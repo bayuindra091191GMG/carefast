@@ -13,10 +13,10 @@ class ComposerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view()->composer(
-            'partials.admin._sidebar',
-            'App\Http\ViewComposers\NavigationComposer'
-        );
+//        view()->composer(
+//            'partials.admin._sidebar',
+//            'App\Http\ViewComposers\NavigationComposer'
+//        );
     }
 
     /**

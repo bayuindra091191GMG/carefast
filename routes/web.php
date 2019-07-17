@@ -18,7 +18,7 @@
 Auth::routes();
 
 
-Route::get('/', 'Frontend\HomeController@index')->name('home');
+Route::get('/', 'Admin\DashboardController@dashboard')->name('admin.dashboard');
 Route::get('/test-email', 'Frontend\HomeController@testEmail')->name('testEmail');
 Route::get('/test-notif', 'Frontend\HomeController@testNotif')->name('testNotif');
 Route::get('/test-notif-send', 'Frontend\HomeController@testNotifSend')->name('testNotifSend');
@@ -30,7 +30,7 @@ Route::get('/test-province', 'Frontend\HomeController@getProvince')->name('getPr
 Route::post('/keluar', 'Admin\AdminController@logout')->name('admin.keluar');
 Route::prefix('admin')->group(function(){
     Route::get('/testing', 'Admin\AdminController@test')->name('admin.test');
-    Route::get('/', 'Admin\AdminController@index')->name('admin.dashboard');
+//    Route::get('/', 'Admin\DashboardController@dashboard')->name('admin.dashboard');
     Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
     Route::post('/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
 
