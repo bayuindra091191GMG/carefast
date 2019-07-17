@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Thu, 07 Feb 2019 07:28:43 +0000.
+ * Date: Wed, 17 Jul 2019 13:57:15 +0700.
  */
 
 namespace App\Models;
@@ -10,6 +10,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
+
 /**
  * Class AdminUser
  * 
@@ -30,22 +31,11 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
  * @property \Carbon\Carbon $updated_at
  * 
  * @property \App\Models\Status $status
- * @property \App\Models\WasteBank $waste_bank
- * @property \App\Models\Role $role
- * @property \Illuminate\Database\Eloquent\Collection $companies
- * @property \Illuminate\Database\Eloquent\Collection $dws_waste_category_datas
- * @property \Illuminate\Database\Eloquent\Collection $dws_wastes
+ * @property \App\Models\AdminUserRole $admin_user_role
  * @property \Illuminate\Database\Eloquent\Collection $faqs
- * @property \Illuminate\Database\Eloquent\Collection $masaro_waste_category_datas
- * @property \Illuminate\Database\Eloquent\Collection $masaro_wastes
- * @property \Illuminate\Database\Eloquent\Collection $store_addresses
- * @property \Illuminate\Database\Eloquent\Collection $transaction_headers
- * @property \Illuminate\Database\Eloquent\Collection $voucher_categories
- * @property \Illuminate\Database\Eloquent\Collection $vouchers
- * @property \Illuminate\Database\Eloquent\Collection $waste_bank_schedules
- * @property \Illuminate\Database\Eloquent\Collection $waste_banks
- * @property \Illuminate\Database\Eloquent\Collection $waste_collectors
  * @property \Illuminate\Database\Eloquent\Collection $fcm_token_browsers
+ * @property \Illuminate\Database\Eloquent\Collection $permission_menu_subs
+ * @property \Illuminate\Database\Eloquent\Collection $permission_menus
  *
  * @package App\Models
  */
@@ -89,29 +79,9 @@ class AdminUser extends Authenticatable
 		return $this->belongsTo(\App\Models\Status::class);
 	}
 
-	public function waste_bank()
+	public function admin_user_role()
 	{
-		return $this->belongsTo(\App\Models\WasteBank::class);
-	}
-
-	public function role()
-	{
-		return $this->belongsTo(\App\Models\Role::class);
-	}
-
-	public function companies()
-	{
-		return $this->hasMany(\App\Models\Company::class, 'updated_by');
-	}
-
-	public function dws_waste_category_datas()
-	{
-		return $this->hasMany(\App\Models\DwsWasteCategoryData::class, 'created_by');
-	}
-
-	public function dws_wastes()
-	{
-		return $this->hasMany(\App\Models\DwsWaste::class, 'updated_by');
+		return $this->belongsTo(\App\Models\AdminUserRole::class, 'role_id');
 	}
 
 	public function faqs()
@@ -119,53 +89,18 @@ class AdminUser extends Authenticatable
 		return $this->hasMany(\App\Models\Faq::class, 'updated_by');
 	}
 
-	public function masaro_waste_category_datas()
-	{
-		return $this->hasMany(\App\Models\MasaroWasteCategoryData::class, 'created_by');
-	}
-
-	public function masaro_wastes()
-	{
-		return $this->hasMany(\App\Models\MasaroWaste::class, 'updated_by');
-	}
-
-	public function store_addresses()
-	{
-		return $this->hasMany(\App\Models\StoreAddress::class, 'updated_by');
-	}
-
-	public function transaction_headers()
-	{
-		return $this->hasMany(\App\Models\TransactionHeader::class, 'updated_by_admin');
-	}
-
-	public function voucher_categories()
-	{
-		return $this->hasMany(\App\Models\VoucherCategory::class, 'updated_by');
-	}
-
-	public function vouchers()
-	{
-		return $this->hasMany(\App\Models\Voucher::class, 'updated_by');
-	}
-
-	public function waste_bank_schedules()
-	{
-		return $this->hasMany(\App\Models\WasteBankSchedule::class, 'updated_by');
-	}
-
-	public function waste_banks()
-	{
-		return $this->hasMany(\App\Models\WasteBank::class, 'updated_by');
-	}
-
-	public function waste_collectors()
-	{
-		return $this->hasMany(\App\Models\WasteCollector::class, 'updated_by');
-	}
-
 	public function fcm_token_browsers()
 	{
-		return $this->hasMany(\App\Models\FcmTokenBrowser::class, 'updated_by');
+		return $this->hasMany(\App\Models\FcmTokenBrowser::class, 'user_admin_id');
+	}
+
+	public function permission_menu_subs()
+	{
+		return $this->hasMany(\App\Models\PermissionMenuSub::class, 'updated_by');
+	}
+
+	public function permission_menus()
+	{
+		return $this->hasMany(\App\Models\PermissionMenu::class, 'updated_by');
 	}
 }
