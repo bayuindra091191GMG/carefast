@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Thu, 06 Dec 2018 06:52:28 +0000.
+ * Date: Wed, 17 Jul 2019 13:39:33 +0700.
  */
 
 namespace App\Models;
@@ -35,17 +35,12 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * 
- * @property \Illuminate\Database\Eloquent\Collection $attributes
- * @property \Illuminate\Database\Eloquent\Collection $avored_product_images
- * @property \Illuminate\Database\Eloquent\Collection $categories
  * @property \Illuminate\Database\Eloquent\Collection $orders
  * @property \Illuminate\Database\Eloquent\Collection $order_return_products
- * @property \Illuminate\Database\Eloquent\Collection $product_downloadable_urls
- * @property \Illuminate\Database\Eloquent\Collection $properties
+ * @property \Illuminate\Database\Eloquent\Collection $product_images
+ * @property \Illuminate\Database\Eloquent\Collection $product_properties
  * @property \Illuminate\Database\Eloquent\Collection $product_reviews
  * @property \Illuminate\Database\Eloquent\Collection $product_variations
- * @property \Illuminate\Database\Eloquent\Collection $related_products
- * @property \Illuminate\Database\Eloquent\Collection $wishlists
  *
  * @package App\Models
  */
@@ -87,34 +82,10 @@ class Product extends Eloquent
 		'meta_description'
 	];
 
-	public function attributes()
-	{
-		return $this->belongsToMany(\App\Models\Attribute::class, 'avored_product_attribute_integer_values')
-					->withPivot('id', 'value')
-					->withTimestamps();
-	}
-
-	public function avored_product_images()
-	{
-		return $this->hasMany(\App\Models\AvoredProductImage::class);
-	}
-
-	public function product_images()
-	{
-		return $this->hasMany(\App\Models\ProductImage::class);
-	}
-
-	public function categories()
-	{
-		return $this->belongsToMany(\App\Models\Category::class)
-					->withPivot('id')
-					->withTimestamps();
-	}
-
 	public function orders()
 	{
-		return $this->belongsToMany(\App\Models\Order::class, 'order_product_variations')
-					->withPivot('id', 'attribute_id', 'attribute_dropdown_option_id')
+		return $this->belongsToMany(\App\Models\Order::class, 'order_products')
+					->withPivot('id', 'qty', 'price', 'tax_amount', 'product_info')
 					->withTimestamps();
 	}
 
@@ -123,16 +94,14 @@ class Product extends Eloquent
 		return $this->hasMany(\App\Models\OrderReturnProduct::class);
 	}
 
-	public function product_downloadable_urls()
+	public function product_images()
 	{
-		return $this->hasMany(\App\Models\ProductDownloadableUrl::class);
+		return $this->hasMany(\App\Models\ProductImage::class);
 	}
 
-	public function properties()
+	public function product_properties()
 	{
-		return $this->belongsToMany(\App\Models\Property::class, 'product_property_varchar_values')
-					->withPivot('id', 'value')
-					->withTimestamps();
+		return $this->hasMany(\App\Models\ProductProperty::class);
 	}
 
 	public function product_reviews()
@@ -143,15 +112,5 @@ class Product extends Eloquent
 	public function product_variations()
 	{
 		return $this->hasMany(\App\Models\ProductVariation::class, 'variation_id');
-	}
-
-	public function related_products()
-	{
-		return $this->hasMany(\App\Models\RelatedProduct::class, 'related_id');
-	}
-
-	public function wishlists()
-	{
-		return $this->hasMany(\App\Models\Wishlist::class);
 	}
 }

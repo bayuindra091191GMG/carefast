@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Thu, 06 Dec 2018 06:52:28 +0000.
+ * Date: Wed, 17 Jul 2019 13:40:48 +0700.
  */
 
 namespace App\Models;
@@ -23,11 +23,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $shipping_address_id
  * @property int $billing_address_id
  * @property string $track_code
+ * @property string $zoho_sales_order_id
  * 
- * @property \App\Models\Address $address
- * @property \App\Models\AvoredOrderStatus $avored_order_status
  * @property \App\Models\User $user
- * @property \Illuminate\Database\Eloquent\Collection $order_histories
  * @property \Illuminate\Database\Eloquent\Collection $products
  * @property \Illuminate\Database\Eloquent\Collection $order_return_requests
  *
@@ -50,33 +48,19 @@ class Order extends Eloquent
 		'user_id',
 		'shipping_address_id',
 		'billing_address_id',
-		'track_code'
+		'track_code',
+		'zoho_sales_order_id'
 	];
-
-	public function address()
-	{
-		return $this->belongsTo(\App\Models\Address::class, 'shipping_address_id');
-	}
-
-	public function avored_order_status()
-	{
-		return $this->belongsTo(\App\Models\AvoredOrderStatus::class, 'order_status_id');
-	}
 
 	public function user()
 	{
 		return $this->belongsTo(\App\Models\User::class);
 	}
 
-	public function order_histories()
-	{
-		return $this->hasMany(\App\Models\OrderHistory::class);
-	}
-
 	public function products()
 	{
-		return $this->belongsToMany(\App\Models\Product::class, 'order_product_variations')
-					->withPivot('id', 'attribute_id', 'attribute_dropdown_option_id')
+		return $this->belongsToMany(\App\Models\Product::class, 'order_products')
+					->withPivot('id', 'qty', 'price', 'tax_amount', 'product_info')
 					->withTimestamps();
 	}
 

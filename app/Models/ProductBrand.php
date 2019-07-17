@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 17 Jul 2019 13:42:08 +0700.
+ * Date: Wed, 17 Jul 2019 13:37:59 +0700.
  */
 
 namespace App\Models;
@@ -10,30 +10,29 @@ namespace App\Models;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
- * Class Category
+ * Class ProductBrand
  * 
  * @property int $id
- * @property int $parent_id
  * @property string $name
- * @property string $slug
- * @property string $meta_title
- * @property string $meta_description
+ * @property string $img_path
  * @property \Carbon\Carbon $created_at
+ * @property int $created_by
  * @property \Carbon\Carbon $updated_at
+ * @property int $updated_by
  *
  * @package App\Models
  */
-class Category extends Eloquent
+class ProductBrand extends Eloquent
 {
 	protected $casts = [
-		'parent_id' => 'int'
+		'created_by' => 'int',
+		'updated_by' => 'int'
 	];
 
 	protected $fillable = [
-		'parent_id',
 		'name',
-		'slug',
-		'meta_title',
-		'meta_description'
+		'img_path',
+		'created_by',
+		'updated_by'
 	];
 }

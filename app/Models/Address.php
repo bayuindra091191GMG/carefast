@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 26 Dec 2018 04:00:13 +0000.
+ * Date: Wed, 17 Jul 2019 13:40:24 +0700.
  */
 
 namespace App\Models;
@@ -28,17 +28,17 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $created_at
  * @property string $notes
  * 
+ * @property \App\Models\AddressCity $address_city
+ * @property \App\Models\AddressProvince $address_province
  * @property \App\Models\User $user
  *
  * @package App\Models
  */
 class Address extends Eloquent
 {
-	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
-		'id' => 'int',
 		'user_id' => 'int',
 		'primary' => 'int',
 		'province' => 'int',
@@ -52,25 +52,24 @@ class Address extends Eloquent
 		'primary',
 		'province',
 		'city',
-        'disctrict',
-        'postal_code',
-        'recipient_name',
-        'recipient_phone',
+		'disctrict',
+		'postal_code',
+		'recipient_name',
+		'recipient_phone',
 		'name',
 		'latitude',
 		'longitude',
-        'created_at',
-        'notes'
+		'notes'
 	];
 
-	public function city()
+	public function address_city()
 	{
-		return $this->belongsTo(\App\Models\City::class, 'city');
+		return $this->belongsTo(\App\Models\AddressCity::class, 'city');
 	}
 
-	public function province()
+	public function address_province()
 	{
-		return $this->belongsTo(\App\Models\Province::class, 'province');
+		return $this->belongsTo(\App\Models\AddressProvince::class, 'province');
 	}
 
 	public function user()
