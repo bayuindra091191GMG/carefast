@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminUser;
+use App\Models\AdminUserRole;
 use App\Models\Role;
 use App\Models\WasteBank;
 use App\Transformer\AdminUserTransformer;
@@ -70,11 +71,9 @@ class AdminUserController extends Controller
      */
     public function create()
     {
-        $wasteBanks = WasteBank::orderBy('name')->get();
-        $roles = Role::orderBy('name')->get();
+        $roles = AdminUserRole::orderBy('name')->get();
 
         $data = [
-            'wasteBanks'    => $wasteBanks,
             'roles'         => $roles
         ];
 
@@ -158,12 +157,10 @@ class AdminUserController extends Controller
     {
         $adminUser = AdminUser::find($id);
 
-        $wasteBanks = WasteBank::orderBy('name')->get();
-        $roles = Role::orderBy('name')->get();
+        $roles = AdminUser::orderBy('name')->get();
 
         $data = [
             'adminUser'     => $adminUser,
-            'wasteBanks'    => $wasteBanks,
             'roles'         => $roles
         ];
 
@@ -236,7 +233,7 @@ class AdminUserController extends Controller
             //Belum melakukan pengecekan hubungan antar Table
             $adminUserId = $request->input('id');
             $adminUser = AdminUser::find($adminUserId);
-            $adminUser->delete();
+//            $adminUser->delete();
 
             Session::flash('success', 'Success Deleting Admin User ' . $adminUser->email . ' - ' . $adminUser->first_name . ' ' . $adminUser->last_name);
             return Response::json(array('success' => 'VALID'));

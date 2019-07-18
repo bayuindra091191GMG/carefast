@@ -6,7 +6,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <h1>DAFTAR PENGGUNA</h1>
+                        <h1>Daftar MD</h1>
                         @include('partials.admin._messages')
                     </div>
                 </div>

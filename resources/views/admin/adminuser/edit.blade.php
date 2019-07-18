@@ -35,7 +35,7 @@
                                                             <input type="checkbox" id="is_super_admin" name="is_super_admin" value="true" class="form-check-input"/>
                                                         @endif
                                                         <label class="form-check-label" for="is_super_admin">
-                                                            Super Admin?
+                                                            Super Admin
                                                         </label>
                                                     </div>
                                                 </div>
@@ -120,8 +120,8 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
-                                                <a href="{{ route('admin.admin-users.index') }}" class="btn btn-danger">Exit</a>
-                                                <input type="submit" class="btn btn-success" value="Save">
+                                                <a href="{{ route('admin.admin-users.index') }}" class="btn btn-danger">Kembali</a>
+                                                <input type="submit" class="btn btn-success" value="Simpan">
                                             </div>
                                             <!-- #END# Input -->
                                         </div>
