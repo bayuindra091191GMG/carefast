@@ -39,7 +39,12 @@ class CartController extends Controller
 
             $tmpCart = Cart::where('user_id', $user->id)->where('product_id', $product->id)->get();
             if($tmpCart != null){
+                $totalPriceTmp = $tmpCart->total_price;
+                $totalPrice += $totalPriceTmp;
+                $tmpCart->qty += $request->input('qty');
+                $tmpCart->total_price = $totalPrice;
 
+                $tmpCart->save();
             }
             else{
                 $cart = Cart::create([
@@ -53,7 +58,7 @@ class CartController extends Controller
                 ]);
             }
 
-            return Response::json("Transaction Confirmed!", 200);
+            return Response::json("Added to Cart!", 200);
         }
         catch (\Exception $ex){
             return Response::json("Sorry Something went Wrong!", 500);
