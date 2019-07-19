@@ -116,6 +116,13 @@ Route::prefix('admin')->group(function(){
     Route::post('/product/update-customize/{item}', 'Admin\ProductController@updateCustomize')->name('admin.product.update.customize');
     Route::get('/product/edit/{item}', 'Admin\ProductController@edit')->name('admin.product.edit');
 
+    // Product Category
+    Route::get('/product/category', 'Admin\ProductCategoryController@index')->name('admin.product.category.index');
+    Route::get('/product/category/create', 'Admin\ProductCategoryController@create')->name('admin.product.category.create');
+    Route::get('/product/category/edit/{id}', 'Admin\ProductCategoryController@edit')->name('admin.product.category.edit');
+    Route::post('/product/category/store', 'Admin\ProductCategoryController@store')->name('admin.product.category.store');
+    Route::post('/product/category/update/{id}', 'Admin\ProductCategoryController@update')->name('admin.product.category.update');
+
     // Import
     Route::get('/import/form', 'Admin\ImportController@form')->name('admin.import.form');
     Route::post('/import/form/submit', 'Admin\ImportController@importExcel')->name('admin.import.submit');
@@ -140,6 +147,7 @@ Route::get('/datatables-categories', 'Admin\CategoryController@getIndex')->name(
 Route::get('/datatables-user-categories', 'Admin\UserCategoryController@getIndex')->name('datatables.user_categories');
 Route::get('/datatables-faqs', 'Admin\FaqController@getIndex')->name('datatables.faqs');
 Route::get('/datatables-permission-menus', 'Admin\PermissionMenuController@getIndex')->name('datatables.permission-menus');
+Route::get('/datatables-product-categories', 'Admin\ProductCategoryController@getIndex')->name('datatables.product.categories');
 
 // Select2
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
