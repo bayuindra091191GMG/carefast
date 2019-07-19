@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Validator;
 class CartController extends Controller
 {
     /**
-     * Function to confirm transaction Antar Sendiri by Admin Wastebank.
+     * Function to Add item or Update Cart.
      *
      * @param Request $request
      * @return JsonResponse
@@ -32,6 +32,9 @@ class CartController extends Controller
 
             $data = $request->json()->all();
             $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
 
             $user = auth('api')->user();
             $product = Product::find($request->input('product_id'));
@@ -47,7 +50,7 @@ class CartController extends Controller
                 $tmpCart->save();
             }
             else{
-                $cart = Cart::create([
+                Cart::create([
                     'user_id' => $user->id,
                     'product_id' => $product->id,
                     'description'   => $request->input('description'),
@@ -58,82 +61,44 @@ class CartController extends Controller
                 ]);
             }
 
-            return Response::json("Added to Cart!", 200);
+            return Response::json("Berhasil menambahkan ke keranjang belanja!", 200);
         }
         catch (\Exception $ex){
-            return Response::json("Sorry Something went Wrong!", 500);
+            return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
 
     /**
-     * Used for Antar Sendiri Transaction when Admin Scan the User QR Code
+     * Function to Add item or Update Cart.
      *
      * @param Request $request
      * @return JsonResponse
      */
-    public function setTransactionToUser(Request $request)
+    public function deleteCart(Request $request)
     {
         try{
             $rules = array(
-                'transaction_no'    => 'required',
-                'email'             => 'required'
+                'product_id' => 'required'
             );
 
             $data = $request->json()->all();
-
             $validator = Validator::make($data, $rules);
-
             if ($validator->fails()) {
                 return response()->json($validator->messages(), 400);
             }
 
-            $user = User::where('email', $data['email'])->first();
-            $header = TransactionHeader::where('transaction_no', $data['transaction_no'])->first();
-            $header->user_id = $user->id;
-            $header->save();
+            $user = auth('api')->user();
 
-            //send notification to admin browser and user device
-            $userName = $header->user->first_name." ".$header->user->last_name;
-            $title = "Digital Waste Solution";
-            $body = "Admin Scan QR Code User";
-            $data = array(
-                'type_id' => '2',
-                'transaction_no' => $header->transaction_no,
-                'name' => $userName
-            );
+            $tmpCart = Cart::where('user_id', $user->id)->where('product_id', $request->input('product_id'))->get();
+            if($tmpCart == null){
+                return response()->json("Cart tidak ditemukan!", 404);
+            }
+            $tmpCart->save();
 
-//            FCMNotification::SendNotification($header->created_by_admin, 'browser', $title, $body, $data);
-            FCMNotification::SendNotification($user->id, 'app', $title, $body, $data);
-
-            return Response::json([
-                'message' => "Success assign " . $user->email . " to " . $header->transaction_no . "!",
-            ], 200);
+            return Response::json("Berhasil menghapus dari keranjang belanja!", 200);
         }
         catch (\Exception $ex){
-            Log::error("AdminController - setTransactionToUser error: ". $ex);
-            return Response::json([
-                'ex' => "ex " . $ex
-            ], 500);
-        }
-
-    }
-
-    /**
-     * Function to return Transaction Data Related to the Admin Wastebank.
-     *
-     * @return JsonResponse
-     */
-    public function getTransactionList()
-    {
-        try{
-            $adminWb = auth('admin_wastebank')->user();
-            $admin = AdminUser::find($adminWb->id);
-            $header = TransactionHeader::where('transaction_type_id', 1)->where('waste_bank_id', $admin->waste_bank_id)->get();
-
-            return Response::json($header, 200);
-        }
-        catch (\Exception $ex){
-            return Response::json("Sorry Something went Wrong!" . $ex, 500);
+            return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
 }
