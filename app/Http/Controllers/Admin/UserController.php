@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminUserRole;
 use App\Models\User;
+use App\Models\UserCategory;
 use App\Transformer\UserTransformer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -50,7 +54,9 @@ class UserController extends Controller
     public function create()
     {
         //
-        $category = AdminUserRole::orderBy('name')->get();
+        $categories = UserCategory::orderBy('name')->get();
+        return view('admin.user.create', compact('categories'));
+
     }
 
     /**
@@ -61,7 +67,29 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'first_name'        => 'required|max:100',
+            'last_name'         => 'required|max:100',
+            'email'             => 'required|regex:/^\S*$/u|unique:users|max:50',
+            'category'          => 'required',
+            'password'          => 'required'
+        ]);
+
+        if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+
+        $user = User::create([
+            'first_name'    => $request->input('first_name'),
+            'last_name'     => $request->input('last_name'),
+            'email'         => $request->input('email'),
+            'category_id'   => $request->input('category'),
+            'phone'         => $request->input('phone'),
+            'password'      => Hash::make($request->input('password')),
+            'status_id'     => 1,
+            'created_at'    => Carbon::now('Asia/Jakarta')
+        ]);
+
+        Session::flash('success', 'Sukses membuat MD Baru');
+        return redirect()->route('admin.user.index');
     }
 
     /**
@@ -117,12 +145,18 @@ class UserController extends Controller
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
         $user = User::find($request->input('id'));
+
+        if($request->filled('password')){
+            $user->password = Hash::make($request->input('password'));
+        }
+
+        $user->first_name = $request->input('first_name');
+        $user->last_name = $request->input('last_name');
         $user->email = $request->input('email');
-        $user->name = $request->input('name');
-        $user->phone = $request->input('phone');
+        $user->category_id = $request->input('category');
         $user->save();
 
-        Session::flash('success', 'Success Updating User!');
+        Session::flash('success', 'Sukses menyimpan data MD!');
         return redirect()->route('admin.users.index');
     }
 
@@ -141,7 +175,7 @@ class UserController extends Controller
             $user = User::find($userId);
             $user->delete();
 
-            Session::flash('success', 'Success Deleting User ' . $user->email . ' - ' . $user->name);
+            Session::flash('success', 'Sukses menghapus data MD ' . $user->email . ' - ' . $user->name);
             return Response::json(array('success' => 'VALID'));
         }
         catch(\Exception $ex){

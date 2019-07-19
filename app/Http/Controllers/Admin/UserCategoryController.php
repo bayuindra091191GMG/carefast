@@ -104,7 +104,7 @@ class UserCategoryController extends Controller
             $category->save();
         }
 
-        Session::flash('success', 'Success Creating new Category!');
+        Session::flash('success', 'Sukses membuat MD category!');
         return redirect()->route('admin.user_categories.index');
     }
 
@@ -166,7 +166,7 @@ class UserCategoryController extends Controller
         $user->phone = $request->input('phone');
         $user->save();
 
-        Session::flash('success', 'Success Updating User!');
+        Session::flash('success', 'Sukses menyimpan data MD category!');
         return redirect()->route('admin.user_categories.index');
     }
 
@@ -185,7 +185,7 @@ class UserCategoryController extends Controller
             $user = User::find($userId);
 //            $user->delete();
 
-            Session::flash('success', 'Success Deleting User ' . $user->email . ' - ' . $user->name);
+            Session::flash('success', 'Sukses menghapus MD category ' . $user->email . ' - ' . $user->name);
             return Response::json(array('success' => 'VALID'));
         }
         catch(\Exception $ex){
