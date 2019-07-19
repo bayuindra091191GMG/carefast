@@ -123,6 +123,11 @@ Route::prefix('admin')->group(function(){
     Route::post('/product/category/store', 'Admin\ProductCategoryController@store')->name('admin.product.category.store');
     Route::post('/product/category/update/{id}', 'Admin\ProductCategoryController@update')->name('admin.product.category.update');
 
+    // Orders
+    Route::get('/orders', 'Admin\OrderController@index')->name('admin.orders.index');
+    Route::get('/orders/detail/{item}', 'Admin\OrderController@show')->name('admin.orders.detail');
+    Route::post('/orders/tracking-code/', 'Admin\OrderController@storeTracking')->name('admin.orders.tracking');
+
     // Import
     Route::get('/import/form', 'Admin\ImportController@form')->name('admin.import.form');
     Route::post('/import/form/submit', 'Admin\ImportController@importExcel')->name('admin.import.submit');
@@ -144,6 +149,7 @@ Route::get('/datatables-admin-users', 'Admin\AdminUserController@getIndex')->nam
 Route::get('/datatables-admin-products', 'Admin\ProductController@getIndex')->name('datatables.admin_products');
 Route::get('/datatables-users', 'Admin\UserController@getIndex')->name('datatables.users');
 Route::get('/datatables-categories', 'Admin\CategoryController@getIndex')->name('datatables.categories');
+Route::get('/datatables-orders', 'Admin\OrderController@getIndex')->name('datatables.orders');
 Route::get('/datatables-user-categories', 'Admin\UserCategoryController@getIndex')->name('datatables.user_categories');
 Route::get('/datatables-faqs', 'Admin\FaqController@getIndex')->name('datatables.faqs');
 Route::get('/datatables-permission-menus', 'Admin\PermissionMenuController@getIndex')->name('datatables.permission-menus');
