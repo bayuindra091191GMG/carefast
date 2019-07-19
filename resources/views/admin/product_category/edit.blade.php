@@ -7,11 +7,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <h3>TAMBAH BARU KATEGORI PRODUK</h3>
+                        <h3>UBAH KATEGORI PRODUK {{ $productCategory->name }}</h3>
                     </div>
                 </div>
 
-                {{ Form::open(['route'=>['admin.product.category.store'],'method' => 'post','id' => 'general-form']) }}
+                {{ Form::open(['route'=>['admin.product.category.update', $productCategory->id],'method' => 'post','id' => 'general-form']) }}
 
                 <div class="row">
                     <div class="col-md-12">
@@ -38,7 +38,7 @@
                                                     <div class="form-line">
                                                         <label class="form-label" for="name">Nama Kategori *</label>
                                                         <input id="name" type="text" class="form-control" style="text-transform: uppercase;"
-                                                               name="name" value="{{ old('name') }}">
+                                                               name="name" value="{{ $productCategory->name }}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -48,7 +48,7 @@
                                                     <div class="form-line">
                                                         <label class="form-label" for="description">Keterangan</label>
                                                         <textarea id="description" class="form-control"
-                                                                  name="description" rows="4">{{ old('description') }}</textarea>
+                                                                  name="description" rows="4">{{ $productCategory->description }}</textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -58,21 +58,12 @@
                                                     <div class="form-line">
                                                         <label class="form-label" for="status">Status</label>
                                                         <select class="form-control" id="status" name="status">
-                                                            <option value="1">ACTIVE</option>
-                                                            <option value="2">NON-ACTIVE</option>
+                                                            <option value="1" @if($productCategory->status_id === 1) selected @endif>ACTIVE</option>
+                                                            <option value="2" @if($productCategory->status_id === 2) selected @endif>NON-ACTIVE</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-
-{{--                                            <div class="col-md-12">--}}
-{{--                                                <div class="form-group form-float form-group-lg">--}}
-{{--                                                    <div class="form-line">--}}
-{{--                                                        <label class="form-label" for="img_path">Foto *</label>--}}
-{{--                                                        {!! Form::file('img_path', array('id' => 'main_image', 'class' => 'file-loading', 'accept' => 'image/*')) !!}--}}
-{{--                                                    </div>--}}
-{{--                                                </div>--}}
-{{--                                            </div>--}}
                                         </div>
                                         <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
                                             <a href="{{ route('admin.product.category.index') }}" class="btn btn-danger">BATAL</a>
