@@ -18,6 +18,7 @@ use Laravel\Passport\HasApiTokens;
  * @property string $first_name
  * @property string $last_name
  * @property string $email
+ * @property int $category_id
  * @property string $password
  * @property string $image_path
  * @property string $company_name
@@ -35,6 +36,7 @@ use Laravel\Passport\HasApiTokens;
  * @property \Carbon\Carbon $updated_at
  * 
  * @property \App\Models\Status $status
+ * @property \App\Models\UserCategory $user_categories
  * @property \Illuminate\Database\Eloquent\Collection $addresses
  * @property \Illuminate\Database\Eloquent\Collection $fcm_token_apps
  * @property \Illuminate\Database\Eloquent\Collection $orders
@@ -48,6 +50,7 @@ class User extends Authenticatable
 
 	protected $casts = [
 		'status_id' => 'int',
+		'category_id' => 'int',
 		'company_id' => 'int',
 		'wallet' => 'float',
 		'point' => 'float',
@@ -67,6 +70,7 @@ class User extends Authenticatable
 	protected $fillable = [
 		'first_name',
 		'last_name',
+        'category_id',
 		'email',
 		'password',
 		'image_path',
@@ -86,6 +90,11 @@ class User extends Authenticatable
 	public function status()
 	{
 		return $this->belongsTo(\App\Models\Status::class);
+	}
+
+	public function user_categories()
+	{
+		return $this->belongsTo(\App\Models\UserCategory::class);
 	}
 
 	public function addresses()

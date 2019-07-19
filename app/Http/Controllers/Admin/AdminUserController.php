@@ -132,7 +132,7 @@ class AdminUserController extends Controller
             'created_at'    => Carbon::now('Asia/Jakarta')
         ]);
 
-        Session::flash('success', 'Success Creating new Admin User!');
+        Session::flash('success', 'Sukses membuat Admin User baru');
         return redirect()->route('admin.admin-users.index');
     }
 
@@ -216,7 +216,7 @@ class AdminUserController extends Controller
         $adminUser->updated_at = Carbon::now('Asia/Jakarta');
         $adminUser->save();
 
-        Session::flash('success', 'Sukses menyimpan data admin!');
+        Session::flash('success', 'Sukses menyimpan data Admin User!');
         return redirect()->route('admin.admin-users.index');
     }
 
@@ -235,7 +235,7 @@ class AdminUserController extends Controller
             $adminUser = AdminUser::find($adminUserId);
 //            $adminUser->delete();
 
-            Session::flash('success', 'Success Deleting Admin User ' . $adminUser->email . ' - ' . $adminUser->first_name . ' ' . $adminUser->last_name);
+            Session::flash('success', 'Sukses menghapus Admin User ' . $adminUser->email . ' - ' . $adminUser->first_name . ' ' . $adminUser->last_name);
             return Response::json(array('success' => 'VALID'));
         }
         catch(\Exception $ex){
