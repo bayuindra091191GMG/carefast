@@ -7,6 +7,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
@@ -79,8 +80,33 @@ class Product extends Eloquent
 		'height',
 		'length',
 		'meta_title',
-		'meta_description'
+		'meta_description',
+        'created_at',
+        'updated_at'
 	];
+
+	protected $appends = [
+	    'created_at_string',
+	    'price_string',
+        'weight_string'
+    ];
+
+    public function getCreatedAtStringAttribute(){
+        return Carbon::parse($this->attributes['created_at'])->format('d M Y');
+    }
+
+    public function getWeightStringAttribute(){
+        if(!empty($this->attributes['weight'])){
+            return number_format($this->attributes['weight'], 0, ",", ".");
+        }
+        else{
+            return '0';
+        }
+    }
+
+    public function getPriceStringAttribute(){
+        return number_format($this->attributes['price'], 0, ",", ".");
+    }
 
 	public function orders()
 	{

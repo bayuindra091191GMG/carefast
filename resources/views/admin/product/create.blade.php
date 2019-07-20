@@ -45,7 +45,7 @@
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label class="form-label" for="image_others">Gambar Lain</label>
-                                                        {!! Form::file('image_others', array('id' => 'image_others', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
+                                                        {!! Form::file('image_secondary', array('id' => 'image_secondary', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
                                                     </div>
                                                 </div>
                                             </div>
@@ -107,9 +107,9 @@
                                             <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="discount">Diskon</label>
-                                                        <input id="discount" type="text" class="form-control"
-                                                               name="discount">
+                                                        <label class="form-label" for="weight">Berat (gram)</label>
+                                                        <input id="weight" type="text" class="form-control"
+                                                               name="weight">
                                                     </div>
                                                 </div>
                                             </div>
@@ -120,19 +120,6 @@
                                                         <label class="form-label" for="description">Keterangan</label>
                                                         <textarea id="description" class="form-control"
                                                                   name="description" rows="3">{{ old('description') }}</textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group form-float form-group-lg">
-                                                    <div class="form-line">
-                                                        <label class="form-label" for="wastebank">Waste Processor *</label>
-                                                        <select id="wastebank" name="wastebank" class="form-control">
-                                                            @if(!$isSuperAdmin)
-                                                                <option value="{{ $adminWasteBankObj->id }}" selected>{{ $adminWasteBankObj->name }}</option>
-                                                            @endif
-                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -169,7 +156,37 @@
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.2.0"></script>
     <script type="text/javascript">
+        $("#image_main").fileinput({
+            showUpload: false,
+            allowedFileExtensions: ["jpg", "png", "gif"],
+            maxFileCount: 1
+        });
 
+        $("#image_secondary").fileinput({
+            showUpload: false,
+            allowedFileExtensions: ["jpg", "png", "gif"]
+        });
+
+        new AutoNumeric('#price', {
+            minimumValue: '0',
+            maximumValue: '999999',
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalPlaces: 0,
+            modifyValueOnWheel: false,
+            emptyInputBehavior: 'zero'
+        });
+
+        new AutoNumeric('#weight', {
+            minimumValue: '0',
+            maximumValue: '999999',
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalPlaces: 0,
+            modifyValueOnWheel: false,
+            emptyInputBehavior: 'zero'
+        });
     </script>
 @endsection

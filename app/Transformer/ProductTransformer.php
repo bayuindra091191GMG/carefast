@@ -19,8 +19,8 @@ class ProductTransformer extends TransformerAbstract
     public function transform(Product $product){
 
         try{
-            $createdDate = Carbon::parse($product->created_at)->format('d M Y');
-            $updatedDate = Carbon::parse($product->updated_at)->format('d M Y');
+            $createdDate = Carbon::parse($product->created_at)->toIso8601String();
+            $updatedDate = Carbon::parse($product->updated_at)->toIso8601String();
 
             $itemShowUrl = route('admin.product.show', ['item' => $product->id]);
             $itemEditUrl = route('admin.product.edit', ['item' => $product->id]);
@@ -33,8 +33,8 @@ class ProductTransformer extends TransformerAbstract
             return[
                 'name'              => $product->name,
                 'sku'               => $product->sku,
-                'qty'               => $product->qty,
                 'price'             => $product->price,
+                'price'             => $product->weight,
                 'created_at'        => $createdDate,
                 'update_at'         => $updatedDate,
                 'action'            => $action

@@ -13,12 +13,14 @@ use App\libs\Utilities;
 use App\Models\Category;
 use App\Models\CategoryProduct;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\ProductImage;
 use App\Models\ProductPosition;
 use App\Transformer\ProductTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Yajra\DataTables\DataTables;
@@ -65,7 +67,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        $categories = Category::all();
+        $categories = ProductCategory::all();
 
         $data = [
             'categories'    => $categories,
@@ -77,58 +79,44 @@ class ProductController extends Controller
     {
         try{
             $validator = Validator::make($request->all(), [
-                'name'        => 'required',
-                'sku'         => 'required',
-                'category'             => 'required',
-                'price'             => 'required',
-                'qty'             => 'required',
-                'weight'             => 'required',
-                'description'             => 'required',
-                'tags'             => 'required',
+                'name'          => 'required|max:100',
+                'sku'           => 'required|max:50',
+                'price'         => 'required'
             ]);
 
             if ($request->input('category') == "-1") {
-                return back()->withErrors("Category is required")->withInput($request->all());
+                return back()->withErrors("Kategori wajib dipilih!")->withInput($request->all());
             }
 //            dd($request);
-            $detailImages = $request->file('detail_image');
-            $mainImages = $request->file('main_image');
+            $detailImages = $request->file('image_secondary');
+            $mainImages = $request->file('image_main');
 
-            if($detailImages == null){
-                return back()->withErrors("Detail Image required")->withInput($request->all());
-            }
             if ($validator->fails())
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
-            $dateTimeNow = Carbon::now('Asia/Jakarta');
+            $dateTimeNow = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $slug = Utilities::CreateProductSlug($request->input('name'));
 
-//            dd($slug);
+            // String to float conversion
+            $floatPrice = Utilities::toFloat($request->input('price'));
+            $floatWeight = 0;
+            if($request->filled('weight') && $request->input('weight') != '0'){
+                $floatWeight = Utilities::toFloat($request->input('weight'));
+            }
+
             // save product
             $newProduct = Product::create([
-                'name' => $request->input('name'),
-                'slug' => $slug,
-                'sku' => $request->input('sku'),
-                'description' => $request->input('description'),
-                'qty' => $request->input('qty'),
-                'price' => (double) $request->input('price'),
-                'weight' => $request->input('weight'),
-                'width' => $request->input('width'),
-                'height' => $request->input('height'),
-                'length' => $request->input('length'),
-                'tag' => $request->input('tags'),
-                'status_id' => 1,
-                'created_at'        => $dateTimeNow->toDateTimeString(),
-                'updated_at'        => $dateTimeNow->toDateTimeString()
+                'name'          => $request->input('name'),
+                'slug'          => $slug,
+                'sku'           => $request->input('sku'),
+                'description'   => $request->input('description'),
+                'price'         => $floatPrice,
+                'weight'        => $floatWeight,
+                'tag'           => $request->input('tags'),
+                'status_id'     => 1,
+                'created_at'    => $dateTimeNow,
+                'updated_at'    => $dateTimeNow
             ]);
-
-            // save product category
-            $newProductCategory = CategoryProduct::create([
-                'category_id' => $request->input('category'),
-                'product_id' => $newProduct->id,
-                'created_at'        => $dateTimeNow->toDateTimeString(),
-            ]);
-
 
             // save product main image, and image detail
             $img = Image::make($mainImages);
@@ -143,6 +131,7 @@ class ProductController extends Controller
                 'path' => $filename,
                 'is_main_image' => 1
             ]);
+
             for($i=0;$i<sizeof($detailImages);$i++){
                 $img = Image::make($detailImages[$i]);
                 $extStr = $img->mime();
@@ -162,8 +151,8 @@ class ProductController extends Controller
             return redirect()->route('admin.product.create.customize',['item' => $newProduct->id]);
 
         }catch(\Exception $ex){
-//            dd($ex);
             error_log($ex);
+            Log::error('Admin/ProductController - store error EX: '. $ex);
             return back()->withErrors("Something Went Wrong")->withInput();
         }
     }
