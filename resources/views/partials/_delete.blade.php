@@ -5,7 +5,7 @@
                 <button type="button" class="close" data-dismiss="modal">×</button>
             </div>
             <div class="modal-body">
-                <h3 class="text-center">Are you sure to delete this data?</h3>
+                <h3 class="text-center">Apakah anda yakin ingin menghapus data ini?</h3>
                 <br />
 
                 <form role="form">

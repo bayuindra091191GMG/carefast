@@ -26,12 +26,11 @@
                             <table id="general_table" class="table table-striped table-bordered nowrap" style="width: 100%;">
                                 <thead>
                                 <tr>
-                                    <th>Nama</th>
-                                    <th>Keterangan</th>
-                                    <th>Status</th>
-                                    <th>Tanggal Dibuat</th>
-                                    <th>Tindakan</th>
-                                    <th></th>
+                                    <th class="text-center">Nama</th>
+                                    <th class="text-center">Keterangan</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Tanggal Dibuat</th>
+                                    <th class="text-center">Opsi</th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -62,8 +61,7 @@
             ajax: '{!! route('datatables.product.categories') !!}',
             order: [ [0, 'asc'] ],
             columns: [
-                { data: 'DT_Row_Index', class: 'text-center', orderable: false, searchable: false },
-                { data: 'name', name: 'name', orderable: false, searchable: false},
+                { data: 'name', name: 'name', class: 'text-center'},
                 { data: 'description', name: 'description'},
                 { data: 'status', name: 'status', class: 'text-center'},
                 { data: 'created_at', name: 'created_at', class: 'text-center',

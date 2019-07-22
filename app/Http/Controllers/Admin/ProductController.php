@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Yajra\DataTables\DataTables;
@@ -50,17 +51,21 @@ class ProductController extends Controller
         return view('admin.product.index');
     }
 
-    public function show(Product $item)
+    public function show(int $id)
     {
-        $images = ProductImage::where('product_id', $item->id)->orderby('is_main_image','desc')->get();
-        $productCategory = CategoryProduct::where('product_id', $item->id)->first();
-        $productPosition = ProductPosition::where('product_id', $item->id)->get();
+        $product = Product::find($id);
+        if(empty($product)){
+            return redirect()->back();
+        }
+
+        $images = ProductImage::where('product_id', $product->id);
+        $mainImage = $images->where('main_image', 1);
+        $secondaryImages = $images->where('main_image', 0)->get();
 
         $data = [
-            'product'    => $item,
-            'productCategory'    => $productCategory,
-            'productPosition'    => $productPosition,
-            'images'    => $images,
+            'product'               => $product,
+            'mainImage'             => $mainImage,
+            'secondaryImages'       => $secondaryImages,
         ];
         return view('admin.product.show')->with($data);
     }
@@ -107,13 +112,14 @@ class ProductController extends Controller
             // save product
             $newProduct = Product::create([
                 'name'          => $request->input('name'),
+                'category_id'   => $request->input('category'),
                 'slug'          => $slug,
                 'sku'           => $request->input('sku'),
                 'description'   => $request->input('description'),
                 'price'         => $floatPrice,
                 'weight'        => $floatWeight,
-                'tag'           => $request->input('tags'),
-                'status_id'     => 1,
+//                'tag'           => $request->input('tags'),
+                'status_id'     => $request->input('status'),
                 'created_at'    => $dateTimeNow,
                 'updated_at'    => $dateTimeNow
             ]);
@@ -127,8 +133,8 @@ class ProductController extends Controller
 
             $img->save(public_path('storage/products/'. $filename), 75);
             $newProductImage = ProductImage::create([
-                'product_id' => $newProduct->id,
-                'path' => $filename,
+                'product_id'    => $newProduct->id,
+                'path'          => $filename,
                 'is_main_image' => 1
             ]);
 
@@ -142,14 +148,15 @@ class ProductController extends Controller
                 $img->save(public_path('storage/products/'. $filename), 75);
 
                 $newProductImage = ProductImage::create([
-                    'product_id' => $newProduct->id,
-                    'path' => $filename,
+                    'product_id'    => $newProduct->id,
+                    'path'          => $filename,
                     'is_main_image' => 0
                 ]);
             }
 
-            return redirect()->route('admin.product.create.customize',['item' => $newProduct->id]);
-
+//            return redirect()->route('admin.product.create.customize',['item' => $newProduct->id]);
+            Session::flash('success', 'Sukses membuat produk baru!');
+            return redirect()->route('admin.product.show',['id' => $newProduct->id]);
         }catch(\Exception $ex){
             error_log($ex);
             Log::error('Admin/ProductController - store error EX: '. $ex);

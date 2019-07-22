@@ -16,8 +16,8 @@ class ProductCategoryTransformer extends TransformerAbstract
 
             $productCategoryEditUrl = route('admin.product.category.edit', ['id' => $productCategory->id]);
 
-            $action = "<a class='btn btn-xs btn-info' href='".$productCategoryEditUrl."' data-toggle='tooltip' data-placement='top'><i class='icon-pencil'></i></a> ";
-            $action .= "<a class='delete-modal btn btn-xs btn-danger' data-id='". $productCategory->id ."' ><i class='icon-remove'></i></a>";
+            $action = "<a class='btn btn-xs btn-info' href='".$productCategoryEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a> ";
+            $action .= "<a class='delete-modal btn btn-xs btn-danger' data-id='". $productCategory->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
 
             return[
                 'name'              => $productCategory->name,

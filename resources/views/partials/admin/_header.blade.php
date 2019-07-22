@@ -9,21 +9,17 @@
             <!-- ============================================================== -->
             <!-- Logo -->
             <!-- ============================================================== -->
-            <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
+            <a class="navbar-brand text-center" href="{{ route('admin.dashboard') }}">
                 <!-- Logo icon -->
-                <b class="logo-icon p-l-10">
+                <b class="logo-icon p-l-10" style="margin: 0 auto;">
                     <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                     <!-- Dark Logo icon -->
-                    <img src="{{ asset('images/dws_logo_normal.png') }}" alt="homepage" class="light-logo" height="55" />
+                    <img src="{{ asset('images/yifang/logo_yifang_icon.png') }}" alt="homepage" class="light-logo" height="55" />
 
                 </b>
                 <!--End Logo icon -->
                 <!-- Logo text -->
-                <span class="logo-text">
-                             <!-- dark Logo text -->
-                             {{--<img src="{{ asset('backend/assets/images/logo-text.png') }}" alt="homepage" class="light-logo" />--}}
-
-                        </span>
+{{--                <span class="logo-text"><img src="{{ asset('backend/assets/images/logo-text.png') }}" alt="homepage" class="light-logo" /></span>--}}
                 <!-- Logo icon -->
                 <!-- <b class="logo-icon"> -->
                 <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->

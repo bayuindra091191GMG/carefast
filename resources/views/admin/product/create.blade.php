@@ -66,7 +66,7 @@
                                                         <label class="form-label" for="category">Kategori *</label>
                                                         <select class="form-control" id="category" name="category">
                                                             <option value="-1"> - Pilih Kategori Produk - </option>
-                                                            @foreach($productCategories as $category)
+                                                            @foreach($categories as $category)
                                                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                             @endforeach
                                                         </select>
@@ -85,32 +85,35 @@
                                             </div>
 
                                             <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group form-float form-group-lg">
+                                                            <div class="form-line">
+                                                                <label class="form-label" for="price">Harga *</label>
+                                                                <input id="price" type="text" class="form-control"
+                                                                       name="price">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group form-float form-group-lg">
+                                                            <div class="form-line">
+                                                                <label class="form-label" for="weight">Berat (gram)</label>
+                                                                <input id="weight" type="text" class="form-control"
+                                                                       name="weight">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="status">Status</label>
                                                     <select id="status" name="status" class="form-control">
                                                         <option value="1">Active</option>
                                                         <option value="2">Not Active</option>
                                                     </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group form-float form-group-lg">
-                                                    <div class="form-line">
-                                                        <label class="form-label" for="price">Harga *</label>
-                                                        <input id="price" type="text" class="form-control"
-                                                               name="price">
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group form-float form-group-lg">
-                                                    <div class="form-line">
-                                                        <label class="form-label" for="weight">Berat (gram)</label>
-                                                        <input id="weight" type="text" class="form-control"
-                                                               name="weight">
-                                                    </div>
                                                 </div>
                                             </div>
 

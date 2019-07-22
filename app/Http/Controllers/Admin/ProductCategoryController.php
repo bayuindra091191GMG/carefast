@@ -10,6 +10,7 @@ use App\Transformer\ProductCategoryTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
@@ -29,7 +30,6 @@ class ProductCategoryController extends Controller
         $productCategories = ProductCategory::all();
         return DataTables::of($productCategories)
             ->setTransformer(new ProductCategoryTransformer)
-            ->addIndexColumn()
             ->make(true);
 
     }
@@ -40,7 +40,7 @@ class ProductCategoryController extends Controller
 
     public function store(Request $request){
         $validator = Validator::make($request->all(), [
-            'name'              => 'required|max:100|unique:name',
+            'name'              => 'required|max:100|unique:product_categories',
             'description'       => 'max:255'
         ],[
             'name.required'     => 'Nama kategori wajib diisi!',
@@ -68,10 +68,20 @@ class ProductCategoryController extends Controller
         return redirect()->route('admin.product.category.index');
     }
 
+    public function edit(int $id){
+        $productCategory = ProductCategory::find($id);
+        if(empty($productCategory)){
+            return redirect()->back();
+        }
+
+        return view('admin.product_category.edit', compact('productCategory'));
+    }
+
     public function update(Request $request, int $id){
         $productCategory = ProductCategory::find($id);
+        //dd($productCategory);
         $validator = Validator::make($request->all(), [
-            'name'              => 'required|max:100|unique:product_categories,name,'. $productCategory->name,
+            'name'              => 'required|max:100|unique:product_categories,name,'. $productCategory->id,
             'description'       => 'max:255'
         ],[
             'name.required'     => 'Nama kategori wajib diisi!',
@@ -94,5 +104,19 @@ class ProductCategoryController extends Controller
 
         Session::flash('success', 'Sukses mengubah kategori produk baru!');
         return redirect()->route('admin.product.category.index');
+    }
+
+    public function destroy(Request $request){
+        try{
+            $deletedId = $request->input('id');
+            $productCategory = ProductCategory::find($deletedId);
+            $productCategory->delete();
+
+            Session::flash('success', 'Sukses menghapus kategori produk!');
+            return Response::json(array('success' => 'VALID'));
+        }
+        catch(\Exception $ex){
+            return Response::json(array('errors' => 'INVALID'));
+        }
     }
 }

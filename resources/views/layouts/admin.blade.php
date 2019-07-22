@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('backend/assets/images/favicon.png') }}">
-    <title>GO 4.0 WASTE BACKEND</title>
+    <title>YIFANG C.M.E. BACKEND</title>
 
     <link href="{{ asset('backend/assets/libs/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('backend/assets/libs/flot/css/float-chart.css')}}" rel="stylesheet">
@@ -96,7 +96,7 @@
         }
 
         .navbar-dark .navbar-nav .nav-link{
-            color: #3DCC9C !important;
+            color: #c32924 !important;
         }
 
         .topbar{
@@ -106,6 +106,10 @@
         .btn-success{
             background-color: #3DCC9C;
             border-color: #3DCC9C;
+        }
+
+        .left-sidebar{
+            top: -16px !important;
         }
     </style>
     @yield('styles')

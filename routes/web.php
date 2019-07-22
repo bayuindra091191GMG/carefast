@@ -106,15 +106,15 @@ Route::prefix('admin')->group(function(){
 
     // Product
     Route::get('/product/', 'Admin\ProductController@index')->name('admin.product.index');
-    Route::get('/product/show/{item}', 'Admin\ProductController@show')->name('admin.product.show');
+    Route::get('/product/show/{id}', 'Admin\ProductController@show')->name('admin.product.show');
     Route::get('/product/create', 'Admin\ProductController@create')->name('admin.product.create');
     Route::post('/product/store', 'Admin\ProductController@store')->name('admin.product.store');
+    Route::get('/product/edit/{id}', 'Admin\ProductController@edit')->name('admin.product.edit');
 
     Route::get('/product/create-customize/{item}', 'Admin\ProductController@createCustomize')->name('admin.product.create.customize');
     Route::post('/product/store-customize/{item}', 'Admin\ProductController@storeCustomize')->name('admin.product.store.customize');
     Route::get('/product/edit-customize/{item}', 'Admin\ProductController@editCustomize')->name('admin.product.edit.customize');
     Route::post('/product/update-customize/{item}', 'Admin\ProductController@updateCustomize')->name('admin.product.update.customize');
-    Route::get('/product/edit/{item}', 'Admin\ProductController@edit')->name('admin.product.edit');
 
     // Product Category
     Route::get('/product/category', 'Admin\ProductCategoryController@index')->name('admin.product.category.index');
@@ -122,6 +122,7 @@ Route::prefix('admin')->group(function(){
     Route::get('/product/category/edit/{id}', 'Admin\ProductCategoryController@edit')->name('admin.product.category.edit');
     Route::post('/product/category/store', 'Admin\ProductCategoryController@store')->name('admin.product.category.store');
     Route::post('/product/category/update/{id}', 'Admin\ProductCategoryController@update')->name('admin.product.category.update');
+    Route::post('/product/category/destroy', 'Admin\ProductCategoryController@destroy')->name('admin.product.category.destroy');
 
     // Orders
     Route::get('/orders', 'Admin\OrderController@index')->name('admin.orders.index');
@@ -153,6 +154,7 @@ Route::get('/datatables-orders', 'Admin\OrderController@getIndex')->name('datata
 Route::get('/datatables-user-categories', 'Admin\UserCategoryController@getIndex')->name('datatables.user_categories');
 Route::get('/datatables-faqs', 'Admin\FaqController@getIndex')->name('datatables.faqs');
 Route::get('/datatables-permission-menus', 'Admin\PermissionMenuController@getIndex')->name('datatables.permission-menus');
+Route::get('/datatables-products', 'Admin\ProductController@getIndex')->name('datatables.products');
 Route::get('/datatables-product-categories', 'Admin\ProductCategoryController@getIndex')->name('datatables.product.categories');
 
 // Select2

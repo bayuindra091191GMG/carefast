@@ -14,13 +14,13 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * Class Product
  * 
  * @property int $id
+ * @property int $category_id
  * @property string $type
  * @property string $name
  * @property string $slug
  * @property string $sku
  * @property string $tag
  * @property string $description
- * @property int $status
  * @property int $in_stock
  * @property int $track_stock
  * @property float $qty
@@ -33,6 +33,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property float $length
  * @property string $meta_title
  * @property string $meta_description
+ * @property int $status_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * 
@@ -48,7 +49,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 class Product extends Eloquent
 {
 	protected $casts = [
-		'status' => 'int',
+		'category_id' => 'int',
 		'in_stock' => 'int',
 		'track_stock' => 'int',
 		'qty' => 'float',
@@ -58,17 +59,18 @@ class Product extends Eloquent
 		'weight' => 'float',
 		'width' => 'float',
 		'height' => 'float',
-		'length' => 'float'
+		'length' => 'float',
+		'status_id' => 'int',
 	];
 
 	protected $fillable = [
+	    'category_id',
 		'type',
 		'name',
 		'slug',
 		'sku',
 		'tag',
 		'description',
-		'status',
 		'in_stock',
 		'track_stock',
 		'qty',
@@ -81,6 +83,7 @@ class Product extends Eloquent
 		'length',
 		'meta_title',
 		'meta_description',
+        'status_id',
         'created_at',
         'updated_at'
 	];
@@ -139,4 +142,9 @@ class Product extends Eloquent
 	{
 		return $this->hasMany(\App\Models\ProductVariation::class, 'variation_id');
 	}
+
+    public function status()
+    {
+        return $this->belongsTo(\App\Models\Status::class);
+    }
 }
