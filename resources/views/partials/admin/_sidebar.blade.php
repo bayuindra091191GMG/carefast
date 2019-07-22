@@ -7,40 +7,31 @@
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav">
             <ul id="sidebarnav" class="pt-3 mt-3" style="border-top: 1px solid #eeeeee;">
-{{--                <li class="sidebar-item">--}}
-{{--                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('admin.dashboard') }}" aria-expanded="false">--}}
-{{--                        <i class="mdi mdi-view-dashboard"></i>--}}
-{{--                        <span class="hide-menu">Dashboard</span>--}}
-{{--                    </a>--}}
-{{--                </li>--}}
+                <li class="sidebar-item">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('admin.dashboard') }}" aria-expanded="false">
+                        <i class="mdi mdi-view-dashboard"></i>
+                        <span class="hide-menu">Dashboard</span>
+                    </a>
+                </li>
 
-{{--                @foreach($menus as $menu)--}}
-{{--                    @if($menu->menu->route != "-")--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a class="sidebar-link waves-effect waves-dark sidebar-link mx-2" href="{{ route($menu->route) }}" aria-expanded="false">--}}
-{{--                                <i class="{{ $menu->icon }}"></i>--}}
-{{--                                <span class="hide-menu">{!! $menu->name !!}</span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    @else--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a class="sidebar-link has-arrow waves-effect waves-dark mx-2" href="javascript:void(0)" aria-expanded="false">--}}
-{{--                                <i class="{{ $menu->icon }}"></i>--}}
-{{--                                <span class="hide-menu">{!! $menu->name !!} </span>--}}
-{{--                            </a>--}}
-{{--                            <ul aria-expanded="false" class="collapse  first-level">--}}
-{{--                                @foreach($menu->menu->menu_subs as $sub)--}}
-{{--                                    <li class="sidebar-item">--}}
-{{--                                        <a href="{{ route($sub->route) }}" class="sidebar-link mx-2">--}}
-{{--                                            <i class="{{ $sub->icon }}"></i>--}}
-{{--                                            <span class="hide-menu"> {{ $sub->name }} </span>--}}
-{{--                                        </a>--}}
-{{--                                    </li>--}}
-{{--                                @endforeach--}}
-{{--                            </ul>--}}
-{{--                        </li>--}}
-{{--                    @endif--}}
-{{--                @endforeach--}}
+                @foreach($menuHeader as $header)
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                            <i class="{{ $header->icon }}"></i>
+                            <span class="hide-menu">{!! $header->name !!} </span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            @foreach($header->menu_header->menus as $menu)
+                                <li class="sidebar-item">
+                                    <a href="{{ route($menu->route) }}" class="sidebar-link">
+                                        <i class="{{ $menu->icon }}"></i>
+                                        <span class="hide-menu"> {{ $menu->name }} </span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </li>
+                @endforeach
 
 
                 <li class="sidebar-item">

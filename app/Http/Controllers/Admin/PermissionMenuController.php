@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\PermissionMenu;
-use App\Models\Role;
+use App\Models\AdminUserRole;
+use App\Models\PermissionMenuHeader;
 use App\Transformer\PermissionMenuTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -46,7 +47,7 @@ class PermissionMenuController extends Controller
     public function create()
     {
         //
-        $roles = Role::all();
+        $roles = AdminUserRole::all();
         $menus = Menu::all();
         return view('admin.permission_menus.create', compact('menus', 'roles'));
     }
@@ -61,7 +62,7 @@ class PermissionMenuController extends Controller
     {
         //
         $validator = Validator::make($request->all(), [
-            'role' => 'required'
+            'admin_role' => 'required'
         ]);
 
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors());
@@ -72,13 +73,13 @@ class PermissionMenuController extends Controller
         }
 
         $menus = Input::get('ids');
-        $role_id = $request->get('role');
+        $role_id = $request->get('admin_role');
         $exist = true;
         $valid = true;
 
         foreach ($menus as $menu){
             if(empty($menu)) $exist = false;
-            $permission = PermissionMenu::where('role_id', $role_id)->where('menu_id', $menu)->first();
+            $permission = PermissionMenu::where('admin_role_id', $role_id)->where('menu_id', $menu)->first();
             if($permission != null){
                 $valid = false;
             }
@@ -96,8 +97,8 @@ class PermissionMenuController extends Controller
         $user = Auth::user();
 
         foreach ($menus as $menu){
-            $menuResult = PermissionMenu::create([
-                'role_id'       => $role_id,
+            PermissionMenu::create([
+                'admin_role_id' => $role_id,
                 'menu_id'       => $menu,
                 'created_by'    => $user->id,
                 'created_at'    => $dateTimeNow->toDateTimeString(),
@@ -131,10 +132,10 @@ class PermissionMenuController extends Controller
     public function edit($id)
     {
         $menus = Menu::orderBy('name')->get();
-        $role = Role::find($id);
-        $permissionMenus = PermissionMenu::where('role_id', $role->id)->get();
+        $role = AdminUserRole::find($id);
+        $permissionMenus = PermissionMenu::where('admin_role_id', $role->id)->get();
 
-        return view('admin.permission_menus.edit', compact('menus', 'role', 'permissionMenus'));
+        return view('admin.permission_menus.edit', compact('menus', 'admin_role_id', 'permissionMenus'));
     }
 
     /**
@@ -147,19 +148,17 @@ class PermissionMenuController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'role' => 'required'
+            'admin_role_id' => 'required'
         ]);
 
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors());
 
         //Add Permission Menus
-        $menus = Input::get('ids');
-        $role_id = $request->get('role');
         $dateTimeNow = Carbon::now('Asia/Jakarta');
         $user = Auth::user();
 
         $menus = Input::get('ids');
-        $role_id = $request->get('role');
+        $role_id = $request->get('admin_role_id');
         $exist = true;
 
         if($menus == null){
@@ -168,7 +167,7 @@ class PermissionMenuController extends Controller
 
         if($exist) {
             foreach ($menus as $menu) {
-                $permission = PermissionMenu::where('role_id', $role_id)->where('menu_id', $menu)->first();
+                $permission = PermissionMenu::where('admin_role_id', $role_id)->where('menu_id', $menu)->first();
                 if ($permission == null) {
                     $menuResult = PermissionMenu::create([
                         'role_id' => $role_id,
@@ -178,6 +177,20 @@ class PermissionMenuController extends Controller
                         'updated_by' => $user->id,
                         'updated_at' => $dateTimeNow->toDateTimeString()
                     ]);
+
+                    //Create menu Header
+                    //Check first if Exist
+                    $menuHeader = PermissionMenuHeader::where('admin_role_id', $role_id)->where('menu_header_id', $menuResult->menu->menu_header->id)->first();
+                    if ($menuHeader == null) {
+                        PermissionMenuHeader::create([
+                            'role_id'           => $role_id,
+                            'menu_header_id'    => $menuResult->menu->menu_header->id,
+                            'created_by'        => $user->id,
+                            'created_at'        => $dateTimeNow->toDateTimeString(),
+                            'updated_by'        => $user->id,
+                            'updated_at'        => $dateTimeNow->toDateTimeString()
+                        ]);
+                    }
                 }
             }
         }
@@ -186,17 +199,37 @@ class PermissionMenuController extends Controller
         //Delete Permission Menus
         $menusDelete = Input::get('idsDelete');
         if($menusDelete != null){
+
+
             foreach($menusDelete as $menu){
-                $data = PermissionMenu::where('role_id', $role_id)->where('menu_id', $menu)->first();
+                $data = PermissionMenu::where('admin_role_id', $role_id)->where('menu_id', $menu)->first();
                 if($data != null){
+                    $menuHeader = PermissionMenuHeader::where('admin_role_id', $role_id)->where('menu_header_id', $data->menu->menu_header->id)->first();
                     $data->delete();
+
+                    //Checking Header and Delete Them if no more data in PermissionMenu that Contains Menu header with same ID
+                    $menuHeaderId = $menuHeader->menu_header_id;
+                    $valid = true;
+
+                    if(PermissionMenu::where('admin_role_id', $role_id)->whereHas('menu', function($query) use ($menuHeaderId){
+                        $menuHeaderId2 = $menuHeaderId;
+                        $query->whereHas('menu_header', function ($query1) use ($menuHeaderId2){
+                            $query1->where('id', $menuHeaderId2);
+                        });
+                    })->exists()){
+                        $valid = false;
+                    }
+
+                    if($valid){
+                        $menuHeader->delete();
+                    }
                 }
             }
         }
         //End Delete Permission Menu
 
         Session::flash('message', 'Berhasil mengubah otorisasi menu!');
-        return redirect(route('admin.permission-menus.index'));
+        return redirect(route('admin.permission_menus'));
     }
 
     /**
