@@ -55,6 +55,15 @@ Route::prefix('admin')->group(function(){
     Route::post('/menus/update', 'Admin\MenuController@update')->name('admin.menus.update');
     Route::post('/menus/delete', 'Admin\MenuController@destroy')->name('admin.menus.destroy');
 
+    // Menu Headers
+    Route::get('/menu_headers', 'Admin\MenuHeaderController@index')->name('admin.menu_headers.index');
+    Route::get('menu_headers/detail/{menu}', 'Admin\MenuHeaderController@show')->name('admin.menu_headers.show');
+    Route::get('/menu_headers/create', 'Admin\MenuHeaderController@create')->name('admin.menu_headers.create');
+    Route::post('/menu_headers/store', 'Admin\MenuHeaderController@store')->name('admin.menu_headers.store');
+    Route::get('/menu_headers/edit/{menu}', 'Admin\MenuHeaderController@edit')->name('admin.menu_headers.edit');
+    Route::post('/menu_headers/update', 'Admin\MenuHeaderController@update')->name('admin.menu_headers.update');
+    Route::post('/menu_headers/delete', 'Admin\MenuHeaderController@destroy')->name('admin.menu_headers.destroy');
+
     // Sub Menus
     Route::get('/menu-subs', 'Admin\SubMenuController@index')->name('admin.menu-subs.index');
     Route::get('menu-subs/detail/{menu}', 'Admin\SubMenuController@show')->name('admin.menu-subs.show');
@@ -144,6 +153,7 @@ Route::get('/verifyemail/{token}', 'Auth\RegisterController@verify');
 Route::view('/send-email', 'auth.send-email');
 
 // Datatables
+Route::get('/datatables-menu-headers', 'Admin\MenuHeaderController@getIndex')->name('datatables.menu_headers');
 Route::get('/datatables-menus', 'Admin\MenuController@getIndex')->name('datatables.menus');
 Route::get('/datatables-menu-subs', 'Admin\SubMenuController@getIndex')->name('datatables.menu-subs');
 Route::get('/datatables-admin-users', 'Admin\AdminUserController@getIndex')->name('datatables.admin_users');
