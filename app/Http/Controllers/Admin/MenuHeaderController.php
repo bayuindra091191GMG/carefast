@@ -5,21 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
 use App\Models\MenuHeader;
-use App\Models\MenuSub;
-use App\Transformer\MenuTransformer;
+use App\Transformer\MenuHeaderTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\DataTables;
 
-class MenuController extends Controller
+class MenuHeaderController extends Controller
 {
     public function getIndex()
     {
-        $menus = Menu::all();
-        return DataTables::of($menus)
-            ->setTransformer(new MenuTransformer)
+        $menuheaders = MenuHeader::all();
+        return DataTables::of($menuheaders)
+            ->setTransformer(new MenuHeaderTransformer)
             ->addIndexColumn()
             ->make(true);
     }
@@ -29,7 +28,7 @@ class MenuController extends Controller
     */
     public function index()
     {
-        return view('admin.menu.index');
+        return view('admin.menu_header.index');
     }
 
     /**
@@ -37,9 +36,7 @@ class MenuController extends Controller
     */
     public function create()
     {
-        $menuHeaders = MenuHeader::all();
-
-        return view('admin.menu.create', compact('menuHeaders'));
+        return view('admin.menu_header.create');
     }
 
     /**
@@ -51,56 +48,52 @@ class MenuController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|max:50',
-            'route'    => 'required'
+            'name'     => 'required|max:50'
         ]);
 
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
-        Menu::create([
-            'name'              => $request->get('name'),
-            'route'             => $request->get('route')
+        MenuHeader::create([
+            'name'              => $request->get('name')
         ]);
 
-        Session::flash('message', 'Berhasil membuat data menu baru!');
+        Session::flash('message', 'Berhasil membuat data menu header baru!');
 
-        return redirect()->route('admin.menus');
+        return redirect()->route('admin.menu_headers');
     }
 
     /**
      * Function to show Edit Menu Page.
      *
-     * @param Menu $menu
+     * @param MenuHeader $menuHeader
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit(Menu $menu)
+    public function edit(MenuHeader $menuHeader)
     {
-        return view('admin.menu.edit', compact('menu'));
+        return view('admin.menu_header.edit', compact('menuHeader'));
     }
 
     /**
      * Function to save the updated Menu.
      *
      * @param Request $request
-     * @param Menu $menu
+     * @param MenuHeader $menuHeader
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Menu $menu)
+    public function update(Request $request, MenuHeader $menuHeader)
     {
         $validator = Validator::make($request->all(), [
-            'name'              => 'required|max:50',
-            'route'             => 'required'
+            'name'              => 'required|max:50'
         ]);
 
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors());
 
-        $menu->name = $request->get('name');
-        $menu->route = $request->get('route');
-        $menu->save();
+        $menuHeader->name = $request->get('name');
+        $menuHeader->save();
 
-        Session::flash('message', 'Berhasil mengubah data menu!');
+        Session::flash('message', 'Berhasil mengubah data menu header!');
 
-        return redirect()->route('admin.menus.edit', ['menu' => $menu]);
+        return redirect()->route('admin.menu_headers.edit', ['menu_header' => $menuHeader]);
     }
 
     /**
@@ -113,13 +106,13 @@ class MenuController extends Controller
     public function destroy(Request $request)
     {
         try{
-            $menu = Menu::find($request->input('id'));
+            $menuHeader = MenuHeader::find($request->input('id'));
 
             //Deleting all the Sub Menus
-            MenuSub::where('menu_id', $menu->id)->delete();
-            $menu->delete();
+            Menu::where('menu_header_id', $menuHeader->id)->delete();
+            $menuHeader->delete();
 
-            Session::flash('message', 'Berhasil menghapus data menu '. $menu->name);
+            Session::flash('message', 'Berhasil menghapus data menu header'. $menuHeader->name);
             return Response::json(array('success' => 'VALID'));
         }
         catch(\Exception $ex){
