@@ -14,6 +14,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * 
  * @property int $id
  * @property string $shipping_option
+ * @property string $order_number
  * @property string $payment_option
  * @property int $order_status_id
  * @property string $currency_code
@@ -41,6 +42,7 @@ class Order extends Eloquent
 	];
 
 	protected $fillable = [
+		'order_number',
 		'shipping_option',
 		'payment_option',
 		'order_status_id',
