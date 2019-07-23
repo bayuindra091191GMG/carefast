@@ -143,3 +143,13 @@ Route::post('/submit-demo', 'Api\SubscribeController@demoSubmit');
 
 //Coba2
 Route::post('/test', 'Api\TransactionHeaderController@test');
+
+
+// Yifang
+// Cart
+Route::middleware('auth:api')->group(function() {
+    Route::get('/cart', 'Api\CartController@getCart');
+    Route::post('/cart/add', 'Api\CartController@addToCart');
+    Route::post('/cart/update', 'Api\CartController@updateCart');
+    Route::post('/cart/delete', 'Api\CartController@deleteCart');
+});
