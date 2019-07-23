@@ -84,8 +84,8 @@ Route::prefix('admin')->group(function(){
     Route::get('/user_categories', 'Admin\UserCategoryController@index')->name('admin.user_categories.index');
     Route::get('/user_categories/create', 'Admin\UserCategoryController@create')->name('admin.user_categories.create');
     Route::post('/user_categories/store', 'Admin\UserCategoryController@store')->name('admin.user_categories.store');
-    Route::get('/user_categories/edit/{item}', 'Admin\UserCategoryController@edit')->name('admin.user_categories.edit');
-    Route::post('/user_categories/update', 'Admin\UserCategoryController@update')->name('admin.user_categories.update');
+    Route::get('/user_categories/edit/{id}', 'Admin\UserCategoryController@edit')->name('admin.user_categories.edit');
+    Route::post('/user_categories/update/{id}', 'Admin\UserCategoryController@update')->name('admin.user_categories.update');
     Route::post('/user_categories/delete', 'Admin\UserCategoryController@destroy')->name('admin.user_categories.destroy');
 
     // Category
@@ -111,7 +111,7 @@ Route::prefix('admin')->group(function(){
     Route::post('/product/store', 'Admin\ProductController@store')->name('admin.product.store');
     Route::get('/product/edit/{id}', 'Admin\ProductController@edit')->name('admin.product.edit');
 
-    Route::get('/product/create-customize/{item}', 'Admin\ProductController@createCustomize')->name('admin.product.create.customize');
+    Route::get('/product/create-customize', 'Admin\ProductController@createCustomize')->name('admin.product.customize.create');
     Route::post('/product/store-customize/{item}', 'Admin\ProductController@storeCustomize')->name('admin.product.store.customize');
     Route::get('/product/edit-customize/{item}', 'Admin\ProductController@editCustomize')->name('admin.product.edit.customize');
     Route::post('/product/update-customize/{item}', 'Admin\ProductController@updateCustomize')->name('admin.product.update.customize');

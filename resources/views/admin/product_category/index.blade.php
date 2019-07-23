@@ -30,7 +30,7 @@
                                     <th class="text-center">Keterangan</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Tanggal Dibuat</th>
-                                    <th class="text-center">Opsi</th>
+                                    <th class="text-center">Tindakan</th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>

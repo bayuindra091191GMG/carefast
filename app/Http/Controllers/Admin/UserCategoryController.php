@@ -27,10 +27,9 @@ class UserCategoryController extends Controller
     }
 
     public function getIndex(Request $request){
-        $users = UserCategory::query();
+        $users = UserCategory::all();
         return DataTables::of($users)
             ->setTransformer(new UserCategoryTransformer())
-            ->addIndexColumn()
             ->make(true);
     }
 
@@ -81,30 +80,28 @@ class UserCategoryController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'  => 'required|max:100',
-            'slug'  => 'required|max:100'
+            'name'  => 'required|max:100|unique:user_categories'
         ]);
 
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
         $category = UserCategory::create([
             'name'              => $request->input('name'),
-            'slug'              => $request->input('slug'),
-            'meta_title'        => $request->input('meta_title'),
+            'slug'              => '',
             'meta_description'  => $request->input('meta_description'),
-            'created_at'        => Carbon::now('Asia/Jakarta'),
-            'updated_at'        => Carbon::now('Asia/Jakarta')
+            'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+            'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString()
         ]);
 
 //        dd($request->input('parent'));
 
-        if($request->input('parent') != null){
-            //case if parent
-            $category->parent_id = $request->input('category');
-            $category->save();
-        }
+//        if($request->input('parent') != null){
+//            //case if parent
+//            $category->parent_id = $request->input('category');
+//            $category->save();
+//        }
 
-        Session::flash('success', 'Sukses membuat MD category!');
+        Session::flash('success', 'Sukses Membuat Kategori Master Dealer!');
         return redirect()->route('admin.user_categories.index');
     }
 
@@ -139,35 +136,27 @@ class UserCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, int $id)
     {
-        //
         $validator = Validator::make($request->all(), [
-            'first_name'        => 'required|max:100',
-            'last_name'         => 'required|max:100',
-            'email'             => 'required|regex:/^\S*$/u|unique:users|max:50',
-            'phone'             => 'required'
-        ],[
-            'email.unique'      => 'ID Login Akses telah terdaftar!',
-            'email.regex'       => 'ID Login Akses harus tanpa spasi!'
+            'name'  => 'required|max:100|unique:user_categories,name,'. $id
         ]);
-
-        if(!ctype_space($request->input('password'))){
-            $validator->sometimes('password', 'min:6|confirmed', function ($input) {
-                return $input->password;
-            });
-        }
 
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
-        $user = User::find($request->input('id'));
-        $user->email = $request->input('email');
-        $user->name = $request->input('name');
-        $user->phone = $request->input('phone');
-        $user->save();
+        $userCategory = UserCategory::find($id);
+        if(empty($userCategory)){
+            return redirect()->back()->withErrors('Invalid User Category!', 'default')->withInput($request->all());
+        }
 
-        Session::flash('success', 'Sukses menyimpan data MD category!');
-        return redirect()->route('admin.user_categories.index');
+        $userCategory->name = $request->input('name');
+        $userCategory->meta_description = $request->input('meta_description');
+        $userCategory->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+        $userCategory->save();
+
+        Session::flash('success', 'Sukses Mengubah Kategori Master Dealer!');
+
+        return redirect()->route('admin.user_categories.edit', ['id' => $userCategory->id]);
     }
 
     /**

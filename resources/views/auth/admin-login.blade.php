@@ -10,7 +10,7 @@
     <meta name="author" content="Generasi Muda Gigih">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('backend/assets/images/favicon.png') }}">
-    <title>GO 4.0 WASTE BACKEND</title>
+    <title>YIFANG C.M.E.</title>
     <!-- Custom CSS -->
     <link href="{{ asset('backend/dist/css/style.min.css')}}" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -59,13 +59,13 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-white" id="basic-addon1" style="background-color: #c32924;"><i class="ti-user"></i></span>
                                 </div>
-                                <input type="text" class="form-control form-control-lg" id="email" name="email" placeholder="EMAIL ADDRESS" value="{{ old('email') }}" aria-label="Username" aria-describedby="basic-addon1" required="">
+                                <input type="text" class="form-control form-control-lg" id="email" name="email" placeholder="ALAMAT EMAIL" value="{{ old('email') }}" aria-label="Username" aria-describedby="basic-addon1" required="">
                             </div>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text text-white" id="basic-addon2" style="background-color: #c32924;"><i class="ti-pencil"></i></span>
                                 </div>
-                                <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="PASSWORD" aria-label="Password" aria-describedby="basic-addon1" required="">
+                                <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="KATA SANDI" aria-label="Password" aria-describedby="basic-addon1" required="">
                             </div>
                         </div>
                     </div>

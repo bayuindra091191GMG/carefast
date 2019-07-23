@@ -2,173 +2,193 @@
 
 @section('content')
 
-    <header class="blue accent-3 relative nav-sticky">
-        <div class="container-fluid text-white">
-            <div class="row p-t-b-10 ">
-                <div class="col">
-                    <h4> <i class="icon-table"></i> Edit Product</h4>
+    <div class="row">
+        <div class="col-12">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h3>UBAH DATA PRODUK {{ $product->name }}</h3>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </header>
 
+                {{ Form::open(['route'=>['admin.product.update', $product->id],'method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
 
-    <div class="content-wrapper animatedParent animateOnce">
-        <div class="container">
-            <section class="paper-card">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body b-b">
-                                <h3 class="my-3">
-                                    Step 1 (Product Information)
-                                </h3>
-
-                                <div class="container-fluid animatedParent animateOnce my-3">
-                                    <div class="animated fadeInUpShort">
-                                        <!-- Input -->
-                                        {{ Form::open(['route'=>['admin.product.store'],'method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
-
-                                        @include('partials.admin._messages')
-                                        @foreach($errors->all() as $error)
-                                            <ul>
-                                                <li>
-                                            <span class="help-block">
-                                                <strong style="color: #ff3d00;"> {{ $error }} </strong>
-                                            </span>
-                                                </li>
-                                            </ul>
-                                        @endforeach
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <label class="form-label">Upload Main Image *</label>
-                                                        <img src="{{ asset('storage/products/'.$mainImage->path) }}" style="width: 200px;height: auto;">
-                                                    </div>
-                                                    <div class="col-md-6 mb-3">
-                                                        {{--<input type="file" name="PhotoPosted" id="PhotoPosted" class="file-loading">--}}
-                                                        {!! Form::file('main_image', array('id' => 'main_image', 'class' => 'file-loading', 'accept' => 'image/*,application/pdf')) !!}
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <label class="form-label">Upload Detail Image *</label>
-                                                        <br>
-                                                        @foreach($detailImage as $image)
-                                                            <img src="{{ asset('storage/products/'.$image->path) }}" style="width: 200px;height: auto;">
-                                                        @endforeach
-                                                    </div>
-                                                    <div class="col-md-6 mb-3">
-                                                        {!! Form::file('detail_image[]', array('id' => 'detail_image', 'class' => 'file-loading', 'multiple' => 'multiple')) !!}
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <label for="validationCustom01">Product Name</label>
-                                                        <input type="text" name="name" class="form-control" value="{{$product->name}}" readonly>
-                                                    </div>
-                                                    <div class="col-md-6 mb-3">
-                                                        <label for="sku">SKU</label>
-                                                        <input type="text" class="form-control" id="sku" name="sku" value="{{$product->sku}}" required>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <label for="category">Category</label>
-                                                        <select id="category" name="category" class="custom-select form-control">
-                                                            <option value="-1">Select Product Category</option>
-                                                            @foreach($categories as $category)
-                                                                <option value="{{ $category->id }}" @if($category->id == $selectedCategory->category_id) selected @endif > {{ $category->name }}</option>
+                                <div class="body">
+                                    @include('partials.admin._messages')
+                                    @if(count($errors))
+                                        <div class="col-md-12">
+                                            <div class="form-group form-float form-group-lg">
+                                                <div class="form-line">
+                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                        <ul>
+                                                            @foreach($errors->all() as $error)
+                                                                <li>{{ $error }}</li>
                                                             @endforeach
-                                                        </select>
+                                                        </ul>
                                                     </div>
-                                                    <div class="col-md-3 mb-3">
-                                                        <label for="validationCustom04">Price</label>
-                                                        <input type="number" class="form-control" id="price"  name="price" value="{{$product->price}}" required>
-                                                    </div>
-                                                    <div class="col-md-3 mb-3">
-                                                        <label for="sku">Quantity</label>
-                                                        <input type="number" class="form-control" id="qty" name="qty" value="{{$product->qty}}" required>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-3 mb-3">
-                                                        <label>Weight</label>
-                                                        <input type="number" class="form-control" id="weight" name="weight" value="{{$product->weight}}" required>
-                                                    </div>
-                                                    <div class="col-md-3 mb-3">
-                                                        <label>Width</label>
-                                                        <input type="number" class="form-control" id="width" name="width" value="{{$product->width}}">
-                                                    </div>
-                                                    <div class="col-md-3 mb-3">
-                                                        <label>Height</label>
-                                                        <input type="number" class="form-control" id="height" name="height" value="{{$product->height}}">
-                                                    </div>
-                                                    <div class="col-md-3 mb-3">
-                                                        <label>Length</label>
-                                                        <input type="number" class="form-control" id="length" name="length" value="{{$product->length}}">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="productDetails">Product Details</label>
-                                                    <textarea class="form-control p-t-40" id="description" name="description"
-                                                              placeholder="Write Something..." rows="7" required>{{$product->description}}</textarea>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="tags">Product Tags</label><br>
-                                                    <input type="text" class="tags-input" id="tags" name="tags" placeholder="Add New"
-                                                           value="{{$product->tag}}">
-                                                </div>
-                                                {{--<div class="row">--}}
-                                                {{--<div class="col-md-12 mb-3">--}}
-                                                {{--<label>Meta Title</label>--}}
-                                                {{--<input type="text" name="meta_title" class="form-control">--}}
-                                                {{--</div>--}}
-                                                {{--<div class="col-md-12 mb-3">--}}
-                                                {{--<label>Meta Description</label>--}}
-                                                {{--<textarea id="meta_description" rows="2" class="form-control" name="meta_description"></textarea>--}}
-                                                {{--</div>--}}
-                                                {{--</div>--}}
-                                                <div class="row">
-                                                    <a href="{{ route('admin.product.index') }}" class="btn btn-danger">Exit</a>
-                                                    <button class="btn btn-primary" type="submit">Publish</button>
                                                 </div>
                                             </div>
                                         </div>
-                                    {{ Form::close() }}
-                                    <!-- #END# Input -->
+                                    @endif
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="image_main">Gambar Utama *</label>
+                                                {!! Form::file('image_main', array('id' => 'image_main', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="image_others">Gambar Lain</label>
+                                                {!! Form::file('image_secondary', array('id' => 'image_secondary', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="name">Nama Produk *</label>
+                                                <input id="name" type="text" class="form-control"
+                                                       name="name" value="{{ old('name') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="category">Kategori *</label>
+                                                <select class="form-control" id="category" name="category">
+                                                    <option value="-1"> - Pilih Kategori Produk - </option>
+                                                    @foreach($categories as $category)
+                                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="sku">SKU *</label>
+                                                <input id="sku" type="text" class="form-control"
+                                                       name="sku" value="{{ old('sku') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="price">Harga *</label>
+                                                        <input id="price" type="text" class="form-control"
+                                                               name="price">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="weight">Berat (gram)</label>
+                                                        <input id="weight" type="text" class="form-control"
+                                                               name="weight">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select id="status" name="status" class="form-control">
+                                                <option value="1">Active</option>
+                                                <option value="2">Not Active</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="description">Keterangan</label>
+                                                <textarea id="description" class="form-control"
+                                                          name="description" rows="3">{{ old('description') }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
+                                    <a href="{{ route('admin.product.index') }}" class="btn btn-danger">BATAL</a>
+                                    <input type="submit" class="btn btn-success" value="SIMPAN">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+
+                {{ Form::close() }}
+            </div>
         </div>
     </div>
 @endsection
 
 
 @section('styles')
-    <link href="{{ URL::asset('css/fileinput.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('kartik-v-bootstrap-fileinput/css/fileinput.min.css') }}" rel="stylesheet"/>
+    <style>
+        .select2-container--default .select2-search--dropdown::before {
+            content: "";
+        }
+    </style>
 @endsection
 
 @section('scripts')
-    <script type="text/javascript" src="{{ URL::asset('js/fileinput.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.2.0"></script>
+    <script type="text/javascript">
+        $("#image_main").fileinput({
+            showUpload: false,
+            allowedFileExtensions: ["jpg", "png", "gif"],
+            maxFileCount: 1
+        });
 
-    <script>
+        $("#image_secondary").fileinput({
+            showUpload: false,
+            allowedFileExtensions: ["jpg", "png", "gif"]
+        });
 
-        // FILEINPUT
-        $("#main_image")
-            .fileinput({
-                allowedFileExtensions: ["jpg", "jpeg", "png"],
-                showUpload: false,
-            });
-        $("#detail_image")
-            .fileinput({
-                allowedFileExtensions: ["jpg", "jpeg", "png"],
-                showUpload: false,
-            });
+        new AutoNumeric('#price', {
+            minimumValue: '0',
+            maximumValue: '999999',
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalPlaces: 0,
+            modifyValueOnWheel: false,
+            emptyInputBehavior: 'zero'
+        });
+
+        new AutoNumeric('#weight', {
+            minimumValue: '0',
+            maximumValue: '999999',
+            digitGroupSeparator: '.',
+            decimalCharacter: ',',
+            decimalPlaces: 0,
+            modifyValueOnWheel: false,
+            emptyInputBehavior: 'zero'
+        });
     </script>
 @endsection

@@ -34,7 +34,6 @@
                                     <th class="text-center">Tanggal Dibuat</th>
                                     <th class="text-center">Tanggal Diubah</th>
                                     <th class="text-center">Tindakan</th>
-                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>

@@ -16,11 +16,15 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
 use App\Models\ProductPosition;
+use App\Models\ProductUserCategory;
+use App\Models\UserCategory;
 use App\Transformer\ProductTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
@@ -118,7 +122,6 @@ class ProductController extends Controller
                 'description'   => $request->input('description'),
                 'price'         => $floatPrice,
                 'weight'        => $floatWeight,
-//                'tag'           => $request->input('tags'),
                 'status_id'     => $request->input('status'),
                 'created_at'    => $dateTimeNow,
                 'updated_at'    => $dateTimeNow
@@ -154,6 +157,18 @@ class ProductController extends Controller
                 ]);
             }
 
+            // Save to basic user category
+            $user = Auth::guard('admin')->user();
+            ProductUserCategory::create([
+                'product_id'        => $newProduct->id,
+                'user_category_id'  => 0,
+                'price'             => $floatPrice,
+                'created_at'        => $dateTimeNow,
+                'created_by'        => $user->id,
+                'updated_at'        => $dateTimeNow,
+                'updated_by'        => $user->id
+            ]);
+
 //            return redirect()->route('admin.product.create.customize',['item' => $newProduct->id]);
             Session::flash('success', 'Sukses membuat produk baru!');
             return redirect()->route('admin.product.show',['id' => $newProduct->id]);
@@ -164,41 +179,82 @@ class ProductController extends Controller
         }
     }
 
-    public function createCustomize(Product $item)
+    public function createCustomize(Request $request)
     {
-        $mainImage = ProductImage::where('product_id', $item->id)->where('is_main_image', 1)->first();
+        $product = null;
+        if($request->id != null){
+            $product = Product::find($request->id);
+            if(empty($product)) $product = null;
+        }
+
+        $userCategories = UserCategory::orderBy('name')->get();
+
         $data = [
-            'product'    => $item,
-            'mainImage'    => $mainImage,
+            'product'           => $product,
+            'userCategories'    => $userCategories
         ];
+
         return view('admin.product.create-customize')->with($data);
     }
 
-    public function storeCustomize(Request $request, Product $item)
+    public function storeCustomize(Request $request)
     {
-//        dd($item);
         try{
-            $validator = Validator::make($request->all(), [
-                'position_name'        => 'required',
-                'position_x'         => 'required',
-                'position_y'             => 'required',
-            ]);
+            if(empty($request->input('product'))){
+                return redirect()->back()->withErrors('Pilih produk!', 'default')->withInput($request->all());
+            }
 
-            if ($validator->fails())
-                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            $product = Product::find($request->input('product'));
+            if(empty($product)){
+                return redirect()->back()->withErrors('Produk invalid!', 'default')->withInput($request->all());
+            }
 
-            // save product position
-            $dateTimeNow = Carbon::now('Asia/Jakarta');
-            $newProductCustomize = ProductPosition::create([
-                'product_id' => $item->id,
-                'name' => $request->input('position_name'),
-                'pos_x' => $request->input('position_x'),
-                'pos_y' => $request->input('position_y'),
-                'created_at'        => $dateTimeNow->toDateTimeString(),
-                'updated_at'        => $dateTimeNow->toDateTimeString(),
-            ]);
+            $valid = true;
+            $categories = $request->input('categories');
+            $prices = $request->input('prices');
 
-            return redirect()->route('admin.product.show',['item' => $item->id]);
+            if(empty($categories || empty($prices || empty($weights)))){
+                return redirect()->back()->withErrors('Detil kategori dan harga wajib diisi!', 'default')->withInput($request->all());
+            }
+
+            $idx = 0;
+            foreach ($categories as $category){
+                if(empty($category) || $category == "-1") $valid = false;
+                if(empty($prices[$idx]) || $prices[$idx] === '0') $valid = false;
+                $idx++;
+            }
+
+            if(!$valid){
+                return redirect()->back()->withErrors('Detil kategori MD, berat dan harga wajib diisi!', 'default')->withInput($request->all());
+            }
+
+            // Check duplicate MD categories
+            $validUnique = Utilities::arrayIsUnique($categories);
+            if(!$validUnique){
+                return redirect()->back()->withErrors('Detil kategori MD tidak boleh kembar!', 'default')->withInput($request->all());
+            }
+
+            $user = Auth::guard('admin')->user();
+            $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $idx = 0;
+            foreach ($categories as $category){
+                $userCategoryId = intval($category);
+                $price = Utilities::toFloat($prices[$idx]);
+
+                ProductUserCategory::create([
+                    'product_id'        => $product->id,
+                    'user_category_id'  => $userCategoryId,
+                    'price'             => $price,
+                    'created_at'        => $now,
+                    'created_by'        => $user->id,
+                    'updated_at'        => $now,
+                    'updated_by'        => $user->id
+                ]);
+            }
+
+            Session::flash('success', 'Sukses membuat kustomisasi harga produk!');
+
+            return redirect()->route('admin.product.show',['id' => $product->id]);
 
         }catch(\Exception $ex){
             dd($ex);
@@ -358,7 +414,7 @@ class ProductController extends Controller
 
     public function getProducts(Request $request){
         $term = trim($request->q);
-        $roles = Product::where('id', '!=', $request->id)
+        $products = Product::where('id', '!=', $request->id)
             ->where(function ($q) use ($term) {
                 $q->where('name', 'LIKE', '%' . $term . '%');
             })
@@ -366,10 +422,10 @@ class ProductController extends Controller
 
         $formatted_tags = [];
 
-        foreach ($roles as $role) {
-            $formatted_tags[] = ['id' => $role->id, 'text' => $role->name];
+        foreach ($products as $product) {
+            $formatted_tags[] = ['id' => $product->id, 'text' => $product->name. ' - '. $product->sku];
         }
 
-        return \Response::json($formatted_tags);
+        return Response::json($formatted_tags);
     }
 }
