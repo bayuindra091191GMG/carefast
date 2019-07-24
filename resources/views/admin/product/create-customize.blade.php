@@ -17,7 +17,7 @@
                     </div>
                 </div>
 
-                {{ Form::open(['route'=>['admin.transactions.antar_sendiri.store'],'method' => 'post','id' => 'general-form']) }}
+                {{ Form::open(['route'=>['admin.product.customize.store'],'method' => 'post','id' => 'general-form']) }}
 
                 <div class="row">
                     <div class="col-md-12">
@@ -46,32 +46,45 @@
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
                                                 <label class="form-label" for="product">Produk</label>
-                                                <select id="product" name="product" class="form-control">
-                                                    @if(!empty($product))
-                                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                                    @endif
-                                                </select>
+                                                <input type="text" id="product" name="product" value="{{ $product->name }}" readonly=""/>
+                                                <input type="hidden" id="product_id" name="product_id" value="{{ $product->id }}" readonly=""/>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="col-md-12 mb-3">
-                                        <div class="text-right w-100">
-                                            <a class="btn btn-success" id="btn-add-row" style="color: #fff !important; cursor: pointer;" onclick="addRow();">TAMBAH KUSTOMISASI</a>
+                                        <div class="text-center w-100">
+                                            <h3>KUSTOMISASI HARGA PRODUK</h3>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-12">
-                                    <table id="category_table" class="table">
+                                    <table id="customize_table" class="table">
                                         <thead>
                                         <tr>
-                                            <th scope="col">Kategori MD</th>
-                                            <th scope="col">Harga</th>
-                                            <th scope="col">Tindakan</th>
+                                            <th class="text-center">Kategori MD</th>
+                                            <th class="text-center">Harga</th>
+                                            <th class="text-center">Tindakan</th>
                                         </tr>
                                         </thead>
                                         <tbody>
+                                        @php( $idx = 0 )
+                                        @foreach($userCategories as $userCategory)
+                                            <tr>
+                                                <td class="text-center">
+                                                    <input type="hidden" name="user_categories[]" value="{{ $userCategory->id }}">
+                                                    <span>{{ $userCategory->name }}</span>
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="price_{{ $idx }}" name="prices[]" class="form-control">
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-danger" style="cursor: pointer;" onclick="deleteRow('{{ $idx }}')"><i class="fas fa-minus-circle text-white"></i></a>
+                                                </td>
+                                            </tr>
+                                            @php( $idx++ )
+                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -105,8 +118,21 @@
     <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.2.0"></script>
     <script>
         var categories = [];
+        @php( $idxScript = 0 )
         @foreach($userCategories as $category)
-            categories.push({ id: '{{ $category->id }}', name: '{{ $category->name }}'})
+            categories.push({ id: '{{ $category->id }}', name: '{{ $category->name }}'});
+
+            new AutoNumeric('#price_' + '{{ $idxScript }}', {
+                minimumValue: '0',
+                maximumValue: '9999999999',
+                digitGroupSeparator: '.',
+                decimalCharacter: ',',
+                decimalPlaces: 6,
+                modifyValueOnWheel: false,
+                emptyInputBehavior: 'zero'
+            });
+
+            @php( $idxScript++ )
         @endforeach
 
         jQuery('#date').datepicker({
@@ -132,7 +158,7 @@
             sbAdd += "<td><input type='text' id='price_" + i + "' name='prices[]' class='form-control text-right' /></td>";
             sbAdd += "<td class='text-center'><a class='btn btn-danger' style='cursor: pointer;' onclick='deleteRow(" + i + ")'><i class='fas fa-minus-circle text-white'></a></td>";
 
-            $('#category_table').append(sbAdd);
+            $('#customize_table').append(sbAdd);
 
             new AutoNumeric('#price_' + i, {
                 minimumValue: '0',
@@ -150,37 +176,6 @@
         function deleteRow(rowIdx){
             $('#row_' + rowIdx).remove();
         }
-
-        $('#product').select2({
-            placeholder: {
-                id: '-1',
-                text: ' - Pilih Produk - '
-            },
-            width: '100%',
-            minimumInputLength: 0,
-            ajax: {
-                url: '{{ route('select.products') }}',
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: $.trim(params.term)
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
-            }
-        });
-
-        $('#product').on('select2:select', function (e) {
-            let data = e.params.data;
-            console.log(data);
-
-            let redirectUrl = '{{ route('admin.product.customize.create') }}';
-            window.location.href = redirectUrl + '?id=' + data;
-        });
 
     </script>
 @endsection
