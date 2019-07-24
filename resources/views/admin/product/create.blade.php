@@ -80,6 +80,20 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
+                                                <label class="form-label" for="category">Brand *</label>
+                                                <select class="form-control" id="category" name="category">
+                                                    <option value="-1"> - Pilih Brand - </option>
+                                                    @foreach($brands as $brand)
+                                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
                                                 <label class="form-label" for="sku">SKU *</label>
                                                 <input id="sku" type="text" class="form-control"
                                                        name="sku" value="{{ old('sku') }}">

@@ -2,260 +2,222 @@
 
 @section('content')
 
-    <header class="blue accent-3 relative nav-sticky">
-        <div class="container-fluid text-white">
-            <div class="row p-t-b-10 ">
-                <div class="col">
-                    <h4> <i class="icon-table"></i> New Product</h4>
+    <div class="row">
+        <div class="col-12">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-9">
+                        <h3>UBAH KUSTOMISASI HARGA PRODUK</h3>
+                    </div>
+                    <div class="col-3">
+                        <div class="float-right">
+                            <a href="{{ route('admin.product.customize.index') }}" class="btn btn-danger">BATAL</a>
+                            <button class="btn btn-success" id="btn_save">SIMPAN</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </header>
 
-    <div class="content-wrapper animatedParent animateOnce">
-        <div class="container">
-            <section class="paper-card">
+                {{ Form::open(['route'=>['admin.product.customize.update'],'method' => 'post','id' => 'general-form']) }}
+
+                <input type="hidden" name="redirect" value="{{ $redirect }}">
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body b-b">
+                                <!-- Input -->
+                                <div class="body">
 
-                                <h3 class="my-3">
-                                    Step 2 (Customer Customize Option)
-                                </h3>
-                                <h3 class="my-3">
-                                    Product = {{$productPosition->product->name}}
-                                </h3>
-
-                                <div class="container-fluid animatedParent animateOnce my-3">
-                                    <div class="animated fadeInUpShort">
-                                        <!-- Input -->
-                                        {{ Form::open(['route'=>['admin.product.update.customize', $productPosition->id],'method' => 'post','id' => 'general-form']) }}
-                                        <div class="row">
-                                            <div class="col-md-8">
-                                                <div class="row">
-                                                    <div class="col-md-12 mb-3">
-                                                        <canvas id="myCanvas" width="600" height="600"></canvas>
+                                    @if(count($errors))
+                                        <div class="col-md-12">
+                                            <div class="form-group form-float form-group-lg">
+                                                <div class="form-line">
+                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                        <ul>
+                                                            @foreach($errors->all() as $error)
+                                                                <li>{{ $error }}</li>
+                                                            @endforeach
+                                                        </ul>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="row">
-                                                    <div class="col-md-12 mb-3">
-                                                        <label class="form-label">Position Name</label>
-                                                        <input id="position_name" name="position_name" type="text" value="{{$productPosition->name}}" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 mb-3">
-                                                        <label class="form-label">X</label>
-                                                        <input id="position_x" name="position_x" type="number" value="{{$productPosition->pos_x}}" onkeyup="ChangePosition()" class="form-control">
-                                                    </div>
-                                                    <div class="col-md-6 mb-3">
-                                                        <label class="form-label">Y</label>
-                                                        <input id="position_y" name="position_y" type="number" value="{{$productPosition->pos_y}}" onkeyup="ChangePosition()" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
-                                                    <a href="{{route('admin.product.show', ['item' => $productPosition->product_id])}}" class="btn btn-danger">Back</a>
-                                                    <input type="submit" class="btn btn-success" value="Save">
                                                 </div>
                                             </div>
                                         </div>
-                                    {{ Form::close() }}
-                                    <!-- #END# Input -->
+                                    @endif
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="product">Produk</label>
+                                                <select id="product" name="product" class="form-control">
+                                                    @if(!empty($product))
+                                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                                    @endif
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <div class="text-right w-100">
+                                            <a class="btn btn-success" id="btn-add-row" style="color: #fff !important; cursor: pointer;" onclick="addRow();">TAMBAH KUSTOMISASI</a>
+                                        </div>
                                     </div>
                                 </div>
 
+                                @if(!empty($product))
+                                    <div class="col-md-12">
+                                        <table id="category_table" class="table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Kategori MD</th>
+                                                <th scope="col">Harga</th>
+                                                <th scope="col">Tindakan</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @php( $idx = 0 )
+                                            @foreach($productMdPrices as $productMdPrice)
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <input type="hidden" name="product_user_category_ids[]" value="{{ $productMdPrice->id }}">
+                                                        <input type="hidden" name="md_category_ids[]" value="{{ $productMdPrice->md_category_id }}">
+                                                        <span>{{ $productMdPrice->md_category_name }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" id="price_{{ $idx }}" name="prices[]" class="form-control">
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-danger" style="cursor: pointer;" onclick="deleteRow('{{ $idx }}')"><i class="fas fa-minus-circle text-white"></i></a>
+                                                    </td>
+                                                </tr>
+                                                @php( $idx++ )
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
                             </div>
+                            <!-- #END# Input -->
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
+
+            {{ Form::close() }}
         </div>
     </div>
+
+
 @endsection
 
 @section('styles')
-    <link href="{{ URL::asset('css/fileinput.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    <style>
+        .select2-container--default .select2-search--dropdown::before {
+            content: "";
+        }
+    </style>
 @endsection
 
 @section('scripts')
-    <script type="text/javascript" src="{{ URL::asset('js/fileinput.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script src="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.2.0"></script>
     <script>
-        // FILEINPUT
-        $("#main_image")
-            .fileinput({
-                allowedFileExtensions: ["jpg", "jpeg", "png"],
-                showUpload: false,
-                showPreview: false
+        var categories = [];
+        @php( $idxScript = 0 )
+        @foreach($productUserCategories as $productUserCategory)
+            {{--categories.push({ id: '{{ $category->id }}', name: '{{ $category->name }}'});--}}
+
+            new AutoNumeric('#price_' + '{{ $idxScript }}', '{{ $productUserCategory->price }}', {
+                minimumValue: '0',
+                maximumValue: '9999999999',
+                digitGroupSeparator: '.',
+                decimalCharacter: ',',
+                decimalPlaces: 6,
+                modifyValueOnWheel: false,
+                emptyInputBehavior: 'zero'
             });
+            @php( $idxScript++ )
+        @endforeach
 
-        window.onload = function(){
-            var posX = $('#position_x').val();
-            var posY = $('#position_y').val();
-            var canvas = document.getElementById("myCanvas");
-            var context = canvas.getContext("2d");
-            var imageObj = new Image();
-            imageObj.onload = function(){
-                context.drawImage(imageObj, 10, 10);
-                context.font = "20pt Calibri";
-                context.fillStyle = "#fff";
-                context.fillText("TEST!", posX, posY);
-            };
+        jQuery('#date').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: "dd M yyyy"
+        });
 
-            imageObj.src = "{{ asset('storage/products/'.$mainImage->path) }}";
-        };
+        var i = 0;
 
-        function ChangePosition(){
-            var posX = $('#position_x').val();
-            var posY = $('#position_y').val();
+        function addRow(){
+            var sbAdd = "<tr id='row_" + i + "'>";
+            sbAdd += "<td><select id='category_" + i + "' name='categories[]' class='form-control'>";
+            sbAdd += "<option value='-1'> - Pilih Kategori MD - </option>";
 
-            var canvas = document.getElementById("myCanvas");
-            var context = canvas.getContext("2d");
-            var imageObj = new Image();
-            imageObj.onload = function(){
-                context.drawImage(imageObj, 10, 10);
-                context.font = "20pt Calibri";
-                context.fillStyle = "#fff";
-                context.fillText("TEST!", posX, posY);
-            };
-
-            imageObj.src = "{{ asset('storage/products/'.$mainImage->path) }}";
-        }
-
-        // CANVAS JAVASCRIPT
-
-        // canvas related variables
-        var canvas = document.getElementById("myCanvas");
-        var ctx = canvas.getContext("2d");
-
-        // variables used to get mouse position on the canvas
-        var $canvas = $("#myCanvas");
-        var canvasOffset = $canvas.offset();
-        var offsetX = canvasOffset.left;
-        var offsetY = canvasOffset.top;
-        var scrollX = $canvas.scrollLeft();
-        var scrollY = $canvas.scrollTop();
-
-        // variables to save last mouse position
-        // used to see how far the user dragged the mouse
-        // and then move the text by that distance
-        var startX;
-        var startY;
-
-        // an array to hold text objects
-        var texts = [];
-
-        // this var will hold the index of the hit-selected text
-        var selectedText = -1;
-
-        // clear the canvas & redraw all texts
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (var i = 0; i < texts.length; i++) {
-                var text = texts[i];
-                ctx.fillText(text.text, text.x, text.y);
-            }
-        }
-
-        // test if x,y is inside the bounding box of texts[textIndex]
-        function textHittest(x, y, textIndex) {
-            var text = texts[textIndex];
-            return (x >= text.x && x <= text.x + text.width && y >= text.y - text.height && y <= text.y);
-        }
-
-        // handle mousedown events
-        // iterate through texts[] and see if the user
-        // mousedown'ed on one of them
-        // If yes, set the selectedText to the index of that text
-        function handleMouseDown(e) {
-            e.preventDefault();
-            startX = parseInt(e.clientX - offsetX);
-            startY = parseInt(e.clientY - offsetY);
-            // Put your mousedown stuff here
-            for (var i = 0; i < texts.length; i++) {
-                if (textHittest(startX, startY, i)) {
-                    selectedText = i;
+            if(categories.length > 0){
+                for(var j = 0; j< categories.length; j++){
+                    sbAdd += "<option value='" + categories[j].id + "'>" + categories[j].name + "</option>";
                 }
             }
+
+            sbAdd += "<select/></td>";
+            sbAdd += "<td><input type='text' id='price_" + i + "' name='prices[]' class='form-control text-right' /></td>";
+            sbAdd += "<td class='text-center'><a class='btn btn-danger' style='cursor: pointer;' onclick='deleteRow(" + i + ")'><i class='fas fa-minus-circle text-white'></a></td>";
+
+            $('#category_table').append(sbAdd);
+
+            new AutoNumeric('#price_' + i, {
+                minimumValue: '0',
+                maximumValue: '9999999999',
+                digitGroupSeparator: '.',
+                decimalCharacter: ',',
+                decimalPlaces: 6,
+                modifyValueOnWheel: false,
+                emptyInputBehavior: 'zero'
+            });
+
+            i++;
         }
 
-        // done dragging
-        function handleMouseUp(e) {
-            e.preventDefault();
-            selectedText = -1;
+        function deleteRow(rowIdx){
+            $('#row_' + rowIdx).remove();
         }
 
-        // also done dragging
-        function handleMouseOut(e) {
-            e.preventDefault();
-            selectedText = -1;
-        }
-
-        // handle mousemove events
-        // calc how far the mouse has been dragged since
-        // the last mousemove event and move the selected text
-        // by that distance
-        function handleMouseMove(e) {
-            if (selectedText < 0) {
-                return;
+        $('#product').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Produk - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.products') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
             }
-            e.preventDefault();
-            mouseX = parseInt(e.clientX - offsetX);
-            mouseY = parseInt(e.clientY - offsetY);
-
-            // Put your mousemove stuff here
-            var dx = mouseX - startX;
-            var dy = mouseY - startY;
-            startX = mouseX;
-            startY = mouseY;
-
-            var text = texts[selectedText];
-            text.x += dx;
-            text.y += dy;
-            draw();
-        }
-
-        // listen for mouse events
-        $("#myCanvas").mousedown(function (e) {
-            handleMouseDown(e);
-        });
-        $("#myCanvas").mousemove(function (e) {
-            handleMouseMove(e);
-        });
-        $("#myCanvas").mouseup(function (e) {
-            handleMouseUp(e);
-        });
-        $("#myCanvas").mouseout(function (e) {
-            handleMouseOut(e);
         });
 
-        $("#new_position").click(function () {
+        $('#product').on('select2:select', function (e) {
+            let data = e.params.data;
+            console.log(data);
 
-            // calc the y coordinate for this text on the canvas
-            var y = texts.length * 20 + 20;
-
-            // get the text from the input element
-            var text = {
-                text: 'New Position',
-                x: 20,
-                y: y
-            };
-
-            // calc the size of this text for hit-testing purposes
-            ctx.font = "16px verdana";
-            text.width = ctx.measureText(text.text).width;
-            text.height = 16;
-
-            // put this new text in the texts array
-            texts.push(text);
-
-            // redraw everything
-            draw();
-
+            let redirectUrl = '{{ route('admin.product.customize.edit') }}';
+            window.location.href = redirectUrl + '?product_id=' + data;
         });
-        // CANVAS JAVASCRIPT END
+
+        $(document).on('click', '#btn_save', function() {
+            $('#general-form').submit();
+        });
+
     </script>
-
 @endsection

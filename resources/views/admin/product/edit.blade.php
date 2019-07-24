@@ -55,7 +55,7 @@
                                         @if($secondaryImages->count() > 0)
                                             <div class="row">
                                                 @foreach($secondaryImages as $image)
-                                                    <div class="col-md-3 col-6 text-center">
+                                                    <div class="col-md-3 col-6 text-center" id="image_box_{{ $image->id }}">
                                                         <a class="fancybox-viewer" href="{{ asset('storage/products/'. $image->path) }}"><img src="{{ asset('storage/products/'. $image->path) }}" alt=""/></a>
                                                         <a class="btn btn-danger delete-image" style="cursor: pointer;" data-image-id="{{ $image->id }}">HAPUS</a>
                                                     </div>
@@ -224,6 +224,9 @@
             let deletedImageIds = $('#deleted_image_ids').val();
             deletedImageIds += ',' + deletedImageId;
             $('#deleted_image_ids').val(deletedImageIds);
+
+            // Remove image box
+            $('#image_box_' + deletedImageId).remove();
         });
     </script>
 @endsection

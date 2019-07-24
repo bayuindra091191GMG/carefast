@@ -7,13 +7,13 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <h3>DAFTAR BRAND PRODUK</h3>
+                        <h3>DAFTAR KUSTOMISASI HARGA PRODUK PER KATEGORI MD</h3>
                         @include('partials.admin._messages')
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-12 text-right">
-                        <a href="{{ route('admin.product.brand.create') }}" class="btn btn-success">
+                        <a href="{{ route('admin.product.customize.create') }}" class="btn btn-success">
                             <i class="fas fa-plus text-white"></i>
                             <br/>
                             <span>TAMBAH</span>
@@ -27,8 +27,11 @@
                                 <thead>
                                 <tr>
                                     <th class="text-center">Nama</th>
-                                    {{-- <th class="text-center">Image</th> --}}
+                                    <th class="text-center">SKU</th>
+                                    <th class="text-center">MD</th>
+                                    <th class="text-center">Harga Satuan</th>
                                     <th class="text-center">Tanggal Dibuat</th>
+                                    <th class="text-center">Tanggal Diubah</th>
                                     <th class="text-center">Tindakan</th>
                                 </tr>
                                 </thead>
@@ -40,7 +43,7 @@
             </div>
         </div>
     </div>
-    @include('partials._delete')
+    {{--    @include('partials._delete')--}}
 @endsection
 
 @section('styles')
@@ -57,12 +60,32 @@
             serverSide: true,
             pageLength: 25,
             responsive: true,
-            ajax: '{!! route('datatables.product.brands') !!}',
+            ajax: '{!! route('datatables.product.customizes') !!}',
             order: [ [0, 'asc'] ],
             columns: [
-                { data: 'name', name: 'name', class: 'text-center'},
-                // { data: 'img_path', name: 'img_path'},
+                { data: 'name', name: 'name', orderable: false, searchable: false },
+                { data: 'sku', name: 'sku'},
+                { data: 'md', name: 'md', orderable: false, searchable: false },
+                { data: 'price', name: 'price', class: 'text-right',
+                    render: function ( data, type, row ){
+                        if ( type === 'display' || type === 'filter' ){
+                            return data.toLocaleString(
+                                "de-DE",
+                                {minimumFractionDigits: 2}
+                            );
+                        }
+                        return data;
+                    }
+                },
                 { data: 'created_at', name: 'created_at', class: 'text-center',
+                    render: function ( data, type, row ){
+                        if ( type === 'display' || type === 'filter' ){
+                            return moment(data).format('DD MMM YYYY');
+                        }
+                        return data;
+                    }
+                },
+                { data: 'updated_at', name: 'updated_at', class: 'text-center',
                     render: function ( data, type, row ){
                         if ( type === 'display' || type === 'filter' ){
                             return moment(data).format('DD MMM YYYY');
@@ -74,14 +97,14 @@
             ],
         });
 
-        $(document).on('click', '.delete-modal', function(){
-            $('#deleteModal').modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-
-            $('#deleted-id').val($(this).data('id'));
-        });
+        // $(document).on('click', '.delete-modal', function(){
+        //     $('#deleteModal').modal({
+        //         backdrop: 'static',
+        //         keyboard: false
+        //     });
+        //
+        //     $('#deleted-id').val($(this).data('id'));
+        // });
     </script>
-    @include('partials._deletejs', ['routeUrl' => 'admin.product.brand.destroy', 'redirectUrl' => 'admin.product.brand.index'])
+    {{--    @include('partials._deletejs', ['routeUrl' => 'admin.product.destroy', 'redirectUrl' => 'admin.product.index'])--}}
 @endsection

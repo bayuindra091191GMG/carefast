@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 17 Jul 2019 21:29:13 +0700.
+ * Date: Wed, 24 Jul 2019 15:03:58 +0700.
  */
 
 namespace App\Models;
@@ -20,6 +20,8 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $meta_description
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * 
+ * @property \Illuminate\Database\Eloquent\Collection $product_user_categories
  *
  * @package App\Models
  */
@@ -36,4 +38,9 @@ class UserCategory extends Eloquent
 		'meta_title',
 		'meta_description'
 	];
+
+	public function product_user_categories()
+	{
+		return $this->hasMany(\App\Models\ProductUserCategory::class);
+	}
 }
