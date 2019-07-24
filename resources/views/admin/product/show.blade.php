@@ -41,7 +41,7 @@
                                             <div class="col-md-12">
                                                 @if($secondaryImages->count() > 0)
                                                     @foreach($secondaryImages as $image)
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-3 col-6">
                                                             <a class="fancybox-viewer" href="{{ asset('storage/products/'. $image->path) }}"><img src="{{ asset('storage/products/'. $image->path) }}" alt=""/></a>
                                                         </div>
                                                     @endforeach
@@ -142,8 +142,6 @@
 
 
 @section('styles')
-    <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
-    <link href="{{ asset('kartik-v-bootstrap-fileinput/css/fileinput.min.css') }}" rel="stylesheet"/>
     <style>
         .select2-container--default .select2-search--dropdown::before {
             content: "";
@@ -152,9 +150,7 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-    <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.2.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.js"></script>
     <script type="text/javascript">
         $("#image_main").fileinput({
             showUpload: false,

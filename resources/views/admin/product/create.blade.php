@@ -174,12 +174,13 @@
 
         new AutoNumeric('#price', {
             minimumValue: '0',
-            maximumValue: '999999',
+            maximumValue: '9999999999999',
             digitGroupSeparator: '.',
             decimalCharacter: ',',
-            decimalPlaces: 0,
+            decimalPlaces: 6,
             modifyValueOnWheel: false,
-            emptyInputBehavior: 'zero'
+            emptyInputBehavior: 'zero',
+            allowDecimalPadding: false,
         });
 
         new AutoNumeric('#weight', {
@@ -189,7 +190,8 @@
             decimalCharacter: ',',
             decimalPlaces: 0,
             modifyValueOnWheel: false,
-            emptyInputBehavior: 'zero'
+            emptyInputBehavior: 'zero',
+            allowDecimalPadding: false,
         });
     </script>
 @endsection

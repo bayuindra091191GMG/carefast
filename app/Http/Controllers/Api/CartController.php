@@ -18,6 +18,28 @@ use Illuminate\Support\Facades\Validator;
 class CartController extends Controller
 {
     /**
+     * Function to Get Cart Data.
+     *
+     * @return JsonResponse
+     */
+    public function getCart()
+    {
+        try{
+            $user = auth('api')->user();
+            $carts = Cart::where('user_id', $user->id)->get();
+
+            if($carts == null){
+                return Response::json("Cart Kosong!", 400);
+            }
+
+            return $carts;
+        }
+        catch (\Exception $ex){
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    /**
      * Function to Add item or Update Cart.
      *
      * @param Request $request

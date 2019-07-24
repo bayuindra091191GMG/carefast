@@ -20,7 +20,7 @@ class OrderTransformer extends TransformerAbstract
     public function transform(Order $order){
 
         try{
-            $createdDate = Carbon::parse($order->created_at)->format('d M Y');
+            $createdDate = Carbon::parse($order->created_at)->toIso8601String();
 
             $url = route('admin.orders.detail', ['item'=>$order->id]);
             $action = "<a class='btn btn-xs btn-info' href='".$url."' data-toggle='tooltip' data-placement='top'><i class='icon-info'></i></a>";
