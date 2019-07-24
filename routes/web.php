@@ -124,6 +124,14 @@ Route::prefix('admin')->group(function(){
     Route::post('/product/category/update/{id}', 'Admin\ProductCategoryController@update')->name('admin.product.category.update');
     Route::post('/product/category/destroy', 'Admin\ProductCategoryController@destroy')->name('admin.product.category.destroy');
 
+    //Product Brand
+    Route::get('/product/brand', 'Admin\ProductBrandController@index')->name('admin.product.brand.index');
+    Route::get('/product/brand/create', 'Admin\ProductBrandController@create')->name('admin.product.brand.create');
+    Route::get('/product/brand/edit/{id}', 'Admin\ProductBrandController@edit')->name('admin.product.brand.edit');
+    Route::post('/product/brand/store', 'Admin\ProductBrandController@store')->name('admin.product.brand.store');
+    Route::post('/product/brand/update/{id}', 'Admin\ProductBrandController@update')->name('admin.product.brand.update');
+    Route::post('/product/brand/destroy', 'Admin\ProductBrandController@destroy')->name('admin.product.brand.destroy');
+    
     // Orders
     Route::get('/orders', 'Admin\OrderController@index')->name('admin.orders.index');
     Route::get('/orders/detail/{item}', 'Admin\OrderController@show')->name('admin.orders.detail');
@@ -150,12 +158,14 @@ Route::get('/datatables-admin-users', 'Admin\AdminUserController@getIndex')->nam
 Route::get('/datatables-admin-products', 'Admin\ProductController@getIndex')->name('datatables.admin_products');
 Route::get('/datatables-users', 'Admin\UserController@getIndex')->name('datatables.users');
 Route::get('/datatables-categories', 'Admin\CategoryController@getIndex')->name('datatables.categories');
+Route::get('/datatables-brands', 'Admin\BrandController@getIndex')->name('datatables.brands');
 Route::get('/datatables-orders', 'Admin\OrderController@getIndex')->name('datatables.orders');
 Route::get('/datatables-user-categories', 'Admin\UserCategoryController@getIndex')->name('datatables.user_categories');
 Route::get('/datatables-faqs', 'Admin\FaqController@getIndex')->name('datatables.faqs');
 Route::get('/datatables-permission-menus', 'Admin\PermissionMenuController@getIndex')->name('datatables.permission-menus');
 Route::get('/datatables-products', 'Admin\ProductController@getIndex')->name('datatables.products');
 Route::get('/datatables-product-categories', 'Admin\ProductCategoryController@getIndex')->name('datatables.product.categories');
+Route::get('/datatables-product-brands', 'Admin\ProductBrandController@getIndex')->name('datatables.product.brands');
 
 // Select2
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');

@@ -104,6 +104,12 @@
                                 <span class="hide-menu"> Kategori Produk </span>
                             </a>
                         </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.product.brand.index')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Brand Produk </span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="sidebar-item">
