@@ -20,7 +20,9 @@ class UserTransformer extends TransformerAbstract
         try{
             $createdDate = Carbon::parse($user->created_at)->toIso8601String();
 
-            $action = "<a class='btn btn-xs btn-info' href='users/edit/".$user->id."' data-toggle='tooltip' data-placement='top'><i class='fas fa-edit'></i></a>";
+            $routeEditUrl = route('admin.users.edit', ['id' => $user->id]);
+
+            $action = "<a class='btn btn-xs btn-info' href='".$routeEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-edit'></i></a>";
             $action .= "<a class='delete-modal btn btn-xs btn-danger' data-id='". $user->id ."' ><i class='fas fa-trash-alt'></i></a>";
 
             return[

@@ -19,6 +19,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Illuminate\Database\Eloquent\Collection $product_categories
  * @property \Illuminate\Database\Eloquent\Collection $products
  * @property \Illuminate\Database\Eloquent\Collection $users
+ * @property \Illuminate\Database\Eloquent\Collection $orders
  *
  * @package App\Models
  */
@@ -48,5 +49,10 @@ class Status extends Eloquent
 	public function users()
 	{
 		return $this->hasMany(\App\Models\User::class);
+	}
+
+	public function orders()
+	{
+		return $this->hasMany(\App\Models\Order::class);
 	}
 }

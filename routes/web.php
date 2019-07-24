@@ -145,7 +145,7 @@ Route::prefix('admin')->group(function(){
     // Orders
     Route::get('/orders', 'Admin\OrderController@index')->name('admin.orders.index');
     Route::get('/orders/detail/{item}', 'Admin\OrderController@show')->name('admin.orders.detail');
-    Route::post('/orders/tracking-code/', 'Admin\OrderController@storeTracking')->name('admin.orders.tracking');
+    Route::post('/orders/order-process/', 'Admin\OrderController@confirmOrderProcess')->name('admin.orders.processing');
 
     // Import
     Route::get('/import/form', 'Admin\ImportController@form')->name('admin.import.form');
