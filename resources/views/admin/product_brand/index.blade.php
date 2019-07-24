@@ -27,7 +27,7 @@
                                 <thead>
                                 <tr>
                                     <th class="text-center">Nama</th>
-                                    <th class="text-center">Image</th>
+                                    {{-- <th class="text-center">Image</th> --}}
                                     <th class="text-center">Tanggal Dibuat</th>
                                     <th class="text-center">Tindakan</th>
                                 </tr>
@@ -61,7 +61,7 @@
             order: [ [0, 'asc'] ],
             columns: [
                 { data: 'name', name: 'name', class: 'text-center'},
-                { data: 'img_path', name: 'img_path'},
+                // { data: 'img_path', name: 'img_path'},
                 { data: 'created_at', name: 'created_at', class: 'text-center',
                     render: function ( data, type, row ){
                         if ( type === 'display' || type === 'filter' ){
