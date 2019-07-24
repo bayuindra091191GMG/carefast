@@ -35,6 +35,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \App\Models\User $user
  * @property \Illuminate\Database\Eloquent\Collection $products
  * @property \Illuminate\Database\Eloquent\Collection $order_return_requests
+ * @property \Illuminate\Database\Eloquent\Collection $order_products
  *
  * @package App\Models
  */
@@ -107,5 +108,10 @@ class Order extends Eloquent
 	public function order_return_requests()
 	{
 		return $this->hasMany(\App\Models\OrderReturnRequest::class);
+	}
+
+	public function order_products()
+	{
+		return $this->hasMany(\App\Models\OrderProduct::class);
 	}
 }
