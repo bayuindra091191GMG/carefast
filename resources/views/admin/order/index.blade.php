@@ -21,6 +21,7 @@
                                     <th>Customer</th>
                                     <th>Customer Email</th>
                                     <th>Sub total</th>
+                                    <th>Discount</th>
                                     <th>Grand Total</th>
                                     <th>Status</th>
                                     <th></th>
@@ -69,6 +70,7 @@
                 { data: 'customer', name: 'customer' },
                 { data: 'email', name: 'email', class: 'text-center'},
                 { data: 'sub_total', name: 'sub_total', class: 'text-right'},
+                { data: 'discount', name: 'discount', class: 'text-right'},
                 { data: 'grand_total', name: 'grand_total', class: 'text-right'},
                 { data: 'status', name: 'status', class: 'text-center'},
                 { data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}

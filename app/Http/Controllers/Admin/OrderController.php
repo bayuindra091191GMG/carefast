@@ -74,6 +74,49 @@ class OrderController extends Controller
         //
     }
 
+    public function confirmOrderProcess(Request $request)
+    {
+        try{
+            $processType = $request->input('process_type');
+            $orderid = $request->input('order_id');
+            $cancelReason = $request->input('cancel_reason');
+            $orderDB = Order::find($orderid);
+
+            //change order status (Order Request Diproses)
+            if($processType == 'process'){
+                $orderDB->status_id = 6;
+                $orderDB->save();
+            }
+            //change order status (Dalam Pengiriman)
+            if($processType == 'ship'){
+                $orderDB->status_id = 7;
+                $orderDB->save();
+            }
+            //change order status (Sampai dan Selesai)
+            if($processType == 'done'){
+                $orderDB->status_id = 8;
+                $orderDB->save();
+            }
+            //change order status (Order Request dibatalkan)
+            if($processType == 'cancel'){
+                if(!empty($cancelReason)){
+                    $orderDB->status_id = 9;
+                    $orderDB->notes = $cancelReason;
+                    $orderDB->save();
+                }
+                else{
+                    return Response::json(array('errors' => 'INVALID'));
+                }
+            }
+            return Response::json(array('success' => 'VALID'));
+        }
+        catch (\Exception $ex){
+            return Response::json(array('errors' => 'INVALID'));
+        }
+
+        //
+    }
+
     /**
      * Display the specified resource.
      *
