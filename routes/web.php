@@ -120,10 +120,11 @@ Route::prefix('admin')->group(function(){
     Route::post('/product/store', 'Admin\ProductController@store')->name('admin.product.store');
     Route::get('/product/edit/{id}', 'Admin\ProductController@edit')->name('admin.product.edit');
 
-    Route::get('/product/create-customize', 'Admin\ProductController@createCustomize')->name('admin.product.customize.create');
-    Route::post('/product/store-customize/{item}', 'Admin\ProductController@storeCustomize')->name('admin.product.store.customize');
-    Route::get('/product/edit-customize/{item}', 'Admin\ProductController@editCustomize')->name('admin.product.edit.customize');
-    Route::post('/product/update-customize/{item}', 'Admin\ProductController@updateCustomize')->name('admin.product.update.customize');
+    Route::get('/product/customize', 'Admin\ProductController@createCustomize')->name('admin.product.customize.create');
+    Route::get('/product/customize/create/{product_id}', 'Admin\ProductController@createCustomize')->name('admin.product.customize.create');
+    Route::post('/product/customize/store', 'Admin\ProductController@storeCustomize')->name('admin.product.customize.store');
+    Route::get('/product/customize/edit', 'Admin\ProductController@editCustomize')->name('admin.product.customize.edit');
+    Route::post('/product/customize/update', 'Admin\ProductController@updateCustomize')->name('admin.product.customize.update');
 
     // Product Category
     Route::get('/product/category', 'Admin\ProductCategoryController@index')->name('admin.product.category.index');
