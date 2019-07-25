@@ -146,7 +146,12 @@ Route::post('/test', 'Api\TransactionHeaderController@test');
 
 
 // Yifang
+
+// Dashboard
+Route::get('/dashboard', 'Api\DashboardController@getData');
+
 Route::middleware('auth:api')->group(function() {
+
     // Cart
     Route::get('/cart', 'Api\CartController@getCart');
     Route::post('/cart/add', 'Api\CartController@addToCart');

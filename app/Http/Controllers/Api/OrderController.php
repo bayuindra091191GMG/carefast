@@ -29,7 +29,10 @@ class OrderController extends Controller
     {
         $order = Order::where('order_number', $request->input('order_number'))->with('order_products')->first();
 
-        return $order;
+        return Response::json([
+            'message'   => 'success',
+            'model'    => json_encode($order)
+        ], 200);
     }
 
     /**
@@ -65,6 +68,10 @@ class OrderController extends Controller
                 ->get();
         }
 
-        return Response::json(array('data' => $transactions));
+        return Response::json([
+            'message'   => 'success',
+            'model'    => json_encode($transactions)
+        ], 200);
+//        return Response::json(array('data' => $transactions));
     }
 }
