@@ -47,8 +47,8 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
-                                                <label class="form-label" for="image_others">Gambar Lain</label>
-                                                {!! Form::file('image_secondary', array('id' => 'image_secondary', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
+                                                <label class="form-label" for="image_secondary">Gambar Lain</label>
+                                                {!! Form::file('image_secondary[]', array('id' => 'image_secondary', 'class' => 'file-loading', 'multiple' => 'multiple', 'accept' => 'image/*')) !!}
                                             </div>
                                         </div>
                                     </div>
@@ -80,9 +80,9 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
-                                                <label class="form-label" for="category">Brand *</label>
-                                                <select class="form-control" id="category" name="category">
-                                                    <option value="-1"> - Pilih Brand - </option>
+                                                <label class="form-label" for="brand">Merek *</label>
+                                                <select class="form-control" id="brand" name="brand">
+                                                    <option value="-1"> - Pilih Merek - </option>
                                                     @foreach($brands as $brand)
                                                         <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                                     @endforeach
@@ -95,7 +95,7 @@
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
                                                 <label class="form-label" for="sku">SKU *</label>
-                                                <input id="sku" type="text" class="form-control"
+                                                <input id="sku" type="text" class="form-control" style="text-transform: uppercase;"
                                                        name="sku" value="{{ old('sku') }}">
                                             </div>
                                         </div>
@@ -144,9 +144,14 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <input type="hidden" id="is_start_customize" name="is_start_customize">
+
                                 <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
                                     <a href="{{ route('admin.product.index') }}" class="btn btn-danger">BATAL</a>
-                                    <input type="submit" class="btn btn-success" value="SIMPAN">
+                                    <a id="btn_submit" class="btn btn-success text-white">SIMPAN</a>
+                                    <a id="btn_submit_customize" class="btn btn-success text-white">SIMPAN DAN BUAT KUSTOMISASI</a>
+                                    <a id="btn_loading" class="btn btn-success text-white" style="display: none"><i class="fas fa-sync-alt fa-spin"></i>&nbsp;&nbsp;MENGUNGGAH PRODUK...</a>
                                 </div>
                             </div>
                         </div>
@@ -206,6 +211,22 @@
             modifyValueOnWheel: false,
             emptyInputBehavior: 'zero',
             allowDecimalPadding: false,
+        });
+
+        $(document).on('click', '#btn_submit', function() {
+            $('#btn_submit').hide(500);
+            $('#btn_submit_customize').hide(500);
+            $('#btn_loading').show(500);
+            $('#is_start_customize').val(0);
+            $('#general-form').submit();
+        });
+
+        $(document).on('click', '#btn_submit_customize', function() {
+            $('#btn_submit').hide(500);
+            $('#btn_submit_customize').hide(500);
+            $('#btn_loading').show(500);
+            $('#is_start_customize').val(1);
+            $('#general-form').submit();
         });
     </script>
 @endsection

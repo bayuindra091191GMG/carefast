@@ -119,8 +119,9 @@ Route::prefix('admin')->group(function(){
     Route::get('/product/create', 'Admin\ProductController@create')->name('admin.product.create');
     Route::post('/product/store', 'Admin\ProductController@store')->name('admin.product.store');
     Route::get('/product/edit/{id}', 'Admin\ProductController@edit')->name('admin.product.edit');
+    Route::post('/product/update/{id}', 'Admin\ProductController@update')->name('admin.product.update');
 
-    Route::get('/product/customize', 'Admin\ProductController@createCustomize')->name('admin.product.customize.create');
+    Route::get('/product/customize', 'Admin\ProductController@index')->name('admin.product.customize.index');
     Route::get('/product/customize/create/{product_id}', 'Admin\ProductController@createCustomize')->name('admin.product.customize.create');
     Route::post('/product/customize/store', 'Admin\ProductController@storeCustomize')->name('admin.product.customize.store');
     Route::get('/product/customize/edit', 'Admin\ProductController@editCustomize')->name('admin.product.customize.edit');

@@ -51,18 +51,20 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-12">
+                                    <div class="col-12 mb-3">
                                         @if($secondaryImages->count() > 0)
                                             <div class="row">
                                                 @foreach($secondaryImages as $image)
-                                                    <div class="col-md-3 col-6 text-center" id="image_box_{{ $image->id }}">
+                                                    <div class="col-md-2 col-6 text-center" id="image_box_{{ $image->id }}">
                                                         <a class="fancybox-viewer" href="{{ asset('storage/products/'. $image->path) }}"><img src="{{ asset('storage/products/'. $image->path) }}" alt=""/></a>
-                                                        <a class="btn btn-danger delete-image" style="cursor: pointer;" data-image-id="{{ $image->id }}">HAPUS</a>
+                                                        <br/>
+                                                        <br/>
+                                                        <a class="btn btn-sm btn-danger delete-image text-white" style="cursor: pointer;" data-image-id="{{ $image->id }}">HAPUS</a>
                                                     </div>
                                                 @endforeach
                                             </div>
                                         @else
-                                            <span>Tidak Ada Gambar Lain</span>
+                                            <h3>Tidak Ada Gambar Lain</h3>
                                         @endif
                                     </div>
 
@@ -72,7 +74,7 @@
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
                                                 <label class="form-label" for="image_others">Tambah Gambar Lain</label>
-                                                {!! Form::file('image_secondary', array('id' => 'image_secondary', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
+                                                {!! Form::file('image_secondary[]', array('id' => 'image_secondary', 'class' => 'file-loading', 'multiple' => 'multiple', 'accept' => 'image/*')) !!}
                                             </div>
                                         </div>
                                     </div>
@@ -103,8 +105,21 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
+                                                <label class="form-label" for="brand">Merek</label>
+                                                <select class="form-control" id="brand" name="brand">
+                                                    @foreach($brands as $brand)
+                                                        <option value="{{ $brand->id }}" @if($product->brand_id === $brand->id) selected @endif>{{ $brand->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
                                                 <label class="form-label" for="sku">SKU *</label>
-                                                <input id="sku" type="text" class="form-control"
+                                                <input id="sku" type="text" class="form-control" style="text-transform: uppercase;"
                                                        name="sku" value="{{ $product->sku }}" required>
                                             </div>
                                         </div>
@@ -180,20 +195,26 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.2.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.js"></script>
+    <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
+    <script src="{{ asset('kartik-v-bootstrap-fileinput/themes/fas/theme.js') }}"></script>
     <script type="text/javascript">
         var mainImageUrl = '{{ asset('storage/products/'. $mainImage->path) }}';
         $("#image_main").fileinput({
-            initialPreview : mainImageUrl,
+            theme: 'fas',
+            initialPreview : [mainImageUrl],
+            initialPreviewAsData: true,
+            overwriteInitial: true,
             showUpload: false,
             allowedFileExtensions: ["jpg", "png", "gif"],
             maxFileCount: 1
         });
 
         $("#image_secondary").fileinput({
+            theme: 'fas',
             showUpload: false,
+            overwriteInitial: false,
             allowedFileExtensions: ["jpg", "png", "gif"]
         });
 
@@ -222,11 +243,17 @@
         $(document).on('click', '.delete-image', function() {
             let deletedImageId = $(this).data('image-id');
             let deletedImageIds = $('#deleted_image_ids').val();
-            deletedImageIds += ',' + deletedImageId;
+            if(!deletedImageIds  || deletedImageIds === ''){
+                deletedImageIds += + deletedImageId;
+            }
+            else{
+                deletedImageIds += ',' + deletedImageId;
+            }
+
             $('#deleted_image_ids').val(deletedImageIds);
 
             // Remove image box
-            $('#image_box_' + deletedImageId).remove();
+            $('#image_box_' + deletedImageId).fadeOut(500, function(){ $(this).remove();});
         });
     </script>
 @endsection

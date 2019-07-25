@@ -25,8 +25,8 @@ class ProductTransformer extends TransformerAbstract
             $itemShowUrl = route('admin.product.show', ['id' => $product->id]);
             $itemEditUrl = route('admin.product.edit', ['id' => $product->id]);
 
-            $action = "<a class='btn btn-xs btn-primary' href='".$itemShowUrl."' data-toggle='tooltip' data-placement='top'><i class='icon-details'></i></a> ";
-            $action .= "<a class='btn btn-xs btn-info' href='".$itemEditUrl."' data-toggle='tooltip' data-placement='top'><i class='icon-pencil'></i></a> ";
+            $action = "<a class='btn btn-xs btn-primary' href='".$itemShowUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-info'></i></a> ";
+            $action .= "<a class='btn btn-xs btn-info' href='".$itemEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a> ";
 
 
             return[

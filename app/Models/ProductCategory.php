@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Fri, 19 Jul 2019 10:56:08 +0700.
+ * Date: Thu, 25 Jul 2019 10:57:45 +0700.
  */
 
 namespace App\Models;
@@ -22,6 +22,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $updated_by
  * 
  * @property \App\Models\Status $status
+ * @property \Illuminate\Database\Eloquent\Collection $products
  *
  * @package App\Models
  */
@@ -44,5 +45,10 @@ class ProductCategory extends Eloquent
 	public function status()
 	{
 		return $this->belongsTo(\App\Models\Status::class);
+	}
+
+	public function products()
+	{
+		return $this->hasMany(\App\Models\Product::class, 'category_id');
 	}
 }

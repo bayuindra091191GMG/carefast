@@ -71,13 +71,15 @@ class ProductController extends Controller
     public function show(int $id)
     {
         $product = Product::find($id);
+
         if(empty($product)){
             return redirect()->back();
         }
 
-        $images = ProductImage::where('product_id', $product->id);
-        $mainImage = $images->where('main_image', 1);
-        $secondaryImages = $images->where('main_image', 0)->get();
+        $mainImage = ProductImage::where('product_id', $product->id)->where('is_main_image', 1)->first();
+        $secondaryImages = ProductImage::where('product_id', $product->id)->where('is_main_image', 0)->get();
+
+        //dd($secondaryImages);
 
         $data = [
             'product'               => $product,
@@ -112,8 +114,7 @@ class ProductController extends Controller
             if ($request->input('category') == "-1") {
                 return back()->withErrors("Kategori wajib dipilih!")->withInput($request->all());
             }
-//            dd($request);
-            $detailImages = $request->file('image_secondary');
+
             $mainImages = $request->file('image_main');
 
             if ($validator->fails())
@@ -133,8 +134,9 @@ class ProductController extends Controller
             $newProduct = Product::create([
                 'name'          => $request->input('name'),
                 'category_id'   => $request->input('category'),
+                'brand_id'      => $request->input('brand'),
                 'slug'          => $slug,
-                'sku'           => $request->input('sku'),
+                'sku'           => strtoupper($request->input('sku')),
                 'description'   => $request->input('description'),
                 'price'         => $floatPrice,
                 'weight'        => $floatWeight,
@@ -157,20 +159,25 @@ class ProductController extends Controller
                 'is_main_image' => 1
             ]);
 
-            for($i=0;$i<sizeof($detailImages);$i++){
-                $img = Image::make($detailImages[$i]);
-                $extStr = $img->mime();
-                $ext = explode('/', $extStr, 2);
+            if($request->hasFile('image_secondary')){
+                $idx = 1;
+                foreach($request->file('image_secondary') as $detailImage){
+                    $img = Image::make($detailImage);
+                    $extStr = $img->mime();
+                    $ext = explode('/', $extStr, 2);
 
-                $filename = $newProduct->id.'_secondary_'.$slug.'_'.Carbon::now('Asia/Jakarta')->format('Ymdhms'). '.'. $ext[1];
+                    $filename = $newProduct->id.'_secondary_'. $idx. '_'. $slug.'_'.Carbon::now('Asia/Jakarta')->format('Ymdhms'). '.'. $ext[1];
 
-                $img->save(public_path('storage/products/'. $filename), 75);
+                    $img->save(public_path('storage/products/'. $filename), 75);
 
-                $newProductImage = ProductImage::create([
-                    'product_id'    => $newProduct->id,
-                    'path'          => $filename,
-                    'is_main_image' => 0
-                ]);
+                    $newProductImage = ProductImage::create([
+                        'product_id'    => $newProduct->id,
+                        'path'          => $filename,
+                        'is_main_image' => 0
+                    ]);
+
+                    $idx++;
+                }
             }
 
             // Save to basic user category
@@ -185,7 +192,10 @@ class ProductController extends Controller
                 'updated_by'        => $user->id
             ]);
 
-//            return redirect()->route('admin.product.create.customize',['item' => $newProduct->id]);
+            if($request->input('is_start_customize') == '1'){
+                return redirect()->route('admin.product.customize.create',['product_id' => $newProduct->id]);
+            }
+
             Session::flash('success', 'Sukses membuat produk baru!');
             return redirect()->route('admin.product.show',['id' => $newProduct->id]);
         }catch(\Exception $ex){
@@ -202,7 +212,9 @@ class ProductController extends Controller
             dd('PRODUK INVALID!!');
         }
 
-        $userCategories = UserCategory::orderBy('name')->get();
+        $userCategories = UserCategory::where('id', '!=', 0)
+            ->orderBy('name')
+            ->get();
 
         $data = [
             'product'           => $product,
@@ -392,19 +404,19 @@ class ProductController extends Controller
         $categories = ProductCategory::orderBy('name')->get();
         $brands = ProductBrand::orderBy('name')->get();
         $mainImage = ProductImage::where('product_id', $product->id)->where('is_main_image', 1)->first();
-        $detailImage = ProductImage::where('product_id', $product->id)->where('is_main_image', 0)->get();
+        $secondaryImages = ProductImage::where('product_id', $product->id)->where('is_main_image', 0)->get();
 
         $data = [
             'product'           => $product,
             'categories'        => $categories,
             'brands'            => $brands,
             'mainImage'         => $mainImage,
-            'detailImage'       => $detailImage,
+            'secondaryImages'   => $secondaryImages,
         ];
         return view('admin.product.edit')->with($data);
     }
 
-    public function update(Request $request, Product $product){
+    public function update(Request $request, int $id){
 
         try{
             $validator = Validator::make($request->all(), [
@@ -412,9 +424,6 @@ class ProductController extends Controller
                 'sku'           => 'required|max:50',
                 'price'         => 'required'
             ]);
-
-            $detailImages = $request->file('detail_image');
-            $mainImages = $request->file('main_image');
 
             if ($validator->fails())
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
@@ -426,9 +435,12 @@ class ProductController extends Controller
             $floatWeight = Utilities::toFloat($request->input('weight'));
 
             // update product
+            $product = Product::find($id);
             $product->name = $request->input('name');
+            $product->category_id = $request->input('category');
+            $product->brand_id = $request->input('brand');
             $product->slug = $slug;
-            $product->sku = $request->input('sku');
+            $product->sku = strtoupper($request->input('sku'));
             $product->description = $request->input('description');
             $product->price = $floatPrice;
             $product->weight = $floatWeight;
@@ -438,10 +450,10 @@ class ProductController extends Controller
             $product->save();
 
             // Change main image
-            if($mainImages != null){
+            if($request->hasFile('image_main')){
                 $mainImage = ProductImage::where('product_id', $product->id)->where('is_main_image', 1)->first();
 
-                $img = Image::make($mainImages);
+                $img = Image::make($request->file('image_main'));
                 $img->save(public_path('storage/products/'. $mainImage->path), 75);
 
             }
@@ -475,27 +487,24 @@ class ProductController extends Controller
                 }
             }
 
-            if($detailImages != null){
-                $detailImage = ProductImage::where('product_id', $product->id)->where('is_main_image', 0)->get();
-
-                foreach($detailImage as $image){
-                    $image->delete();
-                }
-
-                for($i=0;$i<sizeof($detailImages);$i++){
-                    $img = Image::make($detailImages[$i]);
+            if($request->hasFile('image_secondary')){
+                $idx = 1;
+                foreach($request->file('image_secondary') as $imageSecondary){
+                    $img = Image::make($imageSecondary);
                     $extStr = $img->mime();
                     $ext = explode('/', $extStr, 2);
 
-                    $filename = $product->id.'_secondary_'.$slug.'_'.Carbon::now('Asia/Jakarta')->format('Ymdhms'). '.'. $ext[1];
+                    $filename = $product->id.'_secondary_' .$idx. '_' .$slug.'_'.Carbon::now('Asia/Jakarta')->format('Ymdhms'). '.'. $ext[1];
 
                     $img->save(public_path('storage/products/'. $filename), 75);
 
                     $newProductImage = ProductImage::create([
-                        'product_id' => $product->id,
-                        'path' => $filename,
+                        'product_id'    => $product->id,
+                        'path'          => $filename,
                         'is_main_image' => 0
                     ]);
+
+                    $idx++;
                 }
             }
 

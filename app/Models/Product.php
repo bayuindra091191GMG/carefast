@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 17 Jul 2019 13:39:33 +0700.
+ * Date: Thu, 25 Jul 2019 10:59:00 +0700.
  */
 
 namespace App\Models;
@@ -15,7 +15,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * 
  * @property int $id
  * @property int $category_id
- * @property string $type
+ * @property int $brand_id
  * @property string $name
  * @property string $slug
  * @property string $sku
@@ -37,11 +37,15 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * 
+ * @property \App\Models\ProductBrand $product_brand
+ * @property \App\Models\ProductCategory $product_category
+ * @property \App\Models\Status $status
  * @property \Illuminate\Database\Eloquent\Collection $orders
  * @property \Illuminate\Database\Eloquent\Collection $order_return_products
  * @property \Illuminate\Database\Eloquent\Collection $product_images
  * @property \Illuminate\Database\Eloquent\Collection $product_properties
  * @property \Illuminate\Database\Eloquent\Collection $product_reviews
+ * @property \Illuminate\Database\Eloquent\Collection $product_user_categories
  * @property \Illuminate\Database\Eloquent\Collection $product_variations
  *
  * @package App\Models
@@ -50,6 +54,7 @@ class Product extends Eloquent
 {
 	protected $casts = [
 		'category_id' => 'int',
+		'brand_id' => 'int',
 		'in_stock' => 'int',
 		'track_stock' => 'int',
 		'qty' => 'float',
@@ -60,12 +65,12 @@ class Product extends Eloquent
 		'width' => 'float',
 		'height' => 'float',
 		'length' => 'float',
-		'status_id' => 'int',
+		'status_id' => 'int'
 	];
 
 	protected $fillable = [
-	    'category_id',
-		'type',
+		'category_id',
+		'brand_id',
 		'name',
 		'slug',
 		'sku',
@@ -83,14 +88,12 @@ class Product extends Eloquent
 		'length',
 		'meta_title',
 		'meta_description',
-        'status_id',
-        'created_at',
-        'updated_at'
+		'status_id'
 	];
 
-	protected $appends = [
-	    'created_at_string',
-	    'price_string',
+    protected $appends = [
+        'created_at_string',
+        'price_string',
         'weight_string'
     ];
 
@@ -110,6 +113,21 @@ class Product extends Eloquent
     public function getPriceStringAttribute(){
         return number_format($this->attributes['price'], 0, ",", ".");
     }
+
+	public function product_brand()
+	{
+		return $this->belongsTo(\App\Models\ProductBrand::class, 'brand_id');
+	}
+
+	public function product_category()
+	{
+		return $this->belongsTo(\App\Models\ProductCategory::class, 'category_id');
+	}
+
+	public function status()
+	{
+		return $this->belongsTo(\App\Models\Status::class);
+	}
 
 	public function orders()
 	{
@@ -138,13 +156,13 @@ class Product extends Eloquent
 		return $this->hasMany(\App\Models\ProductReview::class);
 	}
 
+	public function product_user_categories()
+	{
+		return $this->hasMany(\App\Models\ProductUserCategory::class);
+	}
+
 	public function product_variations()
 	{
 		return $this->hasMany(\App\Models\ProductVariation::class, 'variation_id');
 	}
-
-    public function status()
-    {
-        return $this->belongsTo(\App\Models\Status::class);
-    }
 }

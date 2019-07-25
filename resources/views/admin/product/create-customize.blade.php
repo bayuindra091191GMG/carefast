@@ -11,7 +11,7 @@
                     </div>
                     <div class="col-3">
                         <div class="float-right">
-                            <button class="btn btn-danger" id="btn_cancel">BATAL</button>
+                            <a href="{{ route('admin.product.customize.index') }}" class="btn btn-danger" id="btn_cancel">BATAL</a>
                             <button class="btn btn-success" id="btn_save">SIMPAN</button>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
                                                 <label class="form-label" for="product">Produk</label>
-                                                <input type="text" id="product" name="product" value="{{ $product->name }}" readonly=""/>
+                                                <input type="text" id="product" name="product" class="form-control" value="{{ $product->name }}" readonly=""/>
                                                 <input type="hidden" id="product_id" name="product_id" value="{{ $product->id }}" readonly=""/>
                                             </div>
                                         </div>
@@ -65,7 +65,7 @@
                                         <tr>
                                             <th class="text-center">Kategori MD</th>
                                             <th class="text-center">Harga</th>
-                                            <th class="text-center">Tindakan</th>
+{{--                                            <th class="text-center">Tindakan</th>--}}
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -77,11 +77,11 @@
                                                     <span>{{ $userCategory->name }}</span>
                                                 </td>
                                                 <td>
-                                                    <input type="text" id="price_{{ $idx }}" name="prices[]" class="form-control">
+                                                    <input type="text" id="price_{{ $idx }}" name="prices[]" class="form-control text-right">
                                                 </td>
-                                                <td>
-                                                    <a class="btn btn-danger" style="cursor: pointer;" onclick="deleteRow('{{ $idx }}')"><i class="fas fa-minus-circle text-white"></i></a>
-                                                </td>
+{{--                                                <td>--}}
+{{--                                                    <a class="btn btn-danger" style="cursor: pointer;" onclick="deleteRow('{{ $idx }}')"><i class="fas fa-minus-circle text-white"></i></a>--}}
+{{--                                                </td>--}}
                                             </tr>
                                             @php( $idx++ )
                                         @endforeach
@@ -129,6 +129,7 @@
                 decimalCharacter: ',',
                 decimalPlaces: 6,
                 modifyValueOnWheel: false,
+                allowDecimalPadding: false,
                 emptyInputBehavior: 'zero'
             });
 
@@ -176,6 +177,10 @@
         function deleteRow(rowIdx){
             $('#row_' + rowIdx).remove();
         }
+
+        $(document).on('click', '#btn_save', function() {
+            $('#general-form').submit();
+        });
 
     </script>
 @endsection
