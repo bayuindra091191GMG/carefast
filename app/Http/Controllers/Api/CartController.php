@@ -32,7 +32,10 @@ class CartController extends Controller
                 return Response::json("Cart Kosong!", 400);
             }
 
-            return $carts;
+            return Response::json([
+                'message'   => 'Sukses mengambil data cart!',
+                'model'     => json_encode($carts)
+            ]);
         }
         catch (\Exception $ex){
             return Response::json("Maaf terjadi kesalahan!", 500);
@@ -83,7 +86,10 @@ class CartController extends Controller
                 ]);
             }
 
-            return Response::json("Berhasil menambahkan ke keranjang belanja!", 200);
+            return Response::json([
+                'message'   => 'Berhasil menambahkan ke keranjang belanja!',
+                'model'     => ''
+            ]);
         }
         catch (\Exception $ex){
             return Response::json("Maaf terjadi kesalahan!", 500);
@@ -122,7 +128,10 @@ class CartController extends Controller
             $tmpCart->qty = $request->input('qty');
             $tmpCart->save();
 
-            return Response::json("Berhasil mengubah jumlah barang di keranjang belanja!", 200);
+            return Response::json([
+                'message'   => 'Berhasil mengubah jumlah barang di keranjang belanja!',
+                'model'     => ''
+            ]);
         }
         catch (\Exception $ex){
             return Response::json("Maaf terjadi kesalahan!", 500);
@@ -156,7 +165,10 @@ class CartController extends Controller
             }
             $tmpCart->delete();
 
-            return Response::json("Berhasil menghapus dari keranjang belanja!", 200);
+            return Response::json([
+                'message'   => 'Berhasil menghapus dari keranjang belanja!',
+                'model'     => ''
+            ]);
         }
         catch (\Exception $ex){
             return Response::json("Maaf terjadi kesalahan!", 500);
