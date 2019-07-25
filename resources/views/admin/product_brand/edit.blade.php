@@ -46,7 +46,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="image_main">Gambar Brand *</label>
+                                                        <label class="form-label" for="image_main">Gambar Brand</label>
                                                         {!! Form::file('brand_image', array('id' => 'brand_image', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
                                                     </div>
                                                 </div>
