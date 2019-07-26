@@ -48,21 +48,20 @@ class OrderController extends Controller
         $orderingType = $request->input('ordering_type');
 
 
+        $transactions = Order::with(['order_products'])
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', $orderingType);
+
         // 0 default, get all order history
         if($statusId == 0) {
-            $transactions = Order::with(['order_products'])
-                ->where('user_id', $user->id)
-                ->orderBy('created_at', $orderingType)
+            $transactions = $transactions->where('status_id', $statusId)
                 ->skip($skip)
                 ->limit(10)
                 ->get();
         }
         //get order history by status_id
         else{
-            $transactions = Order::with(['order_products'])
-                ->where('user_id', $user->id)
-                ->where('status_id', $statusId)
-                ->orderBy('created_at', $orderingType)
+            $transactions = $transactions
                 ->skip($skip)
                 ->limit(10)
                 ->get();
