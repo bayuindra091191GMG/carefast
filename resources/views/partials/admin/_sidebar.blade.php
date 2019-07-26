@@ -95,7 +95,19 @@
                         <li class="sidebar-item">
                             <a href="{{route('admin.product.index')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Produk </span>
+                                <span class="hide-menu"> Daftar Produk </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.product.create')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Tambah Produk </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.product.customize.index')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Kustomisasi Harga </span>
                             </a>
                         </li>
                         <li class="sidebar-item">

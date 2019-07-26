@@ -49,9 +49,42 @@ class ProductController extends Controller
         return view('admin.product.index');
     }
 
-    public function indexCustomize()
+    public function indexCustomize(Request $request)
     {
-        return view('admin.product.index-customize');
+        $filterProductId = -1;
+        $filterProduct = null;
+        if($request->product_id != null){
+            $filterProductId = intval($request->product_id);
+            $filterProduct = Product::find($filterProductId);
+            if(empty($filterProduct)){
+                $filterProductId = -1;
+            }
+        }
+
+        $filterUserCategoryId = -1;
+        $filterUserCategory = null;
+        if($request->user_category_id != null){
+            $filterUserCategoryId = intval($request->user_category_id);
+            $filterUserCategory = UserCategory::find($filterUserCategoryId);
+            if(empty($filterUserCategory)){
+                $filterUserCategoryId = -1;
+            }
+        }
+
+        //dd($filterUserCategoryId);
+
+        $userCategories = UserCategory::where('id', '!=', 0)
+            ->orderBy('name')->get();
+
+        $data = [
+            'filterProductId'       => $filterProductId,
+            'filterProduct'         => $filterProduct,
+            'filterUserCategoryId'  => $filterUserCategoryId,
+            'filterUserCategory'    => $filterUserCategory,
+            'userCategories'        => $userCategories,
+        ];
+
+        return view('admin.product.index-customize')->with($data);
     }
 
     public function getIndex(Request $request){
@@ -61,8 +94,20 @@ class ProductController extends Controller
             ->make(true);
     }
 
-    public function getIndexCustomize(){
-        $productUserCategories = ProductUserCategory::query();
+    public function getIndexCustomize(Request $request){
+        $productId = intval($request->input('product_id'));
+        $userCategoryId = intval($request->input('user_category_id'));
+
+        $productUserCategories = ProductUserCategory::where('user_category_id', '!=', 0);
+
+        if($productId !== -1){
+            $productUserCategories = $productUserCategories->where('product_id', $productId);
+        }
+
+        if($userCategoryId !== -1){
+            $productUserCategories = $productUserCategories->where('user_category_id', $userCategoryId);
+        }
+
         return DataTables::of($productUserCategories)
             ->setTransformer(new ProductCustomizeTransformer)
             ->make(true);
@@ -234,7 +279,7 @@ class ProductController extends Controller
             }
 
             $valid = true;
-            $categories = $request->input('categories');
+            $categories = $request->input('user_categories');
             $prices = $request->input('prices');
 
             if(empty($categories || empty($prices || empty($weights)))){
@@ -243,20 +288,19 @@ class ProductController extends Controller
 
             $idx = 0;
             foreach ($categories as $category){
-                if(empty($category) || $category == "-1") $valid = false;
-                if(empty($prices[$idx]) || $prices[$idx] === '0') $valid = false;
+                if(empty($prices[$idx])) $valid = false;
                 $idx++;
             }
 
             if(!$valid){
-                return redirect()->back()->withErrors('Detil kategori MD, berat dan harga wajib diisi!', 'default')->withInput($request->all());
+                return redirect()->back()->withErrors('Detil harga wajib diisi!', 'default')->withInput($request->all());
             }
 
             // Check duplicate MD categories
-            $validUnique = Utilities::arrayIsUnique($categories);
-            if(!$validUnique){
-                return redirect()->back()->withErrors('Detil kategori MD tidak boleh kembar!', 'default')->withInput($request->all());
-            }
+//            $validUnique = Utilities::arrayIsUnique($categories);
+//            if(!$validUnique){
+//                return redirect()->back()->withErrors('Detil kategori MD tidak boleh kembar!', 'default')->withInput($request->all());
+//            }
 
             $user = Auth::guard('admin')->user();
             $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
@@ -274,6 +318,7 @@ class ProductController extends Controller
                     'updated_at'        => $now,
                     'updated_by'        => $user->id
                 ]);
+                $idx++;
             }
 
             Session::flash('success', 'Sukses membuat kustomisasi harga produk!');
@@ -302,7 +347,7 @@ class ProductController extends Controller
             else{
                 $productMdPrices = collect();
 
-                $userCategories = UserCategory::orderBy('name')->get();
+                $userCategories = UserCategory::where('id', '!=', 0)->orderBy('name')->get();
                 foreach ($userCategories as $userCategory){
                     $productUserCategory = $userCategory->product_user_categories->where('product_id', $productId)->first();
 
@@ -343,7 +388,6 @@ class ProductController extends Controller
                 return redirect()->back()->withErrors('PRODUK INVALID!!', 'default')->withInput($request->all());
             }
 
-            $valid = true;
             $productUserCategoryIds = $request->input('product_user_category_ids');
             $userCategoryIds = $request->input('md_category_ids');
             $prices = $request->input('prices');
@@ -376,6 +420,7 @@ class ProductController extends Controller
                         $productUserCategory->save();
                     }
                 }
+                $idx++;
             }
 
             Session::flash('success', 'Sukses mengubah kustomisasi harga produk!');
@@ -521,6 +566,7 @@ class ProductController extends Controller
     public function getProducts(Request $request){
         $term = trim($request->q);
         $products = Product::where('id', '!=', $request->id)
+            ->where('status_id', '!=', 2)
             ->where(function ($q) use ($term) {
                 $q->where('name', 'LIKE', '%' . $term . '%');
             })

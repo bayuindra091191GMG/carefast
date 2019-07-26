@@ -121,7 +121,7 @@ Route::prefix('admin')->group(function(){
     Route::get('/product/edit/{id}', 'Admin\ProductController@edit')->name('admin.product.edit');
     Route::post('/product/update/{id}', 'Admin\ProductController@update')->name('admin.product.update');
 
-    Route::get('/product/customize', 'Admin\ProductController@index')->name('admin.product.customize.index');
+    Route::get('/product/customize', 'Admin\ProductController@indexCustomize')->name('admin.product.customize.index');
     Route::get('/product/customize/create/{product_id}', 'Admin\ProductController@createCustomize')->name('admin.product.customize.create');
     Route::post('/product/customize/store', 'Admin\ProductController@storeCustomize')->name('admin.product.customize.store');
     Route::get('/product/customize/edit', 'Admin\ProductController@editCustomize')->name('admin.product.customize.edit');
@@ -178,6 +178,7 @@ Route::get('/datatables-permission-menus', 'Admin\PermissionMenuController@getIn
 Route::get('/datatables-products', 'Admin\ProductController@getIndex')->name('datatables.products');
 Route::get('/datatables-product-categories', 'Admin\ProductCategoryController@getIndex')->name('datatables.product.categories');
 Route::get('/datatables-product-brands', 'Admin\ProductBrandController@getIndex')->name('datatables.product.brands');
+Route::get('/datatables-product-customizations', 'Admin\ProductController@getIndexCustomize')->name('datatables.product.customizations');
 
 // Select2
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');

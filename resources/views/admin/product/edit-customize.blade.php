@@ -50,18 +50,18 @@
                                                 <label class="form-label" for="product">Produk</label>
                                                 <select id="product" name="product" class="form-control">
                                                     @if(!empty($product))
-                                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                                        <option value="{{ $product->id }}">{{ $product->name }} - {{ $product->sku }}</option>
                                                     @endif
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-12 mb-3">
-                                        <div class="text-right w-100">
-                                            <a class="btn btn-success" id="btn-add-row" style="color: #fff !important; cursor: pointer;" onclick="addRow();">TAMBAH KUSTOMISASI</a>
-                                        </div>
-                                    </div>
+{{--                                    <div class="col-md-12 mb-3">--}}
+{{--                                        <div class="text-right w-100">--}}
+{{--                                            <a class="btn btn-success" id="btn-add-row" style="color: #fff !important; cursor: pointer;" onclick="addRow();">TAMBAH KUSTOMISASI</a>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
                                 </div>
 
                                 @if(!empty($product))
@@ -71,7 +71,6 @@
                                             <tr>
                                                 <th scope="col">Kategori MD</th>
                                                 <th scope="col">Harga</th>
-                                                <th scope="col">Tindakan</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -79,15 +78,12 @@
                                             @foreach($productMdPrices as $productMdPrice)
                                                 <tr>
                                                     <td class="text-center">
-                                                        <input type="hidden" name="product_user_category_ids[]" value="{{ $productMdPrice->id }}">
-                                                        <input type="hidden" name="md_category_ids[]" value="{{ $productMdPrice->md_category_id }}">
-                                                        <span>{{ $productMdPrice->md_category_name }}</span>
+                                                        <input type="hidden" name="product_user_category_ids[]" value="{{ $productMdPrice['id'] }}">
+                                                        <input type="hidden" name="md_category_ids[]" value="{{ $productMdPrice['md_category_id'] }}">
+                                                        <span>{{ $productMdPrice['md_category_name'] }}</span>
                                                     </td>
                                                     <td>
-                                                        <input type="text" id="price_{{ $idx }}" name="prices[]" class="form-control">
-                                                    </td>
-                                                    <td>
-                                                        <a class="btn btn-danger" style="cursor: pointer;" onclick="deleteRow('{{ $idx }}')"><i class="fas fa-minus-circle text-white"></i></a>
+                                                        <input type="text" id="price_{{ $idx }}" name="prices[]" class="form-control text-right">
                                                     </td>
                                                 </tr>
                                                 @php( $idx++ )
@@ -127,16 +123,17 @@
     <script>
         var categories = [];
         @php( $idxScript = 0 )
-        @foreach($productUserCategories as $productUserCategory)
+        @foreach($productMdPrices as $productMdPrice)
             {{--categories.push({ id: '{{ $category->id }}', name: '{{ $category->name }}'});--}}
 
-            new AutoNumeric('#price_' + '{{ $idxScript }}', '{{ $productUserCategory->price }}', {
+            new AutoNumeric('#price_' + '{{ $idxScript }}', '{{ $productMdPrice['price'] }}', {
                 minimumValue: '0',
                 maximumValue: '9999999999',
                 digitGroupSeparator: '.',
                 decimalCharacter: ',',
                 decimalPlaces: 6,
                 modifyValueOnWheel: false,
+                allowDecimalPadding: false,
                 emptyInputBehavior: 'zero'
             });
             @php( $idxScript++ )
@@ -211,8 +208,10 @@
             let data = e.params.data;
             console.log(data);
 
+            let productId = data.id;
+
             let redirectUrl = '{{ route('admin.product.customize.edit') }}';
-            window.location.href = redirectUrl + '?product_id=' + data;
+            window.location.href = redirectUrl + '?product_id=' + productId;
         });
 
         $(document).on('click', '#btn_save', function() {

@@ -22,6 +22,7 @@
                         <div class="card">
                             <div class="card-body b-b">
                                 <div class="body">
+                                    @include('partials.admin._messages')
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
