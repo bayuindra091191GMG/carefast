@@ -33,6 +33,8 @@ Route::prefix('admin')->group(function(){
     // Setting
     Route::get('/setting', 'Admin\AdminController@showSetting')->name('admin.setting');
     Route::post('/setting-update', 'Admin\AdminController@saveSetting')->name('admin.setting.update');
+    Route::get('/setting/password', 'Admin\SettingController@editPassword')->name('admin.setting.password.edit');
+    Route::post('/setting/password/update', 'Admin\SettingController@updatePassword')->name('admin.setting.password.update');
 
     // Token
     Route::post('/save-token', 'Admin\AdminController@saveUserToken')->name('admin.save.token');

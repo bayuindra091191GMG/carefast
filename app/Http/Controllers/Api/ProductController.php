@@ -23,6 +23,7 @@ class ProductController extends Controller
             $orderingField = $request->input('ordering_field');
             $orderingType = $request->input('ordering_type');
             $skip = intval($request->input('skip'));
+            $keyword = $request->input('keyword');
 
             $userId = intval($request->input('user_id'));
 
@@ -37,6 +38,10 @@ class ProductController extends Controller
                 if($startPrice > $endPrice){
 
                     $products = $products->whereBetween('price', array($startPrice, $endPrice));
+                }
+
+                if(!empty($keyword)){
+                    $products = $products->where('name', 'ilike', '%'. $keyword. '%');
                 }
 
                 if($products->count() === 0){
@@ -89,6 +94,12 @@ class ProductController extends Controller
 
                 if($startPrice > $endPrice){
                     $productUserCategories = $productUserCategories->whereBetween('price', array($startPrice, $endPrice));
+                }
+
+                if(!empty($keyword)){
+                    $productUserCategories = $productUserCategories->whereHas('product', function($query) use($keyword){
+                        $query->where('name', 'ilike', '%'. $keyword. '%');
+                    });
                 }
 
                 if($productUserCategories->count() === 0){
@@ -183,4 +194,17 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
+//    public function search(Request $request){
+//        try{
+//            $keyword = $request->input('keyword');
+//        }
+//        catch (\Exception $ex){
+//            Log::error('Api/ProductController - search error EX: '. $ex);
+//            return Response::json([
+//                'message'       => 'ERROR',
+//                'model'         => ''
+//            ], 500);
+//        }
+//    }
 }

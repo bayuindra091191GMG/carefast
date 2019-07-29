@@ -169,6 +169,9 @@
                         <a class="dropdown-item" onclick="event.preventDefault();document.getElementById('logout-form').submit();" style="cursor: pointer;">
                             <i class="fa fa-power-off m-r-5 m-l-5"></i> Logout
                         </a>
+                        <a href="{{ route('admin.setting.password.edit') }}" class="dropdown-item">
+                            <i class="fas fa-key m-r-5 m-l-5"></i> Ubah Kata Sandri
+                        </a>
 {{--                        <div class="dropdown-divider"></div>--}}
 {{--                        <div class="p-l-30 p-10"><a href="javascript:void(0)" class="btn btn-sm btn-success btn-rounded">View Profile</a></div>--}}
                     </div>
