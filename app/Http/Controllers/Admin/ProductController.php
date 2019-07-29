@@ -225,20 +225,24 @@ class ProductController extends Controller
                 }
             }
 
-            // Save to basic user category
+            // Save product price for each user category
             $user = Auth::guard('admin')->user();
-            ProductUserCategory::create([
-                'product_id'        => $newProduct->id,
-                'user_category_id'  => 0,
-                'price'             => $floatPrice,
-                'created_at'        => $dateTimeNow,
-                'created_by'        => $user->id,
-                'updated_at'        => $dateTimeNow,
-                'updated_by'        => $user->id
-            ]);
+
+            $userCategories = UserCategory::all();
+            foreach ($userCategories as $userCategory){
+                ProductUserCategory::create([
+                    'product_id'        => $newProduct->id,
+                    'user_category_id'  => $userCategory->id,
+                    'price'             => $floatPrice,
+                    'created_at'        => $dateTimeNow,
+                    'created_by'        => $user->id,
+                    'updated_at'        => $dateTimeNow,
+                    'updated_by'        => $user->id
+                ]);
+            }
 
             if($request->input('is_start_customize') == '1'){
-                return redirect()->route('admin.product.customize.create',['product_id' => $newProduct->id]);
+                return redirect()->route('admin.product.customize.edit',['product_id' => $newProduct->id, 'redirect' => 'product']);
             }
 
             Session::flash('success', 'Sukses membuat produk baru!');
@@ -434,7 +438,7 @@ class ProductController extends Controller
             }
         }
         catch(\Exception $ex){
-            Log::error('Admin/ProductController - storeCustomize error EX: '. $ex);
+            Log::error('Admin/ProductController - updateCustomize error EX: '. $ex);
             return back()->withErrors("Something Went Wrong")->withInput();
         }
     }
@@ -558,7 +562,7 @@ class ProductController extends Controller
             return redirect()->route('admin.product.show',['item' => $product->id]);
 
         }catch(\Exception $ex){
-            Log::error('Admin/ProductController - store error EX: '. $ex);
+            Log::error('Admin/ProductController - update error EX: '. $ex);
             return back()->withErrors("Something Went Wrong")->withInput();
         }
     }

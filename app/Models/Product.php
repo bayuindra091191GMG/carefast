@@ -31,6 +31,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property float $width
  * @property float $height
  * @property float $length
+ * @property string $external_link
  * @property string $meta_title
  * @property string $meta_description
  * @property int $status_id
@@ -86,6 +87,7 @@ class Product extends Eloquent
 		'width',
 		'height',
 		'length',
+        'external_link',
 		'meta_title',
 		'meta_description',
 		'status_id'

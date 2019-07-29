@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminUserRole;
+use App\Models\Product;
+use App\Models\ProductUserCategory;
 use App\Models\User;
 use App\Models\UserCategory;
 use App\Transformer\UserTransformer;
@@ -85,8 +87,22 @@ class UserController extends Controller
             'phone'         => $request->input('phone'),
             'password'      => Hash::make($request->input('password')),
             'status_id'     => 1,
-            'created_at'    => Carbon::now('Asia/Jakarta')
+            'created_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString()
         ]);
+
+        // Create MD price for each product
+        $products = Product::all();
+        foreach ($products as $product){
+            ProductUserCategory::create([
+                'product_id'        => $product->id,
+                'user_category_id'  => $user->id,
+                'price'             => $product->price,
+                'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'created_by'        => $user->id,
+                'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_by'        => $user->id
+            ]);
+        }
 
         Session::flash('success', 'Sukses membuat MD Baru');
         return redirect()->route('admin.user.index');
