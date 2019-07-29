@@ -45,7 +45,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="password_confirmation">Password Confirmation *</label>
+                                                        <label class="form-label" for="password_confirmation">Konfirmasi Password *</label>
                                                         <input id="password_confirmation" type="password" class="form-control"
                                                                name="password_confirmation">
                                                     </div>
@@ -55,8 +55,8 @@
                                             <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="first_name">First Name *</label>
-                                                        <input id="first_name" name="first_name" type="text" value="{{ $user->first_name }}"
+                                                        <label class="form-label" for="name">Nama *</label>
+                                                        <input id="name" name="name" type="text" value="{{ $user->name }}"
                                                                class="form-control" required>
                                                     </div>
                                                 </div>
@@ -65,17 +65,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="last_name">Last Name *</label>
-                                                        <input id="last_name" name="last_name" type="text" value="{{ $user->last_name }}"
-                                                               class="form-control" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group form-float form-group-lg">
-                                                    <div class="form-line">
-                                                        <label class="form-label" for="phone">Phone *</label>
+                                                        <label class="form-label" for="phone">Telepon *</label>
                                                         <input id="phone" name="phone" type="text" value="{{ $user->phone }}"
                                                                class="form-control" required>
                                                     </div>
@@ -84,14 +74,25 @@
 
                                             <div class="col-md-12">
                                                 <div class="form-group">
+                                                    <label for="role">Kategori MD *</label>
+                                                    <select id="role" name="category" class="form-control">
+                                                        @foreach($categories as $category)
+                                                            <option value="{{ $category->id }}" @if($user->category_id == $category->id) selected @endif>{{ $category->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-group">
                                                     <label for="status">Status *</label>
                                                     <select id="status" name="status" class="form-control">
                                                         @if($user->status_id == 1)
-                                                            <option value="1" selected>Active</option>
-                                                            <option value="2">Not Active</option>
+                                                            <option value="1" selected>Aktif</option>
+                                                            <option value="2">Tidak Aktif</option>
                                                         @else
-                                                            <option value="1">Active</option>
-                                                            <option value="2" selected>Not Active</option>
+                                                            <option value="1">Aktif</option>
+                                                            <option value="2" selected>Tidak Aktif</option>
                                                         @endif
                                                     </select>
                                                 </div>

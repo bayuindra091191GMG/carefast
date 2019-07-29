@@ -70,8 +70,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name'        => 'required|max:100',
-            'last_name'         => 'required|max:100',
+            'name'        => 'required|max:100',
             'email'             => 'required|regex:/^\S*$/u|unique:users|max:50',
             'category'          => 'required',
             'password'          => 'required'
@@ -80,8 +79,7 @@ class UserController extends Controller
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
         $user = User::create([
-            'first_name'    => $request->input('first_name'),
-            'last_name'     => $request->input('last_name'),
+            'name'          => $request->input('name'),
             'email'         => $request->input('email'),
             'category_id'   => $request->input('category'),
             'phone'         => $request->input('phone'),
@@ -105,7 +103,7 @@ class UserController extends Controller
         }
 
         Session::flash('success', 'Sukses membuat MD Baru');
-        return redirect()->route('admin.user.index');
+        return redirect()->route('admin.users.index');
     }
 
     /**
@@ -129,7 +127,8 @@ class UserController extends Controller
     {
         //
         $user = User::find($id);
-        return view('admin.user.edit', compact('user'));
+        $categories = UserCategory::orderBy('name')->get();
+        return view('admin.user.edit', compact('user', 'categories'));
     }
 
     /**
@@ -143,8 +142,7 @@ class UserController extends Controller
     {
         //
         $validator = Validator::make($request->all(), [
-            'first_name'        => 'required|max:100',
-            'last_name'         => 'required|max:100',
+            'name'        => 'required|max:100',
             'email'             => 'required|regex:/^\S*$/u|unique:users|max:50',
             'phone'             => 'required'
         ],[
@@ -166,8 +164,7 @@ class UserController extends Controller
             $user->password = Hash::make($request->input('password'));
         }
 
-        $user->first_name = $request->input('first_name');
-        $user->last_name = $request->input('last_name');
+        $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->category_id = $request->input('category');
         $user->save();

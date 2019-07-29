@@ -15,23 +15,18 @@ use Laravel\Passport\HasApiTokens;
  * Class User
  * 
  * @property int $id
- * @property string $first_name
+ * @property string $name
  * @property string $last_name
  * @property string $email
  * @property int $category_id
  * @property string $password
  * @property string $image_path
- * @property string $company_name
  * @property string $email_token
  * @property string $phone
  * @property int $status_id
  * @property string $tax_no
- * @property int $company_id
  * @property \Carbon\Carbon $email_verified_at
  * @property string $remember_token
- * @property float $wallet
- * @property float $point
- * @property int $routine_pickup
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * 
@@ -52,9 +47,6 @@ class User extends Authenticatable
 		'status_id' => 'int',
 		'category_id' => 'int',
 		'company_id' => 'int',
-		'wallet' => 'float',
-		'point' => 'float',
-		'routine_pickup' => 'int'
 	];
 
 	protected $dates = [
@@ -68,23 +60,17 @@ class User extends Authenticatable
 	];
 
 	protected $fillable = [
-		'first_name',
-		'last_name',
+		'name',
         'category_id',
 		'email',
 		'password',
 		'image_path',
-		'company_name',
 		'email_token',
 		'phone',
 		'status_id',
 		'tax_no',
-		'company_id',
 		'email_verified_at',
 		'remember_token',
-		'wallet',
-		'point',
-		'routine_pickup'
 	];
 
 	public function status()
