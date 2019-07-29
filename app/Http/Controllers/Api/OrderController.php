@@ -27,12 +27,20 @@ class OrderController extends Controller
      */
     public function getTransactionData(Request $request)
     {
-        $order = Order::where('order_number', $request->input('order_number'))->with('order_products')->first();
+        try{
+            $order = Order::where('order_number', $request->input('order_number'))->with('order_products')->first();
 
-        return Response::json([
-            'message'   => 'success',
-            'model'    => json_encode($order)
-        ], 200);
+            return Response::json([
+                'message'   => 'success',
+                'model'    => json_encode($order)
+            ], 200);
+        }
+        catch(\Exception $ex){
+            return Response::json([
+                'message'   => 'Maaf terjadi kesalahan',
+                'model'    => null
+            ], 500);
+        }
     }
 
     /**
@@ -42,35 +50,43 @@ class OrderController extends Controller
      */
     public function getTransactions(Request $request)
     {
-        $user = auth('api')->user();
-        $skip = intval($request->input('skip'));
-        $statusId = $request->input('order_status');
-        $orderingType = $request->input('ordering_type');
+        try{
+            $user = auth('api')->user();
+            $skip = intval($request->input('skip'));
+            $statusId = $request->input('order_status');
+            $orderingType = $request->input('ordering_type');
 
 
-        $transactions = Order::with(['order_products'])
-            ->where('user_id', $user->id)
-            ->orderBy('created_at', $orderingType);
+            $transactions = Order::with(['order_products'])
+                ->where('user_id', $user->id);
+            // 0 default, get all order history
+            if($statusId == 0) {
+                $transactions = $transactions->where('status_id', $statusId)
+                    ->orderBy('created_at', $orderingType)
+                    ->skip($skip)
+                    ->limit(10)
+                    ->get();
+            }
+            //get order history by status_id
+            else{
+                $transactions = $transactions
+                    ->orderBy('created_at', $orderingType)
+                    ->skip($skip)
+                    ->limit(10)
+                    ->get();
+            }
 
-        // 0 default, get all order history
-        if($statusId == 0) {
-            $transactions = $transactions->where('status_id', $statusId)
-                ->skip($skip)
-                ->limit(10)
-                ->get();
+            return Response::json([
+                'message'   => 'success',
+                'model'    => json_encode($transactions)
+            ], 200);
         }
-        //get order history by status_id
-        else{
-            $transactions = $transactions
-                ->skip($skip)
-                ->limit(10)
-                ->get();
+        catch(\Exception $ex){
+            return Response::json([
+                'message'   => 'Maaf terjadi kesalahan',
+                'model'    => null
+            ], 500);
         }
-
-        return Response::json([
-            'message'   => 'success',
-            'model'    => json_encode($transactions)
-        ], 200);
 //        return Response::json(array('data' => $transactions));
     }
 }

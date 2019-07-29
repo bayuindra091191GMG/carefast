@@ -156,4 +156,21 @@ class ProductBrandController extends Controller
             return Response::json(array('errors' => 'INVALID'));
         }
     }
+
+    public function getProductBrands(Request $request){
+        $term = trim($request->q);
+        $productBrands = ProductBrand::where('id', '!=', $request->id)
+            ->where(function ($q) use ($term) {
+                $q->where('name', 'LIKE', '%' . $term . '%');
+            })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($productBrands as $productBrand) {
+            $formatted_tags[] = ['id' => $productBrand->id, 'text' => $productBrand->name];
+        }
+
+        return Response::json($formatted_tags);
+    }
 }

@@ -89,6 +89,26 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
+                        <span class="hide-menu">Banner </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.banner.index')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Banner </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.banner.create')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Buat Banner Baru</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                        <i class="mdi mdi-account-settings-variant"></i>
                         <span class="hide-menu"> Produk </span>
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">

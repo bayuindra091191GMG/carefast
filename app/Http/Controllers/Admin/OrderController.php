@@ -111,6 +111,7 @@ class OrderController extends Controller
             return Response::json(array('success' => 'VALID'));
         }
         catch (\Exception $ex){
+            Log::error('Admin/OrderController - confirmOrderProcess error EX: '. $ex);
             return Response::json(array('errors' => 'INVALID'));
         }
 

@@ -142,6 +142,14 @@ Route::prefix('admin')->group(function(){
     Route::post('/product/brand/store', 'Admin\ProductBrandController@store')->name('admin.product.brand.store');
     Route::post('/product/brand/update/{id}', 'Admin\ProductBrandController@update')->name('admin.product.brand.update');
     Route::post('/product/brand/destroy', 'Admin\ProductBrandController@destroy')->name('admin.product.brand.destroy');
+
+    //Banner
+    Route::get('/product/banner', 'Admin\BannerController@index')->name('admin.banner.index');
+    Route::get('/product/banner/create', 'Admin\BannerController@create')->name('admin.banner.create');
+    Route::get('/product/banner/edit/{id}', 'Admin\BannerController@edit')->name('admin.banner.edit');
+    Route::post('/product/banner/store', 'Admin\BannerController@store')->name('admin.banner.store');
+    Route::post('/product/banner/update/{id}', 'Admin\BannerController@update')->name('admin.banner.update');
+    Route::post('/product/banner/destroy', 'Admin\BannerController@destroy')->name('admin.banner.destroy');
     
     // Orders
     Route::get('/orders', 'Admin\OrderController@index')->name('admin.orders.index');
@@ -179,11 +187,13 @@ Route::get('/datatables-products', 'Admin\ProductController@getIndex')->name('da
 Route::get('/datatables-product-categories', 'Admin\ProductCategoryController@getIndex')->name('datatables.product.categories');
 Route::get('/datatables-product-brands', 'Admin\ProductBrandController@getIndex')->name('datatables.product.brands');
 Route::get('/datatables-product-customizations', 'Admin\ProductController@getIndexCustomize')->name('datatables.product.customizations');
+Route::get('/datatables-banner', 'Admin\BannerController@getIndex')->name('datatables.banners');
 
 // Select2
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
 Route::get('/select-user-categories', 'Admin\UserCategoryController@getCategories')->name('select.user-categories');
 Route::get('/select-products', 'Admin\ProductController@getProducts')->name('select.products');
+Route::get('/select-brands', 'Admin\ProductBrandController@getProductBrands')->name('select.banners');
 
 // Third Party API
 Route::get('/update-currency', 'Admin\CurrencyController@getCurrenciesUpdate')->name('update-currencies');

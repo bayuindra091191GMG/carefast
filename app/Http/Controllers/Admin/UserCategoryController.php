@@ -9,6 +9,7 @@ use App\Transformer\UserCategoryTransformer;
 use App\Transformer\UserTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -79,29 +80,27 @@ class UserCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name'  => 'required|max:100|unique:user_categories'
-        ]);
+        try{
+            $validator = Validator::make($request->all(), [
+                'name'  => 'required|max:100|unique:user_categories'
+            ]);
 
-        if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
-        $category = UserCategory::create([
-            'name'              => $request->input('name'),
-            'slug'              => '',
-            'meta_description'  => $request->input('meta_description'),
-            'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-            'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString()
-        ]);
+            $category = UserCategory::create([
+                'name'              => $request->input('name'),
+                'slug'              => '',
+                'meta_description'  => $request->input('meta_description'),
+                'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString()
+            ]);
 
-//        dd($request->input('parent'));
-
-//        if($request->input('parent') != null){
-//            //case if parent
-//            $category->parent_id = $request->input('category');
-//            $category->save();
-//        }
-
-        Session::flash('success', 'Sukses Membuat Kategori Master Dealer!');
+            Session::flash('success', 'Sukses Membuat Kategori Master Dealer!');
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/UserCategoryController - store error EX: '. $ex);
+            Session::flash('error', 'Gagal Mengubah Kategori Master Dealer!');
+        }
         return redirect()->route('admin.user_categories.index');
     }
 
@@ -138,23 +137,29 @@ class UserCategoryController extends Controller
      */
     public function update(Request $request, int $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name'  => 'required|max:100|unique:user_categories,name,'. $id
-        ]);
+        try{
+            $validator = Validator::make($request->all(), [
+                'name'  => 'required|max:100|unique:user_categories,name,'. $id
+            ]);
 
-        if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
-        $userCategory = UserCategory::find($id);
-        if(empty($userCategory)){
-            return redirect()->back()->withErrors('Invalid User Category!', 'default')->withInput($request->all());
+            $userCategory = UserCategory::find($id);
+            if(empty($userCategory)){
+                return redirect()->back()->withErrors('Invalid User Category!', 'default')->withInput($request->all());
+            }
+
+            $userCategory->name = $request->input('name');
+            $userCategory->meta_description = $request->input('meta_description');
+            $userCategory->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $userCategory->save();
+
+            Session::flash('success', 'Sukses Mengubah Kategori Master Dealer!');
         }
-
-        $userCategory->name = $request->input('name');
-        $userCategory->meta_description = $request->input('meta_description');
-        $userCategory->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
-        $userCategory->save();
-
-        Session::flash('success', 'Sukses Mengubah Kategori Master Dealer!');
+        catch(\Exception $ex){
+            Log::error('Admin/UserCategoryController - update error EX: '. $ex);
+            Session::flash('error', 'Gagal Mengubah Kategori Master Dealer!');
+        }
 
         return redirect()->route('admin.user_categories.edit', ['id' => $userCategory->id]);
     }
@@ -178,6 +183,7 @@ class UserCategoryController extends Controller
             return Response::json(array('success' => 'VALID'));
         }
         catch(\Exception $ex){
+            Log::error('Admin/UserCategoryController - destroy error EX: '. $ex);
             return Response::json(array('errors' => 'INVALID'));
         }
     }
