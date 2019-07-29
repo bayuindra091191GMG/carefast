@@ -158,6 +158,12 @@ Route::prefix('admin')->group(function(){
     Route::get('/orders/detail/{item}', 'Admin\OrderController@show')->name('admin.orders.detail');
     Route::post('/orders/order-process/', 'Admin\OrderController@confirmOrderProcess')->name('admin.orders.processing');
 
+    // Sales Order
+    Route::get('/sales_order', 'Admin\SalesOrderHeaderController@index')->name('admin.sales_order.index');
+    Route::get('/sales_order/show/{id}', 'Admin\SalesOrderHeaderController@show')->name('admin.sales_order.create');
+    Route::get('/sales_order/create', 'Admin\SalesOrderHeaderController@create')->name('admin.sales_order.create');
+    Route::get('/sales_order/edit/{id}', 'Admin\SalesOrderHeaderController@edit')->name('admin.sales_order.edit');
+
     //Kajian Order
     Route::get('/product/kajian_order', 'Admin\BannerController@index')->name('admin.kajian_order.index');
     Route::get('/product/kajian_order/create', 'Admin\BannerController@create')->name('admin.kajian_order.create');
