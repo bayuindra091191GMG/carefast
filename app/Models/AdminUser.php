@@ -36,6 +36,8 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
  * @property \Illuminate\Database\Eloquent\Collection $fcm_token_browsers
  * @property \Illuminate\Database\Eloquent\Collection $permission_menu_subs
  * @property \Illuminate\Database\Eloquent\Collection $permission_menus
+ * @property \Illuminate\Database\Eloquent\Collection $created_by_sales_order_headers
+ * @property \Illuminate\Database\Eloquent\Collection $updated_by_sales_order_headers
  *
  * @package App\Models
  */
@@ -103,4 +105,14 @@ class AdminUser extends Authenticatable
 	{
 		return $this->hasMany(\App\Models\PermissionMenu::class, 'updated_by');
 	}
+
+    public function created_by_sales_order_headers()
+    {
+        return $this->hasMany(\App\Models\SalesOrderHeader::class, 'created_by');
+    }
+
+    public function updated_by_sales_order_headers()
+    {
+        return $this->hasMany(\App\Models\SalesOrderHeader::class, 'updated_by');
+    }
 }

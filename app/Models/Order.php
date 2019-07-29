@@ -36,6 +36,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Illuminate\Database\Eloquent\Collection $products
  * @property \Illuminate\Database\Eloquent\Collection $order_return_requests
  * @property \Illuminate\Database\Eloquent\Collection $order_products
+ * @property \Illuminate\Database\Eloquent\Collection $sales_order_headers
  *
  * @package App\Models
  */
@@ -114,4 +115,9 @@ class Order extends Eloquent
 	{
 		return $this->hasMany(\App\Models\OrderProduct::class);
 	}
+
+    public function sales_order_headers()
+    {
+        return $this->hasMany(\App\Models\SalesOrderHeader::class, 'order_id');
+    }
 }

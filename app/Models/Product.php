@@ -167,4 +167,9 @@ class Product extends Eloquent
 	{
 		return $this->hasMany(\App\Models\ProductVariation::class, 'variation_id');
 	}
+
+    public function sales_order_details()
+    {
+        return $this->hasMany(\App\Models\SalesOrderDetail::class, 'product_id');
+    }
 }

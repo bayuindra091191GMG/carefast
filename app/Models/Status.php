@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Mon, 22 Jul 2019 13:38:40 +0700.
+ * Date: Mon, 29 Jul 2019 15:26:15 +0700.
  */
 
 namespace App\Models;
@@ -18,8 +18,8 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Illuminate\Database\Eloquent\Collection $admin_users
  * @property \Illuminate\Database\Eloquent\Collection $product_categories
  * @property \Illuminate\Database\Eloquent\Collection $products
+ * @property \Illuminate\Database\Eloquent\Collection $sales_order_headers
  * @property \Illuminate\Database\Eloquent\Collection $users
- * @property \Illuminate\Database\Eloquent\Collection $orders
  *
  * @package App\Models
  */
@@ -46,13 +46,13 @@ class Status extends Eloquent
 		return $this->hasMany(\App\Models\Product::class);
 	}
 
+	public function sales_order_headers()
+	{
+		return $this->hasMany(\App\Models\SalesOrderHeader::class);
+	}
+
 	public function users()
 	{
 		return $this->hasMany(\App\Models\User::class);
-	}
-
-	public function orders()
-	{
-		return $this->hasMany(\App\Models\Order::class);
 	}
 }
