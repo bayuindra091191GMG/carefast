@@ -13,7 +13,7 @@ use Laravel\Passport\HasApiTokens;
 
 /**
  * Class User
- * 
+ *
  * @property int $id
  * @property string $name
  * @property string $last_name
@@ -29,7 +29,7 @@ use Laravel\Passport\HasApiTokens;
  * @property string $remember_token
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * 
+ *
  * @property \App\Models\Status $status
  * @property \App\Models\UserCategory $user_categories
  * @property \Illuminate\Database\Eloquent\Collection $addresses

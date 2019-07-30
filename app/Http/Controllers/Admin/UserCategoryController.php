@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\ProductUserCategory;
 use App\Models\User;
 use App\Models\UserCategory;
 use App\Transformer\UserCategoryTransformer;
 use App\Transformer\UserTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -94,6 +97,22 @@ class UserCategoryController extends Controller
                 'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString()
             ]);
+
+            $adminUser = Auth::guard('admin')->user();
+
+            // Create MD price for each product
+            $products = Product::all();
+            foreach ($products as $product){
+                ProductUserCategory::create([
+                    'product_id'        => $product->id,
+                    'user_category_id'  => $category->id,
+                    'price'             => $product->price,
+                    'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_by'        => $adminUser->id,
+                    'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'updated_by'        => $adminUser->id
+                ]);
+            }
 
             Session::flash('success', 'Sukses Membuat Kategori Master Dealer!');
         }

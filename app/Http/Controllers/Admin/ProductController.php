@@ -40,9 +40,9 @@ class ProductController extends Controller
      * @return void
      */
     public function __construct()
-    {
-        $this->middleware('auth:admin');
-    }
+{
+    $this->middleware('auth:admin');
+}
 
     public function index()
     {
@@ -170,10 +170,10 @@ class ProductController extends Controller
 
             // String to float conversion
             $floatPrice = Utilities::toFloat($request->input('price'));
-            $floatWeight = 0;
-            if($request->filled('weight') && $request->input('weight') != '0'){
-                $floatWeight = Utilities::toFloat($request->input('weight'));
-            }
+//            $floatWeight = 0;
+//            if($request->filled('weight') && $request->input('weight') != '0'){
+//                $floatWeight = Utilities::toFloat($request->input('weight'));
+//            }
 
             // save product
             $newProduct = Product::create([
@@ -184,7 +184,6 @@ class ProductController extends Controller
                 'sku'           => strtoupper($request->input('sku')),
                 'description'   => $request->input('description'),
                 'price'         => $floatPrice,
-                'weight'        => $floatWeight,
                 'status_id'     => $request->input('status'),
                 'created_at'    => $dateTimeNow,
                 'updated_at'    => $dateTimeNow
@@ -481,7 +480,7 @@ class ProductController extends Controller
             $slug = Utilities::CreateProductSlug($request->input('name'));
 
             $floatPrice = Utilities::toFloat($request->input('price'));
-            $floatWeight = Utilities::toFloat($request->input('weight'));
+//            $floatWeight = Utilities::toFloat($request->input('weight'));
 
             // update product
             $product = Product::find($id);
@@ -492,7 +491,7 @@ class ProductController extends Controller
             $product->sku = strtoupper($request->input('sku'));
             $product->description = $request->input('description');
             $product->price = $floatPrice;
-            $product->weight = $floatWeight;
+//            $product->weight = $floatWeight;
             $product->tag = $request->input('tags');
             $product->updated_at = $dateTimeNow;
 

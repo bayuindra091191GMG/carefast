@@ -151,15 +151,17 @@ Route::post('/test', 'Api\TransactionHeaderController@test');
 Route::get('/dashboard', 'Api\DashboardController@getData');
 
 Route::middleware('auth:api')->group(function() {
-
     // Cart
     Route::get('/cart', 'Api\CartController@getCart');
     Route::post('/cart/add', 'Api\CartController@addToCart');
     Route::post('/cart/update', 'Api\CartController@updateCart');
     Route::post('/cart/delete', 'Api\CartController@deleteCart');
 
-
     //Orders
     Route::post('/order', 'Api\TransactionHeaderController@getTransactions');
     Route::post('/order/detail', 'Api\TransactionHeaderController@getTransactionData');
 });
+
+// Product
+Route::get('/product/get', 'Api\ProductController@getAllProduct');
+Route::get('/product/show', 'Api\ProductController@show');

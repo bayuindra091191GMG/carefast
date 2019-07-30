@@ -35,7 +35,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="password">Password *</label>
+                                                        <label class="form-label" for="password">Kata Sandi *</label>
                                                         <input id="password" type="password" class="form-control"
                                                                name="password">
                                                     </div>
@@ -45,7 +45,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="password_confirmation">Konfirmasi Password *</label>
+                                                        <label class="form-label" for="password_confirmation">Konfirmasi Kata Sandi *</label>
                                                         <input id="password_confirmation" type="password" class="form-control"
                                                                name="password_confirmation">
                                                     </div>
@@ -65,9 +65,29 @@
                                             <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="phone">Telepon *</label>
+                                                        <label class="form-label" for="phone">Telepon/Fax *</label>
                                                         <input id="phone" name="phone" type="text"
                                                                class="form-control" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="address">Alamat *</label>
+                                                        <textarea id="address" name="address" rows="3"
+                                                               class="form-control" required></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="postal_code">Kodepos</label>
+                                                        <input id="postal_code" name="postal_code" type="text"
+                                                               class="form-control">
                                                     </div>
                                                 </div>
                                             </div>

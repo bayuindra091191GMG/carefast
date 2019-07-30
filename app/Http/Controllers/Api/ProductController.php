@@ -17,7 +17,7 @@ class ProductController extends Controller
 {
     public function getAllProduct(Request $request){
         try{
-            $brand = intval($request->input('brand'));
+            $brand = intval($request->input('brand_id'));
             $startPrice = intval($request->input('price_start'));
             $endPrice = intval($request->input('price_end'));
             $orderingField = $request->input('ordering_field');
@@ -58,10 +58,9 @@ class ProductController extends Controller
 
 
                 foreach ($products as $product){
-
                     $productImage = $product->product_images->where('is_main_image', 1)->first();
-
                     $productModel = collect([
+                        'id'                => $product->id,
                         'name'              => $product->name,
                         'sku'               => $product->sku,
                         'category_id'       => $product->category_id,
@@ -72,7 +71,6 @@ class ProductController extends Controller
                         'external_link'     => $product->external_link ?? '',
                         'price'             => $product->price,
                         'description'       => $product->meta_description ?? '',
-                        'status_id'         => $product->status_id
                     ]);
 
                     $productModels->push($productModel);
@@ -124,18 +122,20 @@ class ProductController extends Controller
                         ->get();
                 }
 
-                foreach ($productUserCategories as $productUserCategorie){
+                foreach ($productUserCategories as $productUserCategory){
+                    $productImage = $productUserCategory->product->product_images->where('is_main_image', 1)->first();
                     $productModel = collect([
-                        'name'              => $productUserCategorie->product->name,
-                        'sku'               => $productUserCategorie->product->sku,
-                        'category_id'       => $productUserCategorie->product->category_id,
-                        'category_name'     => $productUserCategorie->product->product_category->name,
-                        'brand_id'          => $productUserCategorie->product->brand_id,
-                        'brand_name'        => $productUserCategorie->product->product_brand->name,
-                        'external_link'     => $productUserCategorie->product->external_link ?? '',
-                        'price'             => $productUserCategorie->price,
-                        'description'       => $productUserCategorie->product->meta_description ?? '',
-                        'status_id'         => $productUserCategorie->product->status_id
+                        'id'                => $productUserCategory->product_id,
+                        'name'              => $productUserCategory->product->name,
+                        'sku'               => $productUserCategory->product->sku,
+                        'category_id'       => $productUserCategory->product->category_id,
+                        'category_name'     => $productUserCategory->product->product_category->name,
+                        'brand_id'          => $productUserCategory->product->brand_id,
+                        'brand_name'        => $productUserCategory->product->product_brand->name,
+                        'image_path'        => asset('storage/products/'. $productImage->path),
+                        'external_link'     => $productUserCategory->product->external_link ?? '',
+                        'price'             => $productUserCategory->price,
+                        'description'       => $productUserCategory->product->meta_description ?? ''
                     ]);
 
                     $productModels->push($productModel);
@@ -168,13 +168,25 @@ class ProductController extends Controller
                 ], 400);
             }
 
+            $productImages = $product->product_images;
+            $mainImage = $productImages->where('is_main_image', 1)->first();
+            $otherImages = $productImages->where('is_main_image', 0)->get();
+
+            $imageArr = array();
+            foreach($otherImages as $image){
+                array_push($imageArr, asset('storage/products/'. $image->path));
+            }
+
             $productModel = collect([
+                'id'                => $productId,
                 'name'              => $product->name,
                 'sku'               => $product->sku,
                 'category_id'       => $product->category_id,
                 'category_name'     => $product->product_category->name,
                 'brand_id'          => $product->brand_id,
                 'brand_name'        => $product->product_brand->name,
+                'image_path'        => asset('storage/products/'. $mainImage->path),
+                'image_path_others' => $imageArr,
                 'external_link'     => $product->external_link ?? '',
                 'price'             => $product->price,
                 'description'       => $product->meta_description ?? '',

@@ -42,109 +42,6 @@ class UserController extends Controller
     }
 
     /**
-     * Function to change the status of Routine Pickup.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function changeRoutinePickup(Request $request)
-    {
-        try{
-            $userId = auth('api')->user();
-            $user = User::where('email', $userId->email)->first();
-
-            $user->routine_pickup = $request->input('routine_pickup');
-            $user->save();
-
-            //$userWasteBank = UserWasteBank::where('user_id', $user->id)->where('waste_bank_id', $request->input('waste_bank_id'))->first();
-
-            if($user->routine_pickup === 1){
-                $wasteBankRaws = DB::table("waste_banks")
-                    ->select("*"
-                        ,DB::raw("6371 * acos(cos(radians(" . $request->input('latitude') . ")) 
-                    * cos(radians(waste_banks.latitude)) 
-                    * cos(radians(waste_banks.longitude) - radians(" . $request->input('longitude') . ")) 
-                    + sin(radians(" .$request->input('latitude'). ")) 
-                    * sin(radians(waste_banks.latitude))) AS distance"))
-                    ->orderBy("distance")
-                    ->get();
-
-                foreach ($wasteBankRaws as $wasteBankRaw){
-                    Log::info($wasteBankRaw->id. " distance: ". $wasteBankRaw->distance);
-                }
-
-                $config = Configuration::where('configuration_key', 'wastebank_radius')->first();
-                $temp = $wasteBankRaws->where('distance', '<=', $config->configuration_value);
-
-
-                if(count($temp) == 0){
-                    // If calculated waste bank not found
-                    $userWasteBanks = UserWasteBank::where('user_id', $user->id)->get();
-                    foreach($userWasteBanks as $userWasteBank){
-                        $userWasteBank->status_id = 2;
-                        $userWasteBank->save();
-                    }
-
-                    return Response::json([
-                        'message' => "There isn't any Waste Bank near your household address.",
-                    ], 482);
-                }
-                else{
-                    $userWasteBank = UserWasteBank::where('user_id', $user->id)->where('waste_bank_id', $wasteBankRaws[0]->id)->first();
-
-                    if(empty($userWasteBank)){
-                        UserWasteBank::create([
-                            'user_id'       => $user->id,
-                            'waste_bank_id' => $wasteBankRaws[0]->id,
-                            'status_id'     => 1
-                        ]);
-                    }
-                    else{
-                        $userWasteBank->status_id = 1;
-                        $userWasteBank->save();
-                    }
-
-//                    $wasteCollectorUser = WasteCollectorUser::where('user_id', $user->id)->first();
-//                    if(!empty($wasteCollectorUser)){
-//                        $wasteCollectorUser->status_id = 1;
-//                        $wasteCollectorUser->save();
-//                    }
-
-                    $responseJson = User::where('id', $user->id)->with('company', 'addresses')->first();
-                    return Response::json($responseJson, 200);
-                }
-            }
-            else{
-                $userWasteBanks = UserWasteBank::where('user_id', $user->id)->get();
-                if($userWasteBanks->count() > 0){
-                    foreach($userWasteBanks as $userWasteBank){
-                        $userWasteBank->status_id = 2;
-                        $userWasteBank->save();
-                    }
-                }
-
-                $userWasteCollectors = WasteCollectorUser::where('user_id', $user->id)->get();
-                if($userWasteCollectors->count() > 0){
-                    foreach ($userWasteCollectors as $userWasteCollector){
-                        $userWasteCollector->status_id = 2;
-                        $userWasteCollector->save();
-                    }
-                }
-
-                $responseJson = User::where('id', $user->id)->with('company', 'addresses')->first();
-                return Response::json($responseJson, 200);
-            }
-        }
-        catch(\Exception $ex){
-            Log::error("Api/UserController - changeRoutinePickup error: ". $ex);
-            return Response::json([
-                'message' => "Sorry Something went Wrong!",
-                'ex' => $ex,
-            ], 500);
-        }
-    }
-
-    /**
      * Function to save user token.
      *
      * @param Request $request
@@ -178,12 +75,24 @@ class UserController extends Controller
      */
     public function show()
     {
-        error_log("exception");
         try{
-            $user = auth('api')->user();
-            $users = User::where('email', $user->email)->with('company', 'addresses')->first();
+            $userLogin = auth('api')->user();
+            $user = User::where('email', $userLogin->email)->with('addresses')->first();
 
-            return Response::json($users, 200);
+            $userModel = collect([
+                'id'                => $user->id,
+                'name'              => $user->name,
+                'email'             => $user->email,
+                'category_id'       => $user->category_id,
+                'category_name'     => $user->user_category->name,
+                'phone'             => $user->phone,
+                'addresses'         => $user->addresses
+            ]);
+
+            return Response::json([
+                'message'       => 'SUCCESS',
+                'model'         => json_encode($userModel)
+            ]);
         }
         catch(\Exception $ex){
             return Response::json([

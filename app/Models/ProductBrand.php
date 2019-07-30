@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class ProductBrand
- * 
+ *
  * @property int $id
  * @property string $name
  * @property string $img_path
@@ -31,8 +31,10 @@ class ProductBrand extends Eloquent
 
 	protected $fillable = [
 		'name',
-		'img_path',
+		'image_path',
+        'created_at',
 		'created_by',
-		'updated_by'
+        'updated_at',
+		'updated_by',
 	];
 }
