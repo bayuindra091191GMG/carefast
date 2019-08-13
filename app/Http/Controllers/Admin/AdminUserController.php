@@ -91,7 +91,7 @@ class AdminUserController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name'        => 'required|max:100',
             'last_name'         => 'required|max:100',
-            'email'             => 'required|regex:/^\S*$/u|unique:users|max:50',
+            'email'             => 'required|regex:/^\S*$/u|unique:admin_users|max:50',
             'role'              => 'required',
             'password'          => 'required'
         ],[

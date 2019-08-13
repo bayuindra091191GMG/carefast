@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Tue, 13 Aug 2019 10:26:04 +0700.
+ * Date: Tue, 13 Aug 2019 10:25:51 +0700.
  */
 
 namespace App\Models;
@@ -10,11 +10,11 @@ namespace App\Models;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
- * Class User
+ * Class Customer
  * 
  * @property int $id
  * @property string $name
- * @property string $position_name
+ * @property int $category_id
  * @property string $email
  * @property string $password
  * @property string $image_path
@@ -28,13 +28,18 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $updated_at
  * 
  * @property \App\Models\Status $status
- * @property \Illuminate\Database\Eloquent\Collection $fcm_token_users
+ * @property \App\Models\UserCategory $user_category
+ * @property \Illuminate\Database\Eloquent\Collection $fcm_token_customers
  *
  * @package App\Models
  */
-class User extends Eloquent
+class Customer extends Eloquent
 {
+	public $incrementing = false;
+
 	protected $casts = [
+		'id' => 'int',
+		'category_id' => 'int',
 		'status_id' => 'int'
 	];
 
@@ -50,7 +55,7 @@ class User extends Eloquent
 
 	protected $fillable = [
 		'name',
-		'position_name',
+		'category_id',
 		'email',
 		'password',
 		'image_path',
@@ -67,8 +72,13 @@ class User extends Eloquent
 		return $this->belongsTo(\App\Models\Status::class);
 	}
 
-	public function fcm_token_users()
+	public function user_category()
 	{
-		return $this->hasMany(\App\Models\FcmTokenUser::class);
+		return $this->belongsTo(\App\Models\UserCategory::class, 'category_id');
+	}
+
+	public function fcm_token_customers()
+	{
+		return $this->hasMany(\App\Models\FcmTokenCustomer::class);
 	}
 }

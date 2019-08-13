@@ -89,7 +89,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
 //Waste Collector Transaction
 //Route::group(['namespace' => 'Api', 'middleware' => 'waste_collector', 'prefix' => 'waste-collector'], function () {
-Route::middleware('auth:waste_collector')->prefix('waste-collector')->group(function(){
+Route::middleware('auth:customer')->prefix('waste-collector')->group(function(){
     Route::post('/save-collector-device', 'Api\WasteCollectorController@saveCollectorToken');
     Route::get('/get-data', 'Api\WasteCollectorController@show');
     Route::get('/routine/list', 'Api\WasteCollectorController@getUserListRoutinePickUp');;
@@ -115,7 +115,7 @@ Route::middleware('auth:waste_collector')->prefix('waste-collector')->group(func
 
 
 //Admin Wastebank
-Route::middleware('auth:admin_wastebank')->group(function(){
+Route::middleware('auth:admin')->group(function(){
     //Antar Sendiri
     Route::post('/admin/confirm-transaction', 'Api\AdminController@confirmTransactionAntarSendiri');
     Route::get('/admin/transactions/get', 'Api\AdminController@getTransactionList');

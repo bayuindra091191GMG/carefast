@@ -51,15 +51,10 @@ return [
             'provider' => 'users',
         ],
 
-        'waste_collector' => [
+        'customer' => [
             'driver' => 'passport',
-            'provider' => 'waste_collectors',
+            'provider' => 'customers',
         ],
-
-        'admin_wastebank' => [
-            'driver' => 'passport',
-            'provider' => 'admins'
-        ]
     ],
 
     /*
@@ -90,9 +85,9 @@ return [
             'model' => App\Models\AdminUser::class,
         ],
 
-        'waste_collectors' => [
+        'customers' => [
             'driver' => 'eloquent',
-            'model' => App\Models\WasteCollector::class,
+            'model' => App\Models\Customer::class,
         ],
 
         // 'users' => [

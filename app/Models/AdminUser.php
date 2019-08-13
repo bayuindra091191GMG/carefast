@@ -2,14 +2,12 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 17 Jul 2019 13:57:15 +0700.
+ * Date: Tue, 13 Aug 2019 10:28:09 +0700.
  */
 
 namespace App\Models;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
+use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class AdminUser
@@ -22,7 +20,6 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
  * @property string $email
  * @property string $password
  * @property string $language
- * @property int $waste_bank_id
  * @property int $status_id
  * @property string $image_path
  * @property string $remember_token
@@ -32,23 +29,20 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
  * 
  * @property \App\Models\Status $status
  * @property \App\Models\AdminUserRole $admin_user_role
+ * @property \Illuminate\Database\Eloquent\Collection $banners
  * @property \Illuminate\Database\Eloquent\Collection $faqs
- * @property \Illuminate\Database\Eloquent\Collection $fcm_token_browsers
+ * @property \Illuminate\Database\Eloquent\Collection $fcm_token_admins
+ * @property \Illuminate\Database\Eloquent\Collection $permission_menu_headers
  * @property \Illuminate\Database\Eloquent\Collection $permission_menu_subs
  * @property \Illuminate\Database\Eloquent\Collection $permission_menus
- * @property \Illuminate\Database\Eloquent\Collection $created_by_sales_order_headers
- * @property \Illuminate\Database\Eloquent\Collection $updated_by_sales_order_headers
  *
  * @package App\Models
  */
-class AdminUser extends Authenticatable
+class AdminUser extends Eloquent
 {
-    use Notifiable, HasMultiAuthApiTokens;
-
 	protected $casts = [
 		'is_super_admin' => 'int',
 		'role_id' => 'int',
-		'waste_bank_id' => 'int',
 		'status_id' => 'int'
 	];
 
@@ -69,7 +63,6 @@ class AdminUser extends Authenticatable
 		'email',
 		'password',
 		'language',
-		'waste_bank_id',
 		'status_id',
 		'image_path',
 		'remember_token',
@@ -86,14 +79,24 @@ class AdminUser extends Authenticatable
 		return $this->belongsTo(\App\Models\AdminUserRole::class, 'role_id');
 	}
 
+	public function banners()
+	{
+		return $this->hasMany(\App\Models\Banner::class, 'updated_by');
+	}
+
 	public function faqs()
 	{
 		return $this->hasMany(\App\Models\Faq::class, 'updated_by');
 	}
 
-	public function fcm_token_browsers()
+	public function fcm_token_admins()
 	{
-		return $this->hasMany(\App\Models\FcmTokenBrowser::class, 'user_admin_id');
+		return $this->hasMany(\App\Models\FcmTokenAdmin::class, 'user_admin_id');
+	}
+
+	public function permission_menu_headers()
+	{
+		return $this->hasMany(\App\Models\PermissionMenuHeader::class, 'updated_by');
 	}
 
 	public function permission_menu_subs()
@@ -105,14 +108,4 @@ class AdminUser extends Authenticatable
 	{
 		return $this->hasMany(\App\Models\PermissionMenu::class, 'updated_by');
 	}
-
-    public function created_by_sales_order_headers()
-    {
-        return $this->hasMany(\App\Models\SalesOrderHeader::class, 'created_by');
-    }
-
-    public function updated_by_sales_order_headers()
-    {
-        return $this->hasMany(\App\Models\SalesOrderHeader::class, 'updated_by');
-    }
 }
