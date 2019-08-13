@@ -14,7 +14,7 @@
                 <b class="logo-icon p-l-10" style="margin: 0 auto;">
                     <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                     <!-- Dark Logo icon -->
-                    <img src="{{ asset('images/yifang/logo_yifang_icon.png') }}" alt="homepage" class="light-logo" height="55" />
+                    <img src="{{ asset('images/carefast/logo_carefast.png') }}" alt="homepage" class="light-logo" height="35" />
 
                 </b>
                 <!--End Logo icon -->

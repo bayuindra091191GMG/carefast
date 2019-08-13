@@ -7,11 +7,14 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Reliese\Database\Eloquent\Model as Eloquent;
+use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
 
 /**
  * Class AdminUser
- * 
+ *
  * @property int $id
  * @property int $is_super_admin
  * @property int $role_id
@@ -26,7 +29,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $email_verified_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * 
+ *
  * @property \App\Models\Status $status
  * @property \App\Models\AdminUserRole $admin_user_role
  * @property \Illuminate\Database\Eloquent\Collection $banners
@@ -38,8 +41,10 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  *
  * @package App\Models
  */
-class AdminUser extends Eloquent
+class AdminUser extends Authenticatable
 {
+    use Notifiable, HasMultiAuthApiTokens;
+
 	protected $casts = [
 		'is_super_admin' => 'int',
 		'role_id' => 'int',

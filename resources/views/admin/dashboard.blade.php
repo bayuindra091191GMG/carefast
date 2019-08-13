@@ -5,7 +5,7 @@
 
     <div class="row">
         <div class="col-12">
-            <h3>Selamat Datang Admin Yifang C.M.E.</h3>
+            <h3>Selamat Datang Admin Carefast.</h3>
 {{--            @if($isSuperAdmin)--}}
 {{--                <h3>Selamat Datang Admin DWS</h3>--}}
 {{--            @else--}}

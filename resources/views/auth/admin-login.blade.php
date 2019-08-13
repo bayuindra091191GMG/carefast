@@ -48,7 +48,7 @@
         <div class="auth-box border-top border-secondary">
             <div id="loginform">
                 <div class="text-center p-t-20 p-b-20">
-                    <span class="db"><img src="{{ asset('images/yifang/logo_yifang.png')}}" alt="logo" class="w-100" /></span>
+                    <span class="db"><img src="{{ asset('images/carefast/logo_carefast.png')}}" alt="logo" class="w-100" /></span>
                 </div>
                 <!-- Form -->
                 <form class="form-horizontal m-t-20 " id="loginform" method="POST" action="{{ route('admin.login') }}">
@@ -57,13 +57,13 @@
                         <div class="col-12">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text text-white" id="basic-addon1" style="background-color: #c32924;"><i class="ti-user"></i></span>
+                                    <span class="input-group-text text-white" id="basic-addon1" style="background-color: #FFA500;"><i class="ti-user"></i></span>
                                 </div>
                                 <input type="text" class="form-control form-control-lg" id="email" name="email" placeholder="ALAMAT EMAIL" value="{{ old('email') }}" aria-label="Username" aria-describedby="basic-addon1" required="">
                             </div>
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text text-white" id="basic-addon2" style="background-color: #c32924;"><i class="ti-pencil"></i></span>
+                                    <span class="input-group-text text-white" id="basic-addon2" style="background-color: #FFA500;"><i class="ti-pencil"></i></span>
                                 </div>
                                 <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="KATA SANDI" aria-label="Password" aria-describedby="basic-addon1" required="">
                             </div>
@@ -74,7 +74,7 @@
                             <div class="form-group">
                                 <div class="p-t-20 text-center">
 {{--                                    <button class="btn btn-info" id="to-recover" type="button"><i class="fa fa-lock m-r-5"></i> Lost password?</button>--}}
-                                    <button class="btn btn-default" style="background-color: #c32924;" type="submit">MASUK</button>
+                                    <button class="btn btn-default" style="background-color: #FFA500;" type="submit">MASUK</button>
                                 </div>
                             </div>
                         </div>

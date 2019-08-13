@@ -37,31 +37,63 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
-                        <span class="hide-menu">Master Dealer </span>
+                        <span class="hide-menu">Employee </span>
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
-                            <a href="{{route('admin.users.index')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar MD </span>
+                                <span class="hide-menu"> Daftar Employee </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{route('admin.users.create')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Buat MD Baru</span>
+                                <span class="hide-menu"> Buat Employee Baru</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{route('admin.user_categories.index')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Kategori MD </span>
+                                <span class="hide-menu"> Daftar Jabatan Employee </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{route('admin.user_categories.create')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Buat Kategori MD Baru</span>
+                                <span class="hide-menu"> Buat Jabatan Employee Baru</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                        <i class="mdi mdi-account-settings-variant"></i>
+                        <span class="hide-menu">Customer </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Customer </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Buat Customer Baru</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Tipe Customer </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Buat Tipe Customer Baru</span>
                             </a>
                         </li>
                     </ul>
@@ -73,13 +105,13 @@
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
-                            <a href="{{route('admin.admin-users.index')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Daftar Admin </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{route('admin.admin-users.create')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Buat Admin Baru</span>
                             </a>
@@ -89,19 +121,19 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
-                        <span class="hide-menu">Banner </span>
+                        <span class="hide-menu">Place </span>
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
-                            <a href="{{route('admin.banner.index')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Banner </span>
+                                <span class="hide-menu"> Daftar Place </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{route('admin.banner.create')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Buat Banner Baru</span>
+                                <span class="hide-menu"> Buat Place Baru</span>
                             </a>
                         </li>
                     </ul>
@@ -109,37 +141,19 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
-                        <span class="hide-menu"> Produk </span>
+                        <span class="hide-menu"> Object / Unit </span>
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
-                            <a href="{{route('admin.product.index')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Produk </span>
+                                <span class="hide-menu"> Daftar Object </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="{{route('admin.product.create')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Tambah Produk </span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="{{route('admin.product.customize.index')}}" class="sidebar-link">
-                                <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Kustomisasi Harga </span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="{{route('admin.product.category.index')}}" class="sidebar-link">
-                                <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Kategori Produk </span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="{{route('admin.product.brand.index')}}" class="sidebar-link">
-                                <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Brand Produk </span>
+                                <span class="hide-menu"> Tambah Object </span>
                             </a>
                         </li>
                     </ul>
@@ -147,184 +161,23 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
-                        <span class="hide-menu">Order Request </span>
+                        <span class="hide-menu"> Action </span>
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
-                            <a href="{{route('admin.orders.index')}}" class="sidebar-link">
+                            <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar OR </span>
+                                <span class="hide-menu"> Daftar Action </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Tambah Action </span>
                             </a>
                         </li>
                     </ul>
                 </li>
-
-{{--                <li class="sidebar-item">--}}
-{{--                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">--}}
-{{--                        <i class="mdi mdi-book"></i>--}}
-{{--                        <span class="hide-menu">Transaksi Penjemputan<br/>Rutin</span>--}}
-{{--                    </a>--}}
-{{--                    <ul aria-expanded="false" class="collapse  first-level">--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.transactions.penjemputan_rutin.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Daftar Transaksi </span>--}}
-{{--                            </a>--}}
-{{--                            <a href="{{ route('admin.user.penjemputan_rutin.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Daftar User </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-{{--                </li>--}}
-
-{{--                <li class="sidebar-item">--}}
-{{--                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">--}}
-{{--                        <i class="mdi mdi-book"></i>--}}
-{{--                        <span class="hide-menu">Transaksi Antar Sendiri</span>--}}
-{{--                    </a>--}}
-{{--                    <ul aria-expanded="false" class="collapse  first-level">--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.transactions.antar_sendiri.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Daftar Transaksi </span>--}}
-{{--                            </a>--}}
-{{--                            <a href="{{ route('admin.transactions.antar_sendiri.dws.create') }}" class="sidebar-link">--}}
-{{--                                <i class="fas fa-plus"></i>--}}
-{{--                                <span class="hide-menu"> Transaksi Kategori DWS </span>--}}
-{{--                            </a>--}}
-{{--                            <a href="{{ route('admin.transactions.antar_sendiri.masaro.create') }}" class="sidebar-link">--}}
-{{--                                <i class="fas fa-plus"></i>--}}
-{{--                                <span class="hide-menu"> Transaksi Kategori Masaro </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-{{--                </li>--}}
-
-{{--                <li class="sidebar-item">--}}
-{{--                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">--}}
-{{--                        <i class="mdi mdi-book"></i>--}}
-{{--                        <span class="hide-menu">Transaksi Penjemputan<br/>Sekarang</span>--}}
-{{--                    </a>--}}
-{{--                    <ul aria-expanded="false" class="collapse  first-level">--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.transactions.on_demand.list') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Daftar Transaksi Baru </span>--}}
-{{--                            </a>--}}
-{{--                            <a href="{{ route('admin.transactions.on_demand.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Riwayat Transaksi </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-{{--                </li>--}}
-
-{{--                <li class="sidebar-item">--}}
-{{--                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">--}}
-{{--                        <i class="mdi mdi-book"></i>--}}
-{{--                        <span class="hide-menu">Vouchers</span>--}}
-{{--                    </a>--}}
-{{--                    <ul aria-expanded="false" class="collapse  first-level">--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.voucher.users.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Daftar Penggunaan Voucher </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.vouchers.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Daftar Voucher </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.voucher-categories.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Daftar Kategori Voucher </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-{{--                </li>--}}
-
-{{--                <li class="sidebar-item">--}}
-{{--                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('admin.points.index') }}" aria-expanded="false">--}}
-{{--                        <i class="mdi mdi-view-dashboard"></i>--}}
-{{--                        <span class="hide-menu">Point</span>--}}
-{{--                    </a>--}}
-{{--                </li>--}}
-
-{{--                <li class="sidebar-item">--}}
-{{--                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">--}}
-{{--                        <i class="mdi mdi-book"></i>--}}
-{{--                        <span class="hide-menu">Waste Collector</span>--}}
-{{--                    </a>--}}
-{{--                    <ul aria-expanded="false" class="collapse  first-level">--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.wastecollectors.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-book-multiple"></i>--}}
-{{--                                <span class="hide-menu"> Daftar Waste Collector </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.wastecollectors.create') }}" class="sidebar-link">--}}
-{{--                                <i class="fas fa-plus"></i>--}}
-{{--                                <span class="hide-menu"> Tambah Baru </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-{{--                </li>--}}
-
-{{--                <li class="sidebar-item">--}}
-{{--                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">--}}
-{{--                        <i class="mdi mdi-account-settings-variant"></i>--}}
-{{--                        <span class="hide-menu">Master Data </span>--}}
-{{--                    </a>--}}
-{{--                    <ul aria-expanded="false" class="collapse  first-level">--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.admin-users.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-account-star-variant"></i>--}}
-{{--                                <span class="hide-menu"> Admin Users </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.waste-banks.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-note-outline"></i>--}}
-{{--                                <span class="hide-menu"> Waste Processor </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.wastebanks-radius.setting') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-note-outline"></i>--}}
-{{--                                <span class="hide-menu"> Waste Processor Radius </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.setting') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-note-plus"></i>--}}
-{{--                                <span class="hide-menu"> Category Setting </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.dws-wastes.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-note-plus"></i>--}}
-{{--                                <span class="hide-menu"> Dws Waste Categories </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.dws-waste-items.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-note-plus"></i>--}}
-{{--                                <span class="hide-menu"> Dws Waste Items </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.masaro-wastes.index') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-note-plus"></i>--}}
-{{--                                <span class="hide-menu"> Masaro Waste Categories </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-{{--                </li>--}}
             </ul>
         </nav>
         <!-- End Sidebar navigation -->
