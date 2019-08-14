@@ -152,7 +152,7 @@ Route::prefix('admin')->group(function(){
     Route::post('/product/banner/store', 'Admin\BannerController@store')->name('admin.banner.store');
     Route::post('/product/banner/update/{id}', 'Admin\BannerController@update')->name('admin.banner.update');
     Route::post('/product/banner/destroy', 'Admin\BannerController@destroy')->name('admin.banner.destroy');
-    
+
     // Orders
     Route::get('/orders', 'Admin\OrderController@index')->name('admin.orders.index');
     Route::get('/orders/detail/{item}', 'Admin\OrderController@show')->name('admin.orders.detail');
@@ -175,6 +175,30 @@ Route::prefix('admin')->group(function(){
     Route::get('/import/form', 'Admin\ImportController@form')->name('admin.import.form');
     Route::post('/import/form/submit', 'Admin\ImportController@importExcel')->name('admin.import.submit');
     Route::get('/import/address/auto', 'Admin\ImportController@autoAddress')->name('admin.import.address.auto');
+
+    // Unit
+    Route::get('/unit', 'Admin\UnitController@index')->name('admin.unit.index');
+    Route::get('/unit/create', 'Admin\UnitController@create')->name('admin.unit.create');
+    Route::get('/unit/edit/{id}', 'Admin\UnitController@edit')->name('admin.unit.edit');
+    Route::post('/unit/store', 'Admin\UnitController@store')->name('admin.unit.store');
+    Route::post('/unit/update/{id}', 'Admin\UnitController@update')->name('admin.unit.update');
+    Route::post('/unit/destroy', 'Admin\UnitController@destroy')->name('admin.unit.destroy');
+
+    // Place
+    Route::get('/place', 'Admin\PlaceController@index')->name('admin.place.index');
+    Route::get('/place/create', 'Admin\PlaceController@create')->name('admin.place.create');
+    Route::get('/place/edit/{id}', 'Admin\PlaceController@edit')->name('admin.place.edit');
+    Route::post('/place/store', 'Admin\PlaceController@store')->name('admin.place.store');
+    Route::post('/place/update/{id}', 'Admin\PlaceController@update')->name('admin.place.update');
+    Route::post('/place/destroy', 'Admin\PlaceController@destroy')->name('admin.place.destroy');
+
+    // Action
+    Route::get('/action', 'Admin\ActionController@index')->name('admin.action.index');
+    Route::get('/action/create', 'Admin\ActionController@create')->name('admin.action.create');
+    Route::get('/action/edit/{id}', 'Admin\ActionController@edit')->name('admin.action.edit');
+    Route::post('/action/store', 'Admin\ActionController@store')->name('admin.action.store');
+    Route::post('/action/update/{id}', 'Admin\ActionController@update')->name('admin.action.update');
+    Route::post('/action/destroy', 'Admin\ActionController@destroy')->name('admin.action.destroy');
 
     // Report
     Route::get('/transaction/report', 'Admin\ReportController@transactionReport')->name('admin.transaction.report');
@@ -203,6 +227,8 @@ Route::get('/datatables-product-categories', 'Admin\ProductCategoryController@ge
 Route::get('/datatables-product-brands', 'Admin\ProductBrandController@getIndex')->name('datatables.product.brands');
 Route::get('/datatables-product-customizations', 'Admin\ProductController@getIndexCustomize')->name('datatables.product.customizations');
 Route::get('/datatables-banner', 'Admin\BannerController@getIndex')->name('datatables.banners');
+Route::get('/datatables-place', 'Admin\PlaceController@getIndex')->name('datatables.places');
+Route::get('/datatables-unit', 'Admin\UnitController@getIndex')->name('datatables.units');
 
 // Select2
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
