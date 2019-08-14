@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('backend/assets/images/favicon.png') }}">
-    <title>YIFANG C.M.E. BACKEND</title>
+    <title>CAREFAST BACKEND</title>
 
     <link href="{{ asset('backend/assets/libs/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('backend/assets/libs/flot/css/float-chart.css')}}" rel="stylesheet">
@@ -71,9 +71,8 @@
         }
 
         .sidebar-nav ul .sidebar-item.selected>.sidebar-link{
-            background-color: #3DCC9C;
+            background-color: #073674;
             color: #fff;
-            border-radius: 4px;
         }
 
         .sidebar-nav ul .sidebar-item.selected>.sidebar-link i{
@@ -96,7 +95,7 @@
         }
 
         .navbar-dark .navbar-nav .nav-link{
-            color: #c32924 !important;
+            color: #073674 !important;
         }
 
         .topbar{

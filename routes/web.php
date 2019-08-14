@@ -176,6 +176,14 @@ Route::prefix('admin')->group(function(){
     Route::post('/import/form/submit', 'Admin\ImportController@importExcel')->name('admin.import.submit');
     Route::get('/import/address/auto', 'Admin\ImportController@autoAddress')->name('admin.import.address.auto');
 
+    // Employee
+    Route::get('/employee', 'Admin\EmployeeController@index')->name('admin.employee.index');
+    Route::get('/employee/create', 'Admin\EmployeeController@create')->name('admin.employee.create');
+    Route::get('/employee/edit/{id}', 'Admin\EmployeeController@edit')->name('admin.employee.edit');
+    Route::post('/employee/store', 'Admin\EmployeeController@store')->name('admin.employee.store');
+    Route::post('/employee/update/{id}', 'Admin\EmployeeController@update')->name('admin.employee.update');
+    Route::post('/employee/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
+
     // Unit
     Route::get('/unit', 'Admin\UnitController@index')->name('admin.unit.index');
     Route::get('/unit/create', 'Admin\UnitController@create')->name('admin.unit.create');
@@ -226,6 +234,7 @@ Route::get('/datatables-products', 'Admin\ProductController@getIndex')->name('da
 Route::get('/datatables-product-categories', 'Admin\ProductCategoryController@getIndex')->name('datatables.product.categories');
 Route::get('/datatables-product-brands', 'Admin\ProductBrandController@getIndex')->name('datatables.product.brands');
 Route::get('/datatables-product-customizations', 'Admin\ProductController@getIndexCustomize')->name('datatables.product.customizations');
+Route::get('/datatables-employee', 'Admin\EmployeeController@getIndex')->name('datatables.employees');
 Route::get('/datatables-banner', 'Admin\BannerController@getIndex')->name('datatables.banners');
 Route::get('/datatables-place', 'Admin\PlaceController@getIndex')->name('datatables.places');
 Route::get('/datatables-unit', 'Admin\UnitController@getIndex')->name('datatables.units');
