@@ -24,6 +24,10 @@
     <![endif]-->
 
     <style>
+        .bg-custom-dark-blue{
+            background-color: #073674;
+        }
+
         #navbarSupportedContent{
             background: #eeeeee !important;
         }

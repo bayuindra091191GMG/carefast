@@ -13,10 +13,14 @@ class EmployeeTransformer extends TransformerAbstract
     public function transform(Employee $employee){
         $createdDate = Carbon::parse($employee->created_at)->toIso8601String();
 
+        $routeShowUrl = route('admin.employee.show', ['id' => $employee->id]);
         $routeEditUrl = route('admin.employee.edit', ['id' => $employee->id]);
 
-        $action = "<a class='btn btn-xs btn-info' href='".$routeEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a>";
-        $action .= "<a class='delete-modal btn btn-xs btn-danger' data-id='". $employee->id ."' ><i class='fas fa-trash-alt'></i></a>";
+
+        $code = "<a href='".$routeShowUrl."' data-toggle='tooltip' data-placement='top'>". $employee->code. "</a>";
+
+        $action = "<a class='btn btn-xs btn-info' href='".$routeShowUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-info'></i></a>";
+        $action .= "&nbsp;<a class='btn btn-xs btn-primary' href='".$routeEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a>";
 
         $phones = '-';
         if(!empty($employee->telephone)){
@@ -33,11 +37,11 @@ class EmployeeTransformer extends TransformerAbstract
         }
 
         return[
-            'code'              => $employee->code,
+            'code'              => $code,
             'first_name'        => $employee->first_name,
             'last_name'         => $employee->last_name,
             'nik'               => $employee->nik,
-            'phone'             => $phones,
+            'phones'            => $phones,
             'status'            => $employee->status->description,
             'created_at'        => $createdDate,
             'action'            => $action

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Models\EmployeeRole;
 use App\Transformer\EmployeeTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -51,7 +52,9 @@ class EmployeeController extends Controller
 
     public function create(){
         try{
-            return view('admin.employee.create');
+            $employeeRoles = EmployeeRole::all();
+
+            return view('admin.employee.create', compact('employeeRoles'));
         }
         catch (\Exception $ex){
             Log::error('Admin/EmployeeController - create error EX: '. $ex);
@@ -70,6 +73,11 @@ class EmployeeController extends Controller
             if ($validator->fails())
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
+            // Validate employee role
+            if($request->input('role') == -1){
+                return back()->withErrors("Mohon pilih role/posisi!")->withInput($request->all());
+            }
+
             // Validate employee photo
             if(!$request->hasFile('photo')){
                 return back()->withErrors("Foto wajib diunggah!")->withInput($request->all());
@@ -84,19 +92,20 @@ class EmployeeController extends Controller
             }
 
             $employee = Employee::create([
-                'code'          => strtoupper($request->input('code')),
-                'first_name'    => strtoupper($request->input('first_name')),
-                'last_name'     => strtoupper($request->input('last_name')),
-                'address'       => $request->input('address') ?? '',
-                'telephone'     => $request->input('telephone') ?? '',
-                'phone'         => $request->input('phone') ?? '',
-                'dob'           => $dob,
-                'nik'           => $request->input('nik') ?? '',
-                'status_id'     => $request->input('status'),
-                'created_by'    => $adminUser->id,
-                'created_at'    => $now->toDateTimeString(),
-                'updated_by'    => $adminUser->id,
-                'updated_at'    => $now->toDateTimeString(),
+                'employee_role_id'  => $request->input('role'),
+                'code'              => strtoupper($request->input('code')),
+                'first_name'        => strtoupper($request->input('first_name')),
+                'last_name'         => strtoupper($request->input('last_name')),
+                'address'           => $request->input('address') ?? '',
+                'telephone'         => $request->input('telephone') ?? '',
+                'phone'             => $request->input('phone') ?? '',
+                'dob'               => $dob,
+                'nik'               => $request->input('nik') ?? '',
+                'status_id'         => $request->input('status'),
+                'created_by'        => $adminUser->id,
+                'created_at'        => $now->toDateTimeString(),
+                'updated_by'        => $adminUser->id,
+                'updated_at'        => $now->toDateTimeString(),
             ]);
 
             if($request->hasFile('photo')){

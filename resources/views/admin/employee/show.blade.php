@@ -7,7 +7,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-8 col-12">
-                        <a href="{{ route('admin.employee.index') }}" class="btn btn-outline-primary float-left">
+                        <a href="{{ route('admin.employee.index') }}" class="btn btn-outline-primary float-left mr-3">
                             <i class="fas fa-arrow-left"></i>
                         </a>
                         <h3>DETIL DATA KARYAWAN {{ $employee->code }}</h3>
@@ -32,10 +32,20 @@
                                             <div class="form-line">
                                                 <label class="form-label" for="photo">Foto *</label>
                                                 @if(!empty($employee->image_path))
-                                                    <a class="fancybox-viewer" href="{{ asset('storage/employees/'. $employee->image_path) }}"><img src="{{ asset('storage/employees/'. $mainImage->path) }}" alt=""/></a>
+                                                    <a class="fancybox-viewer" href="{{ asset('storage/employees/'. $employee->image_path) }}"><img src="{{ asset('storage/employees/'. $employee->image_path) }}" alt=""/></a>
                                                 @else
                                                     <h4>Tidak ada foto</h4>
                                                 @endif
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="role">Role/Posisi</label>
+                                                <input id="role" type="text" class="form-control"
+                                                       name="role" value="{{ $employee->employee_role->name }}" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -174,5 +184,6 @@
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.js"></script>
     <script type="text/javascript">
+        $("a.fancybox-viewer").fancybox();
     </script>
 @endsection

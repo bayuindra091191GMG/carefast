@@ -2,214 +2,142 @@
 
 @section('content')
 
+    <div class="container-fluid">
+        <!-- ============================================================== -->
+        <!-- Sales Cards  -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-12 mb-3">
+                <h3>Selamat Datang Admin Carefast.</h3>
+            </div>
+            <!-- Column -->
+            <div class="col-md-6 col-lg-2 col-xlg-3">
+                <div class="card card-hover">
+                    <a href="{{ route('admin.dashboard') }}" class="box bg-custom-dark-blue text-center">
+                        <h1 class="font-light text-white"><i class="mdi mdi-view-dashboard"></i></h1>
+                        <h6 class="text-white">Dashboard</h6>
+                    </a>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-md-6 col-lg-2 col-xlg-3">
+                <div class="card card-hover">
+                    <div class="box bg-custom-dark-blue text-center">
+                        <h1 class="font-light text-white"><i class="mdi mdi-account-multiple"></i></h1>
+                        <h6 class="text-white">Employee</h6>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-md-6 col-lg-2 col-xlg-3">
+                <div class="card card-hover">
+                    <div class="box bg-custom-dark-blue text-center">
+                        <h1 class="font-light text-white"><i class="mdi mdi-account-multiple"></i></h1>
+                        <h6 class="text-white">Admins</h6>
+                    </div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-12">
-            <h3>Selamat Datang Admin Carefast.</h3>
-{{--            @if($isSuperAdmin)--}}
-{{--                <h3>Selamat Datang Admin DWS</h3>--}}
-{{--            @else--}}
-{{--                <h3>Selamat Datang Admin Pengolahan Sampah {{ $userAdmin->waste_bank->name }}</h3>--}}
-{{--            @endif--}}
-
+            <div class="col-md-6 col-lg-2 col-xlg-3">
+                <div class="card card-hover">
+                    <div class="box bg-custom-dark-blue text-center">
+                        <h1 class="font-light text-white"><i class="mdi mdi-book-open"></i></h1>
+                        <h6 class="text-white">Master Data</h6>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-md-6 col-lg-2 col-xlg-3">
+                <div class="card card-hover">
+                    <div class="box bg-custom-dark-blue text-center">
+                        <h1 class="font-light text-white"><i class="mdi mdi-cellphone"></i></h1>
+                        <h6 class="text-white">Menu 1</h6>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-md-6 col-lg-2 col-xlg-3">
+                <div class="card card-hover">
+                    <div class="box bg-custom-dark-blue text-center">
+                        <h1 class="font-light text-white"><i class="mdi mdi-receipt"></i></h1>
+                        <h6 class="text-white">Menu 2</h6>
+                    </div>
+                </div>
+            </div>
+            <!-- Column -->
         </div>
-    </div>
-
-    <div class="row">
-
-{{--    @foreach($dashboardDatas as $dashboardData)--}}
-{{--        <!-- column -->--}}
-{{--            <div class="col-lg-4">--}}
-{{--                <!-- card new -->--}}
-{{--                <div class="card">--}}
-{{--                    <div class="card-body">--}}
-{{--                        <span class="badge badge-success font-bold">{{ $dashboardData->get('month') }}</span>--}}
-{{--                    </div>--}}
-
-{{--                    <ul class="list-style-none">--}}
-{{--                        <li class="d-flex no-block card-body">--}}
-{{--                            <div class="col-lg-12">--}}
-{{--                                <span class="text-muted">Total Nilai Sampah</span><br>--}}
-{{--                                <span class="text-muted size-30">Rp </span><span class="text-muted font-bold size-33">{{ number_format($dashboardData->get('totalPrice'), 2, ",", ".") }}</span>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body border-top">--}}
-{{--                            <div class="col-12">--}}
-{{--                                <span class="text-muted">Total Berat</span>--}}
-{{--                                <br>--}}
-{{--                                @if($dashboardData->get('totalWeight') > 0)--}}
-{{--                                    <span class="text-muted font-bold size-33">{{ number_format($dashboardData->get('totalWeight') / 1000, 2, ",", ".") }} </span><span class="text-muted size-30">Kg</span>--}}
-{{--                                @else--}}
-{{--                                    <span class="text-muted font-bold size-33">0 </span><span class="text-muted size-30">Kg</span>--}}
-{{--                                @endif--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body border-top">--}}
-{{--                            <div class="row w-100">--}}
-{{--                                <div class="col-5">--}}
-{{--                                    <span class="font-weight-bold">Jenis Sampah</span>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-3 text-right">--}}
-{{--                                    <span class="font-weight-bold">Berat (Kg)</span>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-4 text-right">--}}
-{{--                                    <span class="font-weight-bold">Harga (Rp)</span>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        @foreach($dashboardData->get('wasteCategoryItems') as $wasteCategoryItem)--}}
-{{--                            <li class="d-flex no-block card-body no-padding">--}}
-{{--                                <div class="row w-100">--}}
-{{--                                    <div class="col-5">--}}
-{{--                                        <span class="text-muted">{{ $wasteCategoryItem->get('name') }}</span>--}}
-{{--                                    </div>--}}
-{{--                                    <div class="col-3 text-right">--}}
-{{--                                        <span class="text-black font-weight-bold">{{ number_format($wasteCategoryItem->get('weight') / 1000, 2, ",", ".") }}</span>--}}
-{{--                                    </div>--}}
-{{--                                    <div class="col-4 text-right">--}}
-{{--                                        <span class="text-black font-weight-bold">{{ number_format($wasteCategoryItem->get('price'), 0, ",", ".") }}</span>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </li>--}}
-{{--                        @endforeach--}}
-{{--                    </ul>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-
-{{--        @endforeach--}}
-{{--    </div>--}}
-
-
-{{--    <div class="row">--}}
-{{--        @foreach($dashboardDatas as $dashboardData)--}}
-{{--            <div class="col-lg-4">--}}
-{{--                <!-- card new -->--}}
-{{--                <div class="card">--}}
-{{--                    <div class="card-body">--}}
-{{--                        <span class="badge badge-success font-bold">{{ $dashboardData->get('month') }}</span>--}}
-{{--                    </div>--}}
-{{--                    <ul class="list-style-none">--}}
-{{--                        <li class="d-flex no-block card-body">--}}
-{{--                            <div class="col-lg-12">--}}
-{{--                                <span class="text-muted">Total User</span><br>--}}
-{{--                                <span class="text-muted size-30"></span><span class="text-muted font-bold size-33">{{ $isSuperAdmin ? $dashboardData->get('totalCustomer') : "-" }}</span>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body border-top">--}}
-{{--                            <div class="col-12">--}}
-{{--                                <span class="text-muted">Total Poin yang Didistribusikan</span>--}}
-{{--                                <br>--}}
-{{--                                <span class="text-muted font-bold size-33">{{ $dashboardData->get('totalDistributedPoint') }} </span>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body border-top">--}}
-{{--                            <div class="row w-100">--}}
-{{--                                <div class="col-12">--}}
-{{--                                    <span class="font-weight-bold">Data Operasional</span>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body no-padding">--}}
-{{--                            <div class="row w-100">--}}
-{{--                                <div class="col-9">--}}
-{{--                                    <span class="text-muted">Total penjemputan sampah</span>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-3">--}}
-{{--                                    <div class="text-right">--}}
-{{--                                        <span class="text-black font-bold">{{ number_format($dashboardData->get('totalTransaction'), 0, ",", ".") }}</span>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body no-padding">--}}
-{{--                            <div class="row w-100">--}}
-{{--                                <div class="col-9">--}}
-{{--                                    <span class="text-muted">Total penjemputan rutin</span>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-3">--}}
-{{--                                    <div class="text-right">--}}
-{{--                                        <span class="text-black font-bold">{{ number_format($dashboardData->get('totalRutin'), 0, ",", ".") }}</span>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body no-padding">--}}
-{{--                            <div class="row w-100">--}}
-{{--                                <div class="col-9">--}}
-{{--                                    <span class="text-muted">Total penjemputan sekarang</span>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-3">--}}
-{{--                                    <div class="text-right">--}}
-{{--                                        <span class="text-black font-bold">{{ number_format($dashboardData->get('totalOnDemand'), 0, ",", ".") }}</span>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body no-padding">--}}
-{{--                            <div class="row w-100">--}}
-{{--                                <div class="col-9">--}}
-{{--                                    <span class="text-muted">Total antar sendiri</span>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-3">--}}
-{{--                                    <div class="text-right">--}}
-{{--                                        <span class="text-black font-bold">{{ number_format($dashboardData->get('totalAntarSendiri'), 0, ",", ".") }}</span>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body no-padding">--}}
-{{--                            <div class="row w-100">--}}
-{{--                                <div class="col-9">--}}
-{{--                                    <span class="text-muted">Total rumah kosong</span>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-3">--}}
-{{--                                    <div class="text-right">--}}
-{{--                                        <span class="text-black font-bold">{{ number_format($dashboardData->get('totalEmptyHouse'), 0, ",", ".") }}</span>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                        <li class="d-flex no-block card-body no-padding">--}}
-{{--                            <div class="row w-100">--}}
-{{--                                <div class="col-9">--}}
-{{--                                    <span class="text-muted">Total tidak ada sampah</span>--}}
-{{--                                </div>--}}
-{{--                                <div class="col-3">--}}
-{{--                                    <div class="text-right">--}}
-{{--                                        <span class="text-black font-bold">{{ number_format($dashboardData->get('totalNoWaste'), 0, ",", ".") }}</span>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        @endforeach--}}
-
-{{--    </div>--}}
-
-{{--    <div class="row">--}}
-{{--        <div class="col-lg-6">--}}
-{{--            <h3>Volume Sampah</h3>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-{{--    <div class="row">--}}
-{{--        <div class="col-md-12">--}}
-{{--            <div class="card">--}}
-{{--                <div class="card-body">--}}
-{{--                    <div class="row">--}}
-{{--                        <!-- column -->--}}
-{{--                        <div class="col-lg-12">--}}
-{{--                            <div class="flot-chart">--}}
-{{--                                <div class="flot-chart-content" id="flot-line-chart"></div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        <!-- column -->--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
+        <!-- ============================================================== -->
+        <!-- Sales chart -->
+        <!-- ============================================================== -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-md-flex align-items-center">
+                            <div>
+                                <h4 class="card-title">Site Analysis</h4>
+                                <h5 class="card-subtitle">Overview of Latest Month</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- column -->
+                            <div class="col-lg-9">
+                                <div class="flot-chart">
+                                    <div class="flot-chart-content" id="flot-line-chart"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="bg-dark p-10 text-white text-center">
+                                            <i class="fa fa-user m-b-5 font-16"></i>
+                                            <h5 class="m-b-0 m-t-5">2540</h5>
+                                            <small class="font-light">Total Users</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="bg-dark p-10 text-white text-center">
+                                            <i class="fa fa-plus m-b-5 font-16"></i>
+                                            <h5 class="m-b-0 m-t-5">120</h5>
+                                            <small class="font-light">New Users</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 m-t-15">
+                                        <div class="bg-dark p-10 text-white text-center">
+                                            <i class="fa fa-cart-plus m-b-5 font-16"></i>
+                                            <h5 class="m-b-0 m-t-5">656</h5>
+                                            <small class="font-light">Total Shop</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 m-t-15">
+                                        <div class="bg-dark p-10 text-white text-center">
+                                            <i class="fa fa-tag m-b-5 font-16"></i>
+                                            <h5 class="m-b-0 m-t-5">9540</h5>
+                                            <small class="font-light">Total Orders</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 m-t-15">
+                                        <div class="bg-dark p-10 text-white text-center">
+                                            <i class="fa fa-table m-b-5 font-16"></i>
+                                            <h5 class="m-b-0 m-t-5">100</h5>
+                                            <small class="font-light">Pending Orders</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 m-t-15">
+                                        <div class="bg-dark p-10 text-white text-center">
+                                            <i class="fa fa-globe m-b-5 font-16"></i>
+                                            <h5 class="m-b-0 m-t-5">8540</h5>
+                                            <small class="font-light">Online Orders</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- column -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 @endsection

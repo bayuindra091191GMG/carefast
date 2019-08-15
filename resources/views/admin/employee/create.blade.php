@@ -47,6 +47,20 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
+                                                <label class="form-label" for="role">Role/Posisi</label>
+                                                <select id="role" class="form-control" name="role">
+                                                    <option value="-1"> - Pilih Role - </option>
+                                                    @foreach($employeeRoles as $role)
+                                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
                                                 <label class="form-label" for="code">ID Karyawan *</label>
                                                 <input id="code" type="text" class="form-control" style="text-transform: uppercase;"
                                                        name="code" value="{{ old('code') }}" required>
