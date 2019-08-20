@@ -2,19 +2,17 @@
 
 /**
  * Created by Reliese Model.
- * Date: Thu, 15 Aug 2019 12:28:39 +0700.
+ * Date: Tue, 20 Aug 2019 10:34:26 +0700.
  */
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class Employee
- *
+ * 
  * @property int $id
- * @property int $employee_role_id
  * @property string $code
  * @property string $first_name
  * @property string $last_name
@@ -26,22 +24,24 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $notes
  * @property string $image_path
  * @property int $status_id
+ * @property int $user_id
  * @property int $created_by
  * @property \Carbon\Carbon $created_at
  * @property int $updated_by
  * @property \Carbon\Carbon $updated_at
- *
- * @property \App\Models\AdminUser $admin_user
- * @property \App\Models\EmployeeRole $employee_role
+ * 
+ * @property \App\Models\AdminUser $createdBy
+ * @property \App\Models\AdminUser $updatedBy
  * @property \App\Models\Status $status
+ * @property \App\Models\User $user
  *
  * @package App\Models
  */
 class Employee extends Eloquent
 {
 	protected $casts = [
-		'employee_role_id' => 'int',
 		'status_id' => 'int',
+		'user_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
 	];
@@ -51,7 +51,6 @@ class Employee extends Eloquent
 	];
 
 	protected $fillable = [
-		'employee_role_id',
 		'code',
 		'first_name',
 		'last_name',
@@ -63,17 +62,10 @@ class Employee extends Eloquent
 		'notes',
 		'image_path',
 		'status_id',
+		'user_id',
 		'created_by',
 		'updated_by'
 	];
-
-    protected $appends = [
-        'dob_string'
-    ];
-
-    public function getDobStringAttribute(){
-        return Carbon::parse($this->attributes['dob'])->format("d M Y");
-    }
 
     public function createdBy()
     {
@@ -85,13 +77,13 @@ class Employee extends Eloquent
         return $this->belongsTo(\App\Models\AdminUser::class, 'updated_by');
     }
 
-	public function employee_role()
-	{
-		return $this->belongsTo(\App\Models\EmployeeRole::class);
-	}
-
 	public function status()
 	{
 		return $this->belongsTo(\App\Models\Status::class);
+	}
+
+	public function user()
+	{
+		return $this->belongsTo(\App\Models\User::class);
 	}
 }

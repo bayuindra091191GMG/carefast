@@ -7,8 +7,6 @@ use App\Http\Resources\UserResource;
 use App\Models\Address;
 use App\Models\Configuration;
 use App\Models\User;
-use App\Models\UserWasteBank;
-use App\Models\WasteCollectorUser;
 use App\Notifications\FCMNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -54,7 +52,7 @@ class UserController extends Controller
             $user = auth('api')->user();
 
             //Save user deviceID
-            FCMNotification::SaveToken($user->id, $data['device_id'], "app");
+            FCMNotification::SaveToken($user->id, $data['device_id'], "user");
 
             return Response::json([
                 'message' => "Success Save User Token!",
@@ -83,10 +81,10 @@ class UserController extends Controller
                 'id'                => $user->id,
                 'name'              => $user->name,
                 'email'             => $user->email,
-                'category_id'       => $user->category_id,
-                'category_name'     => $user->user_category->name,
+                'position_name'     => $user->position_name,
+                'image_path'        => $user->image_path,
                 'phone'             => $user->phone,
-                'addresses'         => $user->addresses
+                'employee'          => $user->employees
             ]);
 
             return Response::json([

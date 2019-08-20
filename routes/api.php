@@ -89,28 +89,9 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
 //Waste Collector Transaction
 //Route::group(['namespace' => 'Api', 'middleware' => 'waste_collector', 'prefix' => 'waste-collector'], function () {
-Route::middleware('auth:customer')->prefix('waste-collector')->group(function(){
-    Route::post('/save-collector-device', 'Api\WasteCollectorController@saveCollectorToken');
-    Route::get('/get-data', 'Api\WasteCollectorController@show');
-    Route::get('/routine/list', 'Api\WasteCollectorController@getUserListRoutinePickUp');;
-    Route::post('/routine/change-status', 'Api\WasteCollectorController@SaveRoutinePickUpStatus');
-    Route::post('/routine/create', 'Api\WasteCollectorController@createTransactionRoutinePickup');
-    Route::post('/routine/create/dev', 'Api\WasteCollectorController@createTransactionRoutinePickupDev');
-    Route::get('/transactions', 'Api\WasteCollectorController@getAllTransactions');
-    Route::get('/routine/schedule', 'Api\WasteCollectorController@getWasteBankCurrentSchedule');
-
-    //On Demand
-    Route::post('/on-demand/transactions', 'Api\TransactionHeaderOnDemandController@getTransactionOnDemandForWasteCollector');
-    Route::get('/on-demand/list', 'Api\WasteCollectorController@getCurrentOnDemandTransaction');
-    Route::post('/on-demand/confirm', 'Api\WasteCollectorController@confirmOnDemandTransaction');
-    Route::post('/on-demand/change-status', 'Api\WasteCollectorController@changeOnDemandStatus');
-
-
-    //Routine
-    Route::post('/routine/transactions', 'Api\TransactionHeaderRoutineController@getTransactionRoutineForWasteCollector');
-
-    //Point
-    Route::get('/point/get', 'Api\PoinController@getWasteCollectorPoint');
+Route::middleware('auth:customer')->prefix('customer')->group(function(){
+    Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
+    Route::get('/get-data', 'Api\CustomerController@show');
 });
 
 

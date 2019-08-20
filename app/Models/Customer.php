@@ -7,7 +7,9 @@
 
 namespace App\Models;
 
-use Reliese\Database\Eloquent\Model as Eloquent;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
 
 /**
  * Class Customer
@@ -20,6 +22,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $image_path
  * @property string $email_token
  * @property string $phone
+ * @property string $device_id
  * @property int $status_id
  * @property string $tax_no
  * @property \Carbon\Carbon $email_verified_at
@@ -33,8 +36,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  *
  * @package App\Models
  */
-class Customer extends Eloquent
+class Customer extends Authenticatable
 {
+    use Notifiable, HasMultiAuthApiTokens;
 	public $incrementing = false;
 
 	protected $casts = [
@@ -64,7 +68,8 @@ class Customer extends Eloquent
 		'status_id',
 		'tax_no',
 		'email_verified_at',
-		'remember_token'
+		'remember_token',
+        'device_id'
 	];
 
 	public function status()
