@@ -185,6 +185,15 @@ Route::prefix('admin')->group(function(){
     Route::post('/employee/update/{id}', 'Admin\EmployeeController@update')->name('admin.employee.update');
     Route::post('/employee/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
 
+    // Employee
+    Route::get('/customer', 'Admin\CustomerController@index')->name('admin.customer.index');
+    Route::get('/customer/create', 'Admin\CustomerController@create')->name('admin.customer.create');
+    Route::get('/customer/show/{id}', 'Admin\CustomerController@show')->name('admin.customer.show');
+    Route::get('/customer/edit/{id}', 'Admin\CustomerController@edit')->name('admin.customer.edit');
+    Route::post('/customer/store', 'Admin\CustomerController@store')->name('admin.customer.store');
+    Route::post('/customer/update/{id}', 'Admin\CustomerController@update')->name('admin.customer.update');
+    Route::post('/customer/destroy', 'Admin\CustomerController@destroy')->name('admin.customer.destroy');
+
     // Unit
     Route::get('/unit', 'Admin\UnitController@index')->name('admin.unit.index');
     Route::get('/unit/create', 'Admin\UnitController@create')->name('admin.unit.create');
@@ -239,6 +248,8 @@ Route::get('/datatables-employee', 'Admin\EmployeeController@getIndex')->name('d
 Route::get('/datatables-banner', 'Admin\BannerController@getIndex')->name('datatables.banners');
 Route::get('/datatables-place', 'Admin\PlaceController@getIndex')->name('datatables.places');
 Route::get('/datatables-unit', 'Admin\UnitController@getIndex')->name('datatables.units');
+Route::get('/datatables-action', 'Admin\ActionController@getIndex')->name('datatables.actions');
+Route::get('/datatables-customer', 'Admin\CustomerController@getIndex')->name('datatables.customers');
 
 // Select2
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');

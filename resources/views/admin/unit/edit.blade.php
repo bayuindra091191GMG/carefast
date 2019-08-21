@@ -38,7 +38,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
-                                                <label class="form-label" for="name">Nama Place *</label>
+                                                <label class="form-label" for="name">Nama Unit *</label>
                                                 <input id="name" type="text" class="form-control" style="text-transform: uppercase;"
                                                        name="name" value="{{ $unit->name }}">
                                             </div>

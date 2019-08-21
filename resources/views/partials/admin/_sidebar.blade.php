@@ -73,13 +73,13 @@
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
+                            <a href="{{route('admin.customer.index')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Daftar Customer </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
+                            <a href="{{route('admin.customer.create')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Buat Customer Baru</span>
                             </a>
@@ -105,13 +105,13 @@
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
+                            <a href="{{route('admin.admin-users.index')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Daftar Admin </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
+                            <a href="{{route('admin.admin-users.create')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Buat Admin Baru</span>
                             </a>
