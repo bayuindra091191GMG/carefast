@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\AttendanceDetail;
 use App\Models\Employee;
 use App\Models\Schedule;
 use Carbon\Carbon;
@@ -59,12 +60,31 @@ class AttendanceController extends Controller
                 $message = "Berhasil Check in";
             }
             else if($request->input('type') == 2){
-                Attendance::create([
+                if($request->input('dac') == null){
+                    return Response::json("Tidak ada data Dac yang diterima!", 500);
+                }
+
+                $newAttendance = Attendance::create([
                     'employee_id'   => $employee->id,
                     'schedule_id'   => $schedule->id,
                     'date'          => Carbon::now('Asia/Jakarta'),
                     'status_id'     => 7
                 ]);
+
+                //Create Attendance Detail
+                $submittedDac = $request->input('dac');
+                $i=0;
+
+                //Done = 8
+                //Not Done =9
+                foreach ($schedule->schedule_details as $dac){
+                    AttendanceDetail::create([
+                        'attendance_id' => $newAttendance->id,
+                        'unit'          => $dac->unit->name,
+                        'action'        => $dac->action->description,
+                        'status_id'     => $submittedDac[$i]->status
+                    ]);
+                }
 
                 //Add to the DAC work
                 $message = "Berhasil Check out";
