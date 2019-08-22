@@ -24,6 +24,23 @@ use Yajra\DataTables\DataTables;
 
 class CustomerController extends Controller
 {
+    public function getCustomers(Request $request){
+        $term = trim($request->q);
+        $customers = Customer::where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', '%' . $term . '%')
+                ->where('email', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($customers as $customer) {
+            $formatted_tags[] = ['id' => $customer->id, 'text' => $customer->name . ' - ' . $customer->email];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+
     public function index(){
         try{
             return view('admin.customer.index');
@@ -184,8 +201,10 @@ class CustomerController extends Controller
 
             if($request->hasFile('photo')){
                 // Delete old image
-                $deletedPath = public_path('storage/customers/'. $customer->image_path);
-                if(file_exists($deletedPath)) unlink($deletedPath);
+                if(!empty($customer->image_path)){
+                    $deletedPath = public_path('storage/customers/'. $customer->image_path);
+                    if(file_exists($deletedPath)) unlink($deletedPath);
+                }
 
                 $img = Image::make($request->file('photo'));
                 $extStr = $img->mime();

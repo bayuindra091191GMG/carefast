@@ -127,7 +127,6 @@ class EmployeeController extends Controller
             return redirect()->route('admin.employee.show',['id' => $employee->id]);
         }
         catch (\Exception $ex){
-            dd($ex);
             Log::error('Admin/EmployeeController - store error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
@@ -184,8 +183,10 @@ class EmployeeController extends Controller
 
             if($request->hasFile('photo')){
                 // Delete old image
-                $deletedPath = public_path('storage/employees/'. $employee->image_path);
-                if(file_exists($deletedPath)) unlink($deletedPath);
+                if(!empty($employee->image_path)){
+                    $deletedPath = public_path('storage/employees/'. $employee->image_path);
+                    if(file_exists($deletedPath)) unlink($deletedPath);
+                }
 
                 $img = Image::make($request->file('photo'));
                 $extStr = $img->mime();
@@ -203,7 +204,6 @@ class EmployeeController extends Controller
             return redirect()->route('admin.employee.show',['id' => $employee->id]);
         }
         catch (\Exception $ex){
-            dd($ex);
             Log::error('Admin/EmployeeController - update error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }

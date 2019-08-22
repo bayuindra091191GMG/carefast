@@ -218,6 +218,15 @@ Route::prefix('admin')->group(function(){
     Route::post('/action/update/{id}', 'Admin\ActionController@update')->name('admin.action.update');
     Route::post('/action/destroy', 'Admin\ActionController@destroy')->name('admin.action.destroy');
 
+    // Project
+    Route::get('/project', 'Admin\ProjectController@index')->name('admin.project.index');
+    Route::get('/project/show/{id}', 'Admin\ProjectController@show')->name('admin.project.show');
+    Route::get('/project/create', 'Admin\ProjectController@create')->name('admin.project.create');
+    Route::get('/project/edit/{id}', 'Admin\ProjectController@edit')->name('admin.project.edit');
+    Route::post('/project/store', 'Admin\ProjectController@store')->name('admin.project.store');
+    Route::post('/project/update/{id}', 'Admin\ProjectController@update')->name('admin.project.update');
+    Route::post('/project/destroy', 'Admin\ProjectController@destroy')->name('admin.project.destroy');
+
     // Report
     Route::get('/transaction/report', 'Admin\ReportController@transactionReport')->name('admin.transaction.report');
     Route::post('/transaction/report/submit', 'Admin\ReportController@transactionReportSubmit')->name('admin.transaction.report.submit');
@@ -250,8 +259,11 @@ Route::get('/datatables-place', 'Admin\PlaceController@getIndex')->name('datatab
 Route::get('/datatables-unit', 'Admin\UnitController@getIndex')->name('datatables.units');
 Route::get('/datatables-action', 'Admin\ActionController@getIndex')->name('datatables.actions');
 Route::get('/datatables-customer', 'Admin\CustomerController@getIndex')->name('datatables.customers');
+Route::get('/datatables-project', 'Admin\ProjectController@getIndex')->name('datatables.projects');
 
 // Select2
+Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
+
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
 Route::get('/select-user-categories', 'Admin\UserCategoryController@getCategories')->name('select.user-categories');
 Route::get('/select-products', 'Admin\ProductController@getProducts')->name('select.products');

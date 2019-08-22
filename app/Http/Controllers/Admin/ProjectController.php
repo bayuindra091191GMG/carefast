@@ -8,12 +8,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\EmployeeRole;
+use App\Models\Project;
 use App\Transformer\CustomerTransformer;
 use App\Transformer\EmployeeTransformer;
+use App\Transformer\ProjectTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
@@ -23,170 +26,154 @@ class ProjectController extends Controller
 {
     public function index(){
         try{
-            return view('admin.customer.index');
+            return view('admin.project.index');
         }
         catch (\Exception $ex){
-            Log::error('Admin/CustomerController - index error EX: '. $ex);
+            Log::error('Admin/ProjectController - index error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
 
     public function getIndex(Request $request){
-        $customers = Customer::all();
+        $customers = Project::all();
         return DataTables::of($customers)
-            ->setTransformer(new CustomerTransformer())
+            ->setTransformer(new ProjectTransformer())
             ->make(true);
     }
 
     public function show(int $id)
     {
-        $customer = Customer::find($id);
+        $project = Project::find($id);
 
-        if(empty($customer)){
+        if(empty($project)){
             return redirect()->back();
         }
 
         $data = [
-            'customer'          => $customer,
+            'project'          => $project,
         ];
-        return view('admin.customer.show')->with($data);
+        return view('admin.project.show')->with($data);
     }
 
     public function create(){
         try{
-            $customerRoles = CustomerType::all();
-
-            return view('admin.customer.create', compact('customerRoles'));
+            return view('admin.project.create');
         }
         catch (\Exception $ex){
-            Log::error('Admin/CustomerController - create error EX: '. $ex);
+            Log::error('Admin/ProjectController - create error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         try{
             $validator = Validator::make($request->all(), [
-                'name'    => 'required|max:100',
-                'phone'     => 'required',
+                'name'          => 'required',
+                'address'       => 'required',
+                'phone'         => 'required',
+                'customer'           => 'required',
+                'latitude'      => 'required',
+                'longitude'     => 'required',
             ]);
 
-            if ($validator->fails())
-                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
-            // Validate customer role
-            if($request->input('role') == -1){
-                return back()->withErrors("Mohon pilih role/posisi!")->withInput($request->all());
-            }
+            //Create Project
 
-            // Validate customer photo
-            if(!$request->hasFile('photo')){
-                return back()->withErrors("Foto wajib diunggah!")->withInput($request->all());
-            }
-
-            $adminUser = Auth::guard('admin')->user();
-            $now = Carbon::now('Asia/Jakarta');
-
-            $dob = null;
-            if($request->filled('dob')){
-                $dob = Carbon::createFromFormat('d M Y', $request->input('dob'), 'Asia/Jakarta');
-            }
-
-            $customer = Customer::create([
-                'employee_role_id'  => $request->input('role'),
-                'email'              => strtoupper($request->input('email')),
-                'name'        => strtoupper($request->input('name')),
-                'phone'             => $request->input('phone') ?? '',
+            $user = Auth::guard('admin')->user();
+            $project = Project::create([
+                'name'              => $request->input('name'),
+                'phone'             => $request->input('phone'),
+                'customer_id'            => $request->input('customer'),
+                'latitude'          => $request->input('latitude'),
+                'longitude'         => $request->input('longitude'),
+                'address'           => $request->input('address'),
+                'description'           => $request->input('description'),
                 'status_id'         => $request->input('status'),
-                'created_by'        => $adminUser->id,
-                'created_at'        => $now->toDateTimeString(),
-                'updated_by'        => $adminUser->id,
-                'updated_at'        => $now->toDateTimeString(),
+                'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'created_by'        => $user->id,
+                'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_by'        => $user->id,
             ]);
 
-            if($request->hasFile('photo')){
-                $img = Image::make($request->file('photo'));
-                $extStr = $img->mime();
-                $ext = explode('/', $extStr, 2);
-
-                $filename = $customer->id.'_photo_'. $now->format('Ymdhms'). '.'. $ext[1];
-
-                $img->save(public_path('storage/customers/'. $filename), 75);
-                $customer->image_path = $filename;
-                $customer->save();
-            }
-
-            Session::flash('success', 'Sukses membuat customer baru!');
-            return redirect()->route('admin.customer.show',['id' => $customer->id]);
+            Session::flash('success', 'Sukses membuat project baru!');
+            return redirect()->route('admin.project.index');
         }
         catch (\Exception $ex){
-            Log::error('Admin/CustomerController - store error EX: '. $ex);
+            Log::error('Admin/ProjectController - store error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
 
     public function edit(int $id)
     {
-        $customer = Customer::find($id);
-
-        if(empty($customer)){
+        $project = Project::find($id);
+        if(empty($project)){
             return redirect()->back();
         }
 
         $data = [
-            'customer'          => $customer,
+            'project'          => $project,
         ];
-        return view('admin.customer.edit')->with($data);
+        return view('admin.project.edit')->with($data);
     }
 
     public function update(Request $request, int $id){
         try{
             $validator = Validator::make($request->all(), [
-                'name'    => 'required|max:100',
-                'phone'     => 'required',
+                'name'          => 'required',
+                'address'       => 'required',
+                'phone'         => 'required',
+                'customer'           => 'required',
+                'latitude'      => 'required',
+                'longitude'     => 'required',
             ]);
 
-            if ($validator->fails())
-                return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
+            $project = Project::find($id);
+            if(empty($project)){
+                return redirect()->back();
+            }
             $adminUser = Auth::guard('admin')->user();
             $now = Carbon::now('Asia/Jakarta');
 
-            $customer = Customer::find($id);
-            if(empty($customer)){
-                return redirect()->back();
-            }
+            $project->name = strtoupper($request->input('name'));
+            $project->phone = $request->input('phone') ?? '';
+            $project->customer_id = $request->input('customer');
+            $project->latitude = $request->input('latitude');
+            $project->longitude =$request->input('longitude');
+            $project->address = $request->input('address');
+            $project->description = $request->input('description');
+            $project->status_id = $request->input('status');
+            $project->updated_by = $adminUser->id;
+            $project->updated_at = $now->toDateTimeString();
+            $project->save();
 
-            $customer->email = strtoupper($request->input('email'));
-            $customer->name = strtoupper($request->input('name'));
-            $customer->phone = $request->input('phone') ?? '';
-            $customer->status_id = $request->input('status');
-            $customer->updated_by = $adminUser->id;
-            $customer->updated_at = $now->toDateTimeString();
+            Session::flash('success', 'Sukses mengubah data project!');
+            return redirect()->route('admin.project.show',['id' => $project->id]);
 
-            if($request->hasFile('photo')){
-                // Delete old image
-                $deletedPath = public_path('storage/customers/'. $customer->image_path);
-                if(file_exists($deletedPath)) unlink($deletedPath);
-
-                $img = Image::make($request->file('photo'));
-                $extStr = $img->mime();
-                $ext = explode('/', $extStr, 2);
-
-                $filename = $customer->id.'_photo_'. $now->format('Ymdhms'). '.'. $ext[1];
-
-                $img->save(public_path('storage/customers/'. $filename), 75);
-                $customer->image_path = $filename;
-            }
-
-            $customer->save();
-
-            Session::flash('success', 'Sukses mengubah data customer!');
-            return redirect()->route('admin.customer.show',['id' => $customer->id]);
         }
         catch (\Exception $ex){
-            Log::error('Admin/CustomerController - update error EX: '. $ex);
+            Log::error('Admin/ProjectController - update error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
+        }
+    }
+
+    public function destroy(Request $request){
+        try{
+//            $deletedId = $request->input('id');
+//            $customer = Customer::find($deletedId);
+//            $customer->status_id = 2;
+//            $customer->save();
+
+            Session::flash('success', 'Sukses mengganti status customer!');
+            return Response::json(array('success' => 'VALID'));
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/CustomerController - destroy error EX: '. $ex);
+            return Response::json(array('errors' => 'INVALID'));
         }
     }
 }
