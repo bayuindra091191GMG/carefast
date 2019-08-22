@@ -7,7 +7,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <h3>DAFTAR UNIT</h3>
+                        <h3>DAFTAR ACTION</h3>
                         @include('partials.admin._messages')
                     </div>
                 </div>
@@ -85,5 +85,5 @@
             $('#deleted-id').val($(this).data('id'));
         });
     </script>
-    @include('partials._deletejs', ['routeUrl' => 'admin.product.category.destroy', 'redirectUrl' => 'admin.product.category.index'])
+    @include('partials._deletejs', ['routeUrl' => 'admin.action.destroy', 'redirectUrl' => 'admin.action.index'])
 @endsection

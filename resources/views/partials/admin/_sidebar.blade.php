@@ -37,31 +37,31 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
-                        <span class="hide-menu">Employee </span>
+                        <span class="hide-menu">Karyawan </span>
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
                             <a href="{{ route('admin.employee.index') }}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Employee </span>
+                                <span class="hide-menu"> Daftar Karyawan </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a href="{{ route('admin.employee.create') }}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Buat Employee Baru</span>
+                                <span class="hide-menu"> Buat Karyawan Baru</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Jabatan Employee </span>
+                                <span class="hide-menu"> Daftar Jabatan Karyawan </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a href="#" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Buat Jabatan Employee Baru</span>
+                                <span class="hide-menu"> Buat Jabatan Karyawan Baru</span>
                             </a>
                         </li>
                     </ul>
@@ -174,6 +174,26 @@
                             <a href="{{route('admin.action.create')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Tambah Action </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                        <i class="mdi mdi-account-settings-variant"></i>
+                        <span class="hide-menu"> Project </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.action.index')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Project </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.action.create')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Tambah Project </span>
                             </a>
                         </li>
                     </ul>

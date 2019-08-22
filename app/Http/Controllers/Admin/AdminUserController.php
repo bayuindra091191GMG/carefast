@@ -127,7 +127,7 @@ class AdminUserController extends Controller
 //            'waste_bank_id' => $assignedWasteBankId,
             'password'      => Hash::make($request->input('password')),
             'status_id'     => $request->input('status'),
-            'is_super_admin'=> $superAdmin,
+            'is_super_admin'=> 0,
             'created_by'    => $user->id,
             'created_at'    => Carbon::now('Asia/Jakarta')
         ]);
@@ -157,7 +157,7 @@ class AdminUserController extends Controller
     {
         $adminUser = AdminUser::find($id);
 
-        $roles = AdminUser::orderBy('name')->get();
+        $roles = AdminUserRole::orderBy('name')->get();
 
         $data = [
             'adminUser'     => $adminUser,
@@ -192,17 +192,6 @@ class AdminUserController extends Controller
         if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
         $adminUser = AdminUser::find($request->input('id'));
-        if($request->filled('is_super_admin')){
-            $superAdmin = 1;
-//            $adminUser->waste_bank_id = null;
-        }
-        else{
-            $superAdmin = 0;
-
-//            if($request->input('waste_bank') != '-1'){
-//                $adminUser->waste_bank_id = $request->input('waste_bank');
-//            }
-        }
 
         if($request->filled('password')){
             $adminUser->password = Hash::make($request->input('password'));
@@ -210,7 +199,6 @@ class AdminUserController extends Controller
 
         $adminUser->first_name = $request->input('first_name');
         $adminUser->last_name = $request->input('last_name');
-        $adminUser->is_super_admin = $superAdmin;
         $adminUser->role_id = $request->input('role');
         $adminUser->status_id = $request->input('status');
         $adminUser->updated_at = Carbon::now('Asia/Jakarta');

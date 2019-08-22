@@ -28,14 +28,14 @@
                                         @endforeach
                                         <!-- Input -->
                                             <div class="body">
-                                                <div class="col-sm-12">
-                                                    <div class="form-check mb-2 mr-sm-2">
-                                                        <input type="checkbox" id="is_super_admin" name="is_super_admin" class="form-check-input"/>
-                                                        <label class="form-check-label" for="is_super_admin">
-                                                            Super Admin?
-                                                        </label>
-                                                    </div>
-                                                </div>
+{{--                                                <div class="col-sm-12">--}}
+{{--                                                    <div class="form-check mb-2 mr-sm-2">--}}
+{{--                                                        <input type="checkbox" id="is_super_admin" name="is_super_admin" class="form-check-input"/>--}}
+{{--                                                        <label class="form-check-label" for="is_super_admin">--}}
+{{--                                                            Super Admin?--}}
+{{--                                                        </label>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
 
                                                 <div class="col-md-12">
                                                     <div class="form-group form-float form-group-lg">

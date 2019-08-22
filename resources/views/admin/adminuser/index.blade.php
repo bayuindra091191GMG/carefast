@@ -26,7 +26,6 @@
                             <tr>
                                 <th>Email</th>
                                 <th>Nama Lengkap</th>
-                                <th>Super Admin</th>
                                 <th>Role</th>
                                 <th>Status</th>
                                 <th>Created At</th>
@@ -60,7 +59,6 @@
             columns: [
                 { data: 'email', name: 'email', class: 'text-left'},
                 { data: 'name', name: 'name', class: 'text-center', orderable: false, searchable: false},
-                { data: 'superadmin', name: 'superadmin', class: 'text-center', orderable: false, searchable: false},
                 { data: 'role', name: 'role', class: 'text-center', orderable: false, searchable: false},
                 { data: 'status', name: 'status', class: 'text-center', orderable: false, searchable: false},
                 { data: 'created_at', name: 'created_at', class: 'text-center',

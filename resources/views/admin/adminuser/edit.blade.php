@@ -27,18 +27,18 @@
                                             @endforeach
                                             <!-- Input -->
                                             <div class="body">
-                                                <div class="col-sm-12">
-                                                    <div class="form-check mb-2 mr-sm-2">
-                                                        @if($adminUser->is_super_admin == 1)
-                                                            <input type="checkbox" id="is_super_admin" name="is_super_admin" value="true" class="form-check-input" checked/>
-                                                        @else
-                                                            <input type="checkbox" id="is_super_admin" name="is_super_admin" value="true" class="form-check-input"/>
-                                                        @endif
-                                                        <label class="form-check-label" for="is_super_admin">
-                                                            Super Admin
-                                                        </label>
-                                                    </div>
-                                                </div>
+{{--                                                <div class="col-sm-12">--}}
+{{--                                                    <div class="form-check mb-2 mr-sm-2">--}}
+{{--                                                        @if($adminUser->is_super_admin == 1)--}}
+{{--                                                            <input type="checkbox" id="is_super_admin" name="is_super_admin" value="true" class="form-check-input" checked/>--}}
+{{--                                                        @else--}}
+{{--                                                            <input type="checkbox" id="is_super_admin" name="is_super_admin" value="true" class="form-check-input"/>--}}
+{{--                                                        @endif--}}
+{{--                                                        <label class="form-check-label" for="is_super_admin">--}}
+{{--                                                            Super Admin--}}
+{{--                                                        </label>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
                                                 <input type="hidden" name="id" value="{{ $adminUser->id }}">
 
                                                 <div class="col-md-12">

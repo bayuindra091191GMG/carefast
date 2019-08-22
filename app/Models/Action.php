@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 21 Aug 2019 09:45:25 +0700.
+ * Date: Thu, 22 Aug 2019 13:05:52 +0700.
  */
 
 namespace App\Models;
@@ -13,6 +13,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * Class Action
  * 
  * @property int $id
+ * @property string $name
  * @property string $description
  * @property int $status_id
  * @property \Carbon\Carbon $created_at
@@ -34,6 +35,7 @@ class Action extends Eloquent
 	];
 
 	protected $fillable = [
+		'name',
 		'description',
 		'status_id',
 		'created_by',

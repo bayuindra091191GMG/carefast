@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 14 Aug 2019 11:17:47 +0700.
+ * Date: Thu, 22 Aug 2019 13:06:06 +0700.
  */
 
 namespace App\Models;
@@ -20,6 +20,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
+ * 
+ * @property \App\Models\Status $status
+ * @property \Illuminate\Database\Eloquent\Collection $schedule_details
  *
  * @package App\Models
  */
@@ -38,4 +41,14 @@ class Unit extends Eloquent
 		'created_by',
 		'updated_by'
 	];
+
+	public function status()
+	{
+		return $this->belongsTo(\App\Models\Status::class);
+	}
+
+	public function schedule_details()
+	{
+		return $this->hasMany(\App\Models\ScheduleDetail::class);
+	}
 }

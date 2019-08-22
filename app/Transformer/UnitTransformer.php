@@ -6,6 +6,7 @@ namespace App\Transformer;
 use App\Models\Place;
 use App\Models\Unit;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use League\Fractal\TransformerAbstract;
 
 class UnitTransformer extends TransformerAbstract
@@ -30,6 +31,7 @@ class UnitTransformer extends TransformerAbstract
         }
         catch (\Exception $exception){
             error_log($exception);
+            Log::error("UnitTransformer.php > transform ".$exception);
         }
     }
 }
