@@ -13,7 +13,7 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
 
 /**
  * Class Customer
- * 
+ *
  * @property int $id
  * @property string $name
  * @property int $category_id
@@ -29,7 +29,7 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
  * @property string $remember_token
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * 
+ *
  * @property \App\Models\Status $status
  * @property \App\Models\UserCategory $user_category
  * @property \Illuminate\Database\Eloquent\Collection $fcm_token_customers
@@ -39,7 +39,6 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
 class Customer extends Authenticatable
 {
     use Notifiable, HasMultiAuthApiTokens;
-	public $incrementing = false;
 
 	protected $casts = [
 		'id' => 'int',

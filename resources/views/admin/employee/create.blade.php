@@ -140,7 +140,7 @@
                                                     <div class="form-line">
                                                         <label class="form-label" for="nik">NIK</label>
                                                         <input id="nik" type="text" class="form-control"
-                                                               name="nik" value="{{ old('nik') }}">
+                                                               name="nik" value="{{ old('nik') }}" pattern="\d+">
                                                     </div>
                                                 </div>
                                             </div>

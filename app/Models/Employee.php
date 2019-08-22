@@ -7,6 +7,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
@@ -72,7 +73,15 @@ class Employee extends Eloquent
 		'updated_by'
 	];
 
-	public function admin_user()
+    protected $appends = [
+        'dob_string'
+    ];
+
+    public function getDobStringAttribute(){
+        return Carbon::parse($this->attributes['dob'])->format("d M Y");
+    }
+
+    public function admin_user()
 	{
 		return $this->belongsTo(\App\Models\AdminUser::class, 'updated_by');
 	}

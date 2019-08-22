@@ -63,6 +63,29 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
+                                                        <label class="form-label" for="password">Kata Sandi Baru*</label>
+                                                        <input id="password" type="password" class="form-control"
+                                                               name="password">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="password_confirmation">Konfirmasi Kata Sandi Baru*</label>
+                                                        <input id="password_confirmation" type="password" class="form-control"
+                                                               name="password_confirmation">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
                                                         <label class="form-label" for="telephone">Email Customer</label>
                                                         <input id="email" type="text" class="form-control"
                                                                name="email" value="{{ $customer->email ?? '' }}">
@@ -74,7 +97,7 @@
                                                     <div class="form-line">
                                                         <label class="form-label" for="phone">Nomor Ponsel</label>
                                                         <input id="phone" type="text" class="form-control"
-                                                               name="phone" value="{{ $customer->phone ?? '' }}">
+                                                               name="phone" value="{{ $customer->phone ?? '' }}" pattern="\d+">
                                                     </div>
                                                 </div>
                                             </div>

@@ -67,6 +67,14 @@
                                 </div>
                                 <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="KATA SANDI" aria-label="Password" aria-describedby="basic-addon1" required="">
                             </div>
+                            <div class="col-md-12" style="color: red;">
+                                @foreach($errors->all() as $error)
+                                    <span class="form-message">
+                                    <strong> {{ $error }} </strong>
+                                    <br/>
+                                </span>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                     <div class="row border-top border-secondary">

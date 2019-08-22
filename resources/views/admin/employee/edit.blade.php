@@ -126,7 +126,7 @@
                                                     <div class="form-line">
                                                         <label class="form-label" for="nik">NIK</label>
                                                         <input id="nik" type="text" class="form-control"
-                                                               name="nik" value="{{ $employee->nik ?? '' }}">
+                                                               name="nik" value="{{ $employee->nik ?? '' }}" pattern="\d+">
                                                     </div>
                                                 </div>
                                             </div>

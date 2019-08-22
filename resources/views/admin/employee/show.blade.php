@@ -14,7 +14,7 @@
                     </div>
                     <div class="col-md-4 col-12 text-right">
                         <a href="{{ route('admin.employee.edit', ['id' => $employee->id]) }}" class="btn btn-primary">EDIT</a>
-                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">HAPUS</button>
+                        <button class="btn btn-danger delete-modal" data-toggle="modal" data-target="#deleteModal" data-id="{{$employee->id}}">HAPUS</button>
                     </div>
                 </div>
 
@@ -168,6 +168,7 @@
             </div>
         </div>
     </div>
+    @include('partials._delete')
 @endsection
 
 
@@ -185,5 +186,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.js"></script>
     <script type="text/javascript">
         $("a.fancybox-viewer").fancybox();
+
+        $(document).on('click', '.delete-modal', function(){
+            $('#deleteModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            $('#deleted-id').val($(this).data('id'));
+        });
     </script>
+    @include('partials._deletejs', ['routeUrl' => 'admin.employee.destroy', 'redirectUrl' => 'admin.employee.index'])
 @endsection

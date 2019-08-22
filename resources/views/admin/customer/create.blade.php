@@ -73,10 +73,32 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="password">Kata Sandi *</label>
+                                                        <input id="password" type="password" class="form-control"
+                                                               name="password" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="password_confirmation">Konfirmasi Kata Sandi *</label>
+                                                        <input id="password_confirmation" type="password" class="form-control"
+                                                               name="password_confirmation" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="col-md-12">
                                         <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label class="form-label" for="telephone">Email Customer</label>
@@ -90,7 +112,7 @@
                                                     <div class="form-line">
                                                         <label class="form-label" for="phone">Nomor Ponsel</label>
                                                         <input id="phone" type="text" class="form-control"
-                                                               name="phone" value="{{ old('phone') }}">
+                                                               name="phone" value="{{ old('phone') }}" pattern="\d+">
                                                     </div>
                                                 </div>
                                             </div>

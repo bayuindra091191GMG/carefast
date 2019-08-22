@@ -8,21 +8,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\EmployeeRole;
-use App\Models\Unit;
 use App\Transformer\CustomerTransformer;
 use App\Transformer\EmployeeTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Yajra\DataTables\DataTables;
 
-class CustomerController extends Controller
+class ProjectController extends Controller
 {
     public function index(){
         try{
@@ -72,15 +69,10 @@ class CustomerController extends Controller
             $validator = Validator::make($request->all(), [
                 'name'    => 'required|max:100',
                 'phone'     => 'required',
-                'password'          => 'required'
             ]);
 
             if ($validator->fails())
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
-
-            $validator->sometimes('password', 'min:6|confirmed', function ($input) {
-                return $input->password;
-            });
 
             // Validate customer role
             if($request->input('role') == -1){
@@ -101,12 +93,11 @@ class CustomerController extends Controller
             }
 
             $customer = Customer::create([
-                'category_id'  => $request->input('role'),
+                'employee_role_id'  => $request->input('role'),
                 'email'              => strtoupper($request->input('email')),
                 'name'        => strtoupper($request->input('name')),
                 'phone'             => $request->input('phone') ?? '',
                 'status_id'         => $request->input('status'),
-                'password'         => Hash::make($request->input('password')),
                 'created_by'        => $adminUser->id,
                 'created_at'        => $now->toDateTimeString(),
                 'updated_by'        => $adminUser->id,
@@ -158,12 +149,6 @@ class CustomerController extends Controller
             if ($validator->fails())
                 return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
-            if(!ctype_space($request->input('password'))){
-                $validator->sometimes('password', 'min:6|confirmed', function ($input) {
-                    return $input->password;
-                });
-            }
-
             $adminUser = Auth::guard('admin')->user();
             $now = Carbon::now('Asia/Jakarta');
 
@@ -172,14 +157,11 @@ class CustomerController extends Controller
                 return redirect()->back();
             }
 
-            if($request->filled('password')){
-                $customer->password = Hash::make($request->input('password'));
-            }
-
-            $customer->email = $request->input('email');
+            $customer->email = strtoupper($request->input('email'));
             $customer->name = strtoupper($request->input('name'));
             $customer->phone = $request->input('phone') ?? '';
             $customer->status_id = $request->input('status');
+            $customer->updated_by = $adminUser->id;
             $customer->updated_at = $now->toDateTimeString();
 
             if($request->hasFile('photo')){
@@ -205,22 +187,6 @@ class CustomerController extends Controller
         catch (\Exception $ex){
             Log::error('Admin/CustomerController - update error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
-        }
-    }
-
-    public function destroy(Request $request){
-        try{
-            $deletedId = $request->input('id');
-            $customer = Customer::find($deletedId);
-            $customer->status_id = 2;
-            $customer->save();
-
-            Session::flash('success', 'Sukses mengganti status customer!');
-            return Response::json(array('success' => 'VALID'));
-        }
-        catch(\Exception $ex){
-            Log::error('Admin/CustomerController - destroy error EX: '. $ex);
-            return Response::json(array('errors' => 'INVALID'));
         }
     }
 }

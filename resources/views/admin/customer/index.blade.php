@@ -62,7 +62,7 @@
             ajax: '{!! route('datatables.customers') !!}',
             order: [ [0, 'asc'] ],
             columns: [
-                { data: 'name', name: 'first_name', class: 'text-center' },
+                { data: 'name', name: 'name', class: 'text-center' },
                 { data: 'email', name: 'email', class: 'text-center' },
                 { data: 'phones', name: 'phones', class: 'text-center'},
                 { data: 'status', name: 'status', class: 'text-center'},

@@ -7,11 +7,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
+use App\Models\Unit;
 use App\Transformer\EmployeeTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
@@ -101,6 +103,7 @@ class EmployeeController extends Controller
                 'phone'             => $request->input('phone') ?? '',
                 'dob'               => $dob,
                 'nik'               => $request->input('nik') ?? '',
+                'notes'               => $request->input('notes') ?? '',
                 'status_id'         => $request->input('status'),
                 'created_by'        => $adminUser->id,
                 'created_at'        => $now->toDateTimeString(),
@@ -124,6 +127,7 @@ class EmployeeController extends Controller
             return redirect()->route('admin.employee.show',['id' => $employee->id]);
         }
         catch (\Exception $ex){
+            dd($ex);
             Log::error('Admin/EmployeeController - store error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
@@ -172,7 +176,8 @@ class EmployeeController extends Controller
             $employee->telephone = $request->input('telephone') ?? '';
             $employee->phone = $request->input('phone') ?? '';
             $employee->dob = $dob;
-            $employee->nik = $request->input('dob') ?? '';
+            $employee->nik = $request->input('nik') ?? '';
+            $employee->notes = $request->input('notes') ?? '';
             $employee->status_id = $request->input('status');
             $employee->updated_by = $adminUser->id;
             $employee->updated_at = $now->toDateTimeString();
@@ -198,8 +203,25 @@ class EmployeeController extends Controller
             return redirect()->route('admin.employee.show',['id' => $employee->id]);
         }
         catch (\Exception $ex){
+            dd($ex);
             Log::error('Admin/EmployeeController - update error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
+        }
+    }
+
+    public function destroy(Request $request){
+        try{
+            $deletedId = $request->input('id');
+            $employee = Employee::find($deletedId);
+            $employee->status_id = 2;
+            $employee->save();
+
+            Session::flash('success', 'Sukses mengganti status employee!');
+            return Response::json(array('success' => 'VALID'));
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/EmployeeController - destroy error EX: '. $ex);
+            return Response::json(array('errors' => 'INVALID'));
         }
     }
 }
