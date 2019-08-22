@@ -32,7 +32,7 @@
                                             <div class="form-line">
                                                 <label class="form-label" for="photo">Foto *</label>
                                                 @if(!empty($customer->image_path))
-                                                    <a class="fancybox-viewer" href="{{ asset('storage/customers/'. $customer->image_path) }}"><img src="{{ asset('storage/employees/'. $customer->image_path) }}" alt=""/></a>
+                                                    <a class="fancybox-viewer" href="{{ asset('storage/customers/'. $customer->image_path) }}"><img src="{{ asset('storage/customers/'. $customer->image_path) }}" alt=""/></a>
                                                 @else
                                                     <h4>Tidak ada foto</h4>
                                                 @endif

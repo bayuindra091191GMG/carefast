@@ -11,7 +11,7 @@
                     </div>
                 </div>
 
-                {{ Form::open(['route'=>['admin.action.update', $unit->id],'method' => 'post','id' => 'general-form']) }}
+                {{ Form::open(['route'=>['admin.action.update', $action->id],'method' => 'post','id' => 'general-form']) }}
 
                 <div class="row">
                     <div class="col-md-12">
@@ -40,7 +40,7 @@
                                             <div class="form-line">
                                                 <label class="form-label" for="name">Nama Action *</label>
                                                 <input id="name" type="text" class="form-control" style="text-transform: uppercase;"
-                                                       name="name" value="{{ $unit->name }}">
+                                                       name="name" value="{{ $action->name }}">
                                             </div>
                                         </div>
                                     </div>
@@ -50,7 +50,7 @@
                                             <div class="form-line">
                                                 <label class="form-label" for="description">Keterangan</label>
                                                 <textarea id="description" class="form-control"
-                                                          name="description" rows="4">{{ $unit->description }}</textarea>
+                                                          name="description" rows="4">{{ $action->description }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -60,8 +60,8 @@
                                             <div class="form-line">
                                                 <label class="form-label" for="status">Status</label>
                                                 <select class="form-control" id="status" name="status">
-                                                    <option value="1" @if($unit->status_id === 1) selected @endif>ACTIVE</option>
-                                                    <option value="2" @if($unit->status_id === 2) selected @endif>NON-ACTIVE</option>
+                                                    <option value="1" @if($action->status_id === 1) selected @endif>ACTIVE</option>
+                                                    <option value="2" @if($action->status_id === 2) selected @endif>NON-ACTIVE</option>
                                                 </select>
                                             </div>
                                         </div>
