@@ -59,7 +59,7 @@
             serverSide: true,
             pageLength: 25,
             responsive: true,
-            ajax: '{!! route('datatables.employees') !!}',
+            ajax: '{!! route('datatables.customers') !!}',
             order: [ [0, 'asc'] ],
             columns: [
                 { data: 'name', name: 'first_name', class: 'text-center' },

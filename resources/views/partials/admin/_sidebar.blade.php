@@ -34,6 +34,28 @@
                 @endforeach
 
 
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                        <i class="mdi mdi-account-settings-variant"></i>
+                        <span class="hide-menu"> Project </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse  first-level">
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Project </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Tambah Project </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="sidebar-item">
                     <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
@@ -174,26 +196,6 @@
                             <a href="{{route('admin.action.create')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Tambah Action </span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-                        <i class="mdi mdi-account-settings-variant"></i>
-                        <span class="hide-menu"> Project </span>
-                    </a>
-                    <ul aria-expanded="false" class="collapse  first-level">
-                        <li class="sidebar-item">
-                            <a href="{{route('admin.action.index')}}" class="sidebar-link">
-                                <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Project </span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="{{route('admin.action.create')}}" class="sidebar-link">
-                                <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Tambah Project </span>
                             </a>
                         </li>
                     </ul>

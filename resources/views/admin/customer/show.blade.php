@@ -45,14 +45,14 @@
                                             <div class="form-line">
                                                 <label class="form-label" for="role">Role/Posisi</label>
                                                 <input id="role" type="text" class="form-control"
-                                                       name="role" value="{{ $customer->employee_role->name }}" readonly>
+                                                       name="role" value="{{ $customer->user_category->name }}" readonly>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="col-md-12">
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label class="form-label" for="name">Nama Customer</label>

@@ -27,6 +27,7 @@
                                 <thead>
                                 <tr>
                                     <th class="text-center">Kode</th>
+                                    <th class="text-center">Posisi</th>
                                     <th class="text-center">Nama Depan</th>
                                     <th class="text-center">Nama Belakang</th>
                                     <th class="text-center">NIK</th>
@@ -65,6 +66,7 @@
             order: [ [0, 'asc'] ],
             columns: [
                 { data: 'code', name: 'code'},
+                { data: 'role', name: 'role'},
                 { data: 'first_name', name: 'first_name', class: 'text-center' },
                 { data: 'last_name', name: 'last_name', class: 'text-center' },
                 { data: 'nik', name: 'nik'},
