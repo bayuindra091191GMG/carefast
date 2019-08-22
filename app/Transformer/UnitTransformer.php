@@ -16,10 +16,11 @@ class UnitTransformer extends TransformerAbstract
         try{
             $createdDate = Carbon::parse($unit->created_at)->toIso8601String();
 
-            $unitEditUrl = route('admin.place.edit', ['id' => $unit->id]);
+            $unitEditUrl = route('admin.unit.edit', ['id' => $unit->id]);
 
             $action = "<a class='btn btn-xs btn-info' href='".$unitEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a> ";
-            $action .= "<a class='delete-modal btn btn-xs btn-danger' data-id='". $unit->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
+//            $action .= "<a class='delete-modal btn btn-xs btn-danger' data-id='". $unit->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
+            $action .= "<a class='btn btn-xs btn-danger' data-id='". $unit->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
 
             return[
                 'name'              => $unit->name,

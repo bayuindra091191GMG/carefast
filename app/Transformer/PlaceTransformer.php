@@ -17,7 +17,9 @@ class PlaceTransformer extends TransformerAbstract
             $placeEditUrl = route('admin.place.edit', ['id' => $place->id]);
 
             $action = "<a class='btn btn-xs btn-info' href='".$placeEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a> ";
-            $action .= "<a class='delete-modal btn btn-xs btn-danger' data-id='". $place->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
+//            $action .= "<a class='delete-modal btn btn-xs btn-danger' data-id='". $place->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
+            $action .= "<a class='btn btn-xs btn-danger' data-id='". $place->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
+
 
             return[
                 'name'              => $place->name,
