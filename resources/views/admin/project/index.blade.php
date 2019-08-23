@@ -13,7 +13,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-12 text-right">
-                        <a href="{{ route('admin.customer.create') }}" class="btn btn-success">
+                        <a href="{{ route('admin.project.create') }}" class="btn btn-success">
                             <i class="fas fa-plus text-white"></i>
                             <br/>
                             <span>TAMBAH</span>
