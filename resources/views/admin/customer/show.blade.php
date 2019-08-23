@@ -45,7 +45,7 @@
                                             <div class="form-line">
                                                 <label class="form-label" for="role">Role/Posisi</label>
                                                 <input id="role" type="text" class="form-control"
-                                                       name="role" value="{{ $customer->user_category->name }}" readonly>
+                                                       name="role" value="{{ $customer->customer_types->name }}" readonly>
                                             </div>
                                         </div>
                                     </div>
