@@ -31,7 +31,7 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
  * @property \Carbon\Carbon $updated_at
  *
  * @property \App\Models\Status $status
- * @property \App\Models\UserCategory $user_category
+ * @property \App\Models\UserCategory $customer_types
  * @property \Illuminate\Database\Eloquent\Collection $fcm_token_customers
  *
  * @package App\Models
@@ -76,9 +76,9 @@ class Customer extends Authenticatable
 		return $this->belongsTo(\App\Models\Status::class);
 	}
 
-	public function user_category()
+	public function customer_types()
 	{
-		return $this->belongsTo(\App\Models\UserCategory::class, 'category_id');
+		return $this->belongsTo(\App\Models\CustomerType::class, 'category_id');
 	}
 
 	public function fcm_token_customers()
