@@ -3,12 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
 use App\Models\Employee;
-use App\Models\User;
-use App\Notifications\FCMNotification;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
 class EmployeeController extends Controller
@@ -42,6 +38,7 @@ class EmployeeController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param $id
      * @return JsonResponse
      */
     public function getEmployeeDetail($id)
