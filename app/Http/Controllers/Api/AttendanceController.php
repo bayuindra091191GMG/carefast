@@ -84,6 +84,7 @@ class AttendanceController extends Controller
                         'action'        => $dac->action->description,
                         'status_id'     => $submittedDac[$i]->status
                     ]);
+                    $i++;
                 }
 
                 //Add to the DAC work
