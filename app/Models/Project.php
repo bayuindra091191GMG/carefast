@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Thu, 22 Aug 2019 18:01:35 +0700.
+ * Date: Wed, 28 Aug 2019 17:03:06 +0700.
  */
 
 namespace App\Models;
@@ -20,6 +20,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $phone
  * @property string $address
  * @property string $description
+ * @property \Carbon\Carbon $start_date
+ * @property \Carbon\Carbon $finish_date
+ * @property int $total_manday
  * @property int $status_id
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
@@ -29,6 +32,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \App\Models\Customer $customer
  * @property \App\Models\Status $status
  * @property \App\Models\AdminUser $admin_user
+ * @property \Illuminate\Database\Eloquent\Collection $project_objects
  *
  * @package App\Models
  */
@@ -36,9 +40,15 @@ class Project extends Eloquent
 {
 	protected $casts = [
 		'customer_id' => 'int',
+		'total_manday' => 'int',
 		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
+	];
+
+	protected $dates = [
+		'start_date',
+		'finish_date'
 	];
 
 	protected $fillable = [
@@ -49,6 +59,9 @@ class Project extends Eloquent
 		'phone',
 		'address',
 		'description',
+		'start_date',
+		'finish_date',
+		'total_manday',
 		'status_id',
 		'created_by',
 		'updated_by'
@@ -67,5 +80,10 @@ class Project extends Eloquent
 	public function admin_user()
 	{
 		return $this->belongsTo(\App\Models\AdminUser::class, 'updated_by');
+	}
+
+	public function project_objects()
+	{
+		return $this->hasMany(\App\Models\ProjectObject::class);
 	}
 }

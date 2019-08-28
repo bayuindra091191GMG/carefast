@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin\project;
 
 
 use App\Http\Controllers\Controller;
@@ -22,25 +22,8 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Yajra\DataTables\DataTables;
 
-class ProjectController extends Controller
+class ProjectObjectController extends Controller
 {
-    public function index(){
-        try{
-            return view('admin.project.index');
-        }
-        catch (\Exception $ex){
-            Log::error('Admin/ProjectController - index error EX: '. $ex);
-            return "Something went wrong! Please contact administrator!";
-        }
-    }
-
-    public function getIndex(Request $request){
-        $customers = Project::all();
-        return DataTables::of($customers)
-            ->setTransformer(new ProjectTransformer())
-            ->make(true);
-    }
-
     public function show(int $id)
     {
         $project = Project::find($id);
@@ -52,15 +35,15 @@ class ProjectController extends Controller
         $data = [
             'project'          => $project,
         ];
-        return view('admin.project.show')->with($data);
+        return view('admin.project.object.show')->with($data);
     }
 
     public function create(){
         try{
-            return view('admin.project.create');
+            return view('admin.project.object.create');
         }
         catch (\Exception $ex){
-            Log::error('Admin/ProjectController - create error EX: '. $ex);
+            Log::error('Admin/object/ProjectObjectController - create error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
@@ -97,11 +80,11 @@ class ProjectController extends Controller
                 'updated_by'        => $user->id,
             ]);
 
-            Session::flash('success', 'Sukses membuat project baru!');
-            return redirect()->route('admin.project.index');
+            Session::flash('success', 'Sukses membuat project object baru!');
+            return redirect()->route('admin.project.object.index');
         }
         catch (\Exception $ex){
-            Log::error('Admin/ProjectController - store error EX: '. $ex);
+            Log::error('Admin/object/ProjectObjectController - store error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
@@ -116,7 +99,7 @@ class ProjectController extends Controller
         $data = [
             'project'          => $project,
         ];
-        return view('admin.project.edit')->with($data);
+        return view('admin.project.object.edit')->with($data);
     }
 
     public function update(Request $request, int $id){
@@ -151,12 +134,12 @@ class ProjectController extends Controller
             $project->updated_at = $now->toDateTimeString();
             $project->save();
 
-            Session::flash('success', 'Sukses mengubah data project!');
-            return redirect()->route('admin.project.show',['id' => $project->id]);
+            Session::flash('success', 'Sukses mengubah data project object!');
+            return redirect()->route('admin.project.object.show',['id' => $project->id]);
 
         }
         catch (\Exception $ex){
-            Log::error('Admin/ProjectController - update error EX: '. $ex);
+            Log::error('Admin/object/ProjectObjectController - update error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }

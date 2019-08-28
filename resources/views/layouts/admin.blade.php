@@ -114,6 +114,10 @@
         .left-sidebar{
             top: -16px !important;
         }
+        .nav-tabs{
+            padding-left: 10px;
+            border-bottom: none !important;
+        }
     </style>
     @yield('styles')
 </head>

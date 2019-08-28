@@ -111,7 +111,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
-                                        <a href="{{ route('admin.project.index') }}" class="btn btn-danger">BATAL</a>
+                                        <a href="{{ route('information') }}" class="btn btn-danger">BATAL</a>
                                         <input type="submit" class="btn btn-success" value="SIMPAN">
                                     </div>
                                 </div>

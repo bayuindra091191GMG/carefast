@@ -17,8 +17,8 @@ class ProjectTransformer extends TransformerAbstract
         try{
             $createdDate = Carbon::parse($project->created_at)->toIso8601String();
 
-            $routeShowUrl = route('admin.project.show', ['id' => $project->id]);
-            $routeEditUrl = route('admin.project.edit', ['id' => $project->id]);
+            $routeShowUrl = route('admin.project.information.show', ['id' => $project->id]);
+            $routeEditUrl = route('admin.project.information.edit', ['id' => $project->id]);
 
             $action = "<a class='btn btn-xs btn-info' href='".$routeShowUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-info'></i></a>";
             $action .= "&nbsp;<a class='btn btn-xs btn-primary' href='".$routeEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a>";

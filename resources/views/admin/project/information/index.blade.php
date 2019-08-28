@@ -7,13 +7,13 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <h3>DAFTAR CUSTOMER</h3>
+                        <h3>DAFTAR PROJECT</h3>
                         @include('partials.admin._messages')
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-12 text-right">
-                        <a href="{{ route('admin.project.create') }}" class="btn btn-success">
+                        <a href="{{ route('admin.project.information.create') }}" class="btn btn-success">
                             <i class="fas fa-plus text-white"></i>
                             <br/>
                             <span>TAMBAH</span>

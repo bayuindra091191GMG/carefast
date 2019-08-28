@@ -219,13 +219,34 @@ Route::prefix('admin')->group(function(){
     Route::post('/action/destroy', 'Admin\ActionController@destroy')->name('admin.action.destroy');
 
     // Project
-    Route::get('/project', 'Admin\ProjectController@index')->name('admin.project.index');
-    Route::get('/project/show/{id}', 'Admin\ProjectController@show')->name('admin.project.show');
-    Route::get('/project/create', 'Admin\ProjectController@create')->name('admin.project.create');
-    Route::get('/project/edit/{id}', 'Admin\ProjectController@edit')->name('admin.project.edit');
-    Route::post('/project/store', 'Admin\ProjectController@store')->name('admin.project.store');
-    Route::post('/project/update/{id}', 'Admin\ProjectController@update')->name('admin.project.update');
-    Route::post('/project/destroy', 'Admin\ProjectController@destroy')->name('admin.project.destroy');
+    Route::get('/project', 'Admin\project\ProjectController@index')->name('admin.project.information.index');
+    Route::get('/project/show/{id}', 'Admin\project\ProjectController@show')->name('admin.project.information.show');
+    Route::get('/project/create', 'Admin\project\ProjectController@create')->name('admin.project.information.create');
+    Route::get('/project/edit/{id}', 'Admin\project\ProjectController@edit')->name('admin.project.information.edit');
+    Route::post('/project/store', 'Admin\project\ProjectController@store')->name('admin.project.information.store');
+    Route::post('/project/update/{id}', 'Admin\project\ProjectController@update')->name('admin.project.information.update');
+    Route::post('/project/destroy', 'Admin\project\ProjectController@destroy')->name('admin.project.information.destroy');
+
+    // Project Object
+    Route::get('/project/object/show/{id}', 'Admin\project\ProjectObjectController@show')->name('admin.project.object.show');
+    Route::get('/project/object/create', 'Admin\project\ProjectObjectController@create')->name('admin.project.object.create');
+    Route::get('/project/object/edit/{id}', 'Admin\project\ProjectObjectController@edit')->name('admin.project.object.edit');
+    Route::post('/project/object/store', 'Admin\project\ProjectObjectController@store')->name('admin.project.object.store');
+    Route::post('/project/object/update/{id}', 'Admin\project\ProjectObjectController@update')->name('admin.project.object.update');
+
+    // Project Employee
+    Route::get('/project/employee/show/{id}', 'Admin\project\ProjectController@show')->name('admin.project.employee.show');
+    Route::get('/project/employee/create', 'Admin\project\ProjectController@create')->name('admin.project.employee.create');
+    Route::get('/project/employee/edit/{id}', 'Admin\project\ProjectController@edit')->name('admin.project.employee.edit');
+    Route::post('/project/employee/store', 'Admin\project\ProjectController@store')->name('admin.project.employee.store');
+    Route::post('/project/employee/update/{id}', 'Admin\project\ProjectController@update')->name('admin.project.employee.update');
+
+    // Project Schedule
+    Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectController@show')->name('admin.project.schedule.show');
+    Route::get('/project/schedule/create', 'Admin\project\ProjectController@create')->name('admin.project.schedule.create');
+    Route::get('/project/schedule/edit/{id}', 'Admin\project\ProjectController@edit')->name('admin.project.schedule.edit');
+    Route::post('/project/schedule/store', 'Admin\project\ProjectController@store')->name('admin.project.schedule.store');
+    Route::post('/project/schedule/update/{id}', 'Admin\project\ProjectController@update')->name('admin.project.schedule.update');
 
     // Report
     Route::get('/transaction/report', 'Admin\ReportController@transactionReport')->name('admin.transaction.report');
@@ -259,7 +280,7 @@ Route::get('/datatables-place', 'Admin\PlaceController@getIndex')->name('datatab
 Route::get('/datatables-unit', 'Admin\UnitController@getIndex')->name('datatables.units');
 Route::get('/datatables-action', 'Admin\ActionController@getIndex')->name('datatables.actions');
 Route::get('/datatables-customer', 'Admin\CustomerController@getIndex')->name('datatables.customers');
-Route::get('/datatables-project', 'Admin\ProjectController@getIndex')->name('datatables.projects');
+Route::get('/datatables-project', 'Admin\Project\ProjectController@getIndex')->name('datatables.projects');
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
