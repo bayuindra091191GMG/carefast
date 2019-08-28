@@ -36,8 +36,14 @@ Route::post('/register/exist/phone', 'Api\RegisterController@isPhoneExist');
 //User Management
 //Route::group(['namespace' => 'Api', 'middleware' => 'api', 'prefix' => 'user'], function () {
 Route::middleware('auth:api')->prefix('user')->group(function(){
-    //New Route
+    //New Route Start
+    // Attendance
     Route::post('/attendance/submit', 'Api\AttendanceController@submit');
+
+    //Employee
+    Route::get('/employee/get', 'Api\EmployeeController@getEmployees');
+    Route::get('/employee/get/{id}', 'Api\EmployeeController@getEmployeeDetail');
+    //New Route Finish
 
     Route::get('/testing', 'Api\UserController@testingAuthToken');
     Route::get('/get-users', 'Api\UserController@index');
