@@ -11,7 +11,7 @@
                     </div>
                 </div>
 
-                {{ Form::open(['route'=>['information'],'method' => 'post','id' => 'general-form']) }}
+                {{ Form::open(['route'=>['admin.project.information.store'],'method' => 'post','id' => 'general-form']) }}
 
                 <div class="row">
                     <div class="col-md-12">
@@ -109,7 +109,7 @@
                                             </div>
                                         </div>
                                     <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
-                                        <a href="{{ route('information') }}" class="btn btn-danger">BATAL</a>
+                                        <a href="{{ route('admin.project.information.index') }}" class="btn btn-danger">BATAL</a>
                                         <input type="submit" class="btn btn-success" value="SIMPAN">
                                     </div>
                                 </div>

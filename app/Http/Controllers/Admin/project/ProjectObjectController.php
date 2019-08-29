@@ -31,9 +31,11 @@ class ProjectObjectController extends Controller
         if(empty($project)){
             return redirect()->back();
         }
+        $projectObject = $project->project_objects;
 
         $data = [
-            'project'          => $project,
+            'project'           => $project,
+            'projectObject'     => $projectObject,
         ];
         return view('admin.project.object.show')->with($data);
     }

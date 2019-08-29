@@ -7,11 +7,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <h3>TAMBAH BARU PROJECT</h3>
+                        <h3>TAMBAH BARU OBJECT PROJECT</h3>
                     </div>
                 </div>
 
-                {{ Form::open(['route'=>['information'],'method' => 'post','id' => 'general-form']) }}
+                {{ Form::open(['route'=>['admin.project.object.store'],'method' => 'post','id' => 'general-form']) }}
 
                 <div class="row">
                     <div class="col-md-12">
@@ -34,82 +34,82 @@
                                             </div>
                                         </div>
                                     @endif
-                                        <div class="col-md-12">
-                                            <div class="form-group form-float form-group-lg">
-                                                <div class="form-line">
-                                                    <label class="form-label" for="name">Nama Project*</label>
-                                                    <input id="name" type="text" class="form-control"
-                                                           name="name" value="{{ old('name') }}">
-                                                </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="name">Nama Project*</label>
+                                                <input id="name" type="text" class="form-control"
+                                                       name="name" value="{{ old('name') }}">
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="col-md-12">
-                                            <div class="form-group form-float form-group-lg">
-                                                <div class="form-line">
-                                                    <label class="form-label" for="phone">Nomor Telepon *</label>
-                                                    <input id="phone" type="text" class="form-control"
-                                                           name="phone" value="{{ old('phone') }}">
-                                                </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="phone">Nomor Telepon *</label>
+                                                <input id="phone" type="text" class="form-control"
+                                                       name="phone" value="{{ old('phone') }}">
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="col-md-12">
-                                            <div class="form-group form-float form-group-lg">
-                                                <div class="form-line">
-                                                    <label class="form-label" for="address">Alamat *</label>
-                                                    <textarea name="address" id="address" class="form-control" rows="10">{{ old('address') }}</textarea>
-                                                </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="address">Alamat *</label>
+                                                <textarea name="address" id="address" class="form-control" rows="10">{{ old('address') }}</textarea>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="col-md-12">
-                                            <div class="form-group form-float form-group-lg">
-                                                <div class="form-line">
-                                                    <label class="form-label" for="searchmap">Lokasi *</label>
-                                                    <input type="text" name="location" id="searchmap" class="form-control"/>
-                                                </div>
-                                                <div id="map-canvas" style="height: 200px;"></div>
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="searchmap">Lokasi *</label>
+                                                <input type="text" name="location" id="searchmap" class="form-control"/>
+                                            </div>
+                                            <div id="map-canvas" style="height: 200px;"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="latitude">Latitude</label>
+                                                <input type="text" name="latitude" id="latitude" class="form-control" readonly/>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="col-md-12">
-                                            <div class="form-group form-float form-group-lg">
-                                                <div class="form-line">
-                                                    <label class="form-label" for="latitude">Latitude</label>
-                                                    <input type="text" name="latitude" id="latitude" class="form-control" readonly/>
-                                                </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="longitude">Longitude</label>
+                                                <input type="text" name="longitude" id="longitude" class="form-control" readonly/>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="col-md-12">
-                                            <div class="form-group form-float form-group-lg">
-                                                <div class="form-line">
-                                                    <label class="form-label" for="longitude">Longitude</label>
-                                                    <input type="text" name="longitude" id="longitude" class="form-control" readonly/>
-                                                </div>
-                                            </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="customer">Customer *</label>
+                                            <select id="customer" name="customer" class="form-control"></select>
                                         </div>
+                                    </div>
 
-
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="customer">Customer *</label>
-                                                <select id="customer" name="customer" class="form-control"></select>
-                                            </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="status">Status</label>
+                                            <select id="status" name="status" class="form-control">
+                                                <option value="1" selected>Aktif</option>
+                                                <option value="2">Non-Aktif</option>
+                                            </select>
                                         </div>
-
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="status">Status</label>
-                                                <select id="status" name="status" class="form-control">
-                                                    <option value="1" selected>Aktif</option>
-                                                    <option value="2">Non-Aktif</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                                    </div>
                                     <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
-                                        <a href="{{ route('information') }}" class="btn btn-danger">BATAL</a>
+                                        <a href="{{ route('admin.project.object.show') }}" class="btn btn-danger">BATAL</a>
                                         <input type="submit" class="btn btn-success" value="SIMPAN">
                                     </div>
                                 </div>
