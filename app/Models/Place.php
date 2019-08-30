@@ -15,6 +15,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $id
  * @property string $name
  * @property string $description
+ * @property string $qr_code
  * @property int $status_id
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
@@ -36,6 +37,7 @@ class Place extends Eloquent
 
 	protected $fillable = [
 		'name',
+        'qr_code',
 		'description',
 		'status_id',
 		'created_by',
