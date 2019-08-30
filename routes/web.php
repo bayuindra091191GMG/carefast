@@ -303,7 +303,9 @@ Route::get('/datatables-sub2unit', 'Admin\Sub2UnitController@getIndex')->name('d
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
 Route::get('/select-units', 'Admin\UnitController@getUnits')->name('select.units');
-Route::get('/select-objects', 'Admin\UnitController@getObjects')->name('select.sub1unit');
+Route::get('/select-sub1unit-dropdown', 'Admin\Sub1UnitController@getSub1UnitDropdowns')->name('select.sub1unit-dropdown');
+Route::get('/select-sub1units', 'Admin\Sub1UnitController@getSub1Units')->name('select.sub1units');
+Route::get('/select-sub2units', 'Admin\Sub2UnitController@getSub2Units')->name('select.sub2units');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
 Route::get('/select-user-categories', 'Admin\UserCategoryController@getCategories')->name('select.user-categories');
