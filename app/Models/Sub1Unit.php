@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Fri, 30 Aug 2019 09:26:57 +0700.
+ * Date: Fri, 30 Aug 2019 09:26:34 +0700.
  */
 
 namespace App\Models;
@@ -10,9 +10,10 @@ namespace App\Models;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
- * Class Unit
+ * Class Sub1Unit
  * 
  * @property int $id
+ * @property int $unit_id
  * @property string $name
  * @property string $description
  * @property int $status_id
@@ -22,20 +23,22 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $updated_by
  * 
  * @property \App\Models\Status $status
- * @property \Illuminate\Database\Eloquent\Collection $schedule_details
- * @property \Illuminate\Database\Eloquent\Collection $sub_1_units
+ * @property \App\Models\Unit $unit
+ * @property \Illuminate\Database\Eloquent\Collection $sub_2_units
  *
  * @package App\Models
  */
-class Unit extends Eloquent
+class Sub1Unit extends Eloquent
 {
 	protected $casts = [
+		'unit_id' => 'int',
 		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
 	];
 
 	protected $fillable = [
+		'unit_id',
 		'name',
 		'description',
 		'status_id',
@@ -48,13 +51,13 @@ class Unit extends Eloquent
 		return $this->belongsTo(\App\Models\Status::class);
 	}
 
-	public function schedule_details()
+	public function unit()
 	{
-		return $this->hasMany(\App\Models\ScheduleDetail::class);
+		return $this->belongsTo(\App\Models\Unit::class);
 	}
 
-	public function sub_1_units()
+	public function sub_2_units()
 	{
-		return $this->hasMany(\App\Models\Sub1Unit::class);
+		return $this->hasMany(\App\Models\Sub2Unit::class);
 	}
 }
