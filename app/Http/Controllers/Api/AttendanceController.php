@@ -10,8 +10,10 @@ use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 
 class AttendanceController extends Controller
 {
@@ -51,13 +53,39 @@ class AttendanceController extends Controller
             //Check out = 2
             $message = "";
             if($request->input('type') == 1){
-                Attendance::create([
-                    'employee_id'   => $employee->id,
-                    'schedule_id'   => $schedule->id,
-                    'date'          => Carbon::now('Asia/Jakarta'),
-                    'status_id'     => 6
-                ]);
-                $message = "Berhasil Check in";
+                if($request->hasFile('image')){
+                    $newAttendance = Attendance::create([
+                        'employee_id'   => $employee->id,
+                        'schedule_id'   => $schedule->id,
+                        'date'          => Carbon::now('Asia/Jakarta'),
+                        'status_id'     => 6
+                    ]);
+
+                    //Upload Image
+                    //Creating Path Everyday
+                    $today = Carbon::now('Asia/Jakarta');
+                    $todayStr = $today->format('l d-m-y');
+                    if(!File::exists($todayStr)){
+                        File::makeDirectory(public_path('storage/checkins/'. $todayStr));
+                    }
+
+                    $image = $request->file('image');
+                    $avatar = Image::make($image);
+                    $extension = $image->extension();
+                    $filename = $employee->first_name . ' ' . $employee->last_name . '_checkin_'. $newAttendance->id . '_' .
+                        Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                    $avatar->save(public_path('storage/checkins/'. $todayStr . $filename));
+
+                    $newAttendance->image_path = $filename;
+                    $newAttendance->save();
+                    $message = "Berhasil Check in";
+                }
+                else{
+                    return Response::json([
+                        'message'   => 'Harus mengupload Gambar!',
+                        'model'     => ''
+                    ], 400);
+                }
             }
             else if($request->input('type') == 2){
                 if($request->input('dac') == null){

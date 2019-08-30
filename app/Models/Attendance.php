@@ -13,6 +13,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * Class Attendance
  * 
  * @property int $id
+ * @property string $image_path
  * @property int $employee_id
  * @property int $schedule_id
  * @property \Carbon\Carbon $date
@@ -43,6 +44,7 @@ class Attendance extends Eloquent
 	];
 
 	protected $fillable = [
+	    'image_path',
 		'employee_id',
 		'schedule_id',
 		'date',
