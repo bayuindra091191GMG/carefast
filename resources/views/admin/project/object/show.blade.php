@@ -43,7 +43,7 @@
                                         <div class="card-body b-b">
                                             <div class="col-md-12 col-12 text-right">
                                                 @if(!empty($projectObject))
-                                                    <a href="{{ route('admin.project.object.create') }}" class="btn btn-success">ADD OBJECT</a>
+                                                    <a href="{{ route('admin.project.object.create', ['id' => $project->id]) }}" class="btn btn-success">ADD OBJECT</a>
                                                 @endif
                                                 <a href="{{ route('admin.project.object.edit', ['id' => $project->id]) }}" class="btn btn-primary">EDIT OBJECT</a>
                                             </div>

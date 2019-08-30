@@ -132,4 +132,19 @@ class PlaceController extends Controller
             return Response::json(array('errors' => 'INVALID'));
         }
     }
+    public function getPlaces(Request $request){
+        $term = trim($request->q);
+        $places = Place::where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($places as $place) {
+            $formatted_tags[] = ['id' => $place->id, 'text' => $place->name];
+        }
+
+        return \Response::json($formatted_tags);
+    }
 }

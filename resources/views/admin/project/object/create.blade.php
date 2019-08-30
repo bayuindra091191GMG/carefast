@@ -5,15 +5,18 @@
     <div class="row">
         <div class="col-12">
             <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h3>TAMBAH BARU OBJECT PROJECT</h3>
-                    </div>
-                </div>
-
                 {{ Form::open(['route'=>['admin.project.object.store'],'method' => 'post','id' => 'general-form']) }}
+                    <div class="row">
+                        <div class="col-md-8 col-12">
+                            <h3>TAMBAH BARU OBJECT PROJECT</h3>
+                        </div>
+                        <div class="col-md-4 col-12 text-right">
+                            <a href="{{ route('admin.project.object.show', ['id'=>$project->id]) }}" class="btn btn-danger">BATAL</a>
+                            <input type="submit" class="btn btn-success" value="SIMPAN">
+                        </div>
+                    </div>
 
-                <div class="row">
+                    <div class="row">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body b-b">
@@ -34,90 +37,55 @@
                                             </div>
                                         </div>
                                     @endif
-                                    <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="name">Nama Project*</label>
-                                                <input id="name" type="text" class="form-control"
-                                                       name="name" value="{{ old('name') }}">
-                                            </div>
+
+                                    <div class="col-md-12 p-t-20">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover" id="tab_logic">
+                                                <thead>
+                                                <tr >
+                                                    <th class="text-center" style="width: 30%">
+                                                        Pilih Place*
+                                                    </th>
+                                                    <th class="text-center" style="width: 30%">
+                                                        Pilih Object (Jika ada)
+                                                    </th>
+                                                    <th class="text-center" style="width: 30%">
+                                                        Pilih Sub Object 1 (Jika ada)
+                                                    </th>
+                                                    <th class="text-center" style="width: 30%">
+                                                        Pilih Sub Object 2 (Jika ada)
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr id='sch0'>
+                                                    <td class='field-item'>
+                                                        <select id="place0" name="places[]" class='form-control'></select>
+                                                    </td>
+                                                    <td>
+                                                        <select id="unit0" name="units[]" class='form-control'></select>
+                                                    </td>
+                                                    <td>
+                                                        <select id="sub_1_unit0" name="sub_1_units[]" class='form-control' style="display: none"></select>
+                                                    </td>
+                                                    <td>
+                                                        <select id="sub_2_unit0" name="sub_2_units[]" class='form-control' style="display: none"></select>
+                                                    </td>
+                                                </tr>
+                                                <tr id='sch1'></tr>
+                                                </tbody>
+                                            </table>
                                         </div>
+                                        <a id="add_row" class="btn btn-success" style="color: #fff;">Tambah</a>
+                                        &nbsp;
+                                        <a id='delete_row' class="btn btn-danger" style="color: #fff;">Hapus</a>
                                     </div>
 
-                                    <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="phone">Nomor Telepon *</label>
-                                                <input id="phone" type="text" class="form-control"
-                                                       name="phone" value="{{ old('phone') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="address">Alamat *</label>
-                                                <textarea name="address" id="address" class="form-control" rows="10">{{ old('address') }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="searchmap">Lokasi *</label>
-                                                <input type="text" name="location" id="searchmap" class="form-control"/>
-                                            </div>
-                                            <div id="map-canvas" style="height: 200px;"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="latitude">Latitude</label>
-                                                <input type="text" name="latitude" id="latitude" class="form-control" readonly/>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="longitude">Longitude</label>
-                                                <input type="text" name="longitude" id="longitude" class="form-control" readonly/>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="customer">Customer *</label>
-                                            <select id="customer" name="customer" class="form-control"></select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="status">Status</label>
-                                            <select id="status" name="status" class="form-control">
-                                                <option value="1" selected>Aktif</option>
-                                                <option value="2">Non-Aktif</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
-                                        <a href="{{ route('admin.project.object.show') }}" class="btn btn-danger">BATAL</a>
-                                        <input type="submit" class="btn btn-success" value="SIMPAN">
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 {{ Form::close() }}
             </div>
         </div>
@@ -135,18 +103,17 @@
             type="text/javascript"></script>
 
     <script type="text/javascript">
+        // select2 for initial Data
 
-        $('#city').select2();
-
-        $('#customer').select2({
+        $('#place0').select2({
             placeholder: {
                 id: '-1',
-                text: ' - Pilih Customer - '
+                text: ' - Pilih Place - '
             },
             width: '100%',
-            minimumInputLength: 0,
+            minimumInputLength: 1,
             ajax: {
-                url: '{{ route('select.customers') }}',
+                url: '{{ route('select.places') }}',
                 dataType: 'json',
                 data: function (params) {
                     return {
@@ -161,46 +128,182 @@
             }
         });
 
-        var map = new google.maps.Map(document.getElementById('map-canvas'), {
-            center:{
-                lat: -6.180495,
-                lng: 106.82834149999996
+        $('#unit0').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Object - '
             },
-            zoom: 15
-        });
-
-        var marker = new google.maps.Marker({
-            position:{
-                lat: -6.180495,
-                lng: 106.82834149999996
-            },
-            map: map,
-            draggable: true
-        });
-
-        var searchBox = new google.maps.places.SearchBox(document.getElementById('searchmap'));
-
-        google.maps.event.addListener(searchBox, 'places_changed', function(){
-            var places = searchBox.getPlaces();
-            var bounds = new google.maps.LatLngBounds();
-            var i, place;
-
-            for(i=0; place=places[i]; i++){
-                bounds.extend(place.geometry.location);
-                marker.setPosition(place.geometry.location);
+            width: '100%',
+            minimumInputLength: 1,
+            ajax: {
+                url: '{{ route('select.units') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
             }
-
-            map.fitBounds(bounds);
-            map.setZoom(15);
         });
 
-        google.maps.event.addListener(marker, 'position_changed', function(){
-            var lat = marker.getPosition().lat();
-            var lng = marker.getPosition().lng();
+        $('#unit0').on('select2:select', function(){
+            var objVal = $('#unit0').val();
+            // alert(objVal);
 
-            $('#latitude').val(lat);
-            $('#longitude').val(lng);
+            $.ajax({
+                url: '{{ route('select.units') }}',
+                dataType: 'json',
+                data: {
+                    'id': objVal
+                },
+                success: function (data) {
+                    $('#sub_1_unit0').empty();
+                    for(let j=0; j<data.length; j++){
+                        $('#sub_1_unit0')
+                            .append($("<option></option>")
+                                .attr("value",data[j])
+                                .text(data[j]));
+                    }
+                    $('#sub_1_unit0').show();
+                }
+            });
         });
 
+        $('#sub_1_object' + i).on('select2:select', function(){
+            {{--var objId = 'sub_1_object' + i;--}}
+            {{--$.ajax({--}}
+            {{--    url: '{{ route('select.units') }}',--}}
+            {{--    dataType: 'json',--}}
+            {{--    data: {--}}
+            {{--        'id': $('select[id=objId]').val()--}}
+            {{--    },--}}
+            {{--    success: function (data) {--}}
+            {{--        var i;--}}
+            {{--        $('#sub_2_object' + i).empty();--}}
+            {{--        for(i=0; i<data.length; i++){--}}
+            {{--            $('#sub_2_object' + i)--}}
+            {{--                .append($("<option></option>")--}}
+            {{--                    .attr("value",data[i])--}}
+            {{--                    .text(data[i]));--}}
+            {{--        }--}}
+            {{--        $('#sub_2_object' + i).show();--}}
+            {{--    }--}}
+            {{--});--}}
+        });
+
+        var i=1;
+        $("#add_row").click(function(){
+            var bufferID = i;
+            $('#sch'+i).html(
+                "<td><select id='place" + i +"' name='places[]' class='form-control'></select></td>" +
+                "<td><select id='unit" + i +"' name='units[]' class='form-control'></select></td>" +
+                "<td><select id='sub_1_unit" + i +"' name='sub_1_units[]' class='form-control' style='display: none'></select></td>" +
+                "<td><select id='sub_2_unit" + i +"' name='sub_2_units[]' class='form-control' style='display: none'></select></td>"
+            );
+            $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+
+            $('#place' + i).select2({
+                placeholder: {
+                    id: '-1',
+                    text: ' - Pilih Place - '
+                },
+                width: '100%',
+                minimumInputLength: 1,
+                ajax: {
+                    url: '{{ route('select.places') }}',
+                    dataType: 'json',
+                    data: function (params) {
+                        return {
+                            q: $.trim(params.term)
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+
+            $('#unit' + i).select2({
+                placeholder: {
+                    id: '-1',
+                    text: ' - Pilih Object - '
+                },
+                width: '100%',
+                minimumInputLength: 1,
+                ajax: {
+                    url: '{{ route('select.units') }}',
+                    dataType: 'json',
+                    data: function (params) {
+                        return {
+                            q: $.trim(params.term)
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+
+            $('#unit' + i).on('select2:select', function(){
+                var objVal = '#unit' + bufferID;
+
+                $.ajax({
+                    url: '{{ route('select.units') }}',
+                    dataType: 'json',
+                    data: {
+                        'id': $(objVal).val()
+                    },
+                    success: function (data) {
+                        $('#sub_1_unit' + bufferID).empty();
+                        for(let j=0; j<data.length; j++){
+                            $('#sub_1_unit' + bufferID)
+                                .append($("<option></option>")
+                                    .attr("value",data[j])
+                                    .text(data[j]));
+                        }
+                        $('#sub_1_unit' + bufferID).show();
+                    }
+                });
+            });
+
+            $('#sub_2_unit' + bufferID).on('change', function() {
+                var objVal = '#sub_1_unit' + bufferID;
+                $.ajax({
+                    url: '{{ route('select.units') }}',
+                    dataType: 'json',
+                    data: {
+                        'id': $(objVal).val()
+                    },
+                    success: function (data) {
+                        $('#sub_2_unit' + bufferID).empty();
+                        for(let j=0; j<data.length; j++){
+                            $('#sub_2_unit' + bufferID)
+                                .append($("<option></option>")
+                                    .attr("value",data[j])
+                                    .text(data[j]));
+                        }
+                        $('#sub_2_unit' + bufferID).show();
+                    }
+                });
+            });
+
+            i++;
+        });
+
+        $("#delete_row").click(function(){
+            if(i>1){
+                $("#sch"+(i-1)).html('');
+                i--;
+            }
+        });
     </script>
 @endsection

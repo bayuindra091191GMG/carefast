@@ -40,9 +40,18 @@ class ProjectObjectController extends Controller
         return view('admin.project.object.show')->with($data);
     }
 
-    public function create(){
+    public function create(int $id){
         try{
-            return view('admin.project.object.create');
+            $project = Project::find($id);
+
+            if(empty($project)){
+                return redirect()->back();
+            }
+
+            $data = [
+                'project'           => $project,
+            ];
+            return view('admin.project.object.create')->with($data);
         }
         catch (\Exception $ex){
             Log::error('Admin/object/ProjectObjectController - create error EX: '. $ex);

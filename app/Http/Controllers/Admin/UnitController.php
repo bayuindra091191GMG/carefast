@@ -132,4 +132,19 @@ class UnitController extends Controller
             return Response::json(array('errors' => 'INVALID'));
         }
     }
+    public function getUnits(Request $request){
+        $term = trim($request->q);
+        $units = Unit::where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($units as $unit) {
+            $formatted_tags[] = ['id' => $unit->id, 'text' => $unit->name];
+        }
+
+        return \Response::json($formatted_tags);
+    }
 }

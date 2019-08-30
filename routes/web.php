@@ -245,7 +245,7 @@ Route::prefix('admin')->group(function(){
 
     // Project Object
     Route::get('/project/object/show/{id}', 'Admin\project\ProjectObjectController@show')->name('admin.project.object.show');
-    Route::get('/project/object/create', 'Admin\project\ProjectObjectController@create')->name('admin.project.object.create');
+    Route::get('/project/object/create/{id}', 'Admin\project\ProjectObjectController@create')->name('admin.project.object.create');
     Route::get('/project/object/edit/{id}', 'Admin\project\ProjectObjectController@edit')->name('admin.project.object.edit');
     Route::post('/project/object/store', 'Admin\project\ProjectObjectController@store')->name('admin.project.object.store');
     Route::post('/project/object/update/{id}', 'Admin\project\ProjectObjectController@update')->name('admin.project.object.update');
@@ -302,6 +302,7 @@ Route::get('/datatables-sub2unit', 'Admin\Sub2UnitController@getIndex')->name('d
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
+Route::get('/select-units', 'Admin\UnitController@getUnits')->name('select.units');
 Route::get('/select-objects', 'Admin\UnitController@getObjects')->name('select.sub1unit');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');

@@ -13,55 +13,28 @@
             <!-- Column -->
             <div class="col-md-6 col-lg-2 col-xlg-3">
                 <div class="card card-hover">
-                    <a href="{{ route('admin.dashboard') }}" class="box bg-custom-dark-blue text-center">
-                        <h1 class="font-light text-white"><i class="mdi mdi-view-dashboard"></i></h1>
-                        <h6 class="text-white">Dashboard</h6>
+                    <a href="{{ route('admin.project.information.index') }}" class="box bg-custom-dark-blue text-center">
+                        <h1 class="font-light text-white"><i class="mdi mdi-book-open"></i></h1>
+                        <h6 class="text-white">Daftar Project</h6>
                     </a>
                 </div>
             </div>
             <!-- Column -->
             <div class="col-md-6 col-lg-2 col-xlg-3">
                 <div class="card card-hover">
-                    <div class="box bg-custom-dark-blue text-center">
+                    <a href="{{ route('admin.project.information.create') }}" class="box bg-custom-dark-blue text-center">
+                        <h1 class="font-light text-white"><i class="mdi mdi-hospital-building"></i></h1>
+                        <h6 class="text-white">Tambah Project</h6>
+                    </a>
+                </div>
+            </div>
+            <!-- Column -->
+            <div class="col-md-6 col-lg-2 col-xlg-3">
+                <div class="card card-hover">
+                    <a href="{{ route('admin.employee.index') }}" class="box bg-custom-dark-blue text-center">
                         <h1 class="font-light text-white"><i class="mdi mdi-account-multiple"></i></h1>
-                        <h6 class="text-white">Employee</h6>
-                    </div>
-                </div>
-            </div>
-            <!-- Column -->
-            <div class="col-md-6 col-lg-2 col-xlg-3">
-                <div class="card card-hover">
-                    <div class="box bg-custom-dark-blue text-center">
-                        <h1 class="font-light text-white"><i class="mdi mdi-account-multiple"></i></h1>
-                        <h6 class="text-white">Admins</h6>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-2 col-xlg-3">
-                <div class="card card-hover">
-                    <div class="box bg-custom-dark-blue text-center">
-                        <h1 class="font-light text-white"><i class="mdi mdi-book-open"></i></h1>
-                        <h6 class="text-white">Master Data</h6>
-                    </div>
-                </div>
-            </div>
-            <!-- Column -->
-            <div class="col-md-6 col-lg-2 col-xlg-3">
-                <div class="card card-hover">
-                    <div class="box bg-custom-dark-blue text-center">
-                        <h1 class="font-light text-white"><i class="mdi mdi-cellphone"></i></h1>
-                        <h6 class="text-white">Menu 1</h6>
-                    </div>
-                </div>
-            </div>
-            <!-- Column -->
-            <div class="col-md-6 col-lg-2 col-xlg-3">
-                <div class="card card-hover">
-                    <div class="box bg-custom-dark-blue text-center">
-                        <h1 class="font-light text-white"><i class="mdi mdi-receipt"></i></h1>
-                        <h6 class="text-white">Menu 2</h6>
-                    </div>
+                        <h6 class="text-white">Daftar Karyawan</h6>
+                    </a>
                 </div>
             </div>
             <!-- Column -->
