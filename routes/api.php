@@ -37,6 +37,9 @@ Route::post('/register/exist/phone', 'Api\RegisterController@isPhoneExist');
 //Route::group(['namespace' => 'Api', 'middleware' => 'api', 'prefix' => 'user'], function () {
 Route::middleware('auth:api')->prefix('user')->group(function(){
     //New Route Start
+    //Place
+    Route::get('/places/get/qr-code', 'Api\PlaceController@qrCode');
+
     // Attendance
     Route::post('/attendance/submit', 'Api\AttendanceController@submit');
 

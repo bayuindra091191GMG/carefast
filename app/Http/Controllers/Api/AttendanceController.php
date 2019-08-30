@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\Employee;
+use App\Models\Place;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +29,8 @@ class AttendanceController extends Controller
     {
         try{
             $rules = array(
-                'type' => 'required'
+                'type'      => 'required',
+                'qr_code'   => 'required'
             );
 
             $data = $request->json()->all();
@@ -43,9 +46,14 @@ class AttendanceController extends Controller
             $date = Carbon::now('Asia/Jakarta');
             $time = $date->format('H:i:s');
             $schedule = Schedule::where('employee_id', $employee->id)->where('start' >= $time)->where('finish' <= $time)->first();
+            $place = Place::find($schedule->place_id);
+
+            if($place->qr_code != Crypt::decryptString($request->input('qr_code'))){
+                return Response::json("Tempat yang discan tidak tepat!", 400);
+            }
 
             if($schedule == null){
-                return Response::json("Jadwal Tidak ditemukan!", 500);
+                return Response::json("Jadwal Tidak ditemukan!", 400);
             }
 
             //Check if Check in or Check out
@@ -57,7 +65,7 @@ class AttendanceController extends Controller
                     $newAttendance = Attendance::create([
                         'employee_id'   => $employee->id,
                         'schedule_id'   => $schedule->id,
-                        'date'          => Carbon::now('Asia/Jakarta'),
+                        'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                         'status_id'     => 6
                     ]);
 

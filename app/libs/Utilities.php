@@ -8,6 +8,7 @@
 
 namespace App\libs;
 
+use App\Models\Place;
 use App\Models\TransactionNumber;
 use Carbon\Carbon;
 use Monolog\Handler\StreamHandler;
@@ -16,6 +17,24 @@ use Monolog\Logger;
 
 class Utilities
 {
+    public static function barcodeNumberExists($number) {
+        // query the database and return a boolean
+        // for instance, it might look like this in Laravel
+        return Place::where('qr_code', $number)->exists();
+    }
+
+    public static function generateBarcodeNumber() {
+        $number = mt_rand(1000000000, 9999999999); // better than rand()
+
+        // call the same function if the barcode exists already
+        if (Utilities::barcodeNumberExists($number)) {
+            return Utilities::generateBarcodeNumber();
+        }
+
+        // otherwise, it's valid and can be used
+        return $number;
+    }
+
     public static function ExceptionLog($ex){
         $logContent = ['id' => 1,
             'description' => $ex];
