@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Fri, 30 Aug 2019 09:26:57 +0700.
+ * Date: Fri, 30 Aug 2019 13:26:03 +0700.
  */
 
 namespace App\Models;
@@ -23,7 +23,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * 
  * @property \App\Models\Status $status
  * @property \Illuminate\Database\Eloquent\Collection $schedule_details
- * @property \Illuminate\Database\Eloquent\Collection $sub_1_units
+ * @property \Illuminate\Database\Eloquent\Collection $sub1_units
  *
  * @package App\Models
  */
@@ -53,7 +53,7 @@ class Unit extends Eloquent
 		return $this->hasMany(\App\Models\ScheduleDetail::class);
 	}
 
-	public function sub_1_units()
+	public function sub1_units()
 	{
 		return $this->hasMany(\App\Models\Sub1Unit::class);
 	}

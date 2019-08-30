@@ -8,35 +8,38 @@
         <nav class="sidebar-nav">
             <ul id="sidebarnav" class="pt-3 mt-3" style="border-top: 1px solid #eeeeee;">
                 <li class="sidebar-item">
-                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('admin.dashboard') }}" aria-expanded="false">
+                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{{ route('admin.dashboard') }}"
+                        aria-expanded="false">
                         <i class="mdi mdi-view-dashboard"></i>
                         <span class="hide-menu">Dashboard</span>
                     </a>
                 </li>
 
                 @foreach($menuHeader as $header)
-                    <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-                            <i class="{{ $header->icon }}"></i>
-                            <span class="hide-menu">{!! $header->name !!} </span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse first-level">
-                            @foreach($header->menu_header->menus as $menu)
-                                <li class="sidebar-item">
-                                    <a href="{{ route($menu->route) }}" class="sidebar-link">
-                                        <i class="{{ $menu->icon }}"></i>
-                                        <span class="hide-menu"> {{ $menu->name }} </span>
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                        aria-expanded="false">
+                        <i class="{{ $header->icon }}"></i>
+                        <span class="hide-menu">{!! $header->name !!} </span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        @foreach($header->menu_header->menus as $menu)
+                        <li class="sidebar-item">
+                            <a href="{{ route($menu->route) }}" class="sidebar-link">
+                                <i class="{{ $menu->icon }}"></i>
+                                <span class="hide-menu"> {{ $menu->name }} </span>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </li>
                 @endforeach
 
 
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                        aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
                         <span class="hide-menu"> Project </span>
                     </a>
@@ -57,7 +60,8 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                        aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
                         <span class="hide-menu">Karyawan </span>
                     </a>
@@ -89,7 +93,8 @@
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                        aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
                         <span class="hide-menu">Customer </span>
                     </a>
@@ -121,7 +126,8 @@
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                        aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
                         <span class="hide-menu">User Admin </span>
                     </a>
@@ -141,7 +147,8 @@
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                        aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
                         <span class="hide-menu">Place </span>
                     </a>
@@ -161,7 +168,8 @@
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                        aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
                         <span class="hide-menu"> Object / Unit </span>
                     </a>
@@ -173,15 +181,40 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
+                            <a href="{{route('admin.sub1unit.index')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Sub Unit 1 </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.sub2unit.index')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Sub Unit 2</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
                             <a href="{{route('admin.unit.create')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Tambah Object </span>
                             </a>
                         </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.sub1unit.create')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Tambah sub-Unit-1 </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.sub2unit.create')}}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Tambah sub-unit-2 </span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
+                        aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
                         <span class="hide-menu"> Action </span>
                     </a>

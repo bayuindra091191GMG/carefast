@@ -202,6 +202,22 @@ Route::prefix('admin')->group(function(){
     Route::post('/unit/update/{id}', 'Admin\UnitController@update')->name('admin.unit.update');
     Route::post('/unit/destroy', 'Admin\UnitController@destroy')->name('admin.unit.destroy');
 
+    //Sub1Unit
+    Route::get('/sub1unit', 'Admin\Sub1UnitController@index')->name('admin.sub1unit.index');
+    Route::get('/sub1unit/create', 'Admin\Sub1UnitController@create')->name('admin.sub1unit.create');
+    Route::get('/sub1unit/edit/{id}', 'Admin\Sub1UnitController@edit')->name('admin.sub1unit.edit');
+    Route::post('/sub1unit/store', 'Admin\Sub1UnitController@store')->name('admin.sub1unit.store');
+    Route::post('/sub1unit/update/{id}', 'Admin\Sub1UnitController@update')->name('admin.sub1unit.update');
+    Route::post('/sub1unit/destroy', 'Admin\Sub1UnitController@destroy')->name('admin.sub1unit.destroy');
+
+    //Sub2Unit
+    Route::get('/sub2unit', 'Admin\Sub2UnitController@index')->name('admin.sub2unit.index');
+    Route::get('/sub2unit/create', 'Admin\Sub2UnitController@create')->name('admin.sub2unit.create');
+    Route::get('/sub2unit/edit/{id}', 'Admin\Sub2UnitController@edit')->name('admin.sub2unit.edit');
+    Route::post('/sub2unit/store', 'Admin\Sub2UnitController@store')->name('admin.sub2unit.store');
+    Route::post('/sub2unit/update/{id}', 'Admin\Sub2UnitController@update')->name('admin.sub2unit.update');
+    Route::post('/sub2unit/destroy', 'Admin\Sub2UnitController@destroy')->name('admin.sub2unit.destroy');
+
     // Place
     Route::get('/place', 'Admin\PlaceController@index')->name('admin.place.index');
     Route::get('/place/create', 'Admin\PlaceController@create')->name('admin.place.create');
@@ -281,9 +297,12 @@ Route::get('/datatables-unit', 'Admin\UnitController@getIndex')->name('datatable
 Route::get('/datatables-action', 'Admin\ActionController@getIndex')->name('datatables.actions');
 Route::get('/datatables-customer', 'Admin\CustomerController@getIndex')->name('datatables.customers');
 Route::get('/datatables-project', 'Admin\Project\ProjectController@getIndex')->name('datatables.projects');
+Route::get('/datatables-sub1unit', 'Admin\Sub1UnitController@getIndex')->name('datatables.sub1_units');
+Route::get('/datatables-sub2unit', 'Admin\Sub2UnitController@getIndex')->name('datatables.sub2_units');
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
+Route::get('/select-objects', 'Admin\UnitController@getObjects')->name('select.sub1unit');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
 Route::get('/select-user-categories', 'Admin\UserCategoryController@getCategories')->name('select.user-categories');

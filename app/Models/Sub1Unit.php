@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Fri, 30 Aug 2019 09:26:34 +0700.
+ * Date: Fri, 30 Aug 2019 13:25:45 +0700.
  */
 
 namespace App\Models;
@@ -24,7 +24,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * 
  * @property \App\Models\Status $status
  * @property \App\Models\Unit $unit
- * @property \Illuminate\Database\Eloquent\Collection $sub_2_units
+ * @property \Illuminate\Database\Eloquent\Collection $sub2_units
  *
  * @package App\Models
  */
@@ -56,8 +56,8 @@ class Sub1Unit extends Eloquent
 		return $this->belongsTo(\App\Models\Unit::class);
 	}
 
-	public function sub_2_units()
+	public function sub2_units()
 	{
-		return $this->hasMany(\App\Models\Sub2Unit::class);
+		return $this->hasMany(\App\Models\Sub2Unit::class, 'sub_1_unit_id');
 	}
 }
