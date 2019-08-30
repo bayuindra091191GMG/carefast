@@ -156,44 +156,44 @@
             // alert(objVal);
 
             $.ajax({
-                url: '{{ route('select.units') }}',
+                url: '{{ route('select.sub1unit-dropdown') }}',
                 dataType: 'json',
                 data: {
                     'id': objVal
                 },
                 success: function (data) {
+                    alert(data);
                     $('#sub_1_unit0').empty();
                     for(let j=0; j<data.length; j++){
                         $('#sub_1_unit0')
                             .append($("<option></option>")
-                                .attr("value",data[j])
-                                .text(data[j]));
+                                .attr("value",data[j].id)
+                                .text(data[j].text));
                     }
                     $('#sub_1_unit0').show();
                 }
             });
         });
 
-        $('#sub_1_object' + i).on('select2:select', function(){
-            {{--var objId = 'sub_1_object' + i;--}}
-            {{--$.ajax({--}}
-            {{--    url: '{{ route('select.units') }}',--}}
-            {{--    dataType: 'json',--}}
-            {{--    data: {--}}
-            {{--        'id': $('select[id=objId]').val()--}}
-            {{--    },--}}
-            {{--    success: function (data) {--}}
-            {{--        var i;--}}
-            {{--        $('#sub_2_object' + i).empty();--}}
-            {{--        for(i=0; i<data.length; i++){--}}
-            {{--            $('#sub_2_object' + i)--}}
-            {{--                .append($("<option></option>")--}}
-            {{--                    .attr("value",data[i])--}}
-            {{--                    .text(data[i]));--}}
-            {{--        }--}}
-            {{--        $('#sub_2_object' + i).show();--}}
-            {{--    }--}}
-            {{--});--}}
+        $('#sub_1_unit0').on('change', function() {
+            var objVal = $('#sub_1_unit0').val();
+            $.ajax({
+                url: '{{ route('select.units') }}',
+                dataType: 'json',
+                data: {
+                    'id': objVal
+                },
+                success: function (data) {
+                    $('#sub_2_unit0').empty();
+                    for(let j=0; j<data.length; j++){
+                        $('#sub_2_unit0')
+                            .append($("<option></option>")
+                                .attr("value",data[j].id)
+                                .text(data[j].text));
+                    }
+                    $('#sub_2_unit0').show();
+                }
+            });
         });
 
         var i=1;
@@ -257,7 +257,7 @@
                 var objVal = '#unit' + bufferID;
 
                 $.ajax({
-                    url: '{{ route('select.units') }}',
+                    url: '{{ route('select.sub1unit-dropdown') }}',
                     dataType: 'json',
                     data: {
                         'id': $(objVal).val()
@@ -267,8 +267,8 @@
                         for(let j=0; j<data.length; j++){
                             $('#sub_1_unit' + bufferID)
                                 .append($("<option></option>")
-                                    .attr("value",data[j])
-                                    .text(data[j]));
+                                    .attr("value",data[j].id)
+                                    .text(data[j].text));
                         }
                         $('#sub_1_unit' + bufferID).show();
                     }
@@ -288,8 +288,8 @@
                         for(let j=0; j<data.length; j++){
                             $('#sub_2_unit' + bufferID)
                                 .append($("<option></option>")
-                                    .attr("value",data[j])
-                                    .text(data[j]));
+                                    .attr("value",data[j].id)
+                                    .text(data[j].text));
                         }
                         $('#sub_2_unit' + bufferID).show();
                     }

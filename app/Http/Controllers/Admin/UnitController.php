@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Sub1Unit;
 use App\Models\Unit;
 use App\Transformer\UnitTransformer;
 use Carbon\Carbon;
@@ -143,6 +144,18 @@ class UnitController extends Controller
 
         foreach ($units as $unit) {
             $formatted_tags[] = ['id' => $unit->id, 'text' => $unit->name];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+    public function getSub1UnitDropdowns(Request $request){
+        $id = $request->input('id');
+        $sub1_units = Sub1Unit::where('unit_id', $id)->get();
+
+        $formatted_tags = [];
+
+        foreach ($sub1_units as $sub1unit) {
+            $formatted_tags[] = ['id' => $sub1unit->id, 'text' => $sub1unit->name];
         }
 
         return \Response::json($formatted_tags);
