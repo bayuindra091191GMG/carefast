@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 21 Aug 2019 12:14:31 +0700.
+ * Date: Mon, 02 Sep 2019 13:50:48 +0700.
  */
 
 namespace App\Models;
@@ -15,9 +15,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $id
  * @property int $employee_id
  * @property int $place_id
- * @property int $status_id
  * @property \Carbon\Carbon $start
  * @property \Carbon\Carbon $finish
+ * @property int $status_id
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -48,9 +48,9 @@ class Schedule extends Eloquent
 	protected $fillable = [
 		'employee_id',
 		'place_id',
-		'status_id',
 		'start',
 		'finish',
+		'status_id',
 		'created_by',
 		'updated_by'
 	];

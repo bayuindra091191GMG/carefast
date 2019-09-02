@@ -136,4 +136,60 @@ class AttendanceController extends Controller
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
+
+    public function employeeList(Request $request){
+        try{
+            $rules = array(
+                'qr_code'   => 'required'
+            );
+
+            $data = $request->json()->all();
+            $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
+
+            //Submit Data
+            $place = Place::where('qr_code', $request->input('qr_code'))->first();
+            $date = Carbon::now('Asia/Jakarta');
+            $time = $date->format('H:i:s');
+            $schedule = Schedule::where('place_id', $place->id)->where('finish' <= $time)->with('employee')->get();
+
+            return Response::json([
+                'message'   => 'Sukses mengambil data Schedule!',
+                'model'     => $schedule
+            ]);
+        }
+        catch (\Exception $ex){
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function supervisorSubmit(Request $request){
+        try {
+            $rules = array(
+                'attendance_id' => 'required'
+            );
+
+            $data = $request->json()->all();
+            $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
+
+            //Submit Data
+            $place = Place::where('qr_code', $request->input('qr_code'))->first();
+
+            if($place->qr_code != Crypt::decryptString($request->input('qr_code'))){
+                return Response::json("Tempat yang discan tidak tepat!", 400);
+            }
+            $date = Carbon::now('Asia/Jakarta');
+            $time = $date->format('H:i:s');
+            $schedule = Schedule::where('place_id', $place->id)->where('start' >= $time)->where('finish' <= $time)->first();
+//            $attendance = Attendance::where('schedule_id', $schedule->id)->where('employee_id', )
+        }
+        catch (\Exception $ex){
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
 }
