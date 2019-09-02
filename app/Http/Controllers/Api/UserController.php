@@ -76,21 +76,29 @@ class UserController extends Controller
         try{
             $userLogin = auth('api')->user();
             $user = User::where('email', $userLogin->email)->with('addresses')->first();
+            $employee = $user->employees->first();
+
+            // Get dob
+            $dob = '';
+            if(!$employee->dob){
+                $dob = Carbon::parse($employee->dob, 'Asia/Jakarta')->format('d M Y');
+            }
 
             $userModel = collect([
                 'id'                => $user->id,
                 'name'              => $user->name,
                 'email'             => $user->email,
-                'position_name'     => $user->position_name,
-                'image_path'        => $user->image_path,
-                'phone'             => $user->phone,
-                'employee'          => $user->employees
+                'role_id'           => $employee->employee_role_id,
+                'role_name'         => $employee->employee_role->name,
+                'image_path'        => $user->image_path ?? '',
+                'telephone'         => $user->telephone ?? '',
+                'phone'             => $user->phone ?? '',
+                'dob'               => $dob,
+                'nik'               => $employee->nik ?? '',
+                'address'           => $employee->address ?? ''
             ]);
 
-            return Response::json([
-                'message'       => 'SUCCESS',
-                'model'         => json_encode($userModel)
-            ]);
+            return Response::json($userModel, 200);
         }
         catch(\Exception $ex){
             return Response::json([
