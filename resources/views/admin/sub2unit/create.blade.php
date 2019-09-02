@@ -55,7 +55,12 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="sub1unit">Pilih Object *</label>
+                                        <select id="sub1unit" name="sub1unit" class="form-control"></select>
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     <div class="form-group form-float form-group-lg">
                                         <div class="form-line">
@@ -86,10 +91,36 @@
 
 @section('styles')
 <link href="{{ asset('kartik-v-bootstrap-fileinput/css/fileinput.min.css') }}" rel="stylesheet" />
+<link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
 @endsection
 
 @section('scripts')
 <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 <script type="text/javascript">
+    $('#city').select2();
+
+    $('#sub1unit').select2({
+        placeholder: {
+            id: '-1',
+            text: ' - Pilih Object - '
+        },
+        width: '100%',
+        minimumInputLength: 0,
+        ajax: {
+            url: '{{ route('select.units') }}',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            }
+        }
+    });
 </script>
 @endsection

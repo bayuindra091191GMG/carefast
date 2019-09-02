@@ -59,7 +59,7 @@
             serverSide: true,
             pageLength: 25,
             responsive: true,
-            ajax: '{!! route('datatables.sub1_units') !!}',
+            ajax: '{!! route('datatables.sub2_units') !!}',
             order: [ [0, 'asc'] ],
             columns: [
                 { data: 'name', name: 'name', class: 'text-center'},

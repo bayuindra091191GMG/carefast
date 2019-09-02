@@ -11,7 +11,7 @@
                 </div>
             </div>
 
-            {{ Form::open(['route'=>['admin.sub2unit.update', $sub1unit->id],'method' => 'post','id' => 'general-form']) }}
+            {{ Form::open(['route'=>['admin.sub2unit.update', $sub2unit->id],'method' => 'post','id' => 'general-form']) }}
 
             <div class="row">
                 <div class="col-md-12">
@@ -41,7 +41,7 @@
                                             <label class="form-label" for="name">Nama Sub Unit 2 *</label>
                                             <input id="name" type="text" class="form-control"
                                                 style="text-transform: uppercase;" name="name"
-                                                value="{{ $sub1unit->name }}">
+                                                value="{{ $sub2unit->name }}">
                                         </div>
                                     </div>
                                 </div>
@@ -51,8 +51,19 @@
                                         <div class="form-line">
                                             <label class="form-label" for="description">Keterangan</label>
                                             <textarea id="description" class="form-control" name="description"
-                                                rows="4">{{ $sub1unit->description }}</textarea>
+                                                rows="4">{{ $sub2unit->description }}</textarea>
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="sub2unit">Units *</label>
+                                        <select id="sub2unit" name="sub2unit" class="form-control">
+                                            <option value="{{ $sub2unit->id }}">
+                                                {{ $sub2unit->name . ' - ' . $sub2unit->description }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
 
@@ -89,8 +100,40 @@
 
 @section('styles')
 <link href="{{ asset('kartik-v-bootstrap-fileinput/css/fileinput.min.css') }}" rel="stylesheet" />
+<link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
 @endsection
 
 @section('scripts')
 <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
+    type="text/javascript"></script>
+
+<script type="text/javascript">
+    $('#city').select2();
+
+        $('#customer').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Customer - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.units') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+</script>
 @endsection

@@ -18,6 +18,57 @@ use Yajra\DataTables\DataTables;
 
 class Sub2UnitController extends Controller
 {
+    public function getObjects(Request $request){
+        $term = trim($request->q);
+        $sub2_units = Sub2Unit::where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', '%' . $term . '%')
+                ->where('email', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($sub2_units as $sub2unit) {
+            $formatted_tags[] = ['id' => $sub2unit->id, 'text' => $sub2unit->name . ' - ' . $sub2unit->email];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+
+    public function getSub2UnitDropdowns(Request $request){
+        $term = trim($request->q);
+        $sub2_units = Sub2Unit::where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', '%' . $term . '%')
+                ->where('email', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($sub2_units as $sub2unit) {
+            $formatted_tags[] = ['id' => $sub2unit->id, 'text' => $sub2unit->name . ' - ' . $sub2unit->email];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+
+    public function getSub2Units(Request $request){
+        $term = trim($request->q);
+        $sub2_units = Sub2Unit::where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', '%' . $term . '%')
+                ->where('description', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($sub2_units as $sub2unit) {
+            $formatted_tags[] = ['id' => $sub2unit->id, 'text' => $sub2unit->name . ' - ' . $sub2unit->description];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+
     public function __construct()
     {
         $this->middleware('auth:admin');
@@ -76,17 +127,17 @@ class Sub2UnitController extends Controller
     }
 
     public function edit(int $id){
-        $Sub2Unit = Sub2Unit::find($id);
-        if(empty($Sub2Unit)){
+        $sub2unit = sub2unit::find($id);
+        if(empty($sub2unit)){
             return redirect()->back();
         }
 
-        return view('admin.Sub2Unit.edit', compact('Sub2Unit'));
+        return view('admin.sub2unit.edit', compact('sub2unit'));
     }
 
     public function update(Request $request, int $id){
         try{
-            $Sub2Unit = Sub2Unit::find($id);
+            $sub2Unit = sub2Unit::find($id);
             //dd($Sub2Unit);
             $validator = Validator::make($request->all(), [
                 'name'              => 'required',
@@ -102,15 +153,15 @@ class Sub2UnitController extends Controller
             $user = Auth::guard('admin')->user();
             $dateNow = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
-            $Sub2Unit->name = $name;
-            $Sub2Unit->description = $request->input('description') ?? null;
-            $Sub2Unit->status_id = $request->input('status');
-            $Sub2Unit->updated_at = $dateNow;
-            $Sub2Unit->updated_by = $user->id;
-            $Sub2Unit->save();
+            $sub2unit->name = $name;
+            $sub2unit->description = $request->input('description') ?? null;
+            $sub2unit->status_id = $request->input('status');
+            $sub2unit->updated_at = $dateNow;
+            $sub2unit->updated_by = $user->id;
+            $sub2unit->save();
 
             Session::flash('success', 'Sukses mengubah Sub Unit 2 baru!');
-            return redirect()->route('admin.Sub2Unit.index');
+            return redirect()->route('admin.sub2unit.index');
         }
         catch(\Exception $ex){
             Log::error('Admin/Sub2UnitController - update error EX: '. $ex);

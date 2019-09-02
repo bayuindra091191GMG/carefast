@@ -108,7 +108,7 @@
         width: '100%',
         minimumInputLength: 0,
         ajax: {
-            url: '{{ route('select.sub1unit') }}',
+            url: '{{ route('select.units') }}',
             dataType: 'json',
             data: function (params) {
                 return {

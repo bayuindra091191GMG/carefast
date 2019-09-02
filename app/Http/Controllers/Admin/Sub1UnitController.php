@@ -53,6 +53,23 @@ class Sub1UnitController extends Controller
         return \Response::json($formatted_tags);
     }
 
+    public function getSub1Units(Request $request){
+        $term = trim($request->q);
+        $sub1_units = Sub1Unit::where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', '%' . $term . '%')
+                ->where('description', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($sub1_units as $sub1unit) {
+            $formatted_tags[] = ['id' => $sub1unit->id, 'text' => $sub1unit->name . ' - ' . $sub1unit->description];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+
     public function __construct()
     {
         $this->middleware('auth:admin');
