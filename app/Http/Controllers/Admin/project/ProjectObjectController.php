@@ -66,10 +66,11 @@ class ProjectObjectController extends Controller
                 'name'          => 'required',
                 'address'       => 'required',
                 'phone'         => 'required',
-                'customer'           => 'required',
+                'customer'      => 'required',
                 'latitude'      => 'required',
                 'longitude'     => 'required',
             ]);
+
 
             if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
@@ -79,11 +80,11 @@ class ProjectObjectController extends Controller
             $project = Project::create([
                 'name'              => $request->input('name'),
                 'phone'             => $request->input('phone'),
-                'customer_id'            => $request->input('customer'),
+                'customer_id'       => $request->input('customer'),
                 'latitude'          => $request->input('latitude'),
                 'longitude'         => $request->input('longitude'),
                 'address'           => $request->input('address'),
-                'description'           => $request->input('description'),
+                'description'       => $request->input('description'),
                 'status_id'         => $request->input('status'),
                 'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'created_by'        => $user->id,

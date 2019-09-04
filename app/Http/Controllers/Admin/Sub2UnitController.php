@@ -18,35 +18,14 @@ use Yajra\DataTables\DataTables;
 
 class Sub2UnitController extends Controller
 {
-    public function getObjects(Request $request){
-        $term = trim($request->q);
-        $sub2_units = Sub2Unit::where(function ($q) use ($term) {
-            $q->where('name', 'LIKE', '%' . $term . '%')
-                ->where('email', 'LIKE', '%' . $term . '%');
-        })
-            ->get();
-
-        $formatted_tags = [];
-
-        foreach ($sub2_units as $sub2unit) {
-            $formatted_tags[] = ['id' => $sub2unit->id, 'text' => $sub2unit->name . ' - ' . $sub2unit->email];
-        }
-
-        return \Response::json($formatted_tags);
-    }
-
     public function getSub2UnitDropdowns(Request $request){
-        $term = trim($request->q);
-        $sub2_units = Sub2Unit::where(function ($q) use ($term) {
-            $q->where('name', 'LIKE', '%' . $term . '%')
-                ->where('email', 'LIKE', '%' . $term . '%');
-        })
-            ->get();
+        $id = $request->input('id');
+        $sub2_units = Sub2Unit::where('sub_1_unit_id', $id)->get();
 
         $formatted_tags = [];
 
         foreach ($sub2_units as $sub2unit) {
-            $formatted_tags[] = ['id' => $sub2unit->id, 'text' => $sub2unit->name . ' - ' . $sub2unit->email];
+            $formatted_tags[] = ['id' => $sub2unit->id, 'text' => $sub2unit->name];
         }
 
         return \Response::json($formatted_tags);
@@ -109,6 +88,7 @@ class Sub2UnitController extends Controller
 
             Sub2Unit::create([
                 'name'          => $name,
+                'sub_1_unit_id'          => $request->input('sub1unit'),
                 'description'   => $request->input('description') ?? null,
                 'status_id'     => $request->input('status'),
                 'created_at'    => $dateNow,
@@ -118,7 +98,7 @@ class Sub2UnitController extends Controller
             ]);
 
             Session::flash('success', 'Sukses membuat Sub2Unit baru!');
-            return redirect()->route('admin.Sub2Unit.index');
+            return redirect()->route('admin.sub2unit.index');
         }
         catch(\Exception $ex){
             Log::error('Admin/Sub2UnitController - store error EX: '. $ex);
@@ -137,7 +117,7 @@ class Sub2UnitController extends Controller
 
     public function update(Request $request, int $id){
         try{
-            $sub2Unit = sub2Unit::find($id);
+            $sub2unit = sub2Unit::find($id);
             //dd($Sub2Unit);
             $validator = Validator::make($request->all(), [
                 'name'              => 'required',
@@ -154,6 +134,7 @@ class Sub2UnitController extends Controller
             $dateNow = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
             $sub2unit->name = $name;
+            $sub2unit->sub_1_unit_id = $request->input('sub1unit');
             $sub2unit->description = $request->input('description') ?? null;
             $sub2unit->status_id = $request->input('status');
             $sub2unit->updated_at = $dateNow;

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sub1Unit;
+use App\Models\Unit;
 use App\Transformer\Sub1UnitTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,36 +19,14 @@ use Yajra\DataTables\DataTables;
 
 class Sub1UnitController extends Controller
 {
-
-    public function getObjects(Request $request){
-        $term = trim($request->q);
-        $sub1_units = Sub1Unit::where(function ($q) use ($term) {
-            $q->where('name', 'LIKE', '%' . $term . '%')
-                ->where('email', 'LIKE', '%' . $term . '%');
-        })
-            ->get();
-
-        $formatted_tags = [];
-
-        foreach ($sub1_units as $sub1unit) {
-            $formatted_tags[] = ['id' => $sub1unit->id, 'text' => $sub1unit->name . ' - ' . $sub1unit->email];
-        }
-
-        return \Response::json($formatted_tags);
-    }
-
     public function getSub1UnitDropdowns(Request $request){
-        $term = trim($request->q);
-        $sub1_units = Sub1Unit::where(function ($q) use ($term) {
-            $q->where('name', 'LIKE', '%' . $term . '%')
-                ->where('email', 'LIKE', '%' . $term . '%');
-        })
-            ->get();
+        $id = $request->input('id');
+        $sub1_units = Sub1Unit::where('unit_id', $id)->get();
 
         $formatted_tags = [];
 
         foreach ($sub1_units as $sub1unit) {
-            $formatted_tags[] = ['id' => $sub1unit->id, 'text' => $sub1unit->name . ' - ' . $sub1unit->email];
+            $formatted_tags[] = ['id' => $sub1unit->id, 'text' => $sub1unit->name];
         }
 
         return \Response::json($formatted_tags);
@@ -94,7 +73,7 @@ class Sub1UnitController extends Controller
     public function store(Request $request){
         try{
             $validator = Validator::make($request->all(), [
-                'name'              => 'required|max:100|unique:sub1_units',
+                'name'              => 'required|max:100',
                 'description'       => 'max:255'
             ],[
                 'name.required'     => 'Nama kategori wajib diisi!',
@@ -110,6 +89,7 @@ class Sub1UnitController extends Controller
 
             Sub1Unit::create([
                 'name'          => $name,
+                'unit_id'          => $request->input('unit_id'),
                 'description'   => $request->input('description') ?? null,
                 'status_id'     => $request->input('status'),
                 'created_at'    => $dateNow,
@@ -132,8 +112,9 @@ class Sub1UnitController extends Controller
         if(empty($sub1unit)){
             return redirect()->back();
         }
+        $unit = Unit::find($sub1unit->unit_id);
 
-        return view('admin.sub1unit.edit', compact('sub1unit'));
+        return view('admin.sub1unit.edit', compact('sub1unit', 'unit'));
     }
 
     public function update(Request $request, int $id){
@@ -155,6 +136,7 @@ class Sub1UnitController extends Controller
             $dateNow = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
             $sub1unit->name = $name;
+            $sub1unit->unit_id = $request->input('unit_id');
             $sub1unit->description = $request->input('description') ?? null;
             $sub1unit->status_id = $request->input('status');
             $sub1unit->updated_at = $dateNow;

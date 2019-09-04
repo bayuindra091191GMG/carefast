@@ -27,7 +27,8 @@
                             style="width: 100%;">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Nama</th>
+                                    <th class="text-center">Object</th>
+                                    <th class="text-center">Nama Sub Object</th>
                                     <th class="text-center">Keterangan</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Tanggal Dibuat</th>
@@ -62,6 +63,7 @@
             ajax: '{!! route('datatables.sub1_units') !!}',
             order: [ [0, 'asc'] ],
             columns: [
+                { data: 'unit', name: 'unit', class: 'text-center'},
                 { data: 'name', name: 'name', class: 'text-center'},
                 { data: 'description', name: 'description'},
                 { data: 'status', name: 'status', class: 'text-center'},

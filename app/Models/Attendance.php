@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 21 Aug 2019 12:15:36 +0700.
+ * Date: Wed, 04 Sep 2019 15:08:23 +0700.
  */
 
 namespace App\Models;
@@ -13,19 +13,20 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * Class Attendance
  * 
  * @property int $id
- * @property string $image_path
  * @property int $employee_id
  * @property int $schedule_id
  * @property \Carbon\Carbon $date
  * @property int $status_id
+ * @property string $image_path
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
  * 
  * @property \App\Models\Employee $employee
- * @property \App\Models\ScheduleDetail $schedule_detail
+ * @property \App\Models\Schedule $schedule
  * @property \App\Models\Status $status
+ * @property \Illuminate\Database\Eloquent\Collection $attendance_details
  *
  * @package App\Models
  */
@@ -44,11 +45,11 @@ class Attendance extends Eloquent
 	];
 
 	protected $fillable = [
-	    'image_path',
 		'employee_id',
 		'schedule_id',
 		'date',
 		'status_id',
+		'image_path',
 		'created_by',
 		'updated_by'
 	];
@@ -58,13 +59,18 @@ class Attendance extends Eloquent
 		return $this->belongsTo(\App\Models\Employee::class);
 	}
 
-	public function schedule_detail()
+	public function schedule()
 	{
-		return $this->belongsTo(\App\Models\ScheduleDetail::class, 'schedule_id');
+		return $this->belongsTo(\App\Models\Schedule::class);
 	}
 
 	public function status()
 	{
 		return $this->belongsTo(\App\Models\Status::class);
+	}
+
+	public function attendance_details()
+	{
+		return $this->hasMany(\App\Models\AttendanceDetail::class);
 	}
 }

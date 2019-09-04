@@ -24,6 +24,7 @@ class Sub1UnitTransformer extends TransformerAbstract
 
             return[
                 'name'              => $sub1unit->name,
+                'unit'              => $sub1unit->unit->name,
                 'description'       => $sub1unit->description,
                 'status'            => $sub1unit->status->description,
                 'created_at'        => $createdDate,

@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Mon, 02 Sep 2019 13:50:48 +0700.
+ * Date: Wed, 04 Sep 2019 15:09:10 +0700.
  */
 
 namespace App\Models;
@@ -26,6 +26,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \App\Models\Status $status
  * @property \App\Models\Employee $employee
  * @property \App\Models\Place $place
+ * @property \Illuminate\Database\Eloquent\Collection $attendances
  * @property \Illuminate\Database\Eloquent\Collection $schedule_details
  *
  * @package App\Models
@@ -68,6 +69,11 @@ class Schedule extends Eloquent
 	public function place()
 	{
 		return $this->belongsTo(\App\Models\Place::class);
+	}
+
+	public function attendances()
+	{
+		return $this->hasMany(\App\Models\Attendance::class);
 	}
 
 	public function schedule_details()

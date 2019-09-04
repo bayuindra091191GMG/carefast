@@ -57,8 +57,8 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="sub1unit">Pilih Object *</label>
-                                        <select id="sub1unit" name="sub1unit" class="form-control"></select>
+                                        <label for="unit_id">Pilih Object *</label>
+                                        <select id="unit_id" name="unit_id" class="form-control"></select>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -100,7 +100,7 @@
 <script type="text/javascript">
     $('#city').select2();
 
-    $('#sub1unit').select2({
+    $('#unit_id').select2({
         placeholder: {
             id: '-1',
             text: ' - Pilih Object - '

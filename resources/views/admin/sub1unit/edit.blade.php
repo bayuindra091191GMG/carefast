@@ -58,10 +58,10 @@
 
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="sub1unit">Units *</label>
-                                        <select id="sub1unit" name="sub1unit" class="form-control">
-                                            <option value="{{ $sub1unit->id }}">
-                                                {{ $sub1unit->name . ' - ' . $sub1unit->description }}
+                                        <label for="unit_id">Units *</label>
+                                        <select id="unit_id" name="unit_id" class="form-control">
+                                            <option value="{{ $unit->id }}">
+                                                {{ $unit->name . ' - ' . $unit->description }}
                                             </option>
                                         </select>
                                     </div>
@@ -112,28 +112,27 @@
 <script type="text/javascript">
     $('#city').select2();
 
-        $('#customer').select2({
-            placeholder: {
-                id: '-1',
-                text: ' - Pilih Customer - '
+    $('#unit_id').select2({
+        placeholder: {
+            id: '-1',
+            text: ' - Pilih Object - '
+        },
+        width: '100%',
+        minimumInputLength: 0,
+        ajax: {
+            url: '{{ route('select.units') }}',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
             },
-            width: '100%',
-            minimumInputLength: 0,
-            ajax: {
-                url: '{{ route('select.units') }}',
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: $.trim(params.term)
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
+            processResults: function (data) {
+                return {
+                    results: data
+                };
             }
-        });
-
+        }
+    });
 </script>
 @endsection

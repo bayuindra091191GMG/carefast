@@ -58,8 +58,8 @@
 
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="sub2unit">Units *</label>
-                                        <select id="sub2unit" name="sub2unit" class="form-control">
+                                        <label for="sub1unit">Pilih Sub Object 1 *</label>
+                                        <select id="sub1unit" name="sub1unit" class="form-control">
                                             <option value="{{ $sub2unit->id }}">
                                                 {{ $sub2unit->name . ' - ' . $sub2unit->description }}
                                             </option>
@@ -112,28 +112,27 @@
 <script type="text/javascript">
     $('#city').select2();
 
-        $('#customer').select2({
-            placeholder: {
-                id: '-1',
-                text: ' - Pilih Customer - '
+    $('#sub1unit').select2({
+        placeholder: {
+            id: '-1',
+            text: ' - Pilih Sub Object 1 - '
+        },
+        width: '100%',
+        minimumInputLength: 0,
+        ajax: {
+            url: '{{ route('select.sub1units') }}',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
             },
-            width: '100%',
-            minimumInputLength: 0,
-            ajax: {
-                url: '{{ route('select.units') }}',
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: $.trim(params.term)
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
+            processResults: function (data) {
+                return {
+                    results: data
+                };
             }
-        });
-
+        }
+    });
 </script>
 @endsection

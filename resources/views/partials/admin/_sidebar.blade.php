@@ -171,7 +171,7 @@
                     <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
                         aria-expanded="false">
                         <i class="mdi mdi-account-settings-variant"></i>
-                        <span class="hide-menu"> Object / Unit </span>
+                        <span class="hide-menu"> Object </span>
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
@@ -183,13 +183,13 @@
                         <li class="sidebar-item">
                             <a href="{{route('admin.sub1unit.index')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Sub Unit 1 </span>
+                                <span class="hide-menu"> Daftar Sub Object 1 </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a href="{{route('admin.sub2unit.index')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Sub Unit 2</span>
+                                <span class="hide-menu"> Daftar Sub Object 2</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
@@ -201,13 +201,13 @@
                         <li class="sidebar-item">
                             <a href="{{route('admin.sub1unit.create')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Tambah sub-Unit-1 </span>
+                                <span class="hide-menu"> Tambah Sub Object 1 </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
                             <a href="{{route('admin.sub2unit.create')}}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Tambah sub-unit-2 </span>
+                                <span class="hide-menu"> Tambah Sub Object 2 </span>
                             </a>
                         </li>
                     </ul>

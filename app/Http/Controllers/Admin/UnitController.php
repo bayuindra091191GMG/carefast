@@ -148,16 +148,4 @@ class UnitController extends Controller
 
         return \Response::json($formatted_tags);
     }
-    public function getSub1UnitDropdowns(Request $request){
-        $id = $request->input('id');
-        $sub1_units = Sub1Unit::where('unit_id', $id)->get();
-
-        $formatted_tags = [];
-
-        foreach ($sub1_units as $sub1unit) {
-            $formatted_tags[] = ['id' => $sub1unit->id, 'text' => $sub1unit->name];
-        }
-
-        return \Response::json($formatted_tags);
-    }
 }

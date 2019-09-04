@@ -57,7 +57,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="sub1unit">Pilih Object *</label>
+                                        <label for="sub1unit">Pilih Sub Object 1 *</label>
                                         <select id="sub1unit" name="sub1unit" class="form-control"></select>
                                     </div>
                                 </div>
@@ -103,12 +103,12 @@
     $('#sub1unit').select2({
         placeholder: {
             id: '-1',
-            text: ' - Pilih Object - '
+            text: ' - Pilih Sub Object 1 - '
         },
         width: '100%',
         minimumInputLength: 0,
         ajax: {
-            url: '{{ route('select.units') }}',
+            url: '{{ route('select.sub1units') }}',
             dataType: 'json',
             data: function (params) {
                 return {

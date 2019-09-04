@@ -61,15 +61,27 @@
                                                 <tr id='sch0'>
                                                     <td class='field-item'>
                                                         <select id="place0" name="places[]" class='form-control'></select>
+                                                        <span><br>Atau tambah Baru</span>
+                                                        <input type='text' id='placeNew0' name='place_new[]' class='form-control'>
                                                     </td>
                                                     <td>
                                                         <select id="unit0" name="units[]" class='form-control'></select>
+                                                        <span><br>Atau tambah Baru</span>
+                                                        <input type="text" id="unitNew0" name="unit_new[]" class='form-control'>
                                                     </td>
                                                     <td>
-                                                        <select id="sub_1_unit0" name="sub_1_units[]" class='form-control' style="display: none"></select>
+                                                        <div id='sub_1_unit_div0' style='display: none'>
+                                                            <select id="sub_1_unit0" name="sub_1_units[]" class='form-control'></select>
+                                                            <span><br>Atau tambah Baru</span>
+                                                            <input type="text" id="sub_1_unitNew0" name="sub_1_unit_new[]" class='form-control'>
+                                                        </div>
                                                     </td>
                                                     <td>
-                                                        <select id="sub_2_unit0" name="sub_2_units[]" class='form-control' style="display: none"></select>
+                                                        <div id='sub_2_unit_div0' style='display: none'>
+                                                            <select id="sub_2_unit0" name="sub_2_units[]" class='form-control'></select>
+                                                            <span><br>Atau tambah Baru</span>
+                                                            <input type="text" id="sub_2_unitNew0" name="sub_2_unit_new[]" class='form-control'>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                                 <tr id='sch1'></tr>
@@ -162,7 +174,6 @@
                     'id': objVal
                 },
                 success: function (data) {
-                    alert(data);
                     $('#sub_1_unit0').empty();
                     for(let j=0; j<data.length; j++){
                         $('#sub_1_unit0')
@@ -170,7 +181,7 @@
                                 .attr("value",data[j].id)
                                 .text(data[j].text));
                     }
-                    $('#sub_1_unit0').show();
+                    $('#sub_1_unit_div0').show();
                 }
             });
         });
@@ -191,7 +202,7 @@
                                 .attr("value",data[j].id)
                                 .text(data[j].text));
                     }
-                    $('#sub_2_unit0').show();
+                    $('#sub_2_unit_div0').show();
                 }
             });
         });
@@ -200,10 +211,27 @@
         $("#add_row").click(function(){
             var bufferID = i;
             $('#sch'+i).html(
-                "<td><select id='place" + i +"' name='places[]' class='form-control'></select></td>" +
-                "<td><select id='unit" + i +"' name='units[]' class='form-control'></select></td>" +
-                "<td><select id='sub_1_unit" + i +"' name='sub_1_units[]' class='form-control' style='display: none'></select></td>" +
-                "<td><select id='sub_2_unit" + i +"' name='sub_2_units[]' class='form-control' style='display: none'></select></td>"
+                "<td><select id='place" + i +"' name='places[]' class='form-control'></select>" +
+                "<span><br>Atau tambah Baru</span>" +
+                "<input type='text' id='placeNew" + i +"' name='place_new[]' class='form-control'>" +
+                "</td>" +
+
+                "<td><select id='unit" + i +"' name='units[]' class='form-control'></select>" +
+                "<span><br>Atau tambah Baru</span>" +
+                "<input type='text' id='unitNew" + i +"' name='unit_new[]' class='form-control'>" +
+                "</td>" +
+
+                "<td><div id='sub_1_unit_div" + i +"' style='display: none'>" +
+                "<select id='sub_1_unit" + i +"' name='sub_1_units[]' class='form-control'></select>" +
+                "<span><br>Atau tambah Baru</span>" +
+                "<input type='text' id='sub_1_unitNew" + i +"' name='sub_1_unit_new[]' class='form-control'>" +
+                "</div></td>" +
+
+                "<td><div id='sub_2_unit_div" + i +"' style='display: none'>" +
+                "<select id='sub_2_unit" + i +"' name='sub_2_units[]' class='form-control'></select>" +
+                "<span><br>Atau tambah Baru</span>" +
+                "<input type='text' id='sub_2_unitNew" + i +"' name='sub_2_unit_new[]' class='form-control'>" +
+                "</div></td>"
             );
             $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
 
@@ -270,12 +298,12 @@
                                     .attr("value",data[j].id)
                                     .text(data[j].text));
                         }
-                        $('#sub_1_unit' + bufferID).show();
+                        $('#sub_1_unit_div' + bufferID).show();
                     }
                 });
             });
 
-            $('#sub_2_unit' + bufferID).on('change', function() {
+            $('#sub_1_unit' + bufferID).on('change', function() {
                 var objVal = '#sub_1_unit' + bufferID;
                 $.ajax({
                     url: '{{ route('select.units') }}',
@@ -291,7 +319,7 @@
                                     .attr("value",data[j].id)
                                     .text(data[j].text));
                         }
-                        $('#sub_2_unit' + bufferID).show();
+                        $('#sub_2_unit_div' + bufferID).show();
                     }
                 });
             });
