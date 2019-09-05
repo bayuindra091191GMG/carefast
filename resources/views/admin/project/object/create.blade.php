@@ -40,19 +40,20 @@
 
                                     <div class="col-md-12 p-t-20">
                                         <div class="table-responsive">
+                                            <input type="hidden" name="project_id" value="{{$project->id}}">
                                             <table class="table table-bordered table-hover" id="tab_logic">
                                                 <thead>
-                                                <tr >
-                                                    <th class="text-center" style="width: 30%">
+                                                <tr>
+                                                    <th class="text-center" style="width: 25%">
                                                         Pilih Place*
                                                     </th>
-                                                    <th class="text-center" style="width: 30%">
+                                                    <th class="text-center" style="width: 25%">
                                                         Pilih Object (Jika ada)
                                                     </th>
-                                                    <th class="text-center" style="width: 30%">
+                                                    <th class="text-center" style="width: 25%">
                                                         Pilih Sub Object 1 (Jika ada)
                                                     </th>
-                                                    <th class="text-center" style="width: 30%">
+                                                    <th class="text-center" style="width: 25%">
                                                         Pilih Sub Object 2 (Jika ada)
                                                     </th>
                                                 </tr>
@@ -60,25 +61,25 @@
                                                 <tbody>
                                                 <tr id='sch0'>
                                                     <td class='field-item'>
-                                                        <select id="place0" name="places[]" class='form-control'></select>
+                                                        <select id="place0" name="places[]" class='form-control'><option value='-1'>-</option></select>
                                                         <span><br>Atau tambah Baru</span>
                                                         <input type='text' id='placeNew0' name='place_new[]' class='form-control'>
                                                     </td>
                                                     <td>
-                                                        <select id="unit0" name="units[]" class='form-control'></select>
+                                                        <select id="unit0" name="units[]" class='form-control'><option value='-1'>-</option></select>
                                                         <span><br>Atau tambah Baru</span>
                                                         <input type="text" id="unitNew0" name="unit_new[]" class='form-control'>
                                                     </td>
                                                     <td>
-                                                        <div id='sub_1_unit_div0' style='display: none'>
-                                                            <select id="sub_1_unit0" name="sub_1_units[]" class='form-control'></select>
+                                                        <div id='sub_1_unit_div0'>
+                                                            <select id="sub_1_unit0" name="sub_1_units[]" class='form-control'><option value='-1'>-</option></select>
                                                             <span><br>Atau tambah Baru</span>
                                                             <input type="text" id="sub_1_unitNew0" name="sub_1_unit_new[]" class='form-control'>
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <div id='sub_2_unit_div0' style='display: none'>
-                                                            <select id="sub_2_unit0" name="sub_2_units[]" class='form-control'></select>
+                                                        <div id='sub_2_unit_div0'>
+                                                            <select id="sub_2_unit0" name="sub_2_units[]" class='form-control'><option value='-1'>-</option></select>
                                                             <span><br>Atau tambah Baru</span>
                                                             <input type="text" id="sub_2_unitNew0" name="sub_2_unit_new[]" class='form-control'>
                                                         </div>
@@ -175,13 +176,24 @@
                 },
                 success: function (data) {
                     $('#sub_1_unit0').empty();
-                    for(let j=0; j<data.length; j++){
+                    if(data.length == 0){
                         $('#sub_1_unit0')
                             .append($("<option></option>")
-                                .attr("value",data[j].id)
-                                .text(data[j].text));
+                                .attr("value","-1")
+                                .text("-"));
                     }
-                    $('#sub_1_unit_div0').show();
+                    else{
+                        for(let j=0; j<data.length; j++){
+                            $('#sub_1_unit0')
+                                .append($("<option></option>")
+                                    .attr("value",data[j].id)
+                                    .text(data[j].text));
+                        }
+                    }
+                    $('#sub_2_unit0')
+                        .append($("<option></option>")
+                            .attr("value","-1")
+                            .text("-"));
                 }
             });
         });
@@ -202,7 +214,6 @@
                                 .attr("value",data[j].id)
                                 .text(data[j].text));
                     }
-                    $('#sub_2_unit_div0').show();
                 }
             });
         });
@@ -211,24 +222,24 @@
         $("#add_row").click(function(){
             var bufferID = i;
             $('#sch'+i).html(
-                "<td><select id='place" + i +"' name='places[]' class='form-control'></select>" +
+                "<td><select id='place" + i +"' name='places[]' class='form-control'><option value='-1'>-</option></select>" +
                 "<span><br>Atau tambah Baru</span>" +
                 "<input type='text' id='placeNew" + i +"' name='place_new[]' class='form-control'>" +
                 "</td>" +
 
-                "<td><select id='unit" + i +"' name='units[]' class='form-control'></select>" +
+                "<td><select id='unit" + i +"' name='units[]' class='form-control'><option value='-1'>-</option></select>" +
                 "<span><br>Atau tambah Baru</span>" +
                 "<input type='text' id='unitNew" + i +"' name='unit_new[]' class='form-control'>" +
                 "</td>" +
 
-                "<td><div id='sub_1_unit_div" + i +"' style='display: none'>" +
-                "<select id='sub_1_unit" + i +"' name='sub_1_units[]' class='form-control'></select>" +
+                "<td><div id='sub_1_unit_div" + i +"' >" +
+                "<select id='sub_1_unit" + i +"' name='sub_1_units[]' class='form-control'><option value='-1'>-</option></select>" +
                 "<span><br>Atau tambah Baru</span>" +
                 "<input type='text' id='sub_1_unitNew" + i +"' name='sub_1_unit_new[]' class='form-control'>" +
                 "</div></td>" +
 
-                "<td><div id='sub_2_unit_div" + i +"' style='display: none'>" +
-                "<select id='sub_2_unit" + i +"' name='sub_2_units[]' class='form-control'></select>" +
+                "<td><div id='sub_2_unit_div" + i +"'>" +
+                "<select id='sub_2_unit" + i +"' name='sub_2_units[]' class='form-control'><option value='-1'>-</option></select>" +
                 "<span><br>Atau tambah Baru</span>" +
                 "<input type='text' id='sub_2_unitNew" + i +"' name='sub_2_unit_new[]' class='form-control'>" +
                 "</div></td>"
@@ -292,13 +303,24 @@
                     },
                     success: function (data) {
                         $('#sub_1_unit' + bufferID).empty();
-                        for(let j=0; j<data.length; j++){
+                        if(data.length == 0){
                             $('#sub_1_unit' + bufferID)
                                 .append($("<option></option>")
-                                    .attr("value",data[j].id)
-                                    .text(data[j].text));
+                                    .attr("value","-1")
+                                    .text("-"));
                         }
-                        $('#sub_1_unit_div' + bufferID).show();
+                        else{
+                            for(let j=0; j<data.length; j++){
+                                $('#sub_1_unit' + bufferID)
+                                    .append($("<option></option>")
+                                        .attr("value",data[j].id)
+                                        .text(data[j].text));
+                            }
+                        }
+                        $('#sub_2_unit' + bufferID)
+                            .append($("<option></option>")
+                                .attr("value","-1")
+                                .text("-"));
                     }
                 });
             });
@@ -319,7 +341,6 @@
                                     .attr("value",data[j].id)
                                     .text(data[j].text));
                         }
-                        $('#sub_2_unit_div' + bufferID).show();
                     }
                 });
             });
