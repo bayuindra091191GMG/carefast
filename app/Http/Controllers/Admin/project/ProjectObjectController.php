@@ -11,6 +11,8 @@ use App\Models\EmployeeRole;
 use App\Models\Place;
 use App\Models\Project;
 use App\Models\ProjectObject;
+use App\Models\Sub1Unit;
+use App\Models\Sub2Unit;
 use App\Models\Unit;
 use App\Transformer\CustomerTransformer;
 use App\Transformer\EmployeeTransformer;
@@ -84,13 +86,19 @@ class ProjectObjectController extends Controller
             $i = 0;
             foreach($places as $place){
                 $selectedPlace = "";
+                $selectedPlaceName = "";
                 $selectedUnit = "";
+                $selectedUnitName = "";
                 $selectedSubUnit1 = "";
+                $selectedSubUnit1Name = "";
                 $selectedSubUnit2 = "";
+                $selectedSubUnit2Name = "";
 
                 //check if any new place, then create new place, else use selected place
                 if(empty($placeNews[$i])){
                     $selectedPlace = $place;
+                    $placeDB = Place::find($place);
+                    $selectedPlaceName = $placeDB->name;
                 }
                 else{
                     $placeDBNew = Place::create([
@@ -103,11 +111,14 @@ class ProjectObjectController extends Controller
                         'updated_by'        => $user->id,
                     ]);
                     $selectedPlace = $placeDBNew->id;
+                    $selectedPlaceName = $placeDBNew->description;
                 }
 
                 //check if any new unit, then create new unit, else use selected unit
                 if(empty($unit_news[$i])){
                     $selectedUnit = $units[$i];
+                    $placeDB = Unit::find($units[$i]);
+                    $selectedUnitName = $placeDB->name;
                 }
                 else{
                     $unitDBNew = Unit::create([
@@ -120,11 +131,14 @@ class ProjectObjectController extends Controller
                         'updated_by'        => $user->id,
                     ]);
                     $selectedUnit = $unitDBNew->id;
+                    $selectedUnitName = $unitDBNew->description;
                 }
 
                 //check if any new unit, then create new unit, else use selected unit
                 if(empty($sub_1_unit_news[$i])){
                     $selectedSubUnit1 = $sub_1_units[$i];
+                    $placeDB = Sub1Unit::find($sub_1_units[$i]);
+                    $selectedSubUnit1Name = $placeDB->name;
                 }
                 else{
                     $sub1unitDBNew = Unit::create([
@@ -137,10 +151,13 @@ class ProjectObjectController extends Controller
                         'updated_by'        => $user->id,
                     ]);
                     $selectedSubUnit1 = $sub1unitDBNew->id;
+                    $selectedSubUnit1Name = $sub1unitDBNew->description;
                 }
 
                 if(empty($placeNews[$i])){
                     $selectedSubUnit2 = $sub_2_units[$i];
+                    $placeDB = Sub2Unit::find($sub_2_units[$i]);
+                    $selectedSubUnit2Name = $placeDB->name;
                 }
                 else{
                     $sub2unitDBNew = Unit::create([
@@ -153,6 +170,7 @@ class ProjectObjectController extends Controller
                         'updated_by'        => $user->id,
                     ]);
                     $selectedSubUnit2 = $sub2unitDBNew->id;
+                    $selectedSubUnit2Name = $sub2unitDBNew->description;
                 }
 
                 //Create Project Object
@@ -162,10 +180,10 @@ class ProjectObjectController extends Controller
                     'unit_id'           => $selectedUnit,
                     'sub1_unit_id'      => $selectedSubUnit1,
                     'sub2_unit_id'      => $selectedSubUnit2,
-//                    'place_name'        => $request->input('description'),
-//                    'unit_name'         => $request->input('description'),
-//                    'sub1_unit_name'    => $request->input('description'),
-//                    'sub2_unit_name'    => $request->input('description'),
+                    'place_name'        => $request->input('description'),
+                    'unit_name'         => $selectedUnitName,
+                    'sub1_unit_name'    => $selectedSubUnit1Name,
+                    'sub2_unit_name'    => $selectedSubUnit2Name,
                     'status_id'         => 1,
                     'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'created_by'        => $user->id,
