@@ -252,7 +252,7 @@ Route::prefix('admin')->group(function(){
 
     // Project Employee
     Route::get('/project/employee/show/{id}', 'Admin\project\ProjectController@show')->name('admin.project.employee.show');
-    Route::get('/project/employee/create', 'Admin\project\ProjectController@create')->name('admin.project.employee.create');
+    Route::get('/project/employee/create/{id}', 'Admin\project\ProjectEmployeeController@create')->name('admin.project.employee.create');
     Route::get('/project/employee/edit/{id}', 'Admin\project\ProjectController@edit')->name('admin.project.employee.edit');
     Route::post('/project/employee/store', 'Admin\project\ProjectController@store')->name('admin.project.employee.store');
     Route::post('/project/employee/update/{id}', 'Admin\project\ProjectController@update')->name('admin.project.employee.update');
@@ -307,6 +307,8 @@ Route::get('/select-units', 'Admin\UnitController@getUnits')->name('select.units
 Route::get('/select-sub1unit-dropdown', 'Admin\Sub1UnitController@getSub1UnitDropdowns')->name('select.sub1unit-dropdown');
 Route::get('/select-sub1units', 'Admin\Sub1UnitController@getSub1Units')->name('select.sub1units');
 Route::get('/select-sub2units', 'Admin\Sub2UnitController@getSub2Units')->name('select.sub2units');
+Route::get('/select-upper-employees', 'Admin\EmployeeController@getUpperEmployees')->name('select.upper.employees');
+Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('select.employees');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
 Route::get('/select-user-categories', 'Admin\UserCategoryController@getCategories')->name('select.user-categories');

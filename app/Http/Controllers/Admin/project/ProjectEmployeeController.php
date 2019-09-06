@@ -29,15 +29,24 @@ class ProjectEmployeeController extends Controller
         $data = [
             'information'          => $project,
         ];
-        return view('admin.information.show')->with($data);
+
+        return view('admin.project.employee.show')->with($data);
     }
 
-    public function create(){
+    public function create(int $id){
         try{
-            return view('admin.information.create');
+            $project = Project::find($id);
+            $manpower = $project->total_manpower - 1;
+
+            $data = [
+                'project'       => $project,
+                'manpower'      => $manpower
+            ];
+
+            return view('admin.project.employee.create')->with($data);
         }
         catch (\Exception $ex){
-            Log::error('Admin/information/ProjectObjectController - create error EX: '. $ex);
+            Log::error('Admin/information/ProjectEmployeeController - create error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }

@@ -224,4 +224,87 @@ class EmployeeController extends Controller
             return Response::json(array('errors' => 'INVALID'));
         }
     }
+
+    public function getUpperEmployees(Request $request){
+        $term = trim($request->q);
+
+        $employees = Employee::whereIn('employee_role_id', [2,3,4]);
+
+        if($request->ids !== null){
+            foreach ($request->ids as $id){
+                error_log($id);
+            }
+
+            $employees = $employees->whereNotIn('id', $request->ids);
+        }
+
+        $employees = $employees->where(function ($q) use ($term) {
+                $q->where('code', 'LIKE', '%' . $term . '%')
+                    ->orWhere('first_name', 'LIKE', '%' . $term . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $term . '%');
+            })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($employees as $employee) {
+            $formatted_tags[] = [
+                'id' => $employee->id. '#'. strtoupper($employee->employee_role->name),
+                'text' => $employee->code. ' - '. strtoupper($employee->employee_role->name). ' - '. $employee->first_name. ' '. $employee->last_name
+            ];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+
+    public function getCleanerEmployees(Request $request){
+        $term = trim($request->q);
+
+        $employees = Employee::where('employee_role_id', 1);
+
+        if($request->ids !== null){
+//            foreach ($request->ids as $id){
+//                error_log($id);
+//            }
+
+            $employees = $employees->whereNotIn('id', $request->ids);
+        }
+
+        $employees = $employees->where(function ($q) use ($term) {
+            $q->where('code', 'LIKE', '%' . $term . '%')
+                ->orWhere('first_name', 'LIKE', '%' . $term . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($employees as $employee) {
+            $formatted_tags[] = [
+                'id' => $employee->id,
+                'text' => $employee->code. ' - '. $employee->first_name. ' '. $employee->last_name
+            ];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+
+    public function getEmployees(Request $request){
+        $term = trim($request->q);
+
+        $employees = Employee::where(function ($q) use ($term) {
+            $q->where('code', 'LIKE', '%' . $term . '%')
+                ->orWhere('first_name', 'LIKE', '%' . $term . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $term . '%');
+            })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($employees as $employee) {
+            $formatted_tags[] = ['id' => $employee->id, 'text' => $employee->code. ' - '. $employee->first_name. ' '. $employee->last_name];
+        }
+
+        return \Response::json($formatted_tags);
+    }
 }
