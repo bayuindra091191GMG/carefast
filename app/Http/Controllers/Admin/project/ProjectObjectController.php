@@ -40,8 +40,9 @@ class ProjectObjectController extends Controller
 
         $data = [
             'project'           => $project,
-            'projectObject'     => $projectObject,
+            'projectObjects'     => $projectObject,
         ];
+//        dd($data);
         return view('admin.project.object.show')->with($data);
     }
 
@@ -111,7 +112,7 @@ class ProjectObjectController extends Controller
                         'updated_by'        => $user->id,
                     ]);
                     $selectedPlace = $placeDBNew->id;
-                    $selectedPlaceName = $placeDBNew->description;
+                    $selectedPlaceName = $placeDBNew->name;
                 }
 
                 //check if any new unit, then create new unit, else use selected unit
@@ -131,10 +132,10 @@ class ProjectObjectController extends Controller
                         'updated_by'        => $user->id,
                     ]);
                     $selectedUnit = $unitDBNew->id;
-                    $selectedUnitName = $unitDBNew->description;
+                    $selectedUnitName = $unitDBNew->name;
                 }
 
-                //check if any new unit, then create new unit, else use selected unit
+                //check if any new sub 1 unit, then create new sub 1 unit, else use selected sub 1 unit
                 if(empty($sub_1_unit_news[$i])){
                     $selectedSubUnit1 = $sub_1_units[$i];
                     $placeDB = Sub1Unit::find($sub_1_units[$i]);
@@ -151,9 +152,10 @@ class ProjectObjectController extends Controller
                         'updated_by'        => $user->id,
                     ]);
                     $selectedSubUnit1 = $sub1unitDBNew->id;
-                    $selectedSubUnit1Name = $sub1unitDBNew->description;
+                    $selectedSubUnit1Name = $sub1unitDBNew->name;
                 }
 
+                //check if any new sub 2 unit, then create new sub 2 unit, else use selected sub 2 unit
                 if(empty($placeNews[$i])){
                     $selectedSubUnit2 = $sub_2_units[$i];
                     $placeDB = Sub2Unit::find($sub_2_units[$i]);
@@ -170,7 +172,7 @@ class ProjectObjectController extends Controller
                         'updated_by'        => $user->id,
                     ]);
                     $selectedSubUnit2 = $sub2unitDBNew->id;
-                    $selectedSubUnit2Name = $sub2unitDBNew->description;
+                    $selectedSubUnit2Name = $sub2unitDBNew->name;
                 }
 
                 //Create Project Object
@@ -208,10 +210,13 @@ class ProjectObjectController extends Controller
         if(empty($project)){
             return redirect()->back();
         }
-
+        $projectObject = $project->project_objects;
         $data = [
-            'project'          => $project,
+            'project'           => $project,
+            'projectObjects'     => $projectObject,
+            'projectObjectCount'     => $projectObject->count(),
         ];
+//        dd($data);
         return view('admin.project.object.edit')->with($data);
     }
 

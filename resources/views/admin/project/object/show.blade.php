@@ -49,6 +49,54 @@
                                             </div>
                                             <div class="body">
 
+                                                <div class="col-md-12 p-t-20">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-bordered table-hover" id="tab_logic">
+                                                            <thead>
+                                                            <tr>
+                                                                <th class="text-center" style="width: 4%">
+                                                                    No
+                                                                </th>
+                                                                <th class="text-center" style="width: 24%">
+                                                                    Place
+                                                                </th>
+                                                                <th class="text-center" style="width: 24%">
+                                                                    Object (Jika ada)
+                                                                </th>
+                                                                <th class="text-center" style="width: 24%">
+                                                                    Sub Object 1 (Jika ada)
+                                                                </th>
+                                                                <th class="text-center" style="width: 24%">
+                                                                    Sub Object 2 (Jika ada)
+                                                                </th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            @php($count=1)
+                                                            @foreach($projectObjects as $projectObject)
+                                                                <tr id='sch0'>
+                                                                    <td>
+                                                                        {{$count}}
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type='text'class='form-control' value="{{$projectObject->place_name}}" disabled>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type='text'class='form-control' value="{{$projectObject->unit_name}}" disabled>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type='text'class='form-control' value="{{$projectObject->sub1_unit_name}}" disabled>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type='text'class='form-control' value="{{$projectObject->sub2_unit_name}}" disabled>
+                                                                    </td>
+                                                                </tr>
+                                                                @php($count++)
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
