@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin\project;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Project;
+use App\Models\ProjectEmployee;
 use App\Transformer\ProjectTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -26,8 +28,20 @@ class ProjectEmployeeController extends Controller
             return redirect()->back();
         }
 
+        $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
+            ->where('project_id', $id)
+            ->whereIn('employee_roles_id', [2,3,4])
+            ->get();
+
+        $cleanerEmployees = ProjectEmployee::with('employee')
+            ->where('project_id', $id)
+            ->where('employee_roles_id', 1)
+            ->get();
+
         $data = [
-            'information'          => $project,
+            'project'               => $project,
+            'upperEmployees'        => $upperEmployees,
+            'cleanerEmployees'      => $cleanerEmployees
         ];
 
         return view('admin.project.employee.show')->with($data);
@@ -36,7 +50,7 @@ class ProjectEmployeeController extends Controller
     public function create(int $id){
         try{
             $project = Project::find($id);
-            $manpower = $project->total_manpower - 1;
+            $manpower = $project->total_manpower - 2;
 
             $data = [
                 'project'       => $project,
@@ -51,43 +65,78 @@ class ProjectEmployeeController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(Request $request, int $project_id)
     {
         try{
-            $validator = Validator::make($request->all(), [
-                'name'          => 'required',
-                'address'       => 'required',
-                'phone'         => 'required',
-                'customer'           => 'required',
-                'latitude'      => 'required',
-                'longitude'     => 'required',
-            ]);
+            // Validate input
+            $upperEmployeeIds = $request->input('upper_employee_ids');
+            $cleanerEmployeeIds = $request->input('cleaner_employee_ids');
 
-            if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
+            if(empty($upperEmployeeIds) && empty($cleanerEmployeeIds)){
+                return back()->withErrors("INVALID INPUT!")->withInput($request->all());
+            }
 
-            //Create Project
+            $valid = true;
+            if(!empty($upperEmployeeIds)){
+                foreach ($upperEmployeeIds as $upperEmployeeId){
+                    if(empty($upperEmployeeId)) $valid = false;
+                }
+            }
 
-            $user = Auth::guard('admin')->user();
-            $project = Project::create([
-                'name'              => $request->input('name'),
-                'phone'             => $request->input('phone'),
-                'customer_id'            => $request->input('customer'),
-                'latitude'          => $request->input('latitude'),
-                'longitude'         => $request->input('longitude'),
-                'address'           => $request->input('address'),
-                'description'           => $request->input('description'),
-                'status_id'         => $request->input('status'),
-                'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'created_by'        => $user->id,
-                'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'updated_by'        => $user->id,
-            ]);
+            if(!empty($cleanerEmployeeIds)){
+                foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
+                    if(empty($cleanerEmployeeId)) $valid = false;
+                }
+            }
 
-            Session::flash('success', 'Sukses membuat information baru!');
-            return redirect()->route('admin.information.index');
+            if(!$valid){
+                return back()->withErrors("INVALID INPUT!")->withInput($request->all());
+            }
+
+            $adminUser = Auth::guard('admin')->user();
+            $now = Carbon::now('Asia/Jakarta');
+
+            if(!empty($upperEmployeeIds)){
+                foreach ($upperEmployeeIds as $upperEmployeeId){
+                    $emp = Employee::find($upperEmployeeId);
+                    if(!empty($emp)){
+                        ProjectEmployee::create([
+                            'project_id'        => $project_id,
+                            'employee_id'       => $upperEmployeeId,
+                            'employee_role_id'  => $emp->employee_role_id,
+                            'status_id'         => 1,
+                            'created_by'        => $adminUser->id,
+                            'created_at'        => $now->toDateTimeString(),
+                            'updated_by'        => $adminUser->id,
+                            'updated_at'        => $now->toDateTimeString(),
+                        ]);
+                    }
+                }
+            }
+
+            if(!empty($cleanerEmployeeIds)){
+                foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
+                    $emp = Employee::find($cleanerEmployeeId);
+                    if(!empty($emp)){
+                        ProjectEmployee::create([
+                            'project_id'        => $project_id,
+                            'employee_id'       => $cleanerEmployeeId,
+                            'employee_role_id'  => $emp->employee_role_id,
+                            'status_id'         => 1,
+                            'created_by'        => $adminUser->id,
+                            'created_at'        => $now->toDateTimeString(),
+                            'updated_by'        => $adminUser->id,
+                            'updated_at'        => $now->toDateTimeString(),
+                        ]);
+                    }
+                }
+            }
+
+            Session::flash('success', 'Sukses menugaskan employee ke project!');
+            return redirect()->route('admin.project.employee.show');
         }
         catch (\Exception $ex){
-            Log::error('Admin/information/ProjectObjectController - store error EX: '. $ex);
+            Log::error('Admin/project/ProjectEmployeeController - store error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }

@@ -185,7 +185,7 @@ Route::prefix('admin')->group(function(){
     Route::post('/employee/update/{id}', 'Admin\EmployeeController@update')->name('admin.employee.update');
     Route::post('/employee/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
 
-    // Employee
+    // Customer
     Route::get('/customer', 'Admin\CustomerController@index')->name('admin.customer.index');
     Route::get('/customer/create', 'Admin\CustomerController@create')->name('admin.customer.create');
     Route::get('/customer/show/{id}', 'Admin\CustomerController@show')->name('admin.customer.show');
@@ -251,11 +251,11 @@ Route::prefix('admin')->group(function(){
     Route::post('/project/object/update/{id}', 'Admin\project\ProjectObjectController@update')->name('admin.project.object.update');
 
     // Project Employee
-    Route::get('/project/employee/show/{id}', 'Admin\project\ProjectController@show')->name('admin.project.employee.show');
+    Route::get('/project/employee/show/{id}', 'Admin\project\ProjectEmployeeController@show')->name('admin.project.employee.show');
     Route::get('/project/employee/create/{id}', 'Admin\project\ProjectEmployeeController@create')->name('admin.project.employee.create');
-    Route::get('/project/employee/edit/{id}', 'Admin\project\ProjectController@edit')->name('admin.project.employee.edit');
-    Route::post('/project/employee/store', 'Admin\project\ProjectController@store')->name('admin.project.employee.store');
-    Route::post('/project/employee/update/{id}', 'Admin\project\ProjectController@update')->name('admin.project.employee.update');
+    Route::get('/project/employee/edit/{project_id}', 'Admin\project\ProjectEmployeeController@edit')->name('admin.project.employee.edit');
+    Route::post('/project/employee/store/{project_id}', 'Admin\project\ProjectEmployeeController@store')->name('admin.project.employee.store');
+    Route::post('/project/employee/update/{id}', 'Admin\project\ProjectEmployeeController@update')->name('admin.project.employee.update');
 
     // Project Schedule
     Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectController@show')->name('admin.project.schedule.show');
@@ -308,6 +308,7 @@ Route::get('/select-sub1unit-dropdown', 'Admin\Sub1UnitController@getSub1UnitDro
 Route::get('/select-sub1units', 'Admin\Sub1UnitController@getSub1Units')->name('select.sub1units');
 Route::get('/select-sub2units', 'Admin\Sub2UnitController@getSub2Units')->name('select.sub2units');
 Route::get('/select-upper-employees', 'Admin\EmployeeController@getUpperEmployees')->name('select.upper.employees');
+Route::get('/select-cleaner-employees', 'Admin\EmployeeController@getCleanerEmployees')->name('select.cleaner.employees');
 Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('select.employees');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
