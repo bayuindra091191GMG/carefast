@@ -205,11 +205,11 @@
                     }
                 }
             });
-
             var bufferID = parseInt(a) - parseInt(1);
-            $('#unit'+ bufferID).on('select2:select', function(){
-                var objVal = $('#unit'+ bufferID).val();
-                alert(objVal);
+            $('#unit'+ a).on('select2:select', function(){
+
+                bufferID = parseInt(a) - parseInt(1);
+                var objVal = $('#unit'+ bufferID).val()
 
                 $.ajax({
                     url: '{{ route('select.sub1unit-dropdown') }}',
