@@ -61,6 +61,7 @@
                                                 <tbody>
                                                 @php($count=0)
                                                 @foreach($projectObjects as $projectObject)
+                                                    <input type='hidden' name='id[]' value='{{$projectObject->id}}'>
                                                     <tr id='sch{{$count}}'>
                                                         <td class='field-item'>
                                                             <select id="place{{$count}}" name="places[]" class='form-control'>
@@ -98,6 +99,7 @@
                                                     @php($count++)
                                                 @endforeach
                                                 <tr id='sch{{$count}}'>
+                                                    <input type='hidden' name='id[]' value='-1'>
                                                     <td class='field-item'>
                                                         <select id="place{{$count}}" name="places[]" class='form-control'><option value='-1'>-</option></select>
                                                         <span><br>Atau tambah Baru</span>
@@ -132,6 +134,7 @@
                                         &nbsp;
                                         <a id='delete_row' class="btn btn-danger" style="color: #fff;">Hapus</a>
                                         <input type="hidden" id="project-count" value="{{$projectObjectCount}}">
+                                        <input type="hidden" id="project-id" name="project-id" value="{{$project->id}}">
                                     </div>
 
                                 </div>
@@ -266,6 +269,7 @@
         $("#add_row").click(function(){
             var bufferID = i;
             $('#sch'+i).html(
+                "<input type='hidden' name='id[]' value='-1'>" +
                 "<td><select id='place" + i +"' name='places[]' class='form-control'><option value='-1'>-</option></select>" +
                 "<span><br>Atau tambah Baru</span>" +
                 "<input type='text' id='placeNew" + i +"' name='place_new[]' class='form-control'>" +
