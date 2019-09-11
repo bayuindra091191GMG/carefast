@@ -117,6 +117,50 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="total_manday">Total Manday *</label>
+                                                                    <input id="total_manday" type="number" class="form-control"
+                                                                           name="total_manday" value="{{ $project->total_manday }}" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="total_mp_onduty">Total MP Onduty *</label>
+                                                                    <input id="total_mp_onduty" type="number" class="form-control"
+                                                                           name="total_mp_onduty" value="{{ $project->total_mp_onduty }}" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="total_mp_off">Total Mp Off *</label>
+                                                                    <input id="total_mp_off" type="number" class="form-control"
+                                                                           name="total_mp_off" value="{{ $project->total_mp_off }}" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="total_manpower">Total Manpower *</label>
+                                                                    <input id="total_manpower" type="number" class="form-control"
+                                                                           name="total_manpower" value="{{ $project->total_manpower }}" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">

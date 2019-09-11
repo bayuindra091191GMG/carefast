@@ -61,8 +61,8 @@
                                                 <tbody>
                                                 @php($count=0)
                                                 @foreach($projectObjects as $projectObject)
-                                                    <input type='hidden' name='id[]' value='{{$projectObject->id}}'>
                                                     <tr id='sch{{$count}}'>
+                                                        <input type='hidden' name='id[]' value='{{$projectObject->id}}'>
                                                         <td class='field-item'>
                                                             <select id="place{{$count}}" name="places[]" class='form-control'>
                                                                 <option value='{{$projectObject->place_id}}'>{{$projectObject->place_name}}</option>
@@ -210,9 +210,9 @@
             });
             var bufferID = parseInt(a) - parseInt(1);
             $('#unit'+ a).on('select2:select', function(){
-
+                alert($(this).val());
                 bufferID = parseInt(a) - parseInt(1);
-                var objVal = $('#unit'+ bufferID).val()
+                var objVal = $(this).val();
 
                 $.ajax({
                     url: '{{ route('select.sub1unit-dropdown') }}',
@@ -236,6 +236,7 @@
                                         .text(data[j].text));
                             }
                         }
+                        $('#sub_2_unit' + bufferID).empty();
                         $('#sub_2_unit'+ bufferID)
                             .append($("<option></option>")
                                 .attr("value","-1")
@@ -365,6 +366,7 @@
                                         .text(data[j].text));
                             }
                         }
+                        $('#sub_2_unit' + bufferID).empty();
                         $('#sub_2_unit' + bufferID)
                             .append($("<option></option>")
                                 .attr("value","-1")

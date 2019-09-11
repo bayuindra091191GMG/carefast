@@ -58,7 +58,7 @@
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
                                                 <label class="form-label" for="address">Alamat *</label>
-                                                <textarea name="address" id="address" class="form-control" rows="10">{{ $project->address }}</textarea>
+                                                <textarea name="address" id="address" class="form-control" rows="3">{{ $project->address }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -91,6 +91,50 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="total_manday">Total Manday *</label>
+                                                        <input id="total_manday" type="number" class="form-control"
+                                                               name="total_manday" value="{{ $project->total_manday }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="total_mp_onduty">Total MP Onduty *</label>
+                                                        <input id="total_mp_onduty" type="number" class="form-control"
+                                                               name="total_mp_onduty" value="{{ $project->total_mp_onduty }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="total_mp_off">Total Mp Off *</label>
+                                                        <input id="total_mp_off" type="number" class="form-control"
+                                                               name="total_mp_off" value="{{ $project->total_mp_off }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="total_manpower">Total Manpower *</label>
+                                                        <input id="total_manpower" type="number" class="form-control"
+                                                               name="total_manpower" value="{{ $project->total_manpower }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -108,6 +152,14 @@
                                                 <option value="1" @if($project->status_id === 1) selected @endif>Aktif</option>
                                                 <option value="2" @if($project->status_id === 2) selected @endif>Non-Aktif</option>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="address">Deksripsi *</label>
+                                                <textarea name="description" id="description" class="form-control" rows="10">{{ $project->description }}</textarea>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">

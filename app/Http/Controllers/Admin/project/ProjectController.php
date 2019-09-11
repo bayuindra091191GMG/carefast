@@ -75,6 +75,10 @@ class ProjectController extends Controller
                 'customer'           => 'required',
                 'latitude'      => 'required',
                 'longitude'     => 'required',
+                'total_manday'     => 'required',
+                'total_mp_onduty'     => 'required',
+                'total_mp_off'     => 'required',
+                'total_manpower'     => 'required',
             ]);
 
             if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
@@ -85,11 +89,15 @@ class ProjectController extends Controller
             $project = Project::create([
                 'name'              => $request->input('name'),
                 'phone'             => $request->input('phone'),
-                'customer_id'            => $request->input('customer'),
+                'customer_id'       => $request->input('customer'),
                 'latitude'          => $request->input('latitude'),
                 'longitude'         => $request->input('longitude'),
                 'address'           => $request->input('address'),
-                'description'           => $request->input('description'),
+                'description'       => $request->input('description'),
+                'total_manday'      => $request->input('total_manday'),
+                'total_mp_onduty'   => $request->input('total_mp_onduty'),
+                'total_mp_off'      => $request->input('total_mp_off'),
+                'total_manpower'    => $request->input('total_manpower'),
                 'status_id'         => $request->input('status'),
                 'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'created_by'        => $user->id,
@@ -128,6 +136,10 @@ class ProjectController extends Controller
                 'customer'           => 'required',
                 'latitude'      => 'required',
                 'longitude'     => 'required',
+                'total_manday'     => 'required',
+                'total_mp_onduty'     => 'required',
+                'total_mp_off'     => 'required',
+                'total_manpower'     => 'required',
             ]);
 
             if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
@@ -146,6 +158,10 @@ class ProjectController extends Controller
             $project->longitude =$request->input('longitude');
             $project->address = $request->input('address');
             $project->description = $request->input('description');
+            $project->total_manday = $request->input('total_manday');
+            $project->total_mp_onduty = $request->input('total_mp_onduty');
+            $project->total_mp_off = $request->input('total_mp_off');
+            $project->total_manpower = $request->input('total_manpower');
             $project->status_id = $request->input('status');
             $project->updated_by = $adminUser->id;
             $project->updated_at = $now->toDateTimeString();

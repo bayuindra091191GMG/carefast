@@ -38,9 +38,15 @@ class ProjectObjectController extends Controller
         }
         $projectObject = $project->project_objects;
 
+        $isCreate = false;
+        if($projectObject->count() === 0){
+            $isCreate = true;
+        }
+
         $data = [
             'project'           => $project,
-            'projectObjects'     => $projectObject,
+            'projectObjects'    => $projectObject,
+            'isCreate'          => $isCreate,
         ];
 //        dd($data);
         return view('admin.project.object.show')->with($data);
@@ -340,7 +346,23 @@ class ProjectObjectController extends Controller
                     }
                 }
 
-                if($projectObjectIds[$i] == '-1'){
+                if($projectObjectIds[$i] != '-1'){
+                    $projectObjectDB = ProjectObject::find($projectObjectIds[$i]);
+                    // kalau salah satu object ada yang berbeda update dengan data terbaru
+                    if(
+                    !($projectObjectDB->place_id == $selectedPlace &&
+                        $projectObjectDB->unit_id == $selectedUnit &&
+                        $projectObjectDB->sub1_unit_id == $selectedSubUnit1 &&
+                        $projectObjectDB->sub2_unit_id == $selectedSubUnit2)
+                    ){
+                        $projectObjectDB->place_id = $selectedPlace;
+                        $projectObjectDB->unit_id = $selectedUnit;
+                        $projectObjectDB->sub1_unit_id = $selectedSubUnit1;
+                        $projectObjectDB->sub2_unit_id = $selectedSubUnit2;
+                        $projectObjectDB->save();
+                    }
+                }
+                else{
                     //Create Project Object
                     $projectObject = ProjectObject::create([
                         'project_id'        => $project->id,
@@ -358,19 +380,6 @@ class ProjectObjectController extends Controller
                         'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                         'updated_by'        => $user->id,
                     ]);
-                }
-                else{
-                    $projectObjectExist = ProjectObject::where('project_id', $project->id)
-                        ->where('place_id', $selectedPlace)
-                        ->where('unit_id', $selectedUnit)
-                        ->where('sub1_unit_id', $selectedSubUnit1)
-                        ->where('sub2_unit_id', $selectedSubUnit2)
-                        ->first();
-                    if(!empty($projectObjectExist)){
-                        if($projectObjectExist->id != $projectObjectIds[$i]){
-
-                        }
-                    }
                 }
                 $i++;
             }

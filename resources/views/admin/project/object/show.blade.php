@@ -42,10 +42,11 @@
                                     <div class="card">
                                         <div class="card-body b-b">
                                             <div class="col-md-12 col-12 text-right">
-                                                @if(!empty($projectObject))
-                                                    <a href="{{ route('admin.project.object.create', ['id' => $project->id]) }}" class="btn btn-success">TAMBAH</a>
+                                                @if($isCreate)
+                                                    <a href="{{ route('admin.project.object.create', ['id' => $project->id]) }}" class="btn btn-success">TAMBAH OBJECT</a>
+                                                @else
+                                                    <a href="{{ route('admin.project.object.edit', ['id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
                                                 @endif
-                                                <a href="{{ route('admin.project.object.edit', ['id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
                                             </div>
                                             <div class="body">
 
@@ -72,27 +73,35 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            @php($count=1)
-                                                            @foreach($projectObjects as $projectObject)
+                                                            @if($projectObjects->count() > 0)
+                                                                @php($count=1)
+                                                                @foreach($projectObjects as $projectObject)
+                                                                    <tr id='sch0'>
+                                                                        <td>
+                                                                            {{$count}}
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type='text'class='form-control' value="{{$projectObject->place_name}}" disabled>
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type='text'class='form-control' value="{{$projectObject->unit_name}}" disabled>
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type='text'class='form-control' value="{{$projectObject->sub1_unit_name}}" disabled>
+                                                                        </td>
+                                                                        <td>
+                                                                            <input type='text'class='form-control' value="{{$projectObject->sub2_unit_name}}" disabled>
+                                                                        </td>
+                                                                    </tr>
+                                                                    @php($count++)
+                                                                @endforeach
+                                                            @else
                                                                 <tr id='sch0'>
-                                                                    <td>
-                                                                        {{$count}}
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type='text'class='form-control' value="{{$projectObject->place_name}}" disabled>
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type='text'class='form-control' value="{{$projectObject->unit_name}}" disabled>
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type='text'class='form-control' value="{{$projectObject->sub1_unit_name}}" disabled>
-                                                                    </td>
-                                                                    <td>
-                                                                        <input type='text'class='form-control' value="{{$projectObject->sub2_unit_name}}" disabled>
+                                                                    <td colspan="5" style="text-align:center;">
+                                                                        <h4>BELUM ADA PLACE DAN OBJECT TERPILIH</h4>
                                                                     </td>
                                                                 </tr>
-                                                                @php($count++)
-                                                            @endforeach
+                                                            @endif
                                                             </tbody>
                                                         </table>
                                                     </div>
