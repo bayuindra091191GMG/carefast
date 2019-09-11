@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 11 Sep 2019 14:57:50 +0700.
+ * Date: Wed, 11 Sep 2019 15:57:30 +0700.
  */
 
 namespace App\Models;
@@ -22,15 +22,16 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
+ * 
+ * @property \App\Models\Customer $customer
+ * @property \App\Models\Project $project
+ * @property \Illuminate\Database\Eloquent\Collection $customer_complaint_details
  *
  * @package App\Models
  */
 class CustomerComplaint extends Eloquent
 {
-	public $incrementing = false;
-
 	protected $casts = [
-		'id' => 'int',
 		'project_id' => 'int',
 		'customer_id' => 'int',
 		'created_by' => 'int',
@@ -50,4 +51,19 @@ class CustomerComplaint extends Eloquent
 		'created_by',
 		'updated_by'
 	];
+
+	public function customer()
+	{
+		return $this->belongsTo(\App\Models\Customer::class);
+	}
+
+	public function project()
+	{
+		return $this->belongsTo(\App\Models\Project::class);
+	}
+
+	public function customer_complaint_details()
+	{
+		return $this->hasMany(\App\Models\CustomerComplaintDetail::class, 'complaint_id');
+	}
 }
