@@ -182,7 +182,7 @@ class ProjectObjectController extends Controller
                     'unit_id'           => $selectedUnit,
                     'sub1_unit_id'      => $selectedSubUnit1,
                     'sub2_unit_id'      => $selectedSubUnit2,
-                    'place_name'        => $request->input('description'),
+                    'place_name'        => $selectedPlaceName,
                     'unit_name'         => $selectedUnitName,
                     'sub1_unit_name'    => $selectedSubUnit1Name,
                     'sub2_unit_name'    => $selectedSubUnit2Name,
@@ -335,9 +335,10 @@ class ProjectObjectController extends Controller
                     if (in_array($projectObject->id, $projectObjectIds)) {
                         $isFound = true;
                     }
-
+                    if(!$isFound){
+                        $projectObject->delete();
+                    }
                 }
-
 
                 if($projectObjectIds[$i] == '-1'){
                     //Create Project Object
@@ -347,7 +348,7 @@ class ProjectObjectController extends Controller
                         'unit_id'           => $selectedUnit,
                         'sub1_unit_id'      => $selectedSubUnit1,
                         'sub2_unit_id'      => $selectedSubUnit2,
-                        'place_name'        => $request->input('description'),
+                        'place_name'        => $selectedPlaceName,
                         'unit_name'         => $selectedUnitName,
                         'sub1_unit_name'    => $selectedSubUnit1Name,
                         'sub2_unit_name'    => $selectedSubUnit2Name,
@@ -359,7 +360,17 @@ class ProjectObjectController extends Controller
                     ]);
                 }
                 else{
+                    $projectObjectExist = ProjectObject::where('project_id', $project->id)
+                        ->where('place_id', $selectedPlace)
+                        ->where('unit_id', $selectedUnit)
+                        ->where('sub1_unit_id', $selectedSubUnit1)
+                        ->where('sub2_unit_id', $selectedSubUnit2)
+                        ->first();
+                    if(!empty($projectObjectExist)){
+                        if($projectObjectExist->id != $projectObjectIds[$i]){
 
+                        }
+                    }
                 }
                 $i++;
             }
