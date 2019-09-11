@@ -12,6 +12,7 @@ use App\Transformer\ProjectTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -20,26 +21,39 @@ use Yajra\DataTables\DataTables;
 
 class ProjectEmployeeController extends Controller
 {
-    public function show(int $id)
+    public function __construct()
     {
-        $project = Project::find($id);
+        $this->middleware('auth:admin');
+    }
 
+    public function show(int $project_id)
+    {
+        $project = Project::find($project_id);
         if(empty($project)){
             return redirect()->back();
         }
 
+        $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
+
         $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
-            ->where('project_id', $id)
+            ->where('project_id', $project_id)
             ->whereIn('employee_roles_id', [2,3,4])
             ->get();
 
         $cleanerEmployees = ProjectEmployee::with('employee')
-            ->where('project_id', $id)
+            ->where('project_id', $project_id)
             ->where('employee_roles_id', 1)
             ->get();
 
+        $isCreate = false;
+        if($upperEmployees->count() === 0 && $cleanerEmployees->count() === 0){
+            $isCreate = true;
+        }
+
         $data = [
             'project'               => $project,
+            'manpowerLeft'          => $manpowerLeft,
+            'isCreate'              => $isCreate,
             'upperEmployees'        => $upperEmployees,
             'cleanerEmployees'      => $cleanerEmployees
         ];
@@ -47,9 +61,13 @@ class ProjectEmployeeController extends Controller
         return view('admin.project.employee.show')->with($data);
     }
 
-    public function create(int $id){
+    public function create(int $project_id){
         try{
-            $project = Project::find($id);
+            $project = Project::find($project_id);
+            if(empty($project)){
+                return redirect()->back();
+            }
+
             $manpower = $project->total_manpower - 2;
 
             $data = [
@@ -96,14 +114,16 @@ class ProjectEmployeeController extends Controller
             $adminUser = Auth::guard('admin')->user();
             $now = Carbon::now('Asia/Jakarta');
 
+            $manpowerUsed = 0;
             if(!empty($upperEmployeeIds)){
                 foreach ($upperEmployeeIds as $upperEmployeeId){
                     $emp = Employee::find($upperEmployeeId);
                     if(!empty($emp)){
+                        $valueArr = explode('#', $upperEmployeeId);
                         ProjectEmployee::create([
                             'project_id'        => $project_id,
-                            'employee_id'       => $upperEmployeeId,
-                            'employee_role_id'  => $emp->employee_role_id,
+                            'employee_id'       => $valueArr[0],
+                            'employee_roles_id' => $emp->employee_role_id,
                             'status_id'         => 1,
                             'created_by'        => $adminUser->id,
                             'created_at'        => $now->toDateTimeString(),
@@ -111,6 +131,7 @@ class ProjectEmployeeController extends Controller
                             'updated_at'        => $now->toDateTimeString(),
                         ]);
                     }
+                    $manpowerUsed++;
                 }
             }
 
@@ -121,7 +142,7 @@ class ProjectEmployeeController extends Controller
                         ProjectEmployee::create([
                             'project_id'        => $project_id,
                             'employee_id'       => $cleanerEmployeeId,
-                            'employee_role_id'  => $emp->employee_role_id,
+                            'employee_roles_id' => $emp->employee_role_id,
                             'status_id'         => 1,
                             'created_by'        => $adminUser->id,
                             'created_at'        => $now->toDateTimeString(),
@@ -129,11 +150,16 @@ class ProjectEmployeeController extends Controller
                             'updated_at'        => $now->toDateTimeString(),
                         ]);
                     }
+                    $manpowerUsed++;
                 }
             }
 
+            $project = Project::find($project_id);
+            $project->total_manpower_used = $manpowerUsed;
+            $project->save();
+
             Session::flash('success', 'Sukses menugaskan employee ke project!');
-            return redirect()->route('admin.project.employee.show');
+            return redirect()->route('admin.project.employee.show', ['project_id' => $project_id]);
         }
         catch (\Exception $ex){
             Log::error('Admin/project/ProjectEmployeeController - store error EX: '. $ex);
@@ -141,53 +167,210 @@ class ProjectEmployeeController extends Controller
         }
     }
 
-    public function edit(int $id)
+    public function edit(int $project_id)
     {
-        $project = Project::find($id);
-        if(empty($project)){
-            return redirect()->back();
-        }
-
-        $data = [
-            'information'          => $project,
-        ];
-        return view('admin.information.edit')->with($data);
-    }
-
-    public function update(Request $request, int $id){
         try{
-            $validator = Validator::make($request->all(), [
-                'name'          => 'required',
-                'address'       => 'required',
-                'phone'         => 'required',
-                'customer'           => 'required',
-                'latitude'      => 'required',
-                'longitude'     => 'required',
-            ]);
-
-            if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
-
-            $project = Project::find($id);
+            $project = Project::find($project_id);
             if(empty($project)){
                 return redirect()->back();
             }
+
+            $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
+
+            $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
+                ->where('project_id', $project_id)
+                ->whereIn('employee_roles_id', [2,3,4])
+                ->get();
+
+            if($upperEmployees->count() === 0){
+                $manpowerLeft--;
+            }
+
+            $includeIds = [];
+            $collectUpperEmployees = collect();
+            foreach ($upperEmployees as $upperEmployee){
+                array_push($includeIds, $upperEmployee->employee_id);
+                // Schedule check here
+
+                $collectUpperEmployee = collect([
+                    'id'                    => $upperEmployee->id,
+                    'employee_id'           => $upperEmployee->employee_id,
+                    'employee_code'         => $upperEmployee->employee->code,
+                    'employee_name'         => $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name,
+                    'employee_role_id'      => $upperEmployee->employee_roles_id,
+                    'employee_role_name'    => $upperEmployee->employee_role->name,
+                    'is_created_schedule'   => false
+                ]);
+
+                $collectUpperEmployees->push($collectUpperEmployee);
+            }
+
+            $cleanerEmployees = ProjectEmployee::with('employee')
+                ->where('project_id', $project_id)
+                ->where('employee_roles_id', 1)
+                ->get();
+
+            if($cleanerEmployees->count() === 0){
+                $manpowerLeft--;
+            }
+
+            $collectCleanerEmployees = collect();
+            foreach ($cleanerEmployees as $cleanerEmployee){
+                array_push($includeIds, $cleanerEmployee->employee_id);
+                // Schedule check here
+
+                $collectCleanerEmployee = collect([
+                    'id'                    => $cleanerEmployee->id,
+                    'employee_id'           => $cleanerEmployee->employee_id,
+                    'employee_code'         => $cleanerEmployee->employee->code,
+                    'employee_name'         => $cleanerEmployee->employee->first_name. ' '. $cleanerEmployee->employee->last_name,
+                    'employee_role_id'      => $cleanerEmployee->employee_roles_id,
+                    'employee_role_name'    => $cleanerEmployee->employee_role->name,
+                    'is_created_schedule'   => false
+                ]);
+
+                $collectCleanerEmployees->push($collectCleanerEmployee);
+            }
+
+            //dd($includeIds);
+
+            $data = [
+                'project'                   => $project,
+                'manpowerLeft'              => $manpowerLeft,
+                'upperEmployees'            => $upperEmployees,
+                'collectUpperEmployees'     => $collectUpperEmployees,
+                'cleanerEmployees'          => $cleanerEmployees,
+                'collectCleanerEmployees'   => $collectCleanerEmployees,
+                'includeIds'                => json_encode($includeIds)
+            ];
+
+            return view('admin.project.employee.edit')->with($data);
+        }
+        catch (\Exception $ex){
+            Log::error('Admin/information/ProjectEmployeeController - edit error EX: '. $ex);
+            return "Something went wrong! Please contact administrator!";
+        }
+    }
+
+    public function update(Request $request, int $project_id){
+        try{
+            // Validate input
+            $upperEmployeeIds = $request->input('upper_employee_ids');
+            $cleanerEmployeeIds = $request->input('cleaner_employee_ids');
+
+            if(empty($upperEmployeeIds) && empty($cleanerEmployeeIds)){
+                return back()->withErrors("INVALID INPUT!")->withInput($request->all());
+            }
+
+            $valid = true;
+            if(!empty($upperEmployeeIds)){
+                foreach ($upperEmployeeIds as $upperEmployeeId){
+                    if(empty($upperEmployeeId)) $valid = false;
+                }
+            }
+
+            if(!empty($cleanerEmployeeIds)){
+                foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
+                    if(empty($cleanerEmployeeId)) $valid = false;
+                }
+            }
+
+            if(!$valid){
+                return back()->withErrors("INVALID INPUT!")->withInput($request->all());
+            }
+
             $adminUser = Auth::guard('admin')->user();
             $now = Carbon::now('Asia/Jakarta');
 
-            $project->name = strtoupper($request->input('name'));
-            $project->phone = $request->input('phone') ?? '';
-            $project->customer_id = $request->input('customer');
-            $project->latitude = $request->input('latitude');
-            $project->longitude =$request->input('longitude');
-            $project->address = $request->input('address');
-            $project->description = $request->input('description');
-            $project->status_id = $request->input('status');
-            $project->updated_by = $adminUser->id;
-            $project->updated_at = $now->toDateTimeString();
+            $projectEmployees = ProjectEmployee::where('project_id', $project_id)
+                ->get();
+
+            // Unassign employee from project
+            foreach ($projectEmployees as $projectEmployee){
+                $isFound = false;
+
+                if(!empty($upperEmployeeIds)){
+                    foreach ($upperEmployeeIds as $upperEmployeeId){
+                        $valueArr = explode('#', $upperEmployeeId);
+                        $empId = intval($valueArr[0]);
+
+                        if($projectEmployee->employee_id === $empId){
+                            $isFound = true;
+                        }
+                    }
+                }
+
+                if(!empty($cleanerEmployeeIds)){
+                    foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
+                        $empId = intval($cleanerEmployeeId);
+
+                        if($projectEmployee->employee_id === $empId){
+                            $isFound = true;
+                        }
+                    }
+                }
+
+                if(!$isFound){
+                    $projectEmployee->delete();
+                }
+            }
+
+            $manpowerUsed = 0;
+            if(!empty($upperEmployeeIds)){
+                foreach ($upperEmployeeIds as $upperEmployeeId){
+                    $emp = Employee::find($upperEmployeeId);
+                    if(!empty($emp)){
+                        if(!DB::table('project_employees')
+                            ->where('project_id', $project_id)
+                            ->where('employee_id', $emp->id)
+                            ->exists()){
+                            $valueArr = explode('#', $upperEmployeeId);
+                            ProjectEmployee::create([
+                                'project_id'        => $project_id,
+                                'employee_id'       => $valueArr[0],
+                                'employee_roles_id' => $emp->employee_role_id,
+                                'status_id'         => 1,
+                                'created_by'        => $adminUser->id,
+                                'created_at'        => $now->toDateTimeString(),
+                                'updated_by'        => $adminUser->id,
+                                'updated_at'        => $now->toDateTimeString(),
+                            ]);
+                        }
+                    }
+                    $manpowerUsed++;
+                }
+            }
+
+            if(!empty($cleanerEmployeeIds)){
+                foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
+                    $emp = Employee::find($cleanerEmployeeId);
+                    if(!empty($emp)){
+                        if(!DB::table('project_employees')
+                            ->where('project_id', $project_id)
+                            ->where('employee_id', $emp->id)
+                            ->exists()){
+                            ProjectEmployee::create([
+                                'project_id'        => $project_id,
+                                'employee_id'       => $cleanerEmployeeId,
+                                'employee_roles_id' => $emp->employee_role_id,
+                                'status_id'         => 1,
+                                'created_by'        => $adminUser->id,
+                                'created_at'        => $now->toDateTimeString(),
+                                'updated_by'        => $adminUser->id,
+                                'updated_at'        => $now->toDateTimeString(),
+                            ]);
+                        }
+                    }
+                    $manpowerUsed++;
+                }
+            }
+
+            $project = Project::find($project_id);
+            $project->total_manpower_used = $manpowerUsed;
             $project->save();
 
-            Session::flash('success', 'Sukses mengubah data information!');
-            return redirect()->route('admin.information.show',['id' => $project->id]);
+            Session::flash('success', 'Sukses mengubah penugasan employee ke project!');
+            return redirect()->route('admin.project.employee.show', ['project_id' => $project_id]);
 
         }
         catch (\Exception $ex){

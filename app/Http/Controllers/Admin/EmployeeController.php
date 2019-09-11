@@ -21,6 +21,11 @@ use Yajra\DataTables\DataTables;
 
 class EmployeeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+
     public function index(){
         try{
             return view('admin.employee.index');

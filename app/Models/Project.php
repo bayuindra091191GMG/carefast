@@ -26,6 +26,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $total_mp_onduty
  * @property int $total_mp_off
  * @property int $total_manpower
+ * @property int $total_manpower_used
  * @property int $status_id
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
@@ -47,6 +48,7 @@ class Project extends Eloquent
 		'total_mp_onduty' => 'int',
 		'total_mp_off' => 'int',
 		'total_manpower' => 'int',
+        'total_manpower_used' => 'int',
 		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
@@ -71,6 +73,7 @@ class Project extends Eloquent
 		'total_mp_onduty',
 		'total_mp_off',
 		'total_manpower',
+        'total_manpower_used',
 		'status_id',
 		'created_by',
 		'updated_by'

@@ -44,7 +44,11 @@
                                                     @include('partials.admin._messages')
 
                                                     <div class="col-12 text-right">
-                                                        <a href="{{ route('admin.project.employee.edit', ['project_id' => $project->id]) }}" class="btn btn-danger">UBAH</a>
+                                                        @if($isCreate)
+                                                            <a href="{{ route('admin.project.employee.create', ['project_id' => $project->id]) }}" class="btn btn-success">TAMBAH EMPLOYEE</a>
+                                                        @else
+                                                            <a href="{{ route('admin.project.employee.edit', ['project_id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
+                                                        @endif
                                                     </div>
 
                                                     <div class="col-md-12">
@@ -61,7 +65,7 @@
                                                                 <div class="form-group form-float form-group-lg">
                                                                     <div class="form-line">
                                                                         <label class="form-label" for="manpower">Manpower</label>
-                                                                        <input type="text" id="manpower_string" class="form-control" value="{{ $project->total_manpower ?? 0 }}" readonly/>
+                                                                        <input type="text" id="manpower_string" class="form-control" value="{{ 'Sisa '. $manpowerLeft. ' dari '. $project->total_manpower }}" readonly/>
                                                                     </div>
                                                                 </div>
                                                             </div>
