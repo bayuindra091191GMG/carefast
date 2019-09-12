@@ -99,9 +99,12 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/redeem-poin', 'Api\PoinController@redeem');
 });
 
-//Waste Collector Transaction
+
 //Route::group(['namespace' => 'Api', 'middleware' => 'waste_collector', 'prefix' => 'waste-collector'], function () {
 Route::middleware('auth:customer')->prefix('customer')->group(function(){
+    //customer complain
+    Route::post('/complain-submit', 'Api\ComplainController@submit');
+
     Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
     Route::get('/get-data', 'Api\CustomerController@show');
 });
