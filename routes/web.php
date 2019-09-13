@@ -185,6 +185,15 @@ Route::prefix('admin')->group(function(){
     Route::post('/employee/update/{id}', 'Admin\EmployeeController@update')->name('admin.employee.update');
     Route::post('/employee/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
 
+    // Employee Role
+    Route::get('/employee_role', 'Admin\EmployeeRoleController@index')->name('admin.employee_role.index');
+    Route::get('/employee_role/create', 'Admin\EmployeeRoleController@create')->name('admin.employee_role.create');
+    Route::get('/employee_role/show/{id}', 'Admin\EmployeeRoleController@show')->name('admin.employee_role.show');
+    Route::get('/employee_role/edit/{id}', 'Admin\EmployeeRoleController@edit')->name('admin.employee_role.edit');
+    Route::post('/employee_role/store', 'Admin\EmployeeRoleController@store')->name('admin.employee_role.store');
+    Route::post('/employee_role/update/{id}', 'Admin\EmployeeRoleController@update')->name('admin.employee_role.update');
+    Route::post('/employee_role/destroy', 'Admin\EmployeeRoleController@destroy')->name('admin.employee_role.destroy');
+
     // Customer
     Route::get('/customer', 'Admin\CustomerController@index')->name('admin.customer.index');
     Route::get('/customer/create', 'Admin\CustomerController@create')->name('admin.customer.create');
@@ -291,6 +300,7 @@ Route::get('/datatables-product-categories', 'Admin\ProductCategoryController@ge
 Route::get('/datatables-product-brands', 'Admin\ProductBrandController@getIndex')->name('datatables.product.brands');
 Route::get('/datatables-product-customizations', 'Admin\ProductController@getIndexCustomize')->name('datatables.product.customizations');
 Route::get('/datatables-employee', 'Admin\EmployeeController@getIndex')->name('datatables.employees');
+Route::get('/datatables-employee_role', 'Admin\EmployeeRoleController@getIndex')->name('datatables.employee_roles');
 Route::get('/datatables-banner', 'Admin\BannerController@getIndex')->name('datatables.banners');
 Route::get('/datatables-place', 'Admin\PlaceController@getIndex')->name('datatables.places');
 Route::get('/datatables-unit', 'Admin\UnitController@getIndex')->name('datatables.units');

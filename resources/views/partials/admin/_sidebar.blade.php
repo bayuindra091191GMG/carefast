@@ -79,13 +79,13 @@
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
+                            <a href="{{ route('admin.employee_role.index') }}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Daftar Jabatan Karyawan </span>
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
+                            <a href="{{ route('admin.employee_role.create') }}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
                                 <span class="hide-menu"> Buat Jabatan Karyawan Baru</span>
                             </a>
