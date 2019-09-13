@@ -36,7 +36,7 @@ class ProjectObjectController extends Controller
         if(empty($project)){
             return redirect()->back();
         }
-        $projectObject = $project->project_objects;
+        $projectObject = $project->project_objects->sortBy('place_id');
 
         $isCreate = false;
         if($projectObject->count() === 0){
@@ -216,7 +216,7 @@ class ProjectObjectController extends Controller
         if(empty($project)){
             return redirect()->back();
         }
-        $projectObject = $project->project_objects;
+        $projectObject = $project->project_objects->sortBy('place_id');
         $data = [
             'project'           => $project,
             'projectObjects'     => $projectObject,
@@ -346,6 +346,7 @@ class ProjectObjectController extends Controller
                     }
                 }
 
+//                dd($selectedPlace, $selectedUnit, $selectedSubUnit1, $selectedSubUnit2,$selectedPlaceName,$selectedUnitName,$selectedSubUnit1Name,$selectedSubUnit2Name);
                 if($projectObjectIds[$i] != '-1'){
                     $projectObjectDB = ProjectObject::find($projectObjectIds[$i]);
                     // kalau salah satu object ada yang berbeda update dengan data terbaru
@@ -359,27 +360,33 @@ class ProjectObjectController extends Controller
                         $projectObjectDB->unit_id = $selectedUnit;
                         $projectObjectDB->sub1_unit_id = $selectedSubUnit1;
                         $projectObjectDB->sub2_unit_id = $selectedSubUnit2;
+                        $projectObjectDB->place_name = $selectedPlaceName;
+                        $projectObjectDB->unit_name = $selectedUnitName;
+                        $projectObjectDB->sub1_unit_name = $selectedSubUnit1Name;
+                        $projectObjectDB->sub2_unit_name = $selectedSubUnit2Name;
                         $projectObjectDB->save();
                     }
                 }
                 else{
                     //Create Project Object
-                    $projectObject = ProjectObject::create([
-                        'project_id'        => $project->id,
-                        'place_id'          => $selectedPlace,
-                        'unit_id'           => $selectedUnit,
-                        'sub1_unit_id'      => $selectedSubUnit1,
-                        'sub2_unit_id'      => $selectedSubUnit2,
-                        'place_name'        => $selectedPlaceName,
-                        'unit_name'         => $selectedUnitName,
-                        'sub1_unit_name'    => $selectedSubUnit1Name,
-                        'sub2_unit_name'    => $selectedSubUnit2Name,
-                        'status_id'         => 1,
-                        'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'created_by'        => $user->id,
-                        'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'updated_by'        => $user->id,
-                    ]);
+                    if($selectedPlace != '-1' && $selectedUnit != '-1' && $selectedSubUnit1 != '-1' && $selectedSubUnit2 != '-1'){
+                        $projectObject = ProjectObject::create([
+                            'project_id'        => $project->id,
+                            'place_id'          => $selectedPlace,
+                            'unit_id'           => $selectedUnit,
+                            'sub1_unit_id'      => $selectedSubUnit1,
+                            'sub2_unit_id'      => $selectedSubUnit2,
+                            'place_name'        => $selectedPlaceName,
+                            'unit_name'         => $selectedUnitName,
+                            'sub1_unit_name'    => $selectedSubUnit1Name,
+                            'sub2_unit_name'    => $selectedSubUnit2Name,
+                            'status_id'         => 1,
+                            'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'created_by'        => $user->id,
+                            'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'updated_by'        => $user->id,
+                        ]);
+                    }
                 }
                 $i++;
             }
