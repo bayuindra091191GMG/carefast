@@ -72,13 +72,13 @@ class ProjectController extends Controller
                 'name'          => 'required',
                 'address'       => 'required',
                 'phone'         => 'required',
-                'customer'           => 'required',
-                'latitude'      => 'required',
-                'longitude'     => 'required',
-                'total_manday'     => 'required',
-                'total_mp_onduty'     => 'required',
-                'total_mp_off'     => 'required',
-                'total_manpower'     => 'required',
+                'customer'          => 'required',
+                'latitude'          => 'required',
+                'longitude'         => 'required',
+                'total_manday'      => 'required',
+                'total_mp_onduty'   => 'required',
+                'total_mp_off'      => 'required',
+                'total_manpower'    => 'required',
             ]);
 
             if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
@@ -130,16 +130,16 @@ class ProjectController extends Controller
     public function update(Request $request, int $id){
         try{
             $validator = Validator::make($request->all(), [
-                'name'          => 'required',
-                'address'       => 'required',
-                'phone'         => 'required',
-                'customer'           => 'required',
-                'latitude'      => 'required',
-                'longitude'     => 'required',
-                'total_manday'     => 'required',
-                'total_mp_onduty'     => 'required',
-                'total_mp_off'     => 'required',
-                'total_manpower'     => 'required',
+                'name'              => 'required',
+                'address'           => 'required',
+                'phone'             => 'required',
+                'customer'          => 'required',
+                'latitude'          => 'required',
+                'longitude'         => 'required',
+                'total_manday'      => 'required',
+                'total_mp_onduty'   => 'required',
+                'total_mp_off'      => 'required',
+                'total_manpower'    => 'required',
             ]);
 
             if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
@@ -169,7 +169,6 @@ class ProjectController extends Controller
 
             Session::flash('success', 'Sukses mengubah data information!');
             return redirect()->route('admin.project.information.show',['id' => $project->id]);
-
         }
         catch (\Exception $ex){
             Log::error('Admin/information/ProjectController - update error EX: '. $ex);

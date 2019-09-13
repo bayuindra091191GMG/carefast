@@ -54,7 +54,7 @@ class Sub2UnitController extends Controller
     }
 
     public function index(){
-        return view('admin.Sub2Unit.index');
+        return view('admin.sub2unit.index');
     }
 
     public function getIndex(){
@@ -66,7 +66,7 @@ class Sub2UnitController extends Controller
     }
 
     public function create(){
-        return view('admin.Sub2Unit.create');
+        return view('admin.sub2unit.create');
     }
 
     public function store(Request $request){

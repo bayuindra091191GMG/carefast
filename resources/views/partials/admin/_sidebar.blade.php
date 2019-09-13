@@ -111,18 +111,6 @@
                                 <span class="hide-menu"> Buat Customer Baru</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
-                                <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Daftar Tipe Customer </span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
-                                <i class="mdi mdi-account"></i>
-                                <span class="hide-menu"> Buat Tipe Customer Baru</span>
-                            </a>
-                        </li>
                     </ul>
                 </li>
                 <li class="sidebar-item">
