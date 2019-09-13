@@ -41,13 +41,13 @@
                                     <div class="col-md-12 p-t-20">
                                         <div class="table-responsive">
                                             <input type="hidden" name="project_id" value="{{$project->id}}">
-                                            <table class="table table-bordered table-hover" id="tab_logic">
+                                            <table class="table table-striped table-bordered table-hover" id="tab_logic">
                                                 <thead>
                                                 <tr>
-                                                    <th class="text-center" style="width: 25%">
+                                                    <th class="text-center" style="width: 20%">
                                                         Pilih Place*
                                                     </th>
-                                                    <th class="text-center" style="width: 25%">
+                                                    <th class="text-center" style="width: 20%">
                                                         Pilih Object (Jika ada)
                                                     </th>
                                                     <th class="text-center" style="width: 25%">
@@ -55,6 +55,9 @@
                                                     </th>
                                                     <th class="text-center" style="width: 25%">
                                                         Pilih Sub Object 2 (Jika ada)
+                                                    </th>
+                                                    <th class="text-center" style="width: 10%">
+                                                        Tindakan
                                                     </th>
                                                 </tr>
                                                 </thead>
@@ -95,6 +98,10 @@
                                                                 <input type="text" id="sub_2_unitNew{{$count}}" name="sub_2_unit_new[]" class='form-control'>
                                                             </div>
                                                         </td>
+                                                        <td>
+                                                            <a class='edit-modal btn btn-xs btn-info' data-id='{{$count}}'><i class='fas fa-info'></i></a>
+                                                            <a class='delete-modal btn btn-xs btn-danger' data-id='{{$count}}' ><i class='fas fa-trash-alt text-white'></i></a>
+                                                        </td>
                                                     </tr>
                                                     @php($count++)
                                                 @endforeach
@@ -124,6 +131,9 @@
                                                             <input type="text" id="sub_2_unitNew{{$count}}" name="sub_2_unit_new[]" class='form-control'>
                                                         </div>
                                                     </td>
+                                                    <td>
+
+                                                    </td>
                                                 </tr>
                                                 @php($count++)
                                                 <tr id='sch{{$count}}'></tr>
@@ -146,7 +156,86 @@
             </div>
         </div>
     </div>
+    <div id="deleteModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+                <div class="modal-body">
+                    <h3 class="text-center">Apakah anda yakin ingin menghapus data ini?</h3>
+                    <br />
+                    <input type="hidden" id="deleted-id" name="deleted-id"/>
 
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">
+                            <span class='glyphicon glyphicon-remove'></span> No
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="deleteRow()">
+                            <span class='glyphicon glyphicon-trash'></span> Yes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="editModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+                <div class="modal-body">
+                    <h3 class="text-center">Apakah anda yakin ingin mengubah data ini?</h3>
+                    <br />
+                    <form role="form">
+                        <input type="hidden" id="edited-id" name="edited-id"/>
+                        <div class="row mb-5">
+                            <div class="col-6">
+                                <h4>Place</h4>
+                                <select id="place_edit" class='form-control'>
+                                </select>
+                                <span><br>Atau tambah Baru</span>
+                                <input type='text' id='placeNew_edit'  class='form-control'>
+                            </div>
+                            <div class="col-6">
+                                <h4>Object (Jika ada)</h4>
+                                <select id="unit_edit" class='form-control'>
+                                </select>
+                                <span><br>Atau tambah Baru</span>
+                                <input type='text' id='unitNew_edit' class='form-control'>
+                            </div>
+                        </div>
+                        <div class="row mb-5">
+                            <div class="col-6">
+                                <h4>Sub Object 1 (Jika ada)</h4>
+                                <select id="sub_1_unit_edit" class='form-control'>
+                                </select>
+                                <span><br>Atau tambah Baru</span>
+                                <input type='text' id='sub_1_unitNew_edit' class='form-control'>
+                            </div>
+                            <div class="col-6">
+                                <h4>Sub Object 2 (Jika ada)</h4>
+                                <select id="sub_2_unit_edit" class='form-control'>
+                                </select>
+                                <span><br>Atau tambah Baru</span>
+                                <input type='text' id='sub_2_unitNew_edit'  class='form-control'>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" data-dismiss="modal">
+                            <span class='glyphicon glyphicon-remove'></span> No
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="editRow()">
+                            <span class='glyphicon glyphicon-trash'></span> Yes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('styles')
@@ -159,112 +248,107 @@
             type="text/javascript"></script>
 
     <script type="text/javascript">
-        // select2 for initial Data
         var countRow = $('#project-count').val();
 
-        for(var a=0; a<=countRow; a++){
-            $('#place' + a).select2({
-                placeholder: {
-                    id: '-1',
-                    text: ' - Pilih Place - '
+        $('#place' + countRow).select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Place - '
+            },
+            width: '100%',
+            minimumInputLength: 1,
+            ajax: {
+                url: '{{ route('select.places') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
                 },
-                width: '100%',
-                minimumInputLength: 1,
-                ajax: {
-                    url: '{{ route('select.places') }}',
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: $.trim(params.term)
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
                 }
-            });
+            }
+        });
 
-            $('#unit' + a).select2({
-                placeholder: {
-                    id: '-1',
-                    text: ' - Pilih Object - '
+        $('#unit' + countRow).select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Object - '
+            },
+            width: '100%',
+            minimumInputLength: 1,
+            ajax: {
+                url: '{{ route('select.units') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
                 },
-                width: '100%',
-                minimumInputLength: 1,
-                ajax: {
-                    url: '{{ route('select.units') }}',
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: $.trim(params.term)
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
                 }
-            });
-            var bufferID = parseInt(a) - parseInt(1);
-            $('#unit'+ a).on('select2:select', function(){
-                alert($(this).val());
-                bufferID = parseInt(a) - parseInt(1);
-                var objVal = $(this).val();
+            }
+        });
 
-                $.ajax({
-                    url: '{{ route('select.sub1unit-dropdown') }}',
-                    dataType: 'json',
-                    data: {
-                        'id': objVal
-                    },
-                    success: function (data) {
-                        $('#sub_1_unit'+ bufferID).empty();
-                        if(data.length == 0){
-                            $('#sub_1_unit'+ bufferID)
-                                .append($("<option></option>")
-                                    .attr("value","-1")
-                                    .text("-"));
-                        }
-                        else{
-                            for(let j=0; j<data.length; j++){
-                                $('#sub_1_unit'+ bufferID)
-                                    .append($("<option></option>")
-                                        .attr("value",data[j].id)
-                                        .text(data[j].text));
-                            }
-                        }
-                        $('#sub_2_unit' + bufferID).empty();
-                        $('#sub_2_unit'+ bufferID)
+        $('#unit' + countRow).on('select2:select', function(){
+            var objVal = '#unit' + countRow;
+
+            $.ajax({
+                url: '{{ route('select.sub1unit-dropdown') }}',
+                dataType: 'json',
+                data: {
+                    'id': $(objVal).val()
+                },
+                success: function (data) {
+                    $('#sub_1_unit' + countRow).empty();
+                    if(data.length == 0){
+                        $('#sub_1_unit' + countRow)
                             .append($("<option></option>")
                                 .attr("value","-1")
                                 .text("-"));
                     }
-                });
-            });
-
-            $('#sub_1_unit' + bufferID).on('change', function() {
-                var objVal = $('#sub_1_unit'+bufferID).val();
-                $.ajax({
-                    url: '{{ route('select.units') }}',
-                    dataType: 'json',
-                    data: {
-                        'id': objVal
-                    },
-                    success: function (data) {
-                        $('#sub_2_unit'+ bufferID).empty();
+                    else{
                         for(let j=0; j<data.length; j++){
-                            $('#sub_2_unit'+ bufferID)
+                            $('#sub_1_unit' + countRow)
                                 .append($("<option></option>")
                                     .attr("value",data[j].id)
                                     .text(data[j].text));
                         }
                     }
-                });
+                    $('#sub_2_unit' + countRow).empty();
+                    $('#sub_2_unit' + countRow)
+                        .append($("<option></option>")
+                            .attr("value","-1")
+                            .text("-"));
+                }
             });
-        }
+        });
+
+        $('#sub_1_unit' + countRow).on('change', function() {
+            var objVal = '#sub_1_unit' + countRow;
+            $.ajax({
+                url: '{{ route('select.units') }}',
+                dataType: 'json',
+                data: {
+                    'id': $(objVal).val()
+                },
+                success: function (data) {
+                    $('#sub_2_unit' + countRow).empty();
+                    for(let j=0; j<data.length; j++){
+                        $('#sub_2_unit' + countRow)
+                            .append($("<option></option>")
+                                .attr("value",data[j].id)
+                                .text(data[j].text));
+                    }
+                }
+            });
+        });
 
         var i= parseInt(countRow) + parseInt(1);
         $("#add_row").click(function(){
@@ -291,7 +375,7 @@
                 "<select id='sub_2_unit" + i +"' name='sub_2_units[]' class='form-control'><option value='-1'>-</option></select>" +
                 "<span><br>Atau tambah Baru</span>" +
                 "<input type='text' id='sub_2_unitNew" + i +"' name='sub_2_unit_new[]' class='form-control'>" +
-                "</div></td>"
+                "</div></td><td></td>"
             );
             $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
 
@@ -404,5 +488,194 @@
                 i--;
             }
         });
+    </script>
+    <script>
+
+        //delete already saved object
+        $(document).on('click', '.delete-modal', function(){
+            $('#deleteModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            $('#deleted-id').val($(this).data('id'));
+        });
+        function deleteRow(){
+            let rowIdx = $('#deleted-id').val();
+            let deletedIdx = parseInt(rowIdx);
+
+            $('#sch' + deletedIdx).remove();
+            $('#deleteModal').modal('hide');
+        }
+
+        //edit already saved object
+        $(document).on('click', '.edit-modal', function(){
+            $('#editModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            let a = $(this).data('id');
+            $('#edited-id').val(a);
+
+            $('#place_edit').select2({
+                placeholder: {
+                    id: '-1',
+                    text: ' - Pilih Place - '
+                },
+                width: '100%',
+                minimumInputLength: 1,
+                ajax: {
+                    url: '{{ route('select.places') }}',
+                    dataType: 'json',
+                    data: function (params) {
+                        return {
+                            q: $.trim(params.term)
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+
+            $('#unit_edit').select2({
+                placeholder: {
+                    id: '-1',
+                    text: ' - Pilih Object - '
+                },
+                width: '100%',
+                minimumInputLength: 1,
+                ajax: {
+                    url: '{{ route('select.units') }}',
+                    dataType: 'json',
+                    data: function (params) {
+                        return {
+                            q: $.trim(params.term)
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
+            $('#unit_edit').on('select2:select', function(){
+                bufferID = parseInt(a) - parseInt(1);
+                var objVal = $(this).val();
+
+                $.ajax({
+                    url: '{{ route('select.sub1unit-dropdown') }}',
+                    dataType: 'json',
+                    data: {
+                        'id': objVal
+                    },
+                    success: function (data) {
+                        $('#sub_1_unit_edit').empty();
+                        if(data.length == 0){
+                            $('#sub_1_unit_edit')
+                                .append($("<option></option>")
+                                    .attr("value","-1")
+                                    .text("-"));
+                        }
+                        else{
+                            for(let j=0; j<data.length; j++){
+                                $('#sub_1_unit_edit')
+                                    .append($("<option></option>")
+                                        .attr("value",data[j].id)
+                                        .text(data[j].text));
+                            }
+                        }
+                        $('#sub_2_unit_edit').empty();
+                        $('#sub_2_unit_edit')
+                            .append($("<option></option>")
+                                .attr("value","-1")
+                                .text("-"));
+                    }
+                });
+            });
+
+            $('#sub_1_unit_edit').on('change', function() {
+                var objVal = $('#sub_1_unit_edit'+a).val();
+                $.ajax({
+                    url: '{{ route('select.units') }}',
+                    dataType: 'json',
+                    data: {
+                        'id': objVal
+                    },
+                    success: function (data) {
+                        $('#sub_2_unit_edit').empty();
+                        for(let j=0; j<data.length; j++){
+                            $('#sub_2_unit_edit')
+                                .append($("<option></option>")
+                                    .attr("value",data[j].id)
+                                    .text(data[j].text));
+                        }
+                    }
+                });
+            });
+
+        });
+
+        function editRow(){
+            let rowIdx = $('#edited-id').val();
+            let a = parseInt(rowIdx);
+
+            let placeNew = $('#placeNew_edit').val();
+            $('#placeNew_edit').val("");
+            $('#place' + a).empty();
+            if(placeNew !== ""){
+                $('#placeNew' + a).val(placeNew);
+            }
+            else{
+                $('#place' + a)
+                    .append($("<option></option>")
+                        .attr("value",$('#place_edit').val())
+                        .text($('#place_edit option:selected').text()));
+            }
+
+            let unitNew = $('#unitNew_edit').val();
+            $('#unitNew_edit').val("");
+            $('#unit' + a).empty();
+            if(unitNew !== ""){
+                $('#unitNew' + a).val(placeNew);
+            }
+            else{
+                $('#unit' + a)
+                    .append($("<option></option>")
+                        .attr("value",$('#unit_edit').val())
+                        .text($('#unit_edit option:selected').text()));
+            }
+
+            let sub1unitNew = $('#sub_1_unitNew_edit').val();
+            $('#sub_1_unitNew_edit').val("");
+            $('#sub_1_unit' + a).empty();
+            if(sub1unitNew !== ""){
+                $('#sub_1_unitNew' + a).val(placeNew);
+            }
+            else{
+                $('#sub_1_unit' + a)
+                    .append($("<option></option>")
+                        .attr("value",$('#sub_1_unit_edit').val())
+                        .text($('#sub_1_unit_edit option:selected').text()));
+            }
+
+            let sub2unitNew = $('#sub_2_unitNew_edit').val();
+            $('#sub_2_unitNew_edit').val("");
+            $('#sub_2_unit' + a).empty();
+            if(sub2unitNew !== ""){
+                $('#sub_2_unitNew' + a).val(placeNew);
+            }
+            else{
+                $('#sub_2_unit' + a)
+                    .append($("<option></option>")
+                        .attr("value",$('#sub_2_unit_edit').val())
+                        .text($('#sub_2_unit_edit option:selected').text()));
+            }
+            $('#editModal').modal('hide');
+        }
     </script>
 @endsection
