@@ -296,7 +296,7 @@ Route::get('/datatables-place', 'Admin\PlaceController@getIndex')->name('datatab
 Route::get('/datatables-unit', 'Admin\UnitController@getIndex')->name('datatables.units');
 Route::get('/datatables-action', 'Admin\ActionController@getIndex')->name('datatables.actions');
 Route::get('/datatables-customer', 'Admin\CustomerController@getIndex')->name('datatables.customers');
-Route::get('/datatables-project', 'Admin\Project\ProjectController@getIndex')->name('datatables.projects');
+Route::get('/datatables-project', 'Admin\project\ProjectController@getIndex')->name('datatables.projects');
 Route::get('/datatables-sub1unit', 'Admin\Sub1UnitController@getIndex')->name('datatables.sub1_units');
 Route::get('/datatables-sub2unit', 'Admin\Sub2UnitController@getIndex')->name('datatables.sub2_units');
 
