@@ -267,11 +267,11 @@ Route::prefix('admin')->group(function(){
     Route::post('/project/employee/update/{project_id}', 'Admin\project\ProjectEmployeeController@update')->name('admin.project.employee.update');
 
     // Project Schedule
-    Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectController@show')->name('admin.project.schedule.show');
-    Route::get('/project/schedule/create', 'Admin\project\ProjectController@create')->name('admin.project.schedule.create');
-    Route::get('/project/schedule/edit/{id}', 'Admin\project\ProjectController@edit')->name('admin.project.schedule.edit');
-    Route::post('/project/schedule/store', 'Admin\project\ProjectController@store')->name('admin.project.schedule.store');
-    Route::post('/project/schedule/update/{id}', 'Admin\project\ProjectController@update')->name('admin.project.schedule.update');
+    Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectScheduleController@show')->name('admin.project.schedule.show');
+    Route::get('/project/schedule/create', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
+    Route::get('/project/schedule/edit/{id}', 'Admin\project\ProjectScheduleController@edit')->name('admin.project.schedule.edit');
+    Route::post('/project/schedule/store', 'Admin\project\ProjectScheduleController@store')->name('admin.project.schedule.store');
+    Route::post('/project/schedule/update/{id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
 
     // Report
     Route::get('/transaction/report', 'Admin\ReportController@transactionReport')->name('admin.transaction.report');

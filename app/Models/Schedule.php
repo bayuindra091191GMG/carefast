@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 04 Sep 2019 15:09:10 +0700.
+ * Date: Mon, 16 Sep 2019 11:25:12 +0700.
  */
 
 namespace App\Models;
@@ -13,8 +13,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * Class Schedule
  * 
  * @property int $id
- * @property int $employee_id
- * @property int $place_id
+ * @property int $project_id
+ * @property int $project_employee_id
+ * @property int $shift_type
  * @property \Carbon\Carbon $start
  * @property \Carbon\Carbon $finish
  * @property int $status_id
@@ -24,8 +25,8 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $updated_by
  * 
  * @property \App\Models\Status $status
- * @property \App\Models\Employee $employee
- * @property \App\Models\Place $place
+ * @property \App\Models\ProjectEmployee $project_employee
+ * @property \App\Models\Project $project
  * @property \Illuminate\Database\Eloquent\Collection $attendances
  * @property \Illuminate\Database\Eloquent\Collection $schedule_details
  *
@@ -34,8 +35,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 class Schedule extends Eloquent
 {
 	protected $casts = [
-		'employee_id' => 'int',
-		'place_id' => 'int',
+		'project_id' => 'int',
+		'project_employee_id' => 'int',
+		'shift_type' => 'int',
 		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
@@ -47,8 +49,9 @@ class Schedule extends Eloquent
 	];
 
 	protected $fillable = [
-		'employee_id',
-		'place_id',
+		'project_id',
+		'project_employee_id',
+		'shift_type',
 		'start',
 		'finish',
 		'status_id',
@@ -61,14 +64,14 @@ class Schedule extends Eloquent
 		return $this->belongsTo(\App\Models\Status::class);
 	}
 
-	public function employee()
+	public function project_employee()
 	{
-		return $this->belongsTo(\App\Models\Employee::class);
+		return $this->belongsTo(\App\Models\ProjectEmployee::class);
 	}
 
-	public function place()
+	public function project()
 	{
-		return $this->belongsTo(\App\Models\Place::class);
+		return $this->belongsTo(\App\Models\Project::class);
 	}
 
 	public function attendances()

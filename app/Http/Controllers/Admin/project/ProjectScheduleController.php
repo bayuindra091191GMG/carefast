@@ -31,19 +31,26 @@ class ProjectScheduleController extends Controller
         if(empty($project)){
             return redirect()->back();
         }
+        $projectEmployees = $project->project_employees->sortByDesc('employee_roles_id');
 
+        $isCreate = false;
+        if($projectEmployees->count() === 0){
+            $isCreate = true;
+        }
         $data = [
             'information'          => $project,
+            'projectEmployees'     => $projectEmployees,
+            'isCreate'          => $isCreate,
         ];
-        return view('admin.information.show')->with($data);
+        return view('admin.project.schedule.show')->with($data);
     }
 
     public function create(){
         try{
-            return view('admin.information.create');
+            return view('admin.project.schedule.create');
         }
         catch (\Exception $ex){
-            Log::error('Admin/information/ProjectObjectController - create error EX: '. $ex);
+            Log::error('Admin/schedule/ProjectObjectController - create error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
@@ -80,11 +87,11 @@ class ProjectScheduleController extends Controller
                 'updated_by'        => $user->id,
             ]);
 
-            Session::flash('success', 'Sukses membuat information baru!');
-            return redirect()->route('admin.information.index');
+            Session::flash('success', 'Sukses membuat schedule baru!');
+            return redirect()->route('admin.project.schedule.index');
         }
         catch (\Exception $ex){
-            Log::error('Admin/information/ProjectObjectController - store error EX: '. $ex);
+            Log::error('Admin/schedule/ProjectObjectController - store error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
@@ -99,7 +106,7 @@ class ProjectScheduleController extends Controller
         $data = [
             'information'          => $project,
         ];
-        return view('admin.information.edit')->with($data);
+        return view('admin.project.schedule.edit')->with($data);
     }
 
     public function update(Request $request, int $id){
@@ -134,12 +141,12 @@ class ProjectScheduleController extends Controller
             $project->updated_at = $now->toDateTimeString();
             $project->save();
 
-            Session::flash('success', 'Sukses mengubah data information!');
-            return redirect()->route('admin.information.show',['id' => $project->id]);
+            Session::flash('success', 'Sukses mengubah data schedule!');
+            return redirect()->route('admin.project.schedule.show',['id' => $project->id]);
 
         }
         catch (\Exception $ex){
-            Log::error('Admin/information/ProjectObjectController - update error EX: '. $ex);
+            Log::error('Admin/schedule/ProjectObjectController - update error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
