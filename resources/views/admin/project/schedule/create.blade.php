@@ -39,59 +39,28 @@
                                     @endif
 
                                     <div class="col-md-12 p-t-20">
-                                        <div class="table-responsive">
-                                            <input type="hidden" name="project_id" value="{{$project->id}}">
-                                            <table class="table table-bordered table-hover" id="tab_logic">
-                                                <thead>
-                                                <tr>
-                                                    <th class="text-center" style="width: 25%">
-                                                        Pilih Place*
-                                                    </th>
-                                                    <th class="text-center" style="width: 25%">
-                                                        Pilih Object (Jika ada)
-                                                    </th>
-                                                    <th class="text-center" style="width: 25%">
-                                                        Pilih Sub Object 1 (Jika ada)
-                                                    </th>
-                                                    <th class="text-center" style="width: 25%">
-                                                        Pilih Sub Object 2 (Jika ada)
-                                                    </th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr id='sch0'>
-                                                    <td class='field-item'>
-                                                        <select id="place0" name="places[]" class='form-control'><option value='-1'>-</option></select>
-                                                        <span><br>Atau tambah Baru</span>
-                                                        <input type='text' id='placeNew0' name='place_new[]' class='form-control'>
-                                                    </td>
-                                                    <td>
-                                                        <select id="unit0" name="units[]" class='form-control'><option value='-1'>-</option></select>
-                                                        <span><br>Atau tambah Baru</span>
-                                                        <input type="text" id="unitNew0" name="unit_new[]" class='form-control'>
-                                                    </td>
-                                                    <td>
-                                                        <div id='sub_1_unit_div0'>
-                                                            <select id="sub_1_unit0" name="sub_1_units[]" class='form-control'><option value='-1'>-</option></select>
-                                                            <span><br>Atau tambah Baru</span>
-                                                            <input type="text" id="sub_1_unitNew0" name="sub_1_unit_new[]" class='form-control'>
+                                        <div class="accordion" id="accordionExample">
+                                            @foreach($projectEmployees as $projectEmployee)
+                                                <div class="card m-b-0 border-top">
+                                                    <div class="card-header" id="heading{{$projectEmployee->employee_id}}">
+                                                        <h5 class="mb-0">
+                                                            <a class="collapsed" data-toggle="collapse" data-target="#collapse{{$projectEmployee->employee_id}}"
+                                                               aria-expanded="false" aria-controls="collapse{{$projectEmployee->employee_id}}">
+                                                                <img src="{{ asset('storage/employees/'.$projectEmployee->employee->image_path) }}" width="50">
+                                                                &nbsp;
+                                                                <span>{{$projectEmployee->employee->first_name}} {{$projectEmployee->employee->last_name}}</span>
+                                                            </a>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapse{{$projectEmployee->employee_id}}" class="collapse"
+                                                         aria-labelledby="heading{{$projectEmployee->employee_id}}" data-parent="#accordionExample">
+                                                        <div class="card-body">
+                                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
                                                         </div>
-                                                    </td>
-                                                    <td>
-                                                        <div id='sub_2_unit_div0'>
-                                                            <select id="sub_2_unit0" name="sub_2_units[]" class='form-control'><option value='-1'>-</option></select>
-                                                            <span><br>Atau tambah Baru</span>
-                                                            <input type="text" id="sub_2_unitNew0" name="sub_2_unit_new[]" class='form-control'>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr id='sch1'></tr>
-                                                </tbody>
-                                            </table>
+                                                    </div>
+                                                </div>
+                                            @endforeach
                                         </div>
-                                        <a id="add_row" class="btn btn-success" style="color: #fff;">Tambah</a>
-                                        &nbsp;
-                                        <a id='delete_row' class="btn btn-danger" style="color: #fff;">Hapus</a>
                                     </div>
 
                                 </div>

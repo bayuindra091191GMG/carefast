@@ -268,7 +268,7 @@ Route::prefix('admin')->group(function(){
 
     // Project Schedule
     Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectScheduleController@show')->name('admin.project.schedule.show');
-    Route::get('/project/schedule/create', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
+    Route::get('/project/schedule/create/{id}', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
     Route::get('/project/schedule/edit/{id}', 'Admin\project\ProjectScheduleController@edit')->name('admin.project.schedule.edit');
     Route::post('/project/schedule/store', 'Admin\project\ProjectScheduleController@store')->name('admin.project.schedule.store');
     Route::post('/project/schedule/update/{id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
@@ -309,6 +309,7 @@ Route::get('/datatables-customer', 'Admin\CustomerController@getIndex')->name('d
 Route::get('/datatables-project', 'Admin\project\ProjectController@getIndex')->name('datatables.projects');
 Route::get('/datatables-sub1unit', 'Admin\Sub1UnitController@getIndex')->name('datatables.sub1_units');
 Route::get('/datatables-sub2unit', 'Admin\Sub2UnitController@getIndex')->name('datatables.sub2_units');
+Route::get('/datatables-project_schedule_employees', 'Admin\project\ProjectScheduleController@getScheduleEmployees')->name('datatables.project_schedule_employees');
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');

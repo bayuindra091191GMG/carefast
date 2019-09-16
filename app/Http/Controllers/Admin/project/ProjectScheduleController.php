@@ -9,8 +9,10 @@ use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\EmployeeRole;
 use App\Models\Project;
+use App\Models\ProjectEmployee;
 use App\Transformer\CustomerTransformer;
 use App\Transformer\EmployeeTransformer;
+use App\Transformer\ProjectScheduleEmployeeTransformer;
 use App\Transformer\ProjectTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,6 +26,18 @@ use Yajra\DataTables\DataTables;
 
 class ProjectScheduleController extends Controller
 {
+
+    public function getScheduleEmployees(Request $request){
+        $id = $request->input('id');
+//        $project = Project::find($id);
+//        $employeeSchedule = $project->project_employees->sortByDesc('employee_roles_id');
+        $employeeSchedule = ProjectEmployee::where('project_id', $id)->orderby('employee_roles_id', 'desc')->get();
+
+        return DataTables::of($employeeSchedule)
+            ->setTransformer(new ProjectScheduleEmployeeTransformer())
+            ->make(true);
+    }
+
     public function show(int $id)
     {
         $project = Project::find($id);
@@ -31,6 +45,7 @@ class ProjectScheduleController extends Controller
         if(empty($project)){
             return redirect()->back();
         }
+        $projectSchedules = $project->schedules;
         $projectEmployees = $project->project_employees->sortByDesc('employee_roles_id');
 
         $isCreate = false;
@@ -38,16 +53,30 @@ class ProjectScheduleController extends Controller
             $isCreate = true;
         }
         $data = [
-            'information'          => $project,
+            'project'               => $project,
             'projectEmployees'     => $projectEmployees,
+            'projectSchedules'     => $projectSchedules,
             'isCreate'          => $isCreate,
         ];
         return view('admin.project.schedule.show')->with($data);
     }
 
-    public function create(){
+    public function create(int $id){
         try{
-            return view('admin.project.schedule.create');
+            $project = Project::find($id);
+
+            if(empty($project)){
+                return redirect()->back();
+            }
+            $projectEmployees = $project->project_employees->sortByDesc('employee_roles_id');
+//            $projectEmployees = ProjectEmployee::where('project_id', $id)->orderby('employee_roles_id', 'desc')->get();
+
+            $data = [
+                'project'           => $project,
+                'projectEmployees'     => $projectEmployees,
+            ];
+
+            return view('admin.project.schedule.create')->with($data);
         }
         catch (\Exception $ex){
             Log::error('Admin/schedule/ProjectObjectController - create error EX: '. $ex);
@@ -104,7 +133,7 @@ class ProjectScheduleController extends Controller
         }
 
         $data = [
-            'information'          => $project,
+            'project'          => $project,
         ];
         return view('admin.project.schedule.edit')->with($data);
     }
