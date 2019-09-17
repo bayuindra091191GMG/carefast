@@ -61,25 +61,24 @@ class ProjectScheduleController extends Controller
         return view('admin.project.schedule.show')->with($data);
     }
 
-    public function create(int $id){
+    public function create(int $employee_id){
         try{
-            $project = Project::find($id);
+            $projectEmployee = ProjectEmployee::find($employee_id);
+            $project = $projectEmployee->project;
 
-            if(empty($project)){
+            if(empty($projectEmployee)){
                 return redirect()->back();
             }
-            $projectEmployees = $project->project_employees->sortByDesc('employee_roles_id');
-//            $projectEmployees = ProjectEmployee::where('project_id', $id)->orderby('employee_roles_id', 'desc')->get();
 
             $data = [
                 'project'           => $project,
-                'projectEmployees'     => $projectEmployees,
+                'projectEmployee'     => $projectEmployee,
             ];
 
             return view('admin.project.schedule.create')->with($data);
         }
         catch (\Exception $ex){
-            Log::error('Admin/schedule/ProjectObjectController - create error EX: '. $ex);
+            Log::error('Admin/schedule/ProjectScheduleController - create error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
@@ -120,7 +119,7 @@ class ProjectScheduleController extends Controller
             return redirect()->route('admin.project.schedule.index');
         }
         catch (\Exception $ex){
-            Log::error('Admin/schedule/ProjectObjectController - store error EX: '. $ex);
+            Log::error('Admin/schedule/ProjectScheduleController - store error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
@@ -175,7 +174,7 @@ class ProjectScheduleController extends Controller
 
         }
         catch (\Exception $ex){
-            Log::error('Admin/schedule/ProjectObjectController - update error EX: '. $ex);
+            Log::error('Admin/schedule/ProjectScheduleController - update error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
@@ -191,7 +190,7 @@ class ProjectScheduleController extends Controller
             return Response::json(array('success' => 'VALID'));
         }
         catch(\Exception $ex){
-            Log::error('Admin/CustomerController - destroy error EX: '. $ex);
+            Log::error('Admin/schedule/ProjectScheduleController - destroy error EX: '. $ex);
             return Response::json(array('errors' => 'INVALID'));
         }
     }

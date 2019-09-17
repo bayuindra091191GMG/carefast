@@ -6,15 +6,15 @@
         <div class="col-12">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-8 col-12">
+                    <div class="col-md-12 col-12">
                         <a href="{{ route('admin.project.information.index') }}" class="btn btn-outline-primary float-left mr-3">
                             <i class="fas fa-arrow-left"></i>
                         </a>
-                        <h3>DETIL SCHEDULE DATA PROJECT {{ $project->name }}</h3>
+                        <h3>DETIL SCHEDULE EMPLOYEE PROJECT {{ $project->name }}</h3>
                     </div>
-                    <div class="col-md-4 col-12 text-right">
+{{--                    <div class="col-md-4 col-12 text-right">--}}
 {{--                        <button class="btn btn-danger " data-toggle="modal" data-target="#deleteModal" data-id="{{$project->id}}">HAPUS</button>--}}
-                    </div>
+{{--                    </div>--}}
                 </div>
 
                 <form>
@@ -94,10 +94,12 @@
             serverSide: true,
             pageLength: 25,
             responsive: true,
-            ajax: '{!! route('datatables.project_schedule_employees') !!}',
-            data: [
-                {'id':'{{$project->id}}'}
-            ],
+            ajax: {
+                url: '{!! route('datatables.project_schedule_employees') !!}',
+                data: {
+                    'id': '{{ $project->id }}'
+                }
+            },
             order: [ [0, 'asc'] ],
             columns: [
                 { data: 'name', name: 'name', class: 'text-center' },

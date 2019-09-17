@@ -268,10 +268,10 @@ Route::prefix('admin')->group(function(){
 
     // Project Schedule
     Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectScheduleController@show')->name('admin.project.schedule.show');
-    Route::get('/project/schedule/create/{id}', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
-    Route::get('/project/schedule/edit/{id}', 'Admin\project\ProjectScheduleController@edit')->name('admin.project.schedule.edit');
+    Route::get('/project/schedule/create/{employee_id}', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
+    Route::get('/project/schedule/edit/{employee_id}', 'Admin\project\ProjectScheduleController@edit')->name('admin.project.schedule.edit');
     Route::post('/project/schedule/store', 'Admin\project\ProjectScheduleController@store')->name('admin.project.schedule.store');
-    Route::post('/project/schedule/update/{id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
+    Route::post('/project/schedule/update/{employee_id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
 
     // Report
     Route::get('/transaction/report', 'Admin\ReportController@transactionReport')->name('admin.transaction.report');

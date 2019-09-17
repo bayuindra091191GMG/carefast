@@ -8,7 +8,7 @@
                 {{ Form::open(['route'=>['admin.project.schedule.store'],'method' => 'post','id' => 'general-form']) }}
                     <div class="row">
                         <div class="col-md-8 col-12">
-                            <h3>TAMBAH BARU SCHEDULE PROJECT</h3>
+                            <h3>TAMBAH BARU SCHEDULE CSO {{$projectEmployee->employee->first_name}} {{$projectEmployee->employee->last_name}}</h3>
                         </div>
                         <div class="col-md-4 col-12 text-right">
                             <a href="{{ route('admin.project.schedule.show', ['id'=>$project->id]) }}" class="btn btn-danger">BATAL</a>
@@ -40,26 +40,65 @@
 
                                     <div class="col-md-12 p-t-20">
                                         <div class="accordion" id="accordionExample">
-                                            @foreach($projectEmployees as $projectEmployee)
-                                                <div class="card m-b-0 border-top">
-                                                    <div class="card-header" id="heading{{$projectEmployee->employee_id}}">
-                                                        <h5 class="mb-0">
-                                                            <a class="collapsed" data-toggle="collapse" data-target="#collapse{{$projectEmployee->employee_id}}"
-                                                               aria-expanded="false" aria-controls="collapse{{$projectEmployee->employee_id}}">
-                                                                <img src="{{ asset('storage/employees/'.$projectEmployee->employee->image_path) }}" width="50">
-                                                                &nbsp;
-                                                                <span>{{$projectEmployee->employee->first_name}} {{$projectEmployee->employee->last_name}}</span>
-                                                            </a>
-                                                        </h5>
-                                                    </div>
-                                                    <div id="collapse{{$projectEmployee->employee_id}}" class="collapse"
-                                                         aria-labelledby="heading{{$projectEmployee->employee_id}}" data-parent="#accordionExample">
-                                                        <div class="card-body">
-                                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                                        </div>
-                                                    </div>
+                                            <div class="card m-b-0 border-top">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">
+                                                        <img src="{{ asset('storage/employees/'.$projectEmployee->employee->image_path) }}" width="50">
+                                                        &nbsp;
+                                                        <span>{{$projectEmployee->employee->first_name}} {{$projectEmployee->employee->last_name}}</span>
+                                                    </h5>
                                                 </div>
-                                            @endforeach
+                                                <div class="col-md-12 p-t-20">
+                                                    <div class="table-responsive">
+                                                        <input type="hidden" name="project_id" value="{{$project->id}}">
+                                                        <input type="hidden" name="project_employee_id" value="{{$projectEmployee->id}}">
+                                                        <table class="table table-bordered table-hover" id="tab_logic">
+                                                            <thead>
+                                                            <tr>
+                                                                <th class="text-center" style="width: 15%">
+                                                                    Jam Mulai
+                                                                </th>
+                                                                <th class="text-center" style="width: 15%">
+                                                                    Jam Berakhir
+                                                                </th>
+                                                                <th class="text-center" style="width: 25%">
+                                                                    Object
+                                                                </th>
+                                                                <th class="text-center" style="width: 20%">
+                                                                    Action
+                                                                </th>
+                                                                <th class="text-center" style="width: 25%">
+                                                                    Deksripsi
+                                                                </th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr id='sch0'>
+                                                                <td class='field-item'>
+                                                                    <input id='start0' class='form-control' name='start_time'/>
+                                                                </td>
+                                                                <td>
+                                                                    <input id='finish0' class='form-control' name='finish_time'/>
+                                                                </td>
+                                                                <td>
+
+                                                                </td>
+                                                                <td>
+
+                                                                </td>
+                                                                <td>
+                                                                    <input type='text' id='desc0' class='form-control' name='description'/>
+                                                                </td>
+                                                            </tr>
+                                                            <tr id='sch1'></tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <a id="add_row" class="btn btn-success" style="color: #fff;">Tambah</a>
+                                                    &nbsp;
+                                                    <a id='delete_row' class="btn btn-danger" style="color: #fff;">Hapus</a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -77,16 +116,24 @@
 
 @section('styles')
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/bootstrap-datetimepicker.css') }}" rel="stylesheet"/>
 @endsection
 
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script src="{{ asset('js/bootstrap-datetimepicker.js') }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
             type="text/javascript"></script>
 
     <script type="text/javascript">
         // select2 for initial Data
 
+        $('#start0').datetimepicker({
+            format: "HH:mm"
+        });
+        $('#finish0').datetimepicker({
+            format: "HH:mm"
+        });
         $('#place0').select2({
             placeholder: {
                 id: '-1',

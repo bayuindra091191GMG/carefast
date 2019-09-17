@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\Address;
 use App\Models\Configuration;
+use App\Models\ProjectEmployee;
 use App\Models\User;
 use App\Notifications\FCMNotification;
 use Carbon\Carbon;
@@ -76,13 +77,31 @@ class UserController extends Controller
         try{
             $userLogin = auth('api')->user();
             $user = User::where('email', $userLogin->email)->with('addresses')->first();
-            $employee = $user->employees->first();
+            $employee = $user->employee;
 
             // Get dob
             $dob = '';
             if(!$employee->dob){
                 $dob = Carbon::parse($employee->dob, 'Asia/Jakarta')->format('d M Y');
             }
+
+            //    accessible_menus =
+            //    1. checkin,
+            //    2. checkout,
+            //    3. lihat jadwal (login sbg CSO)
+            //    4. lihat jadwal cso (login sbg upper mangement)
+            //    5. beri penilaian cso
+            //    6. complain management
+            //    7. create MR
+            $accessible_menus = "";
+            if($user->employees->employee_role_id == 1){
+                $accessible_menus = "1,2,3";
+            }
+            else{
+                $accessible_menus = "1,4,5,6";
+            }
+            //pengecekan jika employee adalah pembuat MR pada suatu project
+
 
             $userModel = collect([
                 'id'                => $user->id,
@@ -95,7 +114,8 @@ class UserController extends Controller
                 'phone'             => $user->phone ?? '',
                 'dob'               => $dob,
                 'nik'               => $employee->nik ?? '',
-                'address'           => $employee->address ?? ''
+                'address'           => $employee->address ?? '',
+                'accessible_menus'  => $accessible_menus,
             ]);
 
             return Response::json($userModel, 200);

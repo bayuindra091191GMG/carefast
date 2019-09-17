@@ -17,8 +17,8 @@ class ProjectScheduleEmployeeTransformer extends TransformerAbstract
     public function transform(ProjectEmployee $project){
 
         try{
-            $routeCreateUrl = route('admin.project.information.create', ['id' => $project->id]);
-            $routeEditUrl = route('admin.project.information.edit', ['id' => $project->id]);
+            $routeCreateUrl = route('admin.project.schedule.create', ['employee_id' => $project->id]);
+            $routeEditUrl = route('admin.project.schedule.edit', ['employee_id' => $project->id]);
 
             $projectScheduleEmployee = Schedule::where('project_id', $project->project_id)
                 ->where('project_employee_id', $project->employee_id)
