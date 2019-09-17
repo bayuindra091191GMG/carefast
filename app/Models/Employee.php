@@ -26,7 +26,6 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $notes
  * @property string $image_path
  * @property int $status_id
- * @property int $user_id
  * @property int $created_by
  * @property \Carbon\Carbon $created_at
  * @property int $updated_by
@@ -35,7 +34,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \App\Models\AdminUser $admin_user
  * @property \App\Models\EmployeeRole $employee_role
  * @property \App\Models\Status $status
- * @property \App\Models\User $user
+ * @property \Illuminate\Database\Eloquent\Collection $users
  * @property \Illuminate\Database\Eloquent\Collection $attendances
  * @property \Illuminate\Database\Eloquent\Collection $schedules
  *
@@ -46,7 +45,6 @@ class Employee extends Eloquent
 	protected $casts = [
 		'employee_role_id' => 'int',
 		'status_id' => 'int',
-		'user_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
 	];
@@ -68,7 +66,6 @@ class Employee extends Eloquent
 		'notes',
 		'image_path',
 		'status_id',
-		'user_id',
 		'created_by',
 		'updated_by'
 	];
@@ -96,9 +93,9 @@ class Employee extends Eloquent
 		return $this->belongsTo(\App\Models\Status::class, 'status_id');
 	}
 
-	public function user()
+	public function users()
 	{
-		return $this->belongsTo(\App\Models\User::class);
+		return $this->hasMany(\App\Models\User::class);
 	}
 
 	public function attendances()

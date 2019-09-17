@@ -332,3 +332,6 @@ Route::get('/update-currency', 'Admin\CurrencyController@getCurrenciesUpdate')->
 
 // Email Aauth
 Route::get('/request-verification/{email}', 'Auth\RegisterController@RequestVerification')->name('request-verification');
+
+// Script
+Route::get('/script/create-users', 'Admin\ScriptController@scriptCreateUsers');

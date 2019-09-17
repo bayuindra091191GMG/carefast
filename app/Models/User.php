@@ -13,8 +13,9 @@ use Laravel\Passport\HasApiTokens;
 
 /**
  * Class User
- * 
+ *
  * @property int $id
+ * @property int $employee_id
  * @property string $name
  * @property string $position_name
  * @property string $email
@@ -29,7 +30,8 @@ use Laravel\Passport\HasApiTokens;
  * @property string $remember_token
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * 
+ *
+ * @property \App\Models\Employee $employee
  * @property \App\Models\Status $status
  * @property \Illuminate\Database\Eloquent\Collection $employees
  * @property \Illuminate\Database\Eloquent\Collection $fcm_token_users
@@ -46,6 +48,7 @@ class User extends Authenticatable
     }
 
 	protected $casts = [
+        'employee_id' => 'int',
 		'status_id' => 'int'
 	];
 
@@ -60,6 +63,7 @@ class User extends Authenticatable
 	];
 
 	protected $fillable = [
+	    'employee_id',
 		'name',
 		'position_name',
 		'email',
@@ -79,9 +83,9 @@ class User extends Authenticatable
 		return $this->belongsTo(\App\Models\Status::class);
 	}
 
-	public function employees()
+	public function employee()
 	{
-		return $this->hasMany(\App\Models\Employee::class);
+		return $this->belongsTo(\App\Models\Employee::class);
 	}
 
 	public function fcm_token_users()

@@ -58,6 +58,39 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="phone">Nomor Ponsel Login *</label>
+                                                <input id="phone" type="text" class="form-control"
+                                                       name="phone" value="{{ old('phone') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="password">Kata Sandi</label>
+                                                        <input id="password" type="password" class="form-control"
+                                                               name="password">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="password_confirmation">Konfirmasi Kata Sandi</label>
+                                                        <input id="password_confirmation" type="password" class="form-control"
+                                                               name="password_confirmation">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
@@ -106,18 +139,18 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="telephone">Nomor Telpon</label>
-                                                        <input id="telephone" type="text" class="form-control"
-                                                               name="telephone" value="{{ old('telephone') }}">
+                                                        <label class="form-label" for="email">Alamat Email</label>
+                                                        <input id="email" type="text" class="form-control"
+                                                               name="email" value="{{ old('email') }}">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="phone">Nomor Ponsel</label>
-                                                        <input id="phone" type="text" class="form-control"
-                                                               name="phone" value="{{ old('phone') }}">
+                                                        <label class="form-label" for="telephone">Nomor Telpon Rumah</label>
+                                                        <input id="telephone" type="text" class="form-control"
+                                                               name="telephone" value="{{ old('telephone') }}">
                                                     </div>
                                                 </div>
                                             </div>

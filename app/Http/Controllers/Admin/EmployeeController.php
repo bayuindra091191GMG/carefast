@@ -8,10 +8,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Unit;
+use App\Models\User;
 use App\Transformer\EmployeeTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -72,9 +74,19 @@ class EmployeeController extends Controller
     public function store(Request $request){
         try{
             $validator = Validator::make($request->all(), [
+                'phone'         => 'required|max:20|unique:employees',
                 'code'          => 'required|max:50|unique:employees',
                 'first_name'    => 'required|max:100',
                 'last_name'     => 'required|max:100',
+                'password'      => 'min:6|required_with:password_confirmation|same:password_confirmation',
+                'password_confirmation' => 'required'
+            ],[
+                'phone.unique'                      => 'Nomor Ponsel Login sudah terdaftar!',
+                'code.unique'                       => 'ID Karyawan sudah terdaftar!',
+                'phone.required'                    => 'Nomor Ponsel Login wajib diisi!',
+                'password.required_with'            => 'Kata Sandi wajib diisi!',
+                'password.same'                     => 'Konfirmasi Kata Sandi berbeda!',
+                'password_confirmation.required'    => 'Konfirmasi Kata Sandi wajib diisi!'
             ]);
 
             if ($validator->fails())
@@ -108,12 +120,23 @@ class EmployeeController extends Controller
                 'phone'             => $request->input('phone') ?? '',
                 'dob'               => $dob,
                 'nik'               => $request->input('nik') ?? '',
-                'notes'               => $request->input('notes') ?? '',
+                'notes'             => $request->input('notes') ?? '',
                 'status_id'         => $request->input('status'),
                 'created_by'        => $adminUser->id,
                 'created_at'        => $now->toDateTimeString(),
                 'updated_by'        => $adminUser->id,
                 'updated_at'        => $now->toDateTimeString(),
+            ]);
+
+            $name = strtoupper($request->input('first_name')). ' '. strtoupper($request->input('last_name'));
+
+            User::create([
+                'employee_id'       => $employee->id,
+                'name'              => $name,
+                'email'             => $request->input('email') ?? '',
+                'password'          => Hash::make($request->input('password')),
+                'phone'             => $request->input('phone'),
+                'status_id'         => $request->input('status')
             ]);
 
             if($request->hasFile('photo')){
