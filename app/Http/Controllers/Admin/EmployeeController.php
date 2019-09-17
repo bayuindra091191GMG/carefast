@@ -53,9 +53,16 @@ class EmployeeController extends Controller
             return redirect()->back();
         }
 
+        $user = User::where('employee_id', $id)->first();
+        if(empty($user)){
+            return redirect()->back();
+        }
+
         $data = [
             'employee'          => $employee,
+            'email'             => $user->email
         ];
+
         return view('admin.employee.show')->with($data);
     }
 
@@ -78,7 +85,7 @@ class EmployeeController extends Controller
                 'code'          => 'required|max:50|unique:employees',
                 'first_name'    => 'required|max:100',
                 'last_name'     => 'required|max:100',
-                'password'      => 'min:6|required_with:password_confirmation|same:password_confirmation',
+                'password'      => 'required_with:password_confirmation|same:password_confirmation',
                 'password_confirmation' => 'required'
             ],[
                 'phone.unique'                      => 'Nomor Ponsel Login sudah terdaftar!',
@@ -168,17 +175,30 @@ class EmployeeController extends Controller
             return redirect()->back();
         }
 
+        $user = User::where('employee_id', $id)->first();
+        if(empty($user)){
+            return redirect()->back();
+        }
+
         $data = [
             'employee'          => $employee,
+            'email'             => $user->email
         ];
+
         return view('admin.employee.edit')->with($data);
     }
 
     public function update(Request $request, int $id){
         try{
             $validator = Validator::make($request->all(), [
+                'phone'         => 'required|max:20|unique:employees,phone,'. $id,
+                'code'          => 'required|max:50|unique:employees,code,'. $id,
                 'first_name'    => 'required|max:100',
-                'last_name'     => 'required|max:100',
+                'last_name'     => 'required|max:100'
+            ],[
+                'phone.unique'                      => 'Nomor Ponsel Login sudah terdaftar!',
+                'code.unique'                       => 'ID Karyawan sudah terdaftar!',
+                'phone.required'                    => 'Nomor Ponsel Login wajib diisi!',
             ]);
 
             if ($validator->fails())
@@ -197,6 +217,12 @@ class EmployeeController extends Controller
                 return redirect()->back();
             }
 
+            $user = User::where('employee_id', $id)->first();
+            if(empty($user)){
+                return redirect()->back();
+            }
+
+            // Update Employee
             $employee->first_name = strtoupper($request->input('first_name'));
             $employee->last_name = strtoupper($request->input('last_name'));
             $employee->address = $request->input('address') ?? '';
@@ -227,6 +253,26 @@ class EmployeeController extends Controller
             }
 
             $employee->save();
+
+            // Update User
+            $name = strtoupper($request->input('first_name')). ' '. strtoupper($request->input('last_name'));
+
+            $user->name = $name;
+            $user->phone = $request->input('phone');
+            $user->email = $request->input('email') ?? '';
+            $user->status_id = $request->input('status');
+
+            if($request->filled('password') && $request->filled('password_confirmation')){
+                $passwordNew = $request->input('password');
+                $passwordConfirm = $request->input('password_confirmation');
+                if($passwordNew !== $passwordConfirm){
+                    return back()->withErrors("Konfirmasi Kata Sandi harus sama dengan Kata Sandi Baru!")->withInput($request->all());
+                }
+
+                $user->password = Hash::make($request->input('password'));
+            }
+
+            $user->save();
 
             Session::flash('success', 'Sukses mengubah data karyawan!');
             return redirect()->route('admin.employee.show',['id' => $employee->id]);
