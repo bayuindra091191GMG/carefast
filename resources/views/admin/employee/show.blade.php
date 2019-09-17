@@ -50,6 +50,16 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="phone">Nomor Ponsel Login</label>
+                                                <input id="phone" type="text" class="form-control"
+                                                       name="phone" value="{{ $employee->phone }}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
@@ -98,18 +108,18 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="telephone">Nomor Telpon</label>
-                                                        <input id="telephone" type="text" class="form-control"
-                                                               name="telephone" value="{{ $employee->telephone }}" readonly>
+                                                        <label class="form-label" for="email">Alamat Email</label>
+                                                        <input id="email" type="text" class="form-control"
+                                                               name="email" value="{{ $email  }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="phone">Nomor Ponsel</label>
-                                                        <input id="phone" type="text" class="form-control"
-                                                               name="phone" value="{{ $employee->phone }}" readonly>
+                                                        <label class="form-label" for="telephone">Nomor Telpon Rumah</label>
+                                                        <input id="telephone" type="text" class="form-control"
+                                                               name="telephone" value="{{ $employee->telephone }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>

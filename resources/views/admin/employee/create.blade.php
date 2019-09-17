@@ -73,7 +73,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="password">Kata Sandi</label>
+                                                        <label class="form-label" for="password">Kata Sandi *</label>
                                                         <input id="password" type="password" class="form-control"
                                                                name="password">
                                                     </div>
@@ -82,7 +82,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="password_confirmation">Konfirmasi Kata Sandi</label>
+                                                        <label class="form-label" for="password_confirmation">Konfirmasi Kata Sandi *</label>
                                                         <input id="password_confirmation" type="password" class="form-control"
                                                                name="password_confirmation">
                                                     </div>
