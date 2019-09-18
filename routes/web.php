@@ -321,6 +321,9 @@ Route::get('/select-sub2units', 'Admin\Sub2UnitController@getSub2Units')->name('
 Route::get('/select-upper-employees', 'Admin\EmployeeController@getUpperEmployees')->name('select.upper.employees');
 Route::get('/select-cleaner-employees', 'Admin\EmployeeController@getCleanerEmployees')->name('select.cleaner.employees');
 Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('select.employees');
+Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('select.employees');
+Route::get('/select-projectObjects', 'Admin\ProjectObjectController@getProjectObjects')->name('select.projectObjects');
+Route::get('/select-actions', 'Admin\ActionController@getActions')->name('select.actions');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
 Route::get('/select-user-categories', 'Admin\UserCategoryController@getCategories')->name('select.user-categories');

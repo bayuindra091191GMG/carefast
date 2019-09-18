@@ -55,36 +55,92 @@
                                                         <table class="table table-bordered table-hover" id="tab_logic">
                                                             <thead>
                                                             <tr>
-                                                                <th class="text-center" style="width: 15%">
+                                                                <th class="text-center">
+                                                                    Minggu
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Hari
+                                                                </th>
+                                                                <th class="text-center">
                                                                     Jam Mulai
                                                                 </th>
-                                                                <th class="text-center" style="width: 15%">
+                                                                <th class="text-center">
                                                                     Jam Berakhir
                                                                 </th>
-                                                                <th class="text-center" style="width: 25%">
+                                                                <th class="text-center">
                                                                     Object
                                                                 </th>
-                                                                <th class="text-center" style="width: 20%">
+                                                                <th class="text-center">
                                                                     Action
                                                                 </th>
-                                                                <th class="text-center" style="width: 25%">
+                                                                <th class="text-center">
                                                                     Deksripsi
                                                                 </th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
                                                             <tr id='sch0'>
-                                                                <td class='field-item'>
-                                                                    <input id='start0' class='form-control' name='start_time'/>
+                                                                <td>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='week1' name='week[0][]' value='1'>
+                                                                        <label class='custom-control-label' for='week1'>Minggu I</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='week2' name='week[0][]' value='2'>
+                                                                        <label class='custom-control-label' for='week2'>Minggu II</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='week3' name='week[0][]' value='3'>
+                                                                        <label class='custom-control-label' for='week3'>Minggu III</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='week4' name='week[0][]' value='4'>
+                                                                        <label class='custom-control-label' for='week4'>Minggu IV</label>
+                                                                    </div>
                                                                 </td>
                                                                 <td>
-                                                                    <input id='finish0' class='form-control' name='finish_time'/>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='day1' name='day[0][]' value='1'>
+                                                                        <label class='custom-control-label' for='day1'>Senin</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='day2' name='day[0][]' value='2'>
+                                                                        <label class='custom-control-label' for='day2'>Selasa</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='day3' name='day[0][]' value='3'>
+                                                                        <label class='custom-control-label' for='day3'>Rabu</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='day4' name='day[0][]' value='4'>
+                                                                        <label class='custom-control-label' for='day4'>Kamis</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='day5' name='day[0][]' value='5'>
+                                                                        <label class='custom-control-label' for='day5'>Jumat</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='day6' name='day[0][]' value='6'>
+                                                                        <label class='custom-control-label' for='day6'>Sabtu</label>
+                                                                    </div>
+                                                                    <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                        <input type='checkbox' class='custom-control-input' id='day7' name='day[0][]' value='7'>
+                                                                        <label class='custom-control-label' for='day7'>Minggu</label>
+                                                                    </div>
                                                                 </td>
                                                                 <td>
-
+                                                                    <input id='start0' class='form-control time-inputmask' name='start_times[]' placeholder="HH:MM"/>
                                                                 </td>
                                                                 <td>
-
+                                                                    <input id='finish0' class='form-control time-inputmask' name='finish_times[]' placeholder="HH:MM"/>
+                                                                </td>
+                                                                <td>
+                                                                    <select id="project_object0" name="project_objects[]" class='form-control'><option value='-1'>-</option></select>
+                                                                </td>
+                                                                <td>
+                                                                    <select id="action0" name="actions[]" class='form-control'><option value='-1'>-</option></select>
+                                                                    <span><br>Atau tambah Baru</span>
+                                                                    <input type='text' id='actionNew" + i +"' name='action_new[]' class='form-control'>
                                                                 </td>
                                                                 <td>
                                                                     <input type='text' id='desc0' class='form-control' name='description'/>
@@ -116,48 +172,31 @@
 
 @section('styles')
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
-    <link href="{{ asset('css/bootstrap-datetimepicker.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/bootstrap-datepicker.min.css') }}" rel="stylesheet"/>
 @endsection
 
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-    <script src="{{ asset('js/bootstrap-datetimepicker.js') }}"></script>
+{{--    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>--}}
+    <script src="{{ asset('js/jquery.inputmask.bundle.min.js') }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
             type="text/javascript"></script>
 
     <script type="text/javascript">
         // select2 for initial Data
 
-        $('#start0').datetimepicker({
-            format: "HH:mm"
+        // $('#start0').datetimepicker({
+        //     format: "HH:mm"
+        // });
+        // $('#finish0').datetimepicker({
+        //     format: "HH:mm"
+        // });
+        $(".time-inputmask").inputmask("hh:mm", {
+            placeholder: "HH:MM",
+            insertMode: false,
+            showMaskOnHover: false
         });
-        $('#finish0').datetimepicker({
-            format: "HH:mm"
-        });
-        $('#place0').select2({
-            placeholder: {
-                id: '-1',
-                text: ' - Pilih Place - '
-            },
-            width: '100%',
-            minimumInputLength: 1,
-            ajax: {
-                url: '{{ route('select.places') }}',
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: $.trim(params.term)
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
-            }
-        });
-
-        $('#unit0').select2({
+        $('#project_object0').select2({
             placeholder: {
                 id: '-1',
                 text: ' - Pilih Object - '
@@ -165,7 +204,7 @@
             width: '100%',
             minimumInputLength: 1,
             ajax: {
-                url: '{{ route('select.units') }}',
+                url: '{{ route('select.projectObjects') }}',
                 dataType: 'json',
                 data: function (params) {
                     return {
@@ -180,112 +219,97 @@
             }
         });
 
-        $('#unit0').on('select2:select', function(){
-            var objVal = $('#unit0').val();
-            // alert(objVal);
-
-            $.ajax({
-                url: '{{ route('select.sub1unit-dropdown') }}',
+        $('#action0').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Action - '
+            },
+            width: '100%',
+            minimumInputLength: 1,
+            ajax: {
+                url: '{{ route('select.actions') }}',
                 dataType: 'json',
-                data: {
-                    'id': objVal
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
                 },
-                success: function (data) {
-                    $('#sub_1_unit0').empty();
-                    if(data.length == 0){
-                        $('#sub_1_unit0')
-                            .append($("<option></option>")
-                                .attr("value","-1")
-                                .text("-"));
-                    }
-                    else{
-                        for(let j=0; j<data.length; j++){
-                            $('#sub_1_unit0')
-                                .append($("<option></option>")
-                                    .attr("value",data[j].id)
-                                    .text(data[j].text));
-                        }
-                    }
-                    $('#sub_2_unit0')
-                        .append($("<option></option>")
-                            .attr("value","-1")
-                            .text("-"));
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
                 }
-            });
+            }
         });
 
-        $('#sub_1_unit0').on('change', function() {
-            var objVal = $('#sub_1_unit0').val();
-            $.ajax({
-                url: '{{ route('select.units') }}',
-                dataType: 'json',
-                data: {
-                    'id': objVal
-                },
-                success: function (data) {
-                    $('#sub_2_unit0').empty();
-                    for(let j=0; j<data.length; j++){
-                        $('#sub_2_unit0')
-                            .append($("<option></option>")
-                                .attr("value",data[j].id)
-                                .text(data[j].text));
-                    }
-                }
-            });
-        });
 
         var i=1;
         $("#add_row").click(function(){
             var bufferID = i;
             $('#sch'+i).html(
-                "<td><select id='place" + i +"' name='places[]' class='form-control'><option value='-1'>-</option></select>" +
-                "<span><br>Atau tambah Baru</span>" +
-                "<input type='text' id='placeNew" + i +"' name='place_new[]' class='form-control'>" +
+                "<td>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='week1"+ i +"' name='week["+ i +"][]' value='1'>" +
+                "<label class='custom-control-label' for='week1"+ i +"'>Minggu I</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='week2"+ i +"' name='week["+ i +"][]' value='2'>" +
+                "<label class='custom-control-label' for='week2"+ i +"'>Minggu I</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='week3"+ i +"' name='week["+ i +"][]' value='3'>" +
+                "<label class='custom-control-label' for='week3"+ i +"'>Minggu I</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='week4"+ i +"' name='week["+ i +"][]' value='4'>" +
+                "<label class='custom-control-label' for='week4"+ i +"'>Minggu I</label></div>" +
                 "</td>" +
 
-                "<td><select id='unit" + i +"' name='units[]' class='form-control'><option value='-1'>-</option></select>" +
-                "<span><br>Atau tambah Baru</span>" +
-                "<input type='text' id='unitNew" + i +"' name='unit_new[]' class='form-control'>" +
+                "<td>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='day1"+ i +"' name='day["+ i +"][]' value='1'>" +
+                "<label class='custom-control-label' for='day1"+ i +"'>Senin</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='day2"+ i +"' name='day["+ i +"][]' value='2'>" +
+                "<label class='custom-control-label' for='day2"+ i +"'>Selasa</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='day3"+ i +"' name='day["+ i +"][]' value='3'>" +
+                "<label class='custom-control-label' for='day3"+ i +"'>Rabu</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='day4"+ i +"' name='day["+ i +"][]' value='4'>" +
+                "<label class='custom-control-label' for='day4"+ i +"'>Kamis</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='day5"+ i +"' name='day["+ i +"][]' value='5'>" +
+                "<label class='custom-control-label' for='day5"+ i +"'>Jumat</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='day6"+ i +"' name='day["+ i +"][]' value='6'>" +
+                "<label class='custom-control-label' for='day6"+ i +"'>Sabtu</label></div>" +
+                "<div class='custom-control custom-checkbox mr-sm-2'>" +
+                "<input type='checkbox' class='custom-control-input' id='day7"+ i +"' name='day["+ i +"][]' value='7'>" +
+                "<label class='custom-control-label' for='day7"+ i +"'>Minggu</label></div>" +
                 "</td>" +
 
-                "<td><div id='sub_1_unit_div" + i +"' >" +
-                "<select id='sub_1_unit" + i +"' name='sub_1_units[]' class='form-control'><option value='-1'>-</option></select>" +
-                "<span><br>Atau tambah Baru</span>" +
-                "<input type='text' id='sub_1_unitNew" + i +"' name='sub_1_unit_new[]' class='form-control'>" +
-                "</div></td>" +
+                "<td>" +
+                "<input id='start"+ i +"' class='form-control time-inputmask' name='start_times[]' placeholder='HH:MM'/>" +
+                "</td>" +
 
-                "<td><div id='sub_2_unit_div" + i +"'>" +
-                "<select id='sub_2_unit" + i +"' name='sub_2_units[]' class='form-control'><option value='-1'>-</option></select>" +
+                "<td>" +
+                "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM'/>" +
+                "</td>" +
+
+                "<td>" +
+                "<select id='project_object"+ i +"' name='project_objects[]' class='form-control'><option value='-1'>-</option></select>" +
+                "</td>" +
+
+                "<td><select id='action" + i +"' name='actions[]' class='form-control'><option value='-1'>-</option></select>" +
                 "<span><br>Atau tambah Baru</span>" +
-                "<input type='text' id='sub_2_unitNew" + i +"' name='sub_2_unit_new[]' class='form-control'>" +
-                "</div></td>"
+                "<input type='text' id='actionNew" + i +"' name='action_new[]' class='form-control'>" +
+                "</td>" +
+
+                "<td>" +
+                "<input type='text' id='desc0' class='form-control' name='description'>" +
+                "</td>"
             );
             $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
 
-            $('#place' + i).select2({
-                placeholder: {
-                    id: '-1',
-                    text: ' - Pilih Place - '
-                },
-                width: '100%',
-                minimumInputLength: 1,
-                ajax: {
-                    url: '{{ route('select.places') }}',
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: $.trim(params.term)
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
-                }
-            });
-
-            $('#unit' + i).select2({
+            $('#project_object' + i).select2({
                 placeholder: {
                     id: '-1',
                     text: ' - Pilih Object - '
@@ -293,7 +317,7 @@
                 width: '100%',
                 minimumInputLength: 1,
                 ajax: {
-                    url: '{{ route('select.units') }}',
+                    url: '{{ route('select.projectObjects') }}',
                     dataType: 'json',
                     data: function (params) {
                         return {
@@ -308,57 +332,27 @@
                 }
             });
 
-            $('#unit' + i).on('select2:select', function(){
-                var objVal = '#unit' + bufferID;
-
-                $.ajax({
-                    url: '{{ route('select.sub1unit-dropdown') }}',
+            $('#action' + i).select2({
+                placeholder: {
+                    id: '-1',
+                    text: ' - Pilih Action - '
+                },
+                width: '100%',
+                minimumInputLength: 1,
+                ajax: {
+                    url: '{{ route('select.actions') }}',
                     dataType: 'json',
-                    data: {
-                        'id': $(objVal).val()
+                    data: function (params) {
+                        return {
+                            q: $.trim(params.term)
+                        };
                     },
-                    success: function (data) {
-                        $('#sub_1_unit' + bufferID).empty();
-                        if(data.length == 0){
-                            $('#sub_1_unit' + bufferID)
-                                .append($("<option></option>")
-                                    .attr("value","-1")
-                                    .text("-"));
-                        }
-                        else{
-                            for(let j=0; j<data.length; j++){
-                                $('#sub_1_unit' + bufferID)
-                                    .append($("<option></option>")
-                                        .attr("value",data[j].id)
-                                        .text(data[j].text));
-                            }
-                        }
-                        $('#sub_2_unit' + bufferID)
-                            .append($("<option></option>")
-                                .attr("value","-1")
-                                .text("-"));
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
                     }
-                });
-            });
-
-            $('#sub_1_unit' + bufferID).on('change', function() {
-                var objVal = '#sub_1_unit' + bufferID;
-                $.ajax({
-                    url: '{{ route('select.units') }}',
-                    dataType: 'json',
-                    data: {
-                        'id': $(objVal).val()
-                    },
-                    success: function (data) {
-                        $('#sub_2_unit' + bufferID).empty();
-                        for(let j=0; j<data.length; j++){
-                            $('#sub_2_unit' + bufferID)
-                                .append($("<option></option>")
-                                    .attr("value",data[j].id)
-                                    .text(data[j].text));
-                        }
-                    }
-                });
+                }
             });
 
             i++;

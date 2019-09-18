@@ -76,7 +76,7 @@ class UserController extends Controller
     {
         try{
             $userLogin = auth('api')->user();
-            $user = User::where('email', $userLogin->email)->with('addresses')->first();
+            $user = User::where('email', $userLogin->email)->first();
             $employee = $user->employee;
 
             // Get dob
@@ -94,7 +94,10 @@ class UserController extends Controller
             //    6. complain management
             //    7. create MR
             $accessible_menus = "";
-            if($user->employees->employee_role_id == 1){
+            if($user->employee->employee_role_id == 9){
+                $accessible_menus = "1,2,3,4,5,6,7";
+            }
+            else if($user->employee->employee_role_id == 1){
                 $accessible_menus = "1,2,3";
             }
             else{
@@ -121,6 +124,7 @@ class UserController extends Controller
             return Response::json($userModel, 200);
         }
         catch(\Exception $ex){
+            Log::error('Api/UserController - show error EX: '. $ex);
             return Response::json([
                 'error'   => $ex,
             ], 500);

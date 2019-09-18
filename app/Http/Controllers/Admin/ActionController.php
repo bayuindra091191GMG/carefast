@@ -132,4 +132,21 @@ class ActionController extends Controller
             return Response::json(array('errors' => 'INVALID'));
         }
     }
+    public function getActions(Request $request){
+        $term = trim($request->q);
+
+        $actions = Action::where(function ($q) use ($term) {
+            $q->where('name', 'LIKE', '%' . $term . '%')
+                ->orWhere('description', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($actions as $action) {
+            $formatted_tags[] = ['id' => $action->id, 'text' => $action->name];
+        }
+
+        return \Response::json($formatted_tags);
+    }
 }

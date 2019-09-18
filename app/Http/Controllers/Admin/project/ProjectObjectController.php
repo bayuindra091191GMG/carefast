@@ -416,4 +416,29 @@ class ProjectObjectController extends Controller
             return Response::json(array('errors' => 'INVALID'));
         }
     }
+    public function getProjectObjects(Request $request){
+        $term = trim($request->q);
+        $term = strtoupper($term);
+
+        $projectObjects = ProjectObject::where(function ($q) use ($term) {
+            $q->where('place_name', 'LIKE', '%' . $term . '%')
+                ->orWhere('unit_name', 'LIKE', '%' . $term . '%')
+                ->orWhere('sub1_unit_name', 'LIKE', '%' . $term . '%')
+                ->orWhere('sub2_unit_name', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($projectObjects as $projectObject) {
+            $name = $projectObject->place_name != "-" ? $projectObject->place_name : "";
+            $name = $name.$projectObject->unit_name != "-" ? $projectObject->unit_name : "";
+            $name = $name.$projectObject->sub1_unit_name != "-" ? $projectObject->sub1_unit_name : "";
+            $name = $name.$projectObject->sub2_unit_name != "-" ? $projectObject->sub2_unit_name : "";
+
+            $formatted_tags[] = ['id' => $projectObject->id, 'text' => $name];
+        }
+
+        return \Response::json($formatted_tags);
+    }
 }

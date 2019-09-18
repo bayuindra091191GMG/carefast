@@ -85,6 +85,7 @@ class ProjectScheduleController extends Controller
 
     public function store(Request $request)
     {
+        dd($request);
         try{
             $validator = Validator::make($request->all(), [
                 'name'          => 'required',
