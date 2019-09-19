@@ -10,6 +10,7 @@ use App\Models\CustomerType;
 use App\Models\EmployeeRole;
 use App\Models\Project;
 use App\Models\ProjectEmployee;
+use App\Models\Schedule;
 use App\Transformer\CustomerTransformer;
 use App\Transformer\EmployeeTransformer;
 use App\Transformer\ProjectScheduleEmployeeTransformer;
@@ -84,6 +85,80 @@ class ProjectScheduleController extends Controller
     }
 
     public function store(Request $request)
+    {
+        try{
+//            dd($request);
+            $weeks = $request->input('week');
+            $days = $request->input('day');
+            $start_times = $request->input('start_times');
+            $finish_times= $request->input('finish_times');
+//            dd($weeks, $days, $start_times, $finish_times);
+
+            //validation for every input
+
+
+            $i = 0;
+            $user = Auth::guard('admin')->user();
+            //create schedule
+            foreach ($start_times as $start_time){
+                $daysString = "";
+                $weekString = "";
+                foreach($weeks[$i] as $weekValue){
+                    $weekString .= $weekValue."#";
+                }
+                foreach($days[$i] as $dayValue){
+                    $daysString .= $dayValue."#";
+                }
+
+                $schedule = Schedule::create([
+                    'project_id'            => $request->input('project_id'),
+                    'project_employee_id'   => $request->input('project_employee_id'),
+                    'shift_type'            => 1,
+                    'weeks'                 => $weekString,
+                    'days'                  => $daysString,
+                    'start'                 => $start_times[$i],
+                    'finish'                => $finish_times[$i],
+                    'status_id'             => 1,
+                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_by'            => $user->id,
+                    'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'updated_by'            => $user->id,
+                ]);
+                $i++;
+            }
+
+            return redirect()->route('admin.project.schedule.create-detail', ['id' => $request->input('project_employee_id')]);
+        }
+        catch (\Exception $ex){
+            Log::error('Admin/schedule/ProjectScheduleController - store error EX: '. $ex);
+            return "Something went wrong! Please contact administrator!" . $ex;
+        }
+    }
+
+    public function createDetail(int $employee_id){
+        try{
+            $projectSchedule = Schedule::where('project_employee_id', $employee_id)->get();
+            $projectEmployee = ProjectEmployee::find($projectSchedule[0]->project_employee_id);
+            $project = Project::find($projectSchedule[0]->project_id);
+
+            if(empty($projectSchedule)){
+                return redirect()->back();
+            }
+
+            $data = [
+                'project'           => $project,
+                'projectEmployee'     => $projectEmployee,
+                'projectSchedules'     => $projectSchedule,
+            ];
+
+            return view('admin.project.schedule.create-detail')->with($data);
+        }
+        catch (\Exception $ex){
+            Log::error('Admin/schedule/ProjectScheduleController - createDetail error EX: '. $ex);
+            return "Something went wrong! Please contact administrator!";
+        }
+    }
+    public function storeDetail(Request $request)
     {
         dd($request);
         try{

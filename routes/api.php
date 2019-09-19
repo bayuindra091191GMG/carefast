@@ -45,7 +45,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
     //Employee
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');
-    Route::get('/employee/get/{id}', 'Api\EmployeeController@getEmployeeDetail');
+    Route::get('/employee/schedule', 'Api\EmployeeController@employeeSchedule');
+    Route::post('/employee/get-detail/', 'Api\EmployeeController@getEmployeeDetail');
     //New Route Finish
 
     Route::get('/testing', 'Api\UserController@testingAuthToken');

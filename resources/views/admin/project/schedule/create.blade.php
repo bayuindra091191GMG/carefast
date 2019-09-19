@@ -8,7 +8,7 @@
                 {{ Form::open(['route'=>['admin.project.schedule.store'],'method' => 'post','id' => 'general-form']) }}
                     <div class="row">
                         <div class="col-md-8 col-12">
-                            <h3>TAMBAH BARU SCHEDULE CSO {{$projectEmployee->employee->first_name}} {{$projectEmployee->employee->last_name}}</h3>
+                            <h3>TAMBAH BARU SCHEDULE CSO</h3>
                         </div>
                         <div class="col-md-4 col-12 text-right">
                             <a href="{{ route('admin.project.schedule.show', ['id'=>$project->id]) }}" class="btn btn-danger">BATAL</a>
@@ -66,15 +66,6 @@
                                                                 </th>
                                                                 <th class="text-center">
                                                                     Jam Berakhir
-                                                                </th>
-                                                                <th class="text-center">
-                                                                    Object
-                                                                </th>
-                                                                <th class="text-center">
-                                                                    Action
-                                                                </th>
-                                                                <th class="text-center">
-                                                                    Deksripsi
                                                                 </th>
                                                             </tr>
                                                             </thead>
@@ -134,17 +125,6 @@
                                                                 <td>
                                                                     <input id='finish0' class='form-control time-inputmask' name='finish_times[]' placeholder="HH:MM"/>
                                                                 </td>
-                                                                <td>
-                                                                    <select id="project_object0" name="project_objects[]" class='form-control'><option value='-1'>-</option></select>
-                                                                </td>
-                                                                <td>
-                                                                    <select id="action0" name="actions[]" class='form-control'><option value='-1'>-</option></select>
-                                                                    <span><br>Atau tambah Baru</span>
-                                                                    <input type='text' id='actionNew" + i +"' name='action_new[]' class='form-control'>
-                                                                </td>
-                                                                <td>
-                                                                    <input type='text' id='desc0' class='form-control' name='description'/>
-                                                                </td>
                                                             </tr>
                                                             <tr id='sch1'></tr>
                                                             </tbody>
@@ -167,7 +147,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('styles')
@@ -183,65 +162,11 @@
             type="text/javascript"></script>
 
     <script type="text/javascript">
-        // select2 for initial Data
-
-        // $('#start0').datetimepicker({
-        //     format: "HH:mm"
-        // });
-        // $('#finish0').datetimepicker({
-        //     format: "HH:mm"
-        // });
         $(".time-inputmask").inputmask("hh:mm", {
             placeholder: "HH:MM",
             insertMode: false,
             showMaskOnHover: false
         });
-        $('#project_object0').select2({
-            placeholder: {
-                id: '-1',
-                text: ' - Pilih Object - '
-            },
-            width: '100%',
-            minimumInputLength: 1,
-            ajax: {
-                url: '{{ route('select.projectObjects') }}',
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: $.trim(params.term)
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
-            }
-        });
-
-        $('#action0').select2({
-            placeholder: {
-                id: '-1',
-                text: ' - Pilih Action - '
-            },
-            width: '100%',
-            minimumInputLength: 1,
-            ajax: {
-                url: '{{ route('select.actions') }}',
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: $.trim(params.term)
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
-            }
-        });
-
 
         var i=1;
         $("#add_row").click(function(){
@@ -253,13 +178,13 @@
                 "<label class='custom-control-label' for='week1"+ i +"'>Minggu I</label></div>" +
                 "<div class='custom-control custom-checkbox mr-sm-2'>" +
                 "<input type='checkbox' class='custom-control-input' id='week2"+ i +"' name='week["+ i +"][]' value='2'>" +
-                "<label class='custom-control-label' for='week2"+ i +"'>Minggu I</label></div>" +
+                "<label class='custom-control-label' for='week2"+ i +"'>Minggu II</label></div>" +
                 "<div class='custom-control custom-checkbox mr-sm-2'>" +
                 "<input type='checkbox' class='custom-control-input' id='week3"+ i +"' name='week["+ i +"][]' value='3'>" +
-                "<label class='custom-control-label' for='week3"+ i +"'>Minggu I</label></div>" +
+                "<label class='custom-control-label' for='week3"+ i +"'>Minggu III</label></div>" +
                 "<div class='custom-control custom-checkbox mr-sm-2'>" +
                 "<input type='checkbox' class='custom-control-input' id='week4"+ i +"' name='week["+ i +"][]' value='4'>" +
-                "<label class='custom-control-label' for='week4"+ i +"'>Minggu I</label></div>" +
+                "<label class='custom-control-label' for='week4"+ i +"'>Minggu IV</label></div>" +
                 "</td>" +
 
                 "<td>" +
@@ -292,69 +217,15 @@
 
                 "<td>" +
                 "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM'/>" +
-                "</td>" +
-
-                "<td>" +
-                "<select id='project_object"+ i +"' name='project_objects[]' class='form-control'><option value='-1'>-</option></select>" +
-                "</td>" +
-
-                "<td><select id='action" + i +"' name='actions[]' class='form-control'><option value='-1'>-</option></select>" +
-                "<span><br>Atau tambah Baru</span>" +
-                "<input type='text' id='actionNew" + i +"' name='action_new[]' class='form-control'>" +
-                "</td>" +
-
-                "<td>" +
-                "<input type='text' id='desc0' class='form-control' name='description'>" +
                 "</td>"
             );
             $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
 
-            $('#project_object' + i).select2({
-                placeholder: {
-                    id: '-1',
-                    text: ' - Pilih Object - '
-                },
-                width: '100%',
-                minimumInputLength: 1,
-                ajax: {
-                    url: '{{ route('select.projectObjects') }}',
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: $.trim(params.term)
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
-                }
+            $(".time-inputmask").inputmask("hh:mm", {
+                placeholder: "HH:MM",
+                insertMode: false,
+                showMaskOnHover: false
             });
-
-            $('#action' + i).select2({
-                placeholder: {
-                    id: '-1',
-                    text: ' - Pilih Action - '
-                },
-                width: '100%',
-                minimumInputLength: 1,
-                ajax: {
-                    url: '{{ route('select.actions') }}',
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: $.trim(params.term)
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
-                }
-            });
-
             i++;
         });
 

@@ -7,7 +7,10 @@ use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\Employee;
 use App\Models\Place;
+use App\Models\ProjectEmployee;
+use App\Models\ProjectObject;
 use App\Models\Schedule;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,8 +42,9 @@ class AttendanceController extends Controller
                 return response()->json($validator->messages(), 400);
             }
 
-            $user = auth('api')->user();
-            $employee = Employee::where('user_id', $user->id)->first();
+            $userLogin = auth('api')->user();
+            $user = User::where('email', $userLogin->email)->first();
+            $employee = $user->employee;
 
             //Check Schedule
             $date = Carbon::now('Asia/Jakarta');
@@ -136,6 +140,7 @@ class AttendanceController extends Controller
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
+
 
     public function employeeList(Request $request){
         try{

@@ -17,6 +17,28 @@ use Monolog\Logger;
 
 class Utilities
 {
+    public static function convertIntToDay($days){
+        $newDay = str_replace('1', 'Senin', $days);
+        $newDay = str_replace('2', 'Selasa', $newDay);
+        $newDay = str_replace('3', 'Rabu', $newDay);
+        $newDay = str_replace('4', 'Kamis', $newDay);
+        $newDay = str_replace('5', 'Jumat', $newDay);
+        $newDay = str_replace('6', 'Sabtu', $newDay);
+        $newDay = str_replace('7', 'Minggu', $newDay);
+        $newDay = str_replace('#', ', ', $newDay);
+        return $newDay;
+
+    }
+    public static function convertIntToWeek($weeks){
+        $newWeek = str_replace('1', 'Minggu I', $weeks);
+        $newWeek = str_replace('2', 'Minggu II', $newWeek);
+        $newWeek = str_replace('3', 'Minggu III', $newWeek);
+        $newWeek = str_replace('4', 'Minggu IV', $newWeek);
+        $newWeek = str_replace('#', ', ', $newWeek);
+        return $newWeek;
+
+    }
+
     public static function barcodeNumberExists($number) {
         // query the database and return a boolean
         // for instance, it might look like this in Laravel
