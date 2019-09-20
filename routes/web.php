@@ -319,6 +319,7 @@ Route::get('/datatables-project_schedule_employees', 'Admin\project\ProjectSched
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
 Route::get('/select-places', 'Admin\PlaceController@getPlaces')->name('select.places');
+Route::get('/select-placeProjects', 'Admin\PlaceController@getPlaceProjects')->name('select.placeProjects');
 Route::get('/select-units', 'Admin\UnitController@getUnits')->name('select.units');
 Route::get('/select-sub1unit-dropdown', 'Admin\Sub1UnitController@getSub1UnitDropdowns')->name('select.sub1unit-dropdown');
 Route::get('/select-sub1units', 'Admin\Sub1UnitController@getSub1Units')->name('select.sub1units');

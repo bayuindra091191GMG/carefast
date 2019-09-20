@@ -50,7 +50,7 @@
                                                 </div>
                                                 <div class="col-md-12 p-t-20">
                                                     <div class="table-responsive">
-                                                        <input type="hidden" name="project_id" value="{{$project->id}}">
+                                                        <input type="hidden" id="project_id" name="project_id" value="{{$project->id}}">
                                                         <input type="hidden" name="project_employee_id" value="{{$projectEmployee->id}}">
                                                         <table class="table table-bordered table-hover" id="tab_logic">
                                                             <thead>
@@ -66,6 +66,9 @@
                                                                 </th>
                                                                 <th class="text-center">
                                                                     Jam Berakhir
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    Place
                                                                 </th>
                                                             </tr>
                                                             </thead>
@@ -120,10 +123,13 @@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    <input id='start0' class='form-control time-inputmask' name='start_times[]' placeholder="HH:MM"/>
+                                                                    <input id='start0' class='form-control time-inputmask' name='start_times[]' placeholder="HH:MM" required/>
                                                                 </td>
                                                                 <td>
-                                                                    <input id='finish0' class='form-control time-inputmask' name='finish_times[]' placeholder="HH:MM"/>
+                                                                    <input id='finish0' class='form-control time-inputmask' name='finish_times[]' placeholder="HH:MM" required/>
+                                                                </td>
+                                                                <td>
+                                                                    <select id='place0' name='places[]' class='form-control'><option value='-1'>-</option></select>
                                                                 </td>
                                                             </tr>
                                                             <tr id='sch1'></tr>
@@ -167,6 +173,30 @@
             insertMode: false,
             showMaskOnHover: false
         });
+
+        $('#place0').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Place - '
+            },
+            width: '100%',
+            ajax: {
+                url: '{{ route('select.placeProjects') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term),
+                        'project_id' : $('#project_id').val()
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
 
         var i=1;
         $("#add_row").click(function(){
@@ -212,11 +242,15 @@
                 "</td>" +
 
                 "<td>" +
-                "<input id='start"+ i +"' class='form-control time-inputmask' name='start_times[]' placeholder='HH:MM'/>" +
+                "<input id='start"+ i +"' class='form-control time-inputmask' name='start_times[]' placeholder='HH:MM' required/>" +
                 "</td>" +
 
                 "<td>" +
-                "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM'/>" +
+                "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM' required/>" +
+                "</td>" +
+
+                "<td>" +
+                "<select id='place"+ i +"' name='places[]' class='form-control'><option value='-1'>-</option></select>" +
                 "</td>"
             );
             $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
@@ -225,6 +259,30 @@
                 placeholder: "HH:MM",
                 insertMode: false,
                 showMaskOnHover: false
+            });
+
+
+            $('#place' + i).select2({
+                placeholder: {
+                    id: '-1',
+                    text: ' - Pilih Place - '
+                },
+                width: '100%',
+                ajax: {
+                    url: '{{ route('select.placeProjects') }}',
+                    dataType: 'json',
+                    data: function (params) {
+                        return {
+                            q: $.trim(params.term),
+                            'project_id' : $('#project_id').val()
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
             });
             i++;
         });

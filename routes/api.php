@@ -42,6 +42,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
     // Attendance
     Route::post('/attendance/submit', 'Api\AttendanceController@submit');
+    Route::post('/attendance/checking', 'Api\AttendanceController@checkinChecking');
 
     //Employee
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');

@@ -48,7 +48,7 @@
                                                         <span>{{$projectEmployee->employee->first_name}} {{$projectEmployee->employee->last_name}}</span>
                                                     </h5>
                                                 </div>
-
+                                                @php($count=0)
                                                 @foreach($projectSchedules as $projectSchedule)
                                                     <div class="card">
                                                         <!-- Nav tabs -->
@@ -77,6 +77,9 @@
                                                                                     <th class="text-center">
                                                                                         Jam Berakhir
                                                                                     </th>
+                                                                                    <th class="text-center">
+                                                                                        Place
+                                                                                    </th>
                                                                                 </tr>
                                                                                 </thead>
                                                                                 <tbody>
@@ -93,7 +96,10 @@
                                                                                     <td>
                                                                                         <input type='text' value='{{$projectSchedule->finish}}' class='form-control' readonly/>
                                                                                     </td>
-                                                                                    <input type="hidden" value="{{$projectSchedule->id}}" id="schedule-id{{$projectSchedule->id}}">
+                                                                                    <td>
+                                                                                        <input type='text' value='{{$projectSchedule->place->name}}' class='form-control' readonly/>
+                                                                                    </td>
+                                                                                    <input type="hidden" value="{{$projectSchedule->id}}" id="schedule-id{{$count}}">
                                                                                 </tr>
                                                                                 </tbody>
                                                                             </table>
@@ -146,6 +152,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    @php($count++)
                                                 @endforeach
                                             </div>
                                         </div>
@@ -177,10 +184,9 @@
 
     <script type="text/javascript">
         let rowCount = '{{$projectSchedules->count()}}';
-        let rowId = $('#schedule-id').val();
 
         for(let a=0;a<rowCount;a++){
-
+            let rowId = $('#schedule-id' + a).val();
             $('#project_object-'+rowId+'-0').select2({
                 placeholder: {
                     id: '-1',

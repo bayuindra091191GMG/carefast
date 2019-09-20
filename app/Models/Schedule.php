@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Thu, 19 Sep 2019 19:05:10 +0700.
+ * Date: Fri, 20 Sep 2019 16:31:29 +0700.
  */
 
 namespace App\Models;
@@ -11,10 +11,11 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class Schedule
- *
+ * 
  * @property int $id
  * @property int $project_id
  * @property int $project_employee_id
+ * @property int $place_id
  * @property int $shift_type
  * @property string $weeks
  * @property string $days
@@ -25,10 +26,11 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
- *
+ * 
  * @property \App\Models\Status $status
+ * @property \App\Models\Place $place
  * @property \App\Models\ProjectEmployee $project_employee
- * @property \App\Models\Project $projects
+ * @property \App\Models\Project $project
  * @property \Illuminate\Database\Eloquent\Collection $attendances
  * @property \Illuminate\Database\Eloquent\Collection $schedule_details
  *
@@ -39,6 +41,7 @@ class Schedule extends Eloquent
 	protected $casts = [
 		'project_id' => 'int',
 		'project_employee_id' => 'int',
+		'place_id' => 'int',
 		'shift_type' => 'int',
 		'status_id' => 'int',
 		'created_by' => 'int',
@@ -48,6 +51,7 @@ class Schedule extends Eloquent
 	protected $fillable = [
 		'project_id',
 		'project_employee_id',
+		'place_id',
 		'shift_type',
 		'weeks',
 		'days',
@@ -63,12 +67,17 @@ class Schedule extends Eloquent
 		return $this->belongsTo(\App\Models\Status::class);
 	}
 
+	public function place()
+	{
+		return $this->belongsTo(\App\Models\Place::class);
+	}
+
 	public function project_employee()
 	{
 		return $this->belongsTo(\App\Models\ProjectEmployee::class);
 	}
 
-	public function projects()
+	public function project()
 	{
 		return $this->belongsTo(\App\Models\Project::class);
 	}

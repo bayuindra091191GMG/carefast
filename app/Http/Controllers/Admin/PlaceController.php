@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Place;
+use App\Models\ProjectObject;
 use App\Transformer\PlaceTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -136,6 +137,26 @@ class PlaceController extends Controller
         $term = trim($request->q);
         $places = Place::where(function ($q) use ($term) {
             $q->where('name', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($places as $place) {
+            $formatted_tags[] = ['id' => $place->id, 'text' => $place->name];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+    public function getPlaceProjects(Request $request){
+        $term = trim($request->q);
+        $projectId = $request->project_id;
+        $placeIds = ProjectObject::select('place_id')->where('project_id', $projectId)->get();
+
+
+        $places = Place::where(function ($q) use ($term, $placeIds) {
+            $q->whereIn('id', $placeIds)
+            ->where('name', 'LIKE', '%' . $term . '%');
         })
             ->get();
 

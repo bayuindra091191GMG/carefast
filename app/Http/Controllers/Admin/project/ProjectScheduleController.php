@@ -92,10 +92,30 @@ class ProjectScheduleController extends Controller
             $days = $request->input('day');
             $start_times = $request->input('start_times');
             $finish_times= $request->input('finish_times');
+            $places= $request->input('places');
 //            dd($weeks, $days, $start_times, $finish_times);
 
             //validation for every input
-
+            $j = 0;
+            if(empty($request->input('day'))){
+                return back()->withErrors("Terdapat MINGGU yang belum terpilih!")->withInput($request->all());
+            }
+            if(empty($request->input('week'))){
+                return back()->withErrors("Terdapat HARI yang belum terpilih!")->withInput($request->all());
+            }
+            foreach ($start_times as $start_time){
+                if(empty($weeks[$j])){
+                    return back()->withErrors("Terdapat MINGGU yang belum terpilih!")->withInput($request->all());
+                }
+                if(empty($days[$j])){
+                    return back()->withErrors("Terdapat MINGGU yang belum terpilih!")->withInput($request->all());
+                }
+                if($places[$j] == '-1'){
+                    return back()->withErrors("Terdapat PLACE yang belum terpilih!")->withInput($request->all());
+                }
+                $j++;
+            }
+//            dd($request);
 
             $i = 0;
             $user = Auth::guard('admin')->user();
@@ -114,6 +134,7 @@ class ProjectScheduleController extends Controller
                     'project_id'            => $request->input('project_id'),
                     'project_employee_id'   => $request->input('project_employee_id'),
                     'shift_type'            => 1,
+                    'place_id'              => $places[$i],
                     'weeks'                 => $weekString,
                     'days'                  => $daysString,
                     'start'                 => $start_times[$i],

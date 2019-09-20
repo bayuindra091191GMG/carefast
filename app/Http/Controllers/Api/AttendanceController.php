@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\Employee;
 use App\Models\Place;
+use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\ProjectObject;
 use App\Models\Schedule;
@@ -16,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
@@ -49,7 +51,10 @@ class AttendanceController extends Controller
             //Check Schedule
             $date = Carbon::now('Asia/Jakarta');
             $time = $date->format('H:i:s');
-            $schedule = Schedule::where('employee_id', $employee->id)->where('start' >= $time)->where('finish' <= $time)->first();
+            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+                ->where('project_employee_id', $projectEmployee->id)
+                ->where('start' >= $time)->where('finish' <= $time)->first();
             $place = Place::find($schedule->place_id);
 
             if($place->qr_code != Crypt::decryptString($request->input('qr_code'))){
@@ -107,6 +112,7 @@ class AttendanceController extends Controller
                 $newAttendance = Attendance::create([
                     'employee_id'   => $employee->id,
                     'schedule_id'   => $schedule->id,
+                    'place_id'   => $place->id,
                     'date'          => Carbon::now('Asia/Jakarta'),
                     'status_id'     => 7
                 ]);
@@ -141,6 +147,46 @@ class AttendanceController extends Controller
         }
     }
 
+    public function checkinChecking(Request $request){
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('email', $userLogin->email)->first();
+            $employee = $user->employee;
+
+            $date = Carbon::now('Asia/Jakarta');
+            $time = $date->format('H:i:s');
+            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+                ->where('project_employee_id', $projectEmployee->id)
+                ->where('start' >= $time)->where('finish' <= $time)->first();
+
+            //checking checkin with attendance
+            $attendance = Attendance::where('employee_id', $employee->id)
+                ->where('schedule_id', $schedule->id)
+                ->first();
+
+            if(empty($attendance)){
+                return Response::json("Jadwal Tidak ditemukan!", 482);
+            }
+            else{
+                $place = Place::find($attendance->place_id);
+
+                $placeModel = collect([
+                    'id'                => $place->id,
+                    'place_name'        => $place->name,
+                    'project_name'      => $projectEmployee->project->name,
+                ]);
+                return Response::json($placeModel, 200);
+            }
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceController - checkinChecking error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+
+
+    }
 
     public function employeeList(Request $request){
         try{
