@@ -175,7 +175,6 @@ class ProjectScheduleController extends Controller
 
             $data = [
                 'project'           => $project,
-                'projectEmployeeId'  => $employee_id,
                 'projectEmployee'     => $projectEmployee,
                 'projectSchedules'     => $projectSchedule,
             ];
@@ -234,7 +233,7 @@ class ProjectScheduleController extends Controller
                 $i++;
             }
             Session::flash('success', 'Sukses membuat schedule detail baru!');
-            return redirect()->route('admin.project.schedule.show', ['id' => $request->input('project_employee_id')]);
+            return redirect()->route('admin.project.schedule.show', ['id' => $request->input('project_id')]);
         }
         catch (\Exception $ex){
             Log::error('Admin/schedule/ProjectScheduleController - store error EX: '. $ex);

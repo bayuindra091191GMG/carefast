@@ -38,6 +38,23 @@
 
                         <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="object" role="tabpanel" aria-labelledby="object-tab">
+
+                                @include('partials.admin._messages')
+                                @if(count($errors))
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                    <ul>
+                                                        @foreach($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="col-md-12">
                                     <div class="card">
                                         <div class="card-body b-b">

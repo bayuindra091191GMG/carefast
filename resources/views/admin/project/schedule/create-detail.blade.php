@@ -48,8 +48,7 @@
                                                         <span>{{$projectEmployee->employee->first_name}} {{$projectEmployee->employee->last_name}}</span>
                                                     </h5>
                                                 </div>
-                                                <input type="hidden" name="project_employee_id" value="{{$projectEmployeeId}}">
-                                                <input type="hidden" id="project_id" value="{{$project->id}}">
+                                                <input type="hidden" id="project_id" name="project_id" value="{{$project->id}}">
                                                 @php($count=0)
                                                 @foreach($projectSchedules as $projectSchedule)
                                                     <div class="card">
