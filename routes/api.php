@@ -33,26 +33,29 @@ Route::post('/external-register', 'Api\RegisterController@externalAuth');
 Route::post('/register/exist/email', 'Api\RegisterController@isEmailExist');
 Route::post('/register/exist/phone', 'Api\RegisterController@isPhoneExist');
 
+Route::post('/places/get/qr-code', 'Api\PlaceController@qrCode');
 //User Management
 //Route::group(['namespace' => 'Api', 'middleware' => 'api', 'prefix' => 'user'], function () {
 Route::middleware('auth:api')->prefix('user')->group(function(){
     //New Route Start
     //Place
-    Route::get('/places/get/qr-code', 'Api\PlaceController@qrCode');
+    Route::post('/places/get/place-by-qr', 'Api\PlaceController@getPlaceByQr');
 
     // Attendance
-    Route::post('/attendance/submit', 'Api\AttendanceController@submit');
-    Route::post('/attendance/checking', 'Api\AttendanceController@checkinChecking');
+    Route::post('/attendance/checkin', 'Api\AttendanceController@submitCheckin');
+    Route::post('/attendance/checkout', 'Api\AttendanceController@submitCheckout');
+    Route::get('/attendance/checking', 'Api\AttendanceController@checkinChecking');
 
     //Employee
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');
     Route::get('/employee/schedule', 'Api\EmployeeController@employeeSchedule');
     Route::post('/employee/get-detail/', 'Api\EmployeeController@getEmployeeDetail');
+
+    Route::get('/get-user-data', 'Api\UserController@show');
     //New Route Finish
 
     Route::get('/testing', 'Api\UserController@testingAuthToken');
     Route::get('/get-users', 'Api\UserController@index');
-    Route::get('/get-user-data', 'Api\UserController@show');
     Route::post('/save-user-device', 'Api\UserController@saveUserToken');
     Route::get('/waste-banks', 'Api\WasteBankController@getData');
     Route::get('/check-category', 'Api\GeneralController@checkCategory');

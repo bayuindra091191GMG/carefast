@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
+use App\Models\Employee;
+use App\Models\Place;
+use App\Models\ProjectEmployee;
+use App\Models\Schedule;
 use App\Models\User;
 use App\Notifications\FCMNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
 use GuzzleHttp\Client;
 
@@ -80,6 +87,35 @@ class HomeController extends Controller
             //dd($user);
             Mail::to($user->email)->send($emailVerify);
             return true;
+        }
+        catch(\Exception $ex){
+            return $ex;
+        }
+    }
+    public function generalFunction(){
+        try{
+            $employee = Employee::find(9);
+            $date = Carbon::now('Asia/Jakarta');
+            $time = $date->format('H:i');
+            $todayWeekOfMonth = $date->weekOfMonth;
+            // dayOfWeekIso returns a number between 1 (monday) and 7 (sunday)
+            $todayOfWeek = $date->dayOfWeekIso;
+            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+
+//            dd($projectEmployee->project_id, $projectEmployee->id, $time);
+            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+                ->where('project_employee_id', $projectEmployee->id)
+                ->where('weeks', 'like', '%'.$todayWeekOfMonth.'%')
+                ->where('days', 'like', '%'.$todayOfWeek.'%')
+                ->whereTime('start', '<=', $time)
+                ->whereTime('finish', '>=', $time)
+                ->first();
+            dd($schedule, $projectEmployee->project_id, $projectEmployee->id,$todayWeekOfMonth,$todayOfWeek, $time);
+            //checking checkin with attendance
+            $attendance = Attendance::where('employee_id', $employee->id)
+                ->where('schedule_id', $schedule->id)
+                ->first();
+            dd($attendance);
         }
         catch(\Exception $ex){
             return $ex;

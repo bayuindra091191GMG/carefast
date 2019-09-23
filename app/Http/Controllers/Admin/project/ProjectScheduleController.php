@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin\project;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Action;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\EmployeeRole;
 use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\Schedule;
+use App\Models\ScheduleDetail;
 use App\Transformer\CustomerTransformer;
 use App\Transformer\EmployeeTransformer;
 use App\Transformer\ProjectScheduleEmployeeTransformer;
@@ -93,6 +95,9 @@ class ProjectScheduleController extends Controller
             $start_times = $request->input('start_times');
             $finish_times= $request->input('finish_times');
             $places= $request->input('places');
+            $start = Carbon::parse('00-00-00 '.$start_times[0])->format('Y-m-d H:i:s');
+            $finish = Carbon::parse('00-00-00 '.$finish_times[0])->format('Y-m-d H:i:s');
+//            dd($start, $finish);
 //            dd($weeks, $days, $start_times, $finish_times);
 
             //validation for every input
@@ -129,6 +134,8 @@ class ProjectScheduleController extends Controller
                 foreach($days[$i] as $dayValue){
                     $daysString .= $dayValue."#";
                 }
+                $start = Carbon::parse('00-00-00 '.$start_times[0])->format('Y-m-d H:i:s');
+                $finish = Carbon::parse('00-00-00 '.$finish_times[0])->format('Y-m-d H:i:s');
 
                 $schedule = Schedule::create([
                     'project_id'            => $request->input('project_id'),
@@ -137,8 +144,8 @@ class ProjectScheduleController extends Controller
                     'place_id'              => $places[$i],
                     'weeks'                 => $weekString,
                     'days'                  => $daysString,
-                    'start'                 => $start_times[$i],
-                    'finish'                => $finish_times[$i],
+                    'start'                 => $start,
+                    'finish'                => $finish,
                     'status_id'             => 1,
                     'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'created_by'            => $user->id,
@@ -168,6 +175,7 @@ class ProjectScheduleController extends Controller
 
             $data = [
                 'project'           => $project,
+                'projectEmployeeId'  => $employee_id,
                 'projectEmployee'     => $projectEmployee,
                 'projectSchedules'     => $projectSchedule,
             ];
@@ -181,39 +189,52 @@ class ProjectScheduleController extends Controller
     }
     public function storeDetail(Request $request)
     {
-        dd($request);
+//        dd($request);
         try{
-            $validator = Validator::make($request->all(), [
-                'name'          => 'required',
-                'address'       => 'required',
-                'phone'         => 'required',
-                'customer'           => 'required',
-                'latitude'      => 'required',
-                'longitude'     => 'required',
-            ]);
 
-            if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
-
-            //Create Project
+            $scheduleIds = $request->input('schedule_id');
+            $projectObjects = $request->input('project_objects');
+            $actions = $request->input('actions');
+            $actionNews = $request->input('action_new');
+            $descriptions = $request->input('description');
 
             $user = Auth::guard('admin')->user();
-            $project = Project::create([
-                'name'              => $request->input('name'),
-                'phone'             => $request->input('phone'),
-                'customer_id'            => $request->input('customer'),
-                'latitude'          => $request->input('latitude'),
-                'longitude'         => $request->input('longitude'),
-                'address'           => $request->input('address'),
-                'description'           => $request->input('description'),
-                'status_id'         => $request->input('status'),
-                'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'created_by'        => $user->id,
-                'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'updated_by'        => $user->id,
-            ]);
+            $i = 0;
+            foreach($scheduleIds as $scheduleId){
+                $selectedAction = "";
+                //check if any new action, then create new place, else use selected place
+                if(empty($actionNews[$i])){
+                    $selectedAction = $actions[$i];
+                }
+                else{
+                    $placeDBNew = Action::create([
+                        'name'              => strtoupper($actionNews[$i]),
+                        'description'       => strtoupper($actionNews[$i]),
+                        'status_id'         => 1,
+                        'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'created_by'        => $user->id,
+                        'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'updated_by'        => $user->id,
+                    ]);
+                    $selectedAction = $placeDBNew->id;
+                }
 
-            Session::flash('success', 'Sukses membuat schedule baru!');
-            return redirect()->route('admin.project.schedule.index');
+                if($selectedAction != '-1' && $projectObjects[$i] != '-1' ){
+                    $scheduleDetail = ScheduleDetail::create([
+                        'schedule_id'           => $scheduleIds[$i],
+                        'project_object_id'     => $projectObjects[$i],
+                        'action_id'             => $selectedAction,
+                        'description'           => $descriptions[$i],
+                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'created_by'            => $user->id,
+                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'updated_by'            => $user->id,
+                    ]);
+                }
+                $i++;
+            }
+            Session::flash('success', 'Sukses membuat schedule detail baru!');
+            return redirect()->route('admin.project.schedule.show', ['id' => $request->input('project_employee_id')]);
         }
         catch (\Exception $ex){
             Log::error('Admin/schedule/ProjectScheduleController - store error EX: '. $ex);

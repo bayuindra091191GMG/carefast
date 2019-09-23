@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Fri, 20 Sep 2019 16:31:29 +0700.
+ * Date: Mon, 23 Sep 2019 16:16:33 +0700.
  */
 
 namespace App\Models;
@@ -19,8 +19,8 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $shift_type
  * @property string $weeks
  * @property string $days
- * @property string $start
- * @property string $finish
+ * @property \Carbon\Carbon $start
+ * @property \Carbon\Carbon $finish
  * @property int $status_id
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
@@ -46,6 +46,11 @@ class Schedule extends Eloquent
 		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
+	];
+
+	protected $dates = [
+		'start',
+		'finish'
 	];
 
 	protected $fillable = [

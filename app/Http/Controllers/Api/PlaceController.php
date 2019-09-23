@@ -7,6 +7,7 @@ use App\libs\Utilities;
 use App\Models\Place;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -20,28 +21,59 @@ class PlaceController extends Controller
      */
     public function qrCode(Request $request){
         try{
-            $rules = array(
-                'place_id' => 'required'
-            );
-
-            $data = $request->json()->all();
-            $validator = Validator::make($data, $rules);
-            if ($validator->fails()) {
-                return response()->json($validator->messages(), 400);
+            if(empty($request->input('place_id'))){
+                return response()->json("Bad Request", 400);
             }
+
 
             $place = Place::find($request->input('place_id'));
             //Generate Random Number
             $number = Utilities::generateBarcodeNumber();
             $place->qr_code = $number;
+            $place->save();
+
             $codeEncrypted = Crypt::encryptString($number);
 
-            return Response::json([
-                'message'   => 'Berhasil mengambil data Qr Code',
-                'model'     => $codeEncrypted
-            ]);
+            return Response::json($codeEncrypted, 200);
         }
         catch (\Exception $exception){
+            Log::error('Api/AttendanceController - qrCode error EX: '. $exception);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function getPlaceByQr(Request $request){
+        try{
+//            $rules = array(
+//                'qr_code' => 'required'
+//            );
+//
+//            $data = $request->json()->all();
+//            $validator = Validator::make($data, $rules);
+//            if ($validator->fails()) {
+//                return response()->json($validator->messages(), 400);
+//            }
+            if(empty($request->input('qr_code'))){
+                return response()->json("Bad Request", 400);
+            }
+
+            $place = Place::where('qr_code', $request->input('qr_code'))->first();
+//            $place = Place::where('qr_code', Crypt::decryptString($request->input('qr_code')))->first();
+
+            if(empty($place)){
+                return Response::json("Place Tidak ditemukan!", 482);
+            }
+            else{
+                $placeModel = collect([
+                    'id'                => $place->id,
+                    'place_name'        => $place->name,
+                    'project_name'      => "",
+                ]);
+                return Response::json($placeModel, 200);
+            }
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceController - checkinChecking error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card-body">
-                {{ Form::open(['route'=>['admin.project.schedule.store'],'method' => 'post','id' => 'general-form']) }}
+                {{ Form::open(['route'=>['admin.project.schedule.store-detail'],'method' => 'post','id' => 'general-form']) }}
                     <div class="row">
                         <div class="col-md-8 col-12">
                             <h3>TAMBAH BARU SCHEDULE DETAIL CSO</h3>
@@ -48,6 +48,8 @@
                                                         <span>{{$projectEmployee->employee->first_name}} {{$projectEmployee->employee->last_name}}</span>
                                                     </h5>
                                                 </div>
+                                                <input type="hidden" name="project_employee_id" value="{{$projectEmployeeId}}">
+                                                <input type="hidden" id="project_id" value="{{$project->id}}">
                                                 @php($count=0)
                                                 @foreach($projectSchedules as $projectSchedule)
                                                     <div class="card">
@@ -91,10 +93,10 @@
                                                                                         <input type='text' value='{{\App\libs\Utilities::convertIntToDay($projectSchedule->days)}}' class='form-control' readonly/>
                                                                                     </td>
                                                                                     <td>
-                                                                                        <input type='text' value='{{$projectSchedule->start}}' class='form-control' readonly/>
+                                                                                        <input type='text' value='{{\Carbon\Carbon::parse($projectSchedule->start)->format('H:i')}}' class='form-control' readonly/>
                                                                                     </td>
                                                                                     <td>
-                                                                                        <input type='text' value='{{$projectSchedule->finish}}' class='form-control' readonly/>
+                                                                                        <input type='text' value='{{\Carbon\Carbon::parse($projectSchedule->finish)->format('H:i')}}' class='form-control' readonly/>
                                                                                     </td>
                                                                                     <td>
                                                                                         <input type='text' value='{{$projectSchedule->place->name}}' class='form-control' readonly/>
@@ -187,6 +189,7 @@
 
         for(let a=0;a<rowCount;a++){
             let rowId = $('#schedule-id' + a).val();
+            let projectId = $('#project_id').val();
             $('#project_object-'+rowId+'-0').select2({
                 placeholder: {
                     id: '-1',
@@ -199,7 +202,8 @@
                     dataType: 'json',
                     data: function (params) {
                         return {
-                            q: $.trim(params.term)
+                            q: $.trim(params.term),
+                            'project_id': projectId
                         };
                     },
                     processResults: function (data) {
@@ -254,6 +258,7 @@
             );
             $('#tab_logic' + rowId ).append('<tr id="sch-'+rowId+"-"+(i+1)+'"></tr>');
 
+            let projectId = $('#project_id').val();
             $('#project_object-' + rowId + "-" + i).select2({
                 placeholder: {
                     id: '-1',
@@ -266,7 +271,8 @@
                     dataType: 'json',
                     data: function (params) {
                         return {
-                            q: $.trim(params.term)
+                            q: $.trim(params.term),
+                            'project_id': projectId
                         };
                     },
                     processResults: function (data) {

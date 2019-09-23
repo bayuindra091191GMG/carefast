@@ -76,12 +76,12 @@ class UserController extends Controller
     {
         try{
             $userLogin = auth('api')->user();
-            $user = User::where('email', $userLogin->email)->first();
+            $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
             // Get dob
             $dob = '';
-            if(!$employee->dob){
+            if(!empty($employee->dob)){
                 $dob = Carbon::parse($employee->dob, 'Asia/Jakarta')->format('d M Y');
             }
 
@@ -89,7 +89,7 @@ class UserController extends Controller
             //    1. checkin,
             //    2. checkout,
             //    3. lihat jadwal (login sbg CSO)
-            //    4. lihat jadwal cso (login sbg upper mangement)
+            //    4. lihat jadwal cso (login sbg upper management)
             //    5. beri penilaian cso
             //    6. complain management
             //    7. create MR
@@ -112,9 +112,9 @@ class UserController extends Controller
                 'email'             => $user->email,
                 'role_id'           => $employee->employee_role_id,
                 'role_name'         => $employee->employee_role->name,
-                'image_path'        => $user->image_path ?? '',
-                'telephone'         => $user->telephone ?? '',
-                'phone'             => $user->phone ?? '',
+                'image_path'        => $employee->image_path ?? '',
+                'telephone'         => $employee->telephone ?? '',
+                'phone'             => $employee->phone ?? '',
                 'dob'               => $dob,
                 'nik'               => $employee->nik ?? '',
                 'address'           => $employee->address ?? '',
