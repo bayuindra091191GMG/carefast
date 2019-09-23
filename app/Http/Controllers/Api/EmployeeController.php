@@ -82,7 +82,7 @@ class EmployeeController extends Controller
             $date = Carbon::now('Asia/Jakarta');
             $time = $date->format('H:i');
             $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
-            Log::info('employee_id = '.$employee->id);
+//            Log::info('employee_id = '.$employee->id);
 
             // weekOfMonth will returns 1 for the 7 first days of the month, then 2 from the 8th to
             // the 14th, 3 from the 15th to the 21st, 4 from 22nd to 28th and 5 above
@@ -104,7 +104,7 @@ class EmployeeController extends Controller
             }
 
             $scheduleModels = collect();
-            Log::info('project_id = '. $projectEmployee->project_id.', project_employee_id = '. $projectEmployee->id);
+//            Log::info('project_id = '. $projectEmployee->project_id.', project_employee_id = '. $projectEmployee->id);
             foreach ($schedules as $schedule){
                 $scheduleDetails = ScheduleDetail::where('schedule_id', $schedule->id)->get();
 

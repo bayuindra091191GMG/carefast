@@ -37,7 +37,8 @@ class AttendanceDetail extends Eloquent
 		'attendance_id',
 		'unit',
 		'action',
-		'status_id'
+		'status_id',
+		'created_at',
 	];
 
 	public function attendance()
