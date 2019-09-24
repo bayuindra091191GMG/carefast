@@ -94,8 +94,8 @@ class EmployeeController extends Controller
                 ->where('project_employee_id', $projectEmployee->id)
                 ->where('weeks', 'like', '%'.$todayWeekOfMonth.'%')
                 ->where('days', 'like', '%'.$todayOfWeek.'%')
-                ->whereTime('start', '<=', $time)
-                ->whereTime('finish', '>=', $time)
+//                ->whereTime('start', '<=', $time)
+//                ->whereTime('finish', '>=', $time)
                 ->get();
 
 

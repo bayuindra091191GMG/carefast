@@ -58,12 +58,13 @@ class AttendanceController extends Controller
             $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
             $schedule = Schedule::where('project_id', $projectEmployee->project_id)
                 ->where('project_employee_id', $projectEmployee->id)
-                ->whereTime('start', '<=', $time)
-                ->whereTime('finish', '>=', $time)
+//                ->whereTime('start', '<=', $time)
+//                ->whereTime('finish', '>=', $time)
                 ->first();
             $place = Place::find($schedule->place_id);
 
-            if($place->qr_code != Crypt::decryptString($data->qr_code)){
+//            if($place->qr_code != Crypt::decryptString($data->qr_code)){
+            if($place->qr_code != $data->qr_code){
                 return Response::json("Tempat yang discan tidak tepat!", 400);
             }
 
@@ -140,7 +141,8 @@ class AttendanceController extends Controller
             $schedule = Schedule::find($attendance->schedule_id);
             $place = Place::find($attendance->place_id);
 
-            if($place->qr_code != Crypt::decryptString($data->qr_code)){
+//            if($place->qr_code != Crypt::decryptString($data->qr_code)){
+            if($place->qr_code != $data->qr_code){
                 return Response::json("Tempat yang discan tidak tepat!", 400);
             }
 
