@@ -72,7 +72,6 @@ class ProjectScheduleController extends Controller
             if(empty($projectEmployee)){
                 return redirect()->back();
             }
-
             $data = [
                 'project'           => $project,
                 'projectEmployee'     => $projectEmployee,
