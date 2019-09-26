@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin;
 
 
 use App\Http\Controllers\Controller;
-use App\Models\Employee;
+use App\Models\Attendance;
 use App\Models\EmployeeRole;
 use App\Models\Unit;
 use App\Models\User;
-use App\Transformer\EmployeeTransformer;
+use App\Transformer\AttendanceTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Yajra\DataTables\DataTables;
 
-class EmployeeController extends Controller
+class AttendanceController extends Controller
 {
     public function __construct()
     {
@@ -39,9 +39,11 @@ class EmployeeController extends Controller
     }
 
     public function getIndex(Request $request){
-        $products = Employee::all();
-        return DataTables::of($products)
-            ->setTransformer(new EmployeeTransformer())
+        $id = $request->input('id');
+
+        $attendance = Attendance::where("employee_id", $id)->get();
+        return DataTables::of($attendance)
+            ->setTransformer(new AttendanceTransformer())
             ->make(true);
     }
 

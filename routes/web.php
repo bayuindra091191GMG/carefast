@@ -186,6 +186,7 @@ Route::prefix('admin')->group(function(){
     Route::post('/employee/store', 'Admin\EmployeeController@store')->name('admin.employee.store');
     Route::post('/employee/update/{id}', 'Admin\EmployeeController@update')->name('admin.employee.update');
     Route::post('/employee/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
+    Route::get('/employee/detail/{id}', 'Admin\EmployeeController@detail')->name('admin.employee.detail-attendance');
 
     // Employee Role
     Route::get('/employee_role', 'Admin\EmployeeRoleController@index')->name('admin.employee_role.index');
@@ -317,6 +318,7 @@ Route::get('/datatables-project', 'Admin\project\ProjectController@getIndex')->n
 Route::get('/datatables-sub1unit', 'Admin\Sub1UnitController@getIndex')->name('datatables.sub1_units');
 Route::get('/datatables-sub2unit', 'Admin\Sub2UnitController@getIndex')->name('datatables.sub2_units');
 Route::get('/datatables-project_schedule_employees', 'Admin\project\ProjectScheduleController@getScheduleEmployees')->name('datatables.project_schedule_employees');
+Route::get('/datatables-attendances', 'Admin\AttendanceController@getIndex')->name('datatables.attendances');
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');

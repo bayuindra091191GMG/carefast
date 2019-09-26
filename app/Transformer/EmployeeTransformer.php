@@ -18,11 +18,13 @@ class EmployeeTransformer extends TransformerAbstract
 
             $routeShowUrl = route('admin.employee.show', ['id' => $employee->id]);
             $routeEditUrl = route('admin.employee.edit', ['id' => $employee->id]);
+            $routeDetailUrl = route('admin.employee.detail-attendance', ['id' => $employee->id]);
 
 
             $code = "<a href='".$routeShowUrl."' data-toggle='tooltip' data-placement='top'>". $employee->code. "</a>";
 
             $action = "<a class='btn btn-xs btn-info' href='".$routeShowUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-info'></i></a>";
+            $action .= "&nbsp;<a class='btn btn-xs btn-success' href='".$routeDetailUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-child'></i></a>";
             $action .= "&nbsp;<a class='btn btn-xs btn-primary' href='".$routeEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a>";
 
             $phones = '-';
