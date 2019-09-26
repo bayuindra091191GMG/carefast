@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Fri, 20 Sep 2019 13:49:33 +0700.
+ * Date: Thu, 26 Sep 2019 10:32:26 +0700.
  */
 
 namespace App\Models;
@@ -15,17 +15,17 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $id
  * @property int $employee_id
  * @property int $schedule_id
+ * @property int $place_id
  * @property \Carbon\Carbon $date
  * @property int $status_id
- * @property string $notes
  * @property string $image_path
- * @property int $is_done
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
  * 
  * @property \App\Models\Employee $employee
+ * @property \App\Models\Place $place
  * @property \App\Models\Schedule $schedule
  * @property \App\Models\Status $status
  * @property \Illuminate\Database\Eloquent\Collection $attendance_details
@@ -37,8 +37,8 @@ class Attendance extends Eloquent
 	protected $casts = [
 		'employee_id' => 'int',
 		'schedule_id' => 'int',
+		'place_id' => 'int',
 		'status_id' => 'int',
-		'is_done' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
 	];
@@ -50,10 +50,9 @@ class Attendance extends Eloquent
 	protected $fillable = [
 		'employee_id',
 		'schedule_id',
+		'place_id',
 		'date',
 		'status_id',
-		'notes',
-		'is_done',
 		'image_path',
 		'created_by',
 		'updated_by'
@@ -62,6 +61,11 @@ class Attendance extends Eloquent
 	public function employee()
 	{
 		return $this->belongsTo(\App\Models\Employee::class);
+	}
+
+	public function place()
+	{
+		return $this->belongsTo(\App\Models\Place::class);
 	}
 
 	public function schedule()
