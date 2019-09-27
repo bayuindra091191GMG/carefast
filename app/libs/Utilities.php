@@ -11,6 +11,7 @@ namespace App\libs;
 use App\Models\Place;
 use App\Models\TransactionNumber;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Crypt;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
@@ -55,6 +56,21 @@ class Utilities
 
         // otherwise, it's valid and can be used
         return $number;
+    }
+
+    public static function checkingQrCode($qrCode){
+        $decryptString = Crypt::decryptString($qrCode);
+        $decryptArr = explode('-', $decryptString);
+
+        $place = Place::find($decryptArr[1]);
+
+        if($place->id != $decryptArr[1]){
+            return false;
+        }
+        else{
+            return true;
+        }
+
     }
 
     public static function ExceptionLog($ex){

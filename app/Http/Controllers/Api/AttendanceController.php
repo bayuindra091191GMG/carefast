@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\libs\Utilities;
 use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\Employee;
@@ -34,15 +35,6 @@ class AttendanceController extends Controller
     public function submitCheckin(Request $request)
     {
         try{
-//            $rules = array(
-//                'type'      => 'required',
-//                'qr_code'   => 'required'
-//            );
-
-//            $validator = Validator::make($data, $rules);
-//            if ($validator->fails()) {
-//                return response()->json($validator->messages(), 400);
-//            }
 
             $data = json_decode($request->input('checkin_model'));
             $userLogin = auth('api')->user();
@@ -63,8 +55,8 @@ class AttendanceController extends Controller
                 ->first();
             $place = Place::find($schedule->place_id);
 
-//            if($place->qr_code != Crypt::decryptString($data->qr_code)){
-            if($place->qr_code != $data->qr_code){
+            $isPlace = Utilities::checkingQrCode($data->qr_code);
+            if(!$isPlace){
                 return Response::json("Tempat yang discan tidak tepat!", 400);
             }
 
@@ -80,7 +72,7 @@ class AttendanceController extends Controller
                 $newAttendance = Attendance::create([
                     'employee_id'   => $employee->id,
                     'schedule_id'   => $schedule->id,
-                    'place_id'      => $schedule->place_id,
+                    'place_id'      => $place->id,
                     'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'is_done'       => 0,
                     'status_id'     => 6
@@ -130,7 +122,6 @@ class AttendanceController extends Controller
 //                return response()->json($validator->messages(), 400);
 //            }
 
-            $data = json_decode($request->input('checkout_model'));
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
@@ -141,8 +132,8 @@ class AttendanceController extends Controller
             $schedule = Schedule::find($attendance->schedule_id);
             $place = Place::find($attendance->place_id);
 
-//            if($place->qr_code != Crypt::decryptString($data->qr_code)){
-            if($place->qr_code != $data->qr_code){
+            $isPlace = Utilities::checkingQrCode($request->input('qr_code'));
+            if(!$isPlace){
                 return Response::json("Tempat yang discan tidak tepat!", 400);
             }
 
@@ -153,36 +144,36 @@ class AttendanceController extends Controller
             //Check if Check in or Check out
             //Check in  = 1
             //Check out = 2
-            if($data->schedule_details == null){
+            if($request->filled('schedule_details')){
                 return Response::json("Tidak ada data Dac yang diterima!", 500);
             }
 
             $newAttendance = Attendance::create([
                 'employee_id'   => $employee->id,
                 'schedule_id'   => $schedule->id,
-                'place_id'      => $schedule->place_id,
+                'place_id'      => $place->id,
                 'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'is_done'       => 1,
-                'notes'          => $data->notes,
+                'notes'         => $request->input('notes'),
                 'status_id'     => 7
             ]);
             $attendance->is_done = 1;
             $attendance->save();
 
             //Create Attendance Detail
-            $submittedDac = $data->schedule_details;
+            $submittedDac = $request->input('schedule_details');
             $i=0;
 
             //Done = 8
             //Not Done =9
-            $scheduleDetails = ScheduleDetail::where('schedule_id', $schedule->id)->get();
+//            $scheduleDetails = ScheduleDetail::where('schedule_id', $schedule->id)->get();
             foreach ($submittedDac as $dac){
 
                 AttendanceDetail::create([
                     'attendance_id' => $newAttendance->id,
-                    'unit'          => $dac->object_name,
-                    'action'        => $dac->action_name,
-                    'status_id'     => $dac->status,
+                    'unit'          => $dac['object_name'],
+                    'action'        => $dac['action_name'],
+                    'status_id'     => $dac['status'],
                     'created_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 ]);
                 $i++;
@@ -227,6 +218,10 @@ class AttendanceController extends Controller
             }
             else{
                 $place = Place::find($attendance->place_id);
+                Log::info('checkinChecking place id = '.$attendance->place_id);
+                if(empty($place)){
+                    return Response::json("Place Tidak ditemukan!", 482);
+                }
 
                 $placeModel = collect([
                     'id'                => $place->id,
@@ -239,7 +234,7 @@ class AttendanceController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceController - checkinChecking error EX: '. $ex);
-            return Response::json("Maaf terjadi kesalahan! ".$ex, 500);
+            return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
 

@@ -32,7 +32,7 @@ class PlaceController extends Controller
             $place->qr_code = $number;
             $place->save();
 
-            $codeEncrypted = Crypt::encryptString($number);
+            $codeEncrypted = Crypt::encryptString($number.'-'.$place->id);
 
             return Response::json($codeEncrypted, 200);
         }
@@ -56,9 +56,10 @@ class PlaceController extends Controller
             if(empty($request->input('qr_code'))){
                 return response()->json("Bad Request", 400);
             }
+            Log::info("hasil decrypt dr apps  = ".Crypt::decryptString($request->input('qr_code')));
 
-            $place = Place::where('qr_code', $request->input('qr_code'))->first();
-//            $place = Place::where('qr_code', Crypt::decryptString($request->input('qr_code')))->first();
+//            $place = Place::where('qr_code', $request->input('qr_code'))->first();
+            $place = Place::where('qr_code', Crypt::decryptString($request->input('qr_code')))->first();
 
             if(empty($place)){
                 return Response::json("Place Tidak ditemukan!", 482);
