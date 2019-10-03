@@ -52,11 +52,14 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/employee/get-detail/', 'Api\EmployeeController@getEmployeeDetail');
 
     Route::get('/get-user-data', 'Api\UserController@show');
+    Route::post('/save-user-device', 'Api\UserController@saveUserToken');
+
+    // Complaint
+    Route::post('/complain-submit', 'Api\ComplainController@submitEmployee');
     //New Route Finish
 
     Route::get('/testing', 'Api\UserController@testingAuthToken');
     Route::get('/get-users', 'Api\UserController@index');
-    Route::post('/save-user-device', 'Api\UserController@saveUserToken');
     Route::get('/waste-banks', 'Api\WasteBankController@getData');
     Route::get('/check-category', 'Api\GeneralController@checkCategory');
     Route::get('/address', 'Api\UserController@getAddress');
@@ -108,7 +111,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 //Route::group(['namespace' => 'Api', 'middleware' => 'waste_collector', 'prefix' => 'waste-collector'], function () {
 Route::middleware('auth:customer')->prefix('customer')->group(function(){
     //customer complain
-    Route::post('/complain-submit', 'Api\ComplainController@submit');
+    Route::post('/complain-submit', 'Api\ComplainController@submitCustomer');
+    Route::get('/get-complaints', 'Api\ComplainController@getComplaint');
 
     Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
     Route::get('/get-data', 'Api\CustomerController@show');
