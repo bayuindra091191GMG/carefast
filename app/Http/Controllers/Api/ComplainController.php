@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\AttendanceDetail;
+use App\Models\Complaint;
+use App\Models\ComplaintDetail;
 use App\Models\Employee;
 use App\Models\CustomerComplaintDetail;
 use App\Models\Customer;
@@ -46,7 +48,7 @@ class ComplainController extends Controller
             $customer = Customer::find($user->id);
 
             //create customer complaint
-            $newComplaint = CustomerComplaint::create([
+            $newComplaint = Complaint::create([
                 'project_id'   => $request->input('project_id'),
                 'customer_id'   => $user->id,
                 'customer_name'   => $customer->name,
@@ -67,7 +69,7 @@ class ComplainController extends Controller
             $employeeID = $employeeDB->employee_id;
 
             //create complaint detail
-            $newComplaint = CustomerComplaintDetail::create([
+            $newComplaint = ComplaintDetail::create([
                 'complaint_id'   => $newComplaint->id,
                 'customer_id'   => $request->input('customer_id'),
                 'employee_id'   => $employeeID,
@@ -92,7 +94,7 @@ class ComplainController extends Controller
             $user = auth('customer')->customer();
             $customer = Customer::find($user->id);
 
-            $customerComplaints =  CustomerComplaint::where('customer_id', $customer->id)->get();
+            $customerComplaints =  Complaint::where('customer_id', $customer->id)->get();
 
             return Response::json($customerComplaints, 200);
         }

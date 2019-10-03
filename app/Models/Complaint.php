@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Wed, 11 Sep 2019 15:57:30 +0700.
+ * Date: Thu, 03 Oct 2019 16:04:43 +0700.
  */
 
 namespace App\Models;
@@ -10,47 +10,65 @@ namespace App\Models;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
- * Class CustomerComplaint
+ * Class Complaint
  * 
  * @property int $id
+ * @property string $code
  * @property int $project_id
  * @property int $customer_id
+ * @property int $employee_id
+ * @property int $employee_handler_id
  * @property string $customer_name
  * @property string $subject
  * @property \Carbon\Carbon $date
+ * @property \Carbon\Carbon $response_limit_date
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
  * 
+ * @property \App\Models\Employee $employee
  * @property \App\Models\Customer $customer
  * @property \App\Models\Project $project
- * @property \Illuminate\Database\Eloquent\Collection $customer_complaint_details
+ * @property \Illuminate\Database\Eloquent\Collection $complaint_absent_histories
+ * @property \Illuminate\Database\Eloquent\Collection $complaint_details
  *
  * @package App\Models
  */
-class CustomerComplaint extends Eloquent
+class Complaint extends Eloquent
 {
 	protected $casts = [
 		'project_id' => 'int',
 		'customer_id' => 'int',
+		'employee_id' => 'int',
+		'employee_handler_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
 	];
 
 	protected $dates = [
-		'date'
+		'date',
+		'response_limit_date'
 	];
 
 	protected $fillable = [
+		'code',
 		'project_id',
 		'customer_id',
+		'employee_id',
+		'employee_handler_id',
 		'customer_name',
 		'subject',
 		'date',
+		'response_limit_date',
 		'created_by',
 		'updated_by'
 	];
+
+	public function employee()
+	{
+		return $this->belongsTo(\App\Models\Employee::class, 'employee_handler_id');
+	}
 
 	public function customer()
 	{
@@ -62,8 +80,13 @@ class CustomerComplaint extends Eloquent
 		return $this->belongsTo(\App\Models\Project::class);
 	}
 
-	public function customer_complaint_details()
+	public function complaint_absent_histories()
 	{
-		return $this->hasMany(\App\Models\CustomerComplaintDetail::class, 'complaint_id');
+		return $this->hasMany(\App\Models\ComplaintAbsentHistory::class);
+	}
+
+	public function complaint_details()
+	{
+		return $this->hasMany(\App\Models\ComplaintDetail::class);
 	}
 }
