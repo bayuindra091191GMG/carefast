@@ -284,6 +284,10 @@ Route::prefix('admin')->group(function(){
     // Report
     Route::get('/transaction/report', 'Admin\ReportController@transactionReport')->name('admin.transaction.report');
     Route::post('/transaction/report/submit', 'Admin\ReportController@transactionReportSubmit')->name('admin.transaction.report.submit');
+
+    // Complaint
+    Route::get('/complaint', 'Admin\ComplaintController@index')->name('admin.complaint.index');
+    Route::get('/complaint/show/{id}', 'Admin\ComplaintController@show')->name('admin.complaint.show');
 });
 
 Route::get('/verifyemail/{token}', 'Auth\RegisterController@verify');
@@ -319,6 +323,7 @@ Route::get('/datatables-sub1unit', 'Admin\Sub1UnitController@getIndex')->name('d
 Route::get('/datatables-sub2unit', 'Admin\Sub2UnitController@getIndex')->name('datatables.sub2_units');
 Route::get('/datatables-project_schedule_employees', 'Admin\project\ProjectScheduleController@getScheduleEmployees')->name('datatables.project_schedule_employees');
 Route::get('/datatables-attendances', 'Admin\AttendanceController@getIndex')->name('datatables.attendances');
+Route::get('/datatables-complaint', 'Admin\ComplaintController@getIndex')->name('datatables.complaints');
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');

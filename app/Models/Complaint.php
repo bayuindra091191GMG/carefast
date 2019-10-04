@@ -7,6 +7,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
@@ -29,6 +30,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $updated_by
  *
  * @property \App\Models\Employee $employee
+ * @property \App\Models\EmployeeRole $employee_role
  * @property \App\Models\Customer $customer
  * @property \App\Models\Project $project
  * @property \App\Models\Status $status
@@ -59,7 +61,7 @@ class Complaint extends Eloquent
 		'project_id',
 		'customer_id',
 		'employee_id',
-		'employee_handler_id',
+		'employee_handler_role_id',
 		'customer_name',
 		'subject',
 		'date',
@@ -69,10 +71,23 @@ class Complaint extends Eloquent
 		'updated_by'
 	];
 
+	protected $appends = [
+	    'date_string'
+    ];
+
+    public function getDateStringAttribute(){
+        return Carbon::parse($this->attributes['date'])->format('d M Y');
+    }
+
 	public function employee()
 	{
 		return $this->belongsTo(\App\Models\Employee::class, 'employee_handler_id');
 	}
+
+    public function employee_role()
+    {
+        return $this->belongsTo(\App\Models\EmployeeRole::class, 'employee_handler_role_id');
+    }
 
 	public function customer()
 	{

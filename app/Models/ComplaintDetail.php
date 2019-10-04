@@ -7,11 +7,12 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class ComplaintDetail
- * 
+ *
  * @property int $id
  * @property int $complaint_id
  * @property int $customer_id
@@ -21,7 +22,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
- * 
+ *
  * @property \App\Models\Customer $customer
  * @property \App\Models\Complaint $complaint
  * @property \App\Models\Employee $employee
@@ -44,8 +45,18 @@ class ComplaintDetail extends Eloquent
 		'employee_id',
 		'message',
 		'created_by',
-		'updated_by'
+        'created_at',
+		'updated_by',
+        'updated_at'
 	];
+
+    protected $appends = [
+        'created_at_string'
+    ];
+
+    public function getCreatedAtStringAttribute(){
+        return Carbon::parse($this->attributes['created_at'])->format('d M Y');
+    }
 
 	public function customer()
 	{
