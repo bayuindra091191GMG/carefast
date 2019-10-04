@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class Complaint
- * 
+ *
  * @property int $id
  * @property string $code
  * @property int $project_id
@@ -20,16 +20,18 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $employee_handler_id
  * @property string $customer_name
  * @property string $subject
+ * @property int $status_id
  * @property \Carbon\Carbon $date
  * @property \Carbon\Carbon $response_limit_date
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
- * 
+ *
  * @property \App\Models\Employee $employee
  * @property \App\Models\Customer $customer
  * @property \App\Models\Project $project
+ * @property \App\Models\Status $status
  * @property \Illuminate\Database\Eloquent\Collection $complaint_absent_histories
  * @property \Illuminate\Database\Eloquent\Collection $complaint_details
  *
@@ -42,6 +44,7 @@ class Complaint extends Eloquent
 		'customer_id' => 'int',
 		'employee_id' => 'int',
 		'employee_handler_id' => 'int',
+		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
 	];
@@ -60,6 +63,7 @@ class Complaint extends Eloquent
 		'customer_name',
 		'subject',
 		'date',
+		'status_id',
 		'response_limit_date',
 		'created_by',
 		'updated_by'
@@ -78,6 +82,11 @@ class Complaint extends Eloquent
 	public function project()
 	{
 		return $this->belongsTo(\App\Models\Project::class);
+	}
+
+	public function status()
+	{
+		return $this->belongsTo(\App\Models\Status::class);
 	}
 
 	public function complaint_absent_histories()

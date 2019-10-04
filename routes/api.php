@@ -113,6 +113,7 @@ Route::middleware('auth:customer')->prefix('customer')->group(function(){
     //customer complain
     Route::post('/complain-submit', 'Api\ComplainController@submitCustomer');
     Route::get('/get-complaints', 'Api\ComplainController@getComplaint');
+    Route::get('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
 
     Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
     Route::get('/get-data', 'Api\CustomerController@show');

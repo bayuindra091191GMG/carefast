@@ -161,7 +161,7 @@ class ComplainController extends Controller
             $user = auth('customer')->user();
             $customer = Customer::find($user->id);
 
-            $customerComplaints =  Complaint::where('customer_id', $customer->id)->get();
+            $customerComplaints =  Complaint::where('customer_id', $customer->id)->with('complaint_details')->get();
 
             if($customerComplaints->count() == 0){
                 return Response::json("Saat ini belum Ada complaint", 482);
@@ -171,6 +171,57 @@ class ComplainController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - getComplaint error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function getComplaintDetail(Request $request){
+        try{
+            if(empty($request->input('complaint_id'))){
+                return response()->json("Bad Request", 400);
+            }
+            $user = auth('customer')->user();
+//            $customer = Customer::find($user->id);
+
+            $complaint =  Complaint::find($request->input('complaint_id'));
+            $complaintDetails = collect();
+
+            if(empty($complaint)){
+                return Response::json("Complaint tidak ditemukan", 482);
+            }
+            else{
+                $customerComplaintDetails = $complaint->complaint_details;
+
+                foreach($customerComplaintDetails as $customerComplaintDetail){
+                    $customerComplaintDetailModel = ([
+                        'customer_id'   => $customerComplaintDetail,
+                        'customer_name'   => $customerComplaintDetail,
+                        'employee_id'   => $customerComplaintDetail,
+                        'employee_name'   => $customerComplaintDetail,
+                        'message'   => $customerComplaintDetail,
+                        'date'   => $customerComplaintDetail,
+                    ]);
+                    $complaintDetails->push($customerComplaintDetailModel);
+                }
+            }
+            $customerComplaintModel = collect([
+                'id'                    => $complaint->id,
+                'project_id'            => $complaint->project_id,
+                'project_name'          => $complaint->project->name,
+                'customer_id'           => $complaint->customer_id,
+                'employee_id'           => $complaint->employee_id,
+                'employee_handler_id'   => $complaint->employee_handler_id,
+                'customer_name'         => $complaint->customer_name,
+                'subject'               => $complaint->subject,
+                'date'                  => $complaint->date,
+                'status_id'             => $complaint->status_id,
+                'complaint_details'     => $complaintDetails,
+            ]);
+
+            return Response::json($customerComplaintModel, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getComplaintDetail error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
