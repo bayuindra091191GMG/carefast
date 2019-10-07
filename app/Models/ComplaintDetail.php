@@ -55,7 +55,7 @@ class ComplaintDetail extends Eloquent
     ];
 
     public function getCreatedAtStringAttribute(){
-        return Carbon::parse($this->attributes['created_at'])->format('d M Y');
+        return Carbon::parse($this->attributes['created_at'])->format('d M Y H:i:s');
     }
 
 	public function customer()

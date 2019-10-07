@@ -68,9 +68,12 @@ class ComplaintController extends Controller
         if(empty($complaint)){
             return redirect()->back();
         }
+        $details = $complaint->complaint_details;
+        $complaintDetailSorted = $details->sortByDesc('id');
 
         $data = [
-            'complaint'     => $complaint
+            'complaint'     => $complaint,
+            'complaintDetails'     => $complaintDetailSorted,
         ];
 
         return view('admin.complaint.show')->with($data);

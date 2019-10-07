@@ -50,7 +50,7 @@
                                                 <div class="col-md-6 col-12">
                                                     <div class="form-group form-float form-group-lg">
                                                         <div class="form-line">
-                                                            <label class="form-label" for="date">Nama Belakang</label>
+                                                            <label class="form-label" for="date">Tanggal Keluhan</label>
                                                             <input id="date" type="text" class="form-control"
                                                                    name="date" value="{{ $complaint->date_string }}" readonly>
                                                         </div>
@@ -73,19 +73,31 @@
                                     <div class="chat-box scrollable" style="height:475px;">
                                         <!--chat Row -->
                                         <ul class="chat-list">
-                                        @foreach($complaint->complaint_details as $detail)
+                                            @foreach($complaintDetails as $detail)
                                             <!--chat Row -->
                                                 <li class="chat-item">
-                                                    {{--<div class="chat-img"><img src="../../assets/images/users/1.jpg" alt="user"></div>--}}
-                                                    <div class="chat-content">
-                                                        @if(!empty($detail->customer_id) && empty($detail->employee_id))
-                                                            <h6 class="font-medium">{{ $detail->customer_name }} - Customer</h6>
-                                                        @else
+                                                    @if(!empty($detail->customer_id) && empty($detail->employee_id))
+                                                        <div class="chat-img">
+                                                            @if(!empty($detail->customer_id))
+                                                                <img src="{{asset('storage/customers/'. $detail->customer->image_path)}}" alt="cust">
+                                                            @endif
+                                                        </div>
+                                                        <div class="chat-content">
+                                                            <h6 class="font-medium">{{ $complaint->customer_name }} - Customer</h6>
+                                                            <div class="box bg-light-info" style="background:#27a9e3;color: white;">{{ $detail->message }}</div>
+                                                        </div>
+                                                    @else
+                                                        <div class="chat-img">
+                                                            @if(!empty($detail->employee_id))
+                                                                <img src="{{asset('storage/employees/'. $detail->employee->image_path)}}" alt="employee">
+                                                            @endif
+                                                        </div>
+                                                        <div class="chat-content">
                                                             <h6 class="font-medium">{{ $detail->employee->first_name. ' '. $detail->employee->last_name }} - {{ $detail->employee->employee_role->name }}</h6>
-                                                        @endif
 
-                                                        <div class="box bg-light-info">{{ $detail->message }}</div>
-                                                    </div>
+                                                            <div class="box bg-light-info">{{ $detail->message }}</div>
+                                                        </div>
+                                                    @endif
                                                     <div class="chat-time">{{ $detail->created_at_string }}</div>
                                                 </li>
                                             @endforeach

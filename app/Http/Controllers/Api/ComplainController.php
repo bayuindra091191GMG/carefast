@@ -69,6 +69,7 @@ class ComplainController extends Controller
                 return response()->json("Quota complaint anda sudah mencapai maksimal", 482);
             }
 
+            $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
             //create first complaint
             if($request->input('complaint_id') == 0){
 
@@ -77,7 +78,6 @@ class ComplainController extends Controller
                             ->where('employee_roles_id', '>', 1)
                             ->orderBy('employee_roles_id', 'asc')
                             ->first();
-
                 //create customer complaint
                 $newComplaint = Complaint::create([
                     'project_id'        => $request->input('project_id'),
@@ -87,9 +87,10 @@ class ComplainController extends Controller
                     'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'status_id'          => 10,
                     'employee_handler_role_id'  => $employeeDB->employee_roles_id,
-                    'created_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'response_limit_date'  => $datetimenow,
+                    'created_at'          => $datetimenow,
                     'updated_by'          => $user->id,
-                    'updated_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'updated_at'          => $datetimenow,
                 ]);
 
                 //create complaint detail
@@ -99,9 +100,9 @@ class ComplainController extends Controller
                     'employee_id'         => null,
                     'message'             => $request->input('message'),
                     'created_by'          => $user->id,
-                    'created_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_at'          => $datetimenow,
                     'updated_by'          => $user->id,
-                    'updated_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'updated_at'          => $datetimenow,
                 ]);
             }
             else{
@@ -119,6 +120,7 @@ class ComplainController extends Controller
 
                 $complaint = Complaint::find($request->input('complaint_id'));
                 $complaint->status_id = 11;
+                $complaint->response_limit_date = $datetimenow;
                 $complaint->save();
             }
 
@@ -159,6 +161,7 @@ class ComplainController extends Controller
                 return response()->json("Quota complaint anda sudah mencapai maksimal", 482);
             }
 
+            $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
             //create first complaint
             if($request->input('complaint_id') == 0){
 
@@ -177,10 +180,11 @@ class ComplainController extends Controller
                     'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'status_id'          => 10,
                     'employee_handler_role_id'  => $employeeDB->employee_roles_id,
+                    'response_limit_date'  => $datetimenow->addHours(6),
                     'created_by'          => $user->id,
-                    'created_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_at'          => $datetimenow,
                     'updated_by'          => $user->id,
-                    'updated_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'updated_at'          => $datetimenow,
                 ]);
 
                 //create complaint detail
@@ -190,9 +194,9 @@ class ComplainController extends Controller
                     'employee_id'         => $employee->id,
                     'message'             => $request->input('message'),
                     'created_by'          => $employee->id,
-                    'created_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_at'          => $datetimenow,
                     'updated_by'          => $employee->id,
-                    'updated_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'updated_at'          => $datetimenow,
                 ]);
             }
             else{
@@ -210,6 +214,7 @@ class ComplainController extends Controller
 
                 $complaint = Complaint::find($request->input('complaint_id'));
                 $complaint->status_id = 11;
+                $complaint->response_limit_date = $datetimenow;
                 $complaint->save();
 
             }
@@ -226,7 +231,7 @@ class ComplainController extends Controller
             $user = auth('customer')->user();
             $customer = Customer::find($user->id);
 
-            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('status_id', )->with('complaint_details')->get();
+            $customerComplaints =  Complaint::where('customer_id', $customer->id)->with('complaint_details')->get();
 
             if($customerComplaints->count() == 0){
                 return Response::json("Saat ini belum Ada complaint", 482);
@@ -289,6 +294,30 @@ class ComplainController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - getComplaintDetail error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function closeComplaint(Request $request){
+        try{
+            if(!$request->filled('complaint_id')){
+                return response()->json("Complaint harus terisi", 400);
+            }
+
+            $user = auth('customer')->user();
+            $customer = Customer::find($user->id);
+
+            $customerComplaint =  Complaint::find($request->input('complaint_id'));
+            if(empty($customerComplaint)){
+                return Response::json("Complaint tidak ditemukan", 482);
+            }
+            $customerComplaint->status_id = 12;
+            $customerComplaint->save();
+
+            return Response::json("Berhasil menutup complaint", 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getComplaint error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

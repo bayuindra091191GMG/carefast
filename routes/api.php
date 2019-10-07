@@ -114,6 +114,7 @@ Route::middleware('auth:customer')->prefix('customer')->group(function(){
     Route::post('/complain-submit', 'Api\ComplainController@submitCustomer');
     Route::get('/get-complaints', 'Api\ComplainController@getComplaint');
     Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
+    Route::post('/close-complaints', 'Api\ComplainController@closeComplaint');
 
     Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
     Route::get('/get-data', 'Api\CustomerController@show');
