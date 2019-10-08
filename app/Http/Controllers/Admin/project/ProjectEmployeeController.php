@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin\project;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Models\EmployeeRole;
 use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Transformer\ProjectTransformer;
@@ -61,6 +62,27 @@ class ProjectEmployeeController extends Controller
         return view('admin.project.employee.show')->with($data);
     }
 
+//    public function create(int $project_id){
+//        try{
+//            $project = Project::find($project_id);
+//            if(empty($project)){
+//                return redirect()->back();
+//            }
+//
+//            $manpower = $project->total_manpower - 2;
+//
+//            $data = [
+//                'project'       => $project,
+//                'manpower'      => $manpower
+//            ];
+//
+//            return view('admin.project.employee.create')->with($data);
+//        }
+//        catch (\Exception $ex){
+//            Log::error('Admin/information/ProjectEmployeeController - create error EX: '. $ex);
+//            return "Something went wrong! Please contact administrator!";
+//        }
+//    }
     public function create(int $project_id){
         try{
             $project = Project::find($project_id);
@@ -68,14 +90,17 @@ class ProjectEmployeeController extends Controller
                 return redirect()->back();
             }
 
+            $employeeRoles = EmployeeRole::where('id', '<', 9)->get();
+
             $manpower = $project->total_manpower - 2;
 
             $data = [
                 'project'       => $project,
+                'employeeRoles'       => $employeeRoles,
                 'manpower'      => $manpower
             ];
 
-            return view('admin.project.employee.create')->with($data);
+            return view('admin.project.employee.create2')->with($data);
         }
         catch (\Exception $ex){
             Log::error('Admin/information/ProjectEmployeeController - create error EX: '. $ex);

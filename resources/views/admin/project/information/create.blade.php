@@ -74,19 +74,43 @@
                                     </div>
 
                                     <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="latitude">Latitude</label>
-                                                <input type="text" name="latitude" id="latitude" class="form-control" readonly/>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="latitude">Latitude</label>
+                                                        <input type="text" name="latitude" id="latitude" class="form-control" readonly/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="longitude">Longitude</label>
+                                                        <input type="text" name="longitude" id="longitude" class="form-control" readonly/>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="longitude">Longitude</label>
-                                                <input type="text" name="longitude" id="longitude" class="form-control" readonly/>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="total_manday">Tanggal Dimulai *</label>
+                                                        <input id="start_date" name="start_date" type="text" class="form-control" autocomplete="off"  required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="total_mp_onduty">Tanggal Selesai *</label>
+                                                        <input id="finish_date" name="finish_date" type="text" class="form-control" autocomplete="off" required>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -135,10 +159,28 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label for="customer">Customer *</label>
+                                                        <select id="customer" name="customer" class="form-control"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label for="customer">&nbsp;</label>
+                                                        <a class="form-control btn btn-success">Tambah</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="customer">Customer *</label>
-                                            <select id="customer" name="customer" class="form-control"></select>
                                         </div>
                                     </div>
 
@@ -179,14 +221,27 @@
 
 @section('styles')
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
 @endsection
 
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script src="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
             type="text/javascript"></script>
 
     <script type="text/javascript">
+        jQuery('#start_date').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: "dd M yyyy"
+        });
+        jQuery('#finish_date').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: "dd M yyyy"
+        });
+
 
         $('#city').select2();
 
