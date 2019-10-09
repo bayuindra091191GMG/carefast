@@ -99,7 +99,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="total_manday">Tanggal Dimulai *</label>
+                                                        <label class="form-label" for="total_manday">Tanggal Dimulai Project*</label>
                                                         <input id="start_date" name="start_date" type="text" class="form-control" autocomplete="off"  required>
                                                     </div>
                                                 </div>
@@ -107,7 +107,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="total_mp_onduty">Tanggal Selesai *</label>
+                                                        <label class="form-label" for="total_mp_onduty">Tanggal Selesai Project*</label>
                                                         <input id="finish_date" name="finish_date" type="text" class="form-control" autocomplete="off" required>
                                                     </div>
                                                 </div>

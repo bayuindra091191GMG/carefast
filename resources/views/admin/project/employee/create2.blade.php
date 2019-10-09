@@ -69,9 +69,6 @@
                                             <div class="col-8">
                                                 <h3>EMPLOYEE</h3>
                                             </div>
-                                            <div class="col-4 text-right">
-                                                <a class="btn btn-primary text-white" style="cursor: pointer;" onclick="addRow();">TAMBAH</a>
-                                            </div>
                                         </div>
                                     </div>
 

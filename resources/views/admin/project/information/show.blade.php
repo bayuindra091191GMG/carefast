@@ -85,7 +85,7 @@
                                                     <div class="form-group form-float form-group-lg">
                                                         <div class="form-line">
                                                             <label class="form-label" for="address">Alamat *</label>
-                                                            <textarea name="address" id="address" class="form-control" rows="10" readonly>{{ $project->address }}</textarea>
+                                                            <textarea name="address" id="address" class="form-control" rows="3" readonly>{{ $project->address }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -100,19 +100,43 @@
                                                 </div>
 
                                                 <div class="col-md-12">
-                                                    <div class="form-group form-float form-group-lg">
-                                                        <div class="form-line">
-                                                            <label class="form-label" for="latitude">Latitude</label>
-                                                            <input type="text" name="latitude" id="latitude" class="form-control" value="{{$project->latitude}}" readonly/>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="latitude">Latitude</label>
+                                                                    <input type="text" name="latitude" id="latitude" class="form-control" value="{{$project->latitude}}" readonly/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="longitude">Longitude</label>
+                                                                    <input type="text" name="longitude" id="longitude" class="form-control" value="{{$project->longitude}}" readonly/>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-12">
-                                                    <div class="form-group form-float form-group-lg">
-                                                        <div class="form-line">
-                                                            <label class="form-label" for="longitude">Longitude</label>
-                                                            <input type="text" name="longitude" id="longitude" class="form-control" value="{{$project->longitude}}" readonly/>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="total_manday">Tanggal Dimulai Project*</label>
+                                                                    <input id="start_date" name="start_date" type="text" class="form-control" value="{{$start_date}}" autocomplete="off" readonly>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="total_mp_onduty">Tanggal Selesai Project*</label>
+                                                                    <input id="finish_date" name="finish_date" type="text" class="form-control" value="{{$finish_date}}" autocomplete="off" readonly>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

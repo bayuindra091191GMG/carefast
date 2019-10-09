@@ -44,6 +44,8 @@ class ProjectController extends Controller
     public function show(int $id)
     {
         $project = Project::find($id);
+        $start_date = !empty($project->start_date) ? Carbon::parse($project->start_date)->format("d M Y") : "-";
+        $finish_date = !empty($project->finish_date) ? Carbon::parse($project->finish_date)->format("d M Y") : "-";
 
         if(empty($project)){
             return redirect()->back();
@@ -51,6 +53,8 @@ class ProjectController extends Controller
 
         $data = [
             'project'          => $project,
+            'start_date'          => $start_date,
+            'finish_date'          => $finish_date,
         ];
         return view('admin.project.information.show')->with($data);
     }
@@ -72,6 +76,8 @@ class ProjectController extends Controller
                 'name'          => 'required',
                 'address'       => 'required',
                 'phone'         => 'required',
+                'start_date'         => 'required',
+                'finish_date'         => 'required',
                 'customer'          => 'required',
                 'latitude'          => 'required',
                 'longitude'         => 'required',
@@ -84,6 +90,8 @@ class ProjectController extends Controller
             if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());
 
             //Create Project
+            $start_date = Carbon::createFromFormat('d M Y', $request->input('start_date'), 'Asia/Jakarta');
+            $finish_date = Carbon::createFromFormat('d M Y', $request->input('finish_date'), 'Asia/Jakarta');
 
             $user = Auth::guard('admin')->user();
             $project = Project::create([
@@ -93,6 +101,8 @@ class ProjectController extends Controller
                 'latitude'          => $request->input('latitude'),
                 'longitude'         => $request->input('longitude'),
                 'address'           => $request->input('address'),
+                'start_date'        => $start_date,
+                'finish_date'       => $finish_date,
                 'description'       => $request->input('description'),
                 'total_manday'      => $request->input('total_manday'),
                 'total_mp_onduty'   => $request->input('total_mp_onduty'),
@@ -117,12 +127,17 @@ class ProjectController extends Controller
     public function edit(int $id)
     {
         $project = Project::find($id);
+        $start_date = !empty($project->start_date) ? Carbon::parse($project->start_date)->format("d M Y") : "-";
+        $finish_date = !empty($project->finish_date) ? Carbon::parse($project->finish_date)->format("d M Y") : "-";
+
         if(empty($project)){
             return redirect()->back();
         }
 
         $data = [
             'project'          => $project,
+            'start_date'          => $start_date,
+            'finish_date'          => $finish_date,
         ];
         return view('admin.project.information.edit')->with($data);
     }
@@ -151,12 +166,17 @@ class ProjectController extends Controller
             $adminUser = Auth::guard('admin')->user();
             $now = Carbon::now('Asia/Jakarta');
 
+            $start_date = Carbon::createFromFormat('d M Y', $request->input('start_date'), 'Asia/Jakarta');
+            $finish_date = Carbon::createFromFormat('d M Y', $request->input('finish_date'), 'Asia/Jakarta');
+
             $project->name = strtoupper($request->input('name'));
             $project->phone = $request->input('phone') ?? '';
             $project->customer_id = $request->input('customer');
             $project->latitude = $request->input('latitude');
             $project->longitude =$request->input('longitude');
             $project->address = $request->input('address');
+            $project->start_date = $start_date;
+            $project->finish_date = $finish_date;
             $project->description = $request->input('description');
             $project->total_manday = $request->input('total_manday');
             $project->total_mp_onduty = $request->input('total_mp_onduty');

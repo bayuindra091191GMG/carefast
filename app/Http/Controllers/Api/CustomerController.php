@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Project;
 use App\Models\User;
 use App\Notifications\FCMNotification;
 use Illuminate\Http\JsonResponse;
@@ -70,18 +71,21 @@ class CustomerController extends Controller
             $customerLogin = auth('customer')->user();
             $customer = Customer::where('id', $customerLogin->id)->first();
 
+            $project = Project::where('customer_id', 'like', '%'.$customer->id.'%')->first();
+            $projectName = empty($project) ? "-" : $project->name;
+
+            $imagePath = asset('storage/customers/'. $customer->image_path);
+
             $customerModel = collect([
                 'id'                => $customer->id,
+                'project_name'      => $projectName,
                 'name'              => $customer->name,
                 'email'             => $customer->email,
-                'image_path'        => $customer->image_path,
+                'image_path'        => $imagePath,
                 'phone'             => $customer->phone
             ]);
 
-            return Response::json([
-                'message'       => 'SUCCESS',
-                'model'         => json_encode($customerModel)
-            ]);
+            return Response::json($customerModel, 200);
         }
         catch(\Exception $ex){
             return Response::json([
