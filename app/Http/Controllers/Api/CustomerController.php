@@ -74,6 +74,10 @@ class CustomerController extends Controller
             $project = Project::where('customer_id', 'like', '%'.$customer->id.'%')->first();
             $projectName = empty($project) ? "-" : $project->name;
 
+            if(empty($project)){
+                return Response::json("Customer tidak ada di project ini", 482);
+            }
+
             $imagePath = asset('storage/customers/'. $customer->image_path);
 
             $customerModel = collect([

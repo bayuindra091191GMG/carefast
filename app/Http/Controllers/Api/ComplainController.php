@@ -100,8 +100,7 @@ class ComplainController extends Controller
                     'updated_at'          => $datetimenow,
                 ]);
 
-
-            return Response::json("Sukses menyimpan complaint", 200);
+            return Response::json($newComplaint->id, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - submitCustomer error EX: '. $ex);
@@ -224,7 +223,7 @@ class ComplainController extends Controller
                 'updated_at'          => $datetimenow,
             ]);
 
-            return Response::json("Sukses menyimpan complaint", 200);
+            return Response::json($newComplaint->id, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - submitEmployee error EX: '. $ex);
