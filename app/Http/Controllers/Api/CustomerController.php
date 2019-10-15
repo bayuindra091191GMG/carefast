@@ -83,6 +83,7 @@ class CustomerController extends Controller
             $customerModel = collect([
                 'id'                => $customer->id,
                 'project_name'      => $projectName,
+                'project_id'      => $project->id,
                 'name'              => $customer->name,
                 'email'             => $customer->email,
                 'image_path'        => $imagePath,

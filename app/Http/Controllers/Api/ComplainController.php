@@ -81,7 +81,7 @@ class ComplainController extends Controller
                     'subject'           => $request->input('subject'),
                     'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'status_id'          => 10,
-                    'employee_handler_role_id'  => $employeeDB->employee_roles_id,
+                    'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
                     'response_limit_date'  => $datetimenow,
                     'created_at'          => $datetimenow,
                     'updated_by'          => $user->id,
@@ -203,7 +203,7 @@ class ComplainController extends Controller
                 'subject'           => $request->input('subject'),
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
-                'employee_handler_role_id'  => $employeeDB->employee_roles_id,
+                'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
                 'response_limit_date'  => $datetimenow->addHours(6),
                 'created_by'          => $user->id,
                 'created_at'          => $datetimenow,
@@ -327,7 +327,7 @@ class ComplainController extends Controller
                 'employee_handler_id'   => $complaint->employee_handler_id,
                 'customer_name'         => $complaint->customer_name,
                 'subject'               => $complaint->subject,
-                'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d-m-Y H:i:s'),
+                'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y'),
                 'status_id'             => $complaint->status_id,
             ]);
 
@@ -354,21 +354,35 @@ class ComplainController extends Controller
                 ->limit(10)
                 ->get();
 
-            if(empty($complaint)){
+            if($complaintDetails->count() == 0){
                 return Response::json("Complaint tidak ditemukan", 482);
             }
             else{
                 foreach($complaintDetails as $customerComplaintDetail){
-                    $customerComplaintDetailModel = ([
-                        'customer_id'       => $customerComplaintDetail->customer_id,
-                        'customer_name'     => $customerComplaintDetail->customer->name,
-                        'customer_image'    => asset('storage/customers/'. $customerComplaintDetail->customer->image_path),
-                        'employee_id'       => $customerComplaintDetail->employee_id,
-                        'employee_name'     => $customerComplaintDetail->employee->first_name." ".$customerComplaintDetail->employee->last_name,
-                        'employee_image'    => asset('storage/employees/'. $customerComplaintDetail->employee->image_path),
-                        'message'           => $customerComplaintDetail->message,
-                        'date'              => Carbon::parse($customerComplaintDetail->created_at, 'Asia/Jakarta')->format('d-m-Y H:i:s'),
-                    ]);
+                    if(empty($customerComplaintDetail->customer_id)){
+                        $customerComplaintDetailModel = ([
+                            'customer_id'       => null,
+                            'customer_name'     => "",
+                            'customer_image'    => "",
+                            'employee_id'       => $customerComplaintDetail->employee_id,
+                            'employee_name'     => $customerComplaintDetail->employee->first_name." ".$customerComplaintDetail->employee->last_name,
+                            'employee_image'    => asset('storage/employees/'. $customerComplaintDetail->employee->image_path),
+                            'message'           => $customerComplaintDetail->message,
+                            'date'              => Carbon::parse($customerComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                        ]);
+                    }
+                    else{
+                        $customerComplaintDetailModel = ([
+                            'customer_id'       => $customerComplaintDetail->customer_id,
+                            'customer_name'     => $customerComplaintDetail->customer->name,
+                            'customer_image'    => asset('storage/customers/'. $customerComplaintDetail->customer->image_path),
+                            'employee_id'       => null,
+                            'employee_name'     => "",
+                            'employee_image'    => "",
+                            'message'           => $customerComplaintDetail->message,
+                            'date'              => Carbon::parse($customerComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                        ]);
+                    }
                     $complaintDetailModels->push($customerComplaintDetailModel);
                 }
             }
