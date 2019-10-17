@@ -87,6 +87,7 @@ class ComplainController extends Controller
                     'updated_by'          => $user->id,
                     'updated_at'          => $datetimenow,
                 ]);
+                $newComplaint->code = "COMP/X/".$newComplaint->id;
 
                 //create complaint detail
                 $newComplaint = ComplaintDetail::create([
@@ -151,7 +152,18 @@ class ComplainController extends Controller
             $complaint->response_limit_date = $datetimenow;
             $complaint->save();
 
-            return Response::json("Sukses menyimpan complaint", 200);
+            $customerComplaintDetailModel = ([
+                'customer_id'       => $newComplaint->customer_id,
+                'customer_name'     => $newComplaint->customer->name,
+                'customer_image'    => asset('storage/customers/'. $newComplaint->customer->image_path),
+                'employee_id'       => null,
+                'employee_name'     => "",
+                'employee_image'    => "",
+                'message'           => $newComplaint->message,
+                'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y'),
+            ]);
+
+            return Response::json($customerComplaintDetailModel, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - submitCustomer error EX: '. $ex);
@@ -197,7 +209,6 @@ class ComplainController extends Controller
             //create customer complaint
             $newComplaint = Complaint::create([
                 'project_id'        => $request->input('project_id'),
-                'code'              => "test",
                 'employee_id'       => $employee->id,
                 'customer_name'     => $employee->name,
                 'subject'           => $request->input('subject'),
@@ -210,6 +221,7 @@ class ComplainController extends Controller
                 'updated_by'          => $user->id,
                 'updated_at'          => $datetimenow,
             ]);
+            $newComplaint->code = "COMP/X/".$newComplaint->id;
 
             //create complaint detail
             $newComplaint = ComplaintDetail::create([
@@ -263,7 +275,18 @@ class ComplainController extends Controller
             $complaint->response_limit_date = $datetimenow;
             $complaint->save();
 
-            return Response::json("Sukses menyimpan complaint", 200);
+            $employeeComplaintDetailModel = ([
+                'customer_id'       => null,
+                'customer_name'     => "",
+                'customer_image'    => "",
+                'employee_id'       => $newComplaint->employee_id,
+                'employee_name'     => $newComplaint->employee->first_name." ".$newComplaint->employee->last_name,
+                'employee_image'    => asset('storage/employees/'. $newComplaint->employee->image_path),
+                'message'           => $newComplaint->message,
+                'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y'),
+            ]);
+
+            return Response::json($employeeComplaintDetailModel, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - submitEmployee error EX: '. $ex);
@@ -284,6 +307,41 @@ class ComplainController extends Controller
 //            Log::info('ordering_type: '. $orderingType);
 
             $customerComplaints =  Complaint::where('customer_id', $customer->id);
+            if($statusId !== 0) {
+                $customerComplaints = $customerComplaints->where('status_id', $statusId);
+            }
+
+            $customerComplaints = $customerComplaints
+                ->orderBy('date', $orderingType)
+                ->skip($skip)
+                ->limit(10)
+                ->get();
+
+            if($customerComplaints->count() == 0){
+                return Response::json("Saat ini belum Ada complaint", 482);
+            }
+
+            return Response::json($customerComplaints, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getComplaint error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+    public function getComplaintEmployee(Request $request){
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
+                ->first();
+
+            $skip = intval($request->input('skip'));
+            $statusId = intval($request->input('compliant_status'));
+            $orderingType = $request->input('ordering_type');
+
+            $customerComplaints =  Complaint::where('project_id', $employeeDB->project_id);
             if($statusId !== 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
             }
@@ -350,6 +408,7 @@ class ComplainController extends Controller
             $complaintDetailModels = collect();
 
             $complaintDetails = $complaintDetails
+                ->orderBy('created_at', 'desc')
                 ->skip($skip)
                 ->limit(10)
                 ->get();
@@ -372,16 +431,16 @@ class ComplainController extends Controller
                         ]);
                     }
                     else{
-                        $customerComplaintDetailModel = ([
-                            'customer_id'       => $customerComplaintDetail->customer_id,
-                            'customer_name'     => $customerComplaintDetail->customer->name,
-                            'customer_image'    => asset('storage/customers/'. $customerComplaintDetail->customer->image_path),
-                            'employee_id'       => null,
-                            'employee_name'     => "",
-                            'employee_image'    => "",
-                            'message'           => $customerComplaintDetail->message,
-                            'date'              => Carbon::parse($customerComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                        ]);
+                            $customerComplaintDetailModel = ([
+                                'customer_id'       => $customerComplaintDetail->customer_id,
+                                'customer_name'     => $customerComplaintDetail->customer->name,
+                                'customer_image'    => asset('storage/customers/'. $customerComplaintDetail->customer->image_path),
+                                'employee_id'       => null,
+                                'employee_name'     => "",
+                                'employee_image'    => "",
+                                'message'           => $customerComplaintDetail->message,
+                                'date'              => Carbon::parse($customerComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                            ]);
                     }
                     $complaintDetailModels->push($customerComplaintDetailModel);
                 }

@@ -55,6 +55,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/save-user-device', 'Api\UserController@saveUserToken');
 
     // Complaint
+    Route::post('/get-complaints', 'Api\ComplainController@getComplaintEmployee');
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintEmployee');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintEmployee');
     //New Route Finish
@@ -117,7 +118,7 @@ Route::middleware('auth:customer')->prefix('customer')->group(function(){
     Route::post('/get-complaints', 'Api\ComplainController@getComplaint');
     Route::post('/get-complaint-headers', 'Api\ComplainController@getComplaintHeader');
     Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
-    Route::post('/close-complaints', 'Api\ComplainController@closeComplaint');
+    Route::post('/complaint-close', 'Api\ComplainController@closeComplaint');
 
     Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
     Route::get('/get-data', 'Api\CustomerController@show');
