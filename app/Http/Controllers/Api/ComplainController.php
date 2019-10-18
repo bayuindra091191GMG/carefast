@@ -83,14 +83,16 @@ class ComplainController extends Controller
                     'status_id'          => 10,
                     'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
                     'response_limit_date'  => Carbon::now('Asia/Jakarta')->addHours(6)->toDateTimeString(),
+                    'created_by'          => $user->id,
                     'created_at'          => $datetimenow,
                     'updated_by'          => $user->id,
                     'updated_at'          => $datetimenow,
                 ]);
                 $newComplaint->code = "COMP/X/".$newComplaint->id;
+                $newComplaint->save();
 
                 //create complaint detail
-                $newComplaint = ComplaintDetail::create([
+                $newComplaintDetail = ComplaintDetail::create([
                     'complaint_id'        => $newComplaint->id,
                     'customer_id'         => $customer->id,
                     'employee_id'         => null,
@@ -104,7 +106,7 @@ class ComplainController extends Controller
             return Response::json($newComplaint->id, 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/ComplainController - submitCustomer error EX: '. $ex);
+            Log::error('Api/ComplainController - createComplaintCustomer error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -166,7 +168,7 @@ class ComplainController extends Controller
             return Response::json($customerComplaintDetailModel, 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/ComplainController - submitCustomer error EX: '. $ex);
+            Log::error('Api/ComplainController - replyComplaintCustomer error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -183,6 +185,9 @@ class ComplainController extends Controller
             if(!$request->filled('message')){
                 return response()->json("Message harus terisi", 400);
             }
+//            Log::error('project_id = '.$request->input('project_id').
+//                ', subject = '.$request->input('subject').
+//                ', message = '.$request->input('message'));
 
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
@@ -210,7 +215,7 @@ class ComplainController extends Controller
             $newComplaint = Complaint::create([
                 'project_id'        => $request->input('project_id'),
                 'employee_id'       => $employee->id,
-                'customer_name'     => $employee->name,
+                'customer_name'     => $employee->first_name." ".$employee->last_name,
                 'subject'           => $request->input('subject'),
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
@@ -222,9 +227,10 @@ class ComplainController extends Controller
                 'updated_at'          => $datetimenow,
             ]);
             $newComplaint->code = "COMP/X/".$newComplaint->id;
+            $newComplaint->save();
 
             //create complaint detail
-            $newComplaint = ComplaintDetail::create([
+            $newComplaintDetail = ComplaintDetail::create([
                 'complaint_id'        => $newComplaint->id,
                 'customer_id'         => null,
                 'employee_id'         => $employee->id,
@@ -238,7 +244,7 @@ class ComplainController extends Controller
             return Response::json($newComplaint->id, 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/ComplainController - submitEmployee error EX: '. $ex);
+            Log::error('Api/ComplainController - createComplaintEmployee error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -289,7 +295,7 @@ class ComplainController extends Controller
             return Response::json($employeeComplaintDetailModel, 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/ComplainController - submitEmployee error EX: '. $ex);
+            Log::error('Api/ComplainController - replyComplaintEmployee error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -390,8 +396,6 @@ class ComplainController extends Controller
                 ]);
                 $complaintModels->push($customerComplaintModel);
             }
-
-
             return Response::json($customerComplaints, 200);
         }
         catch (\Exception $ex){
