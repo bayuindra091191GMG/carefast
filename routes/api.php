@@ -56,72 +56,74 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
     // Complaint
     Route::post('/get-complaints', 'Api\ComplainController@getComplaintEmployee');
+    Route::post('/get-complaint-headers', 'Api\ComplainController@getComplaintHeader');
+    Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintEmployee');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintEmployee');
     //New Route Finish
 
-    Route::get('/testing', 'Api\UserController@testingAuthToken');
-    Route::get('/get-users', 'Api\UserController@index');
-    Route::get('/waste-banks', 'Api\WasteBankController@getData');
-    Route::get('/check-category', 'Api\GeneralController@checkCategory');
-    Route::get('/address', 'Api\UserController@getAddress');
-    Route::post('/set-address', 'Api\UserController@setAddress');
-    Route::post('/profile/update', 'Api\UserController@updateProfile');
-
-    //Transactions
-    Route::get('/get-transactions', 'Api\TransactionHeaderController@getTransactions');
-    Route::post('/get-transaction-details', 'Api\TransactionHeaderController@getTransactionDetails');
-    Route::post('/get-transaction-data', 'Api\TransactionHeaderController@getTransactionData');
-
-    //Antar Sendiri
-    Route::post('/antar-sendiri/transactions', 'Api\TransactionHeaderController@getTransactionAntarSendiriForCustomer');
-    Route::post('/antar-sendiri/confirm', 'Api\TransactionHeaderController@confirmTransactionByUserAntarSendiri');
-    Route::post('/antar-sendiri/cancel', 'Api\TransactionHeaderController@cancelTransactionByUserAntarSendiri');
-
-    //On Demand
-    Route::post('/on-demand/transactions', 'Api\TransactionHeaderOnDemandController@getTransactionOnDemandForCustomer');
-    Route::post('/on-demand/create', 'Api\TransactionHeaderController@createTransaction');
-    Route::post('/on-demand/create/dev', 'Api\TransactionHeaderController@createTransactionDev');
-//    Route::post('/waste-collector/on-demand/confirm', 'Api\TransactionHeaderController@confirmTransactionByDriver');
-    Route::post('/on-demand/confirm', 'Api\TransactionHeaderController@confirmTransactionByUser');
-    Route::post('/on-demand/reject', 'Api\TransactionHeaderController@cancelTransactionByUserOnDemand');
-
-    //Routine
-    Route::post('/routine/transactions', 'Api\TransactionHeaderRoutineController@getTransactionRoutineForCustomer');
-    Route::post('/routine/confirm', 'Api\TransactionHeaderController@confirmTransactionByUserRoutinePickup');
-    Route::post('/routine/cancel', 'Api\TransactionHeaderController@cancelTransactionByUserRoutinePickup');
-
-    //Voucher
-    Route::get('/voucher-categories', 'Api\VoucherController@getCategories');
-    Route::post('/vouchers', 'Api\VoucherController@get');
-    Route::post('/vouchers/all', 'Api\VoucherController@getAll');
-    Route::post('/vouchers/buy', 'Api\VoucherController@buy');
-    Route::post('/vouchers/redeem', 'Api\VoucherController@redeem');
-    Route::get('/vouchers/list', 'Api\VoucherController@getAllUserVoucher');
-
-    //Routine Pickup
-    Route::post('/change-routine-pickup', 'Api\UserController@changeRoutinePickup');
-    Route::get('/waste-banks/get-schedules', 'Api\WasteBankController@getWasteBankSchedules');
-    Route::get('/waste-banks/get-schedule-today', 'Api\WasteBankController@getWasteBankSchedule');
-
-    //Point
-    Route::get('/point/get', 'Api\PoinController@getCustomerPoint');
-    Route::post('/redeem-poin', 'Api\PoinController@redeem');
+//    Route::get('/testing', 'Api\UserController@testingAuthToken');
+//    Route::get('/get-users', 'Api\UserController@index');
+//    Route::get('/waste-banks', 'Api\WasteBankController@getData');
+//    Route::get('/check-category', 'Api\GeneralController@checkCategory');
+//    Route::get('/address', 'Api\UserController@getAddress');
+//    Route::post('/set-address', 'Api\UserController@setAddress');
+//    Route::post('/profile/update', 'Api\UserController@updateProfile');
+//
+//    //Transactions
+//    Route::get('/get-transactions', 'Api\TransactionHeaderController@getTransactions');
+//    Route::post('/get-transaction-details', 'Api\TransactionHeaderController@getTransactionDetails');
+//    Route::post('/get-transaction-data', 'Api\TransactionHeaderController@getTransactionData');
+//
+//    //Antar Sendiri
+//    Route::post('/antar-sendiri/transactions', 'Api\TransactionHeaderController@getTransactionAntarSendiriForCustomer');
+//    Route::post('/antar-sendiri/confirm', 'Api\TransactionHeaderController@confirmTransactionByUserAntarSendiri');
+//    Route::post('/antar-sendiri/cancel', 'Api\TransactionHeaderController@cancelTransactionByUserAntarSendiri');
+//
+//    //On Demand
+//    Route::post('/on-demand/transactions', 'Api\TransactionHeaderOnDemandController@getTransactionOnDemandForCustomer');
+//    Route::post('/on-demand/create', 'Api\TransactionHeaderController@createTransaction');
+//    Route::post('/on-demand/create/dev', 'Api\TransactionHeaderController@createTransactionDev');
+////    Route::post('/waste-collector/on-demand/confirm', 'Api\TransactionHeaderController@confirmTransactionByDriver');
+//    Route::post('/on-demand/confirm', 'Api\TransactionHeaderController@confirmTransactionByUser');
+//    Route::post('/on-demand/reject', 'Api\TransactionHeaderController@cancelTransactionByUserOnDemand');
+//
+//    //Routine
+//    Route::post('/routine/transactions', 'Api\TransactionHeaderRoutineController@getTransactionRoutineForCustomer');
+//    Route::post('/routine/confirm', 'Api\TransactionHeaderController@confirmTransactionByUserRoutinePickup');
+//    Route::post('/routine/cancel', 'Api\TransactionHeaderController@cancelTransactionByUserRoutinePickup');
+//
+//    //Voucher
+//    Route::get('/voucher-categories', 'Api\VoucherController@getCategories');
+//    Route::post('/vouchers', 'Api\VoucherController@get');
+//    Route::post('/vouchers/all', 'Api\VoucherController@getAll');
+//    Route::post('/vouchers/buy', 'Api\VoucherController@buy');
+//    Route::post('/vouchers/redeem', 'Api\VoucherController@redeem');
+//    Route::get('/vouchers/list', 'Api\VoucherController@getAllUserVoucher');
+//
+//    //Routine Pickup
+//    Route::post('/change-routine-pickup', 'Api\UserController@changeRoutinePickup');
+//    Route::get('/waste-banks/get-schedules', 'Api\WasteBankController@getWasteBankSchedules');
+//    Route::get('/waste-banks/get-schedule-today', 'Api\WasteBankController@getWasteBankSchedule');
+//
+//    //Point
+//    Route::get('/point/get', 'Api\PoinController@getCustomerPoint');
+//    Route::post('/redeem-poin', 'Api\PoinController@redeem');
 });
 
 
 //Route::group(['namespace' => 'Api', 'middleware' => 'waste_collector', 'prefix' => 'waste-collector'], function () {
 Route::middleware('auth:customer')->prefix('customer')->group(function(){
+    Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
+    Route::get('/get-data', 'Api\CustomerController@show');
+
     //customer complain
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintCustomer');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintCustomer');
+    Route::post('/complaint-close', 'Api\ComplainController@closeComplaint');
     Route::post('/get-complaints', 'Api\ComplainController@getComplaint');
     Route::post('/get-complaint-headers', 'Api\ComplainController@getComplaintHeader');
     Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
-    Route::post('/complaint-close', 'Api\ComplainController@closeComplaint');
-
-    Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
-    Route::get('/get-data', 'Api\CustomerController@show');
 });
 
 

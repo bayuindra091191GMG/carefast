@@ -160,7 +160,7 @@ class ComplainController extends Controller
                 'employee_name'     => "",
                 'employee_image'    => "",
                 'message'           => $newComplaint->message,
-                'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y'),
+                'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
             ]);
 
             return Response::json($customerComplaintDetailModel, 200);
@@ -283,7 +283,7 @@ class ComplainController extends Controller
                 'employee_name'     => $newComplaint->employee->first_name." ".$newComplaint->employee->last_name,
                 'employee_image'    => asset('storage/employees/'. $newComplaint->employee->image_path),
                 'message'           => $newComplaint->message,
-                'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y'),
+                'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
             ]);
 
             return Response::json($employeeComplaintDetailModel, 200);
@@ -321,6 +321,24 @@ class ComplainController extends Controller
                 return Response::json("Saat ini belum Ada complaint", 482);
             }
 
+            $complaintModels = collect();
+
+            foreach($customerComplaints as $customerComplaint){
+                $customerComplaintModel = collect([
+                    'id'                    => $customerComplaint->id,
+                    'project_id'            => $customerComplaint->project_id,
+                    'project_name'          => $customerComplaint->project->name,
+                    'customer_id'           => $customerComplaint->customer_id,
+                    'employee_id'           => $customerComplaint->employee_id,
+                    'employee_handler_id'   => $customerComplaint->employee_handler_id,
+                    'customer_name'         => $customerComplaint->customer_name,
+                    'subject'               => $customerComplaint->subject,
+                    'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y'),
+                    'status_id'             => $customerComplaint->status_id,
+                ]);
+                $complaintModels->push($customerComplaintModel);
+            }
+
             return Response::json($customerComplaints, 200);
         }
         catch (\Exception $ex){
@@ -355,6 +373,24 @@ class ComplainController extends Controller
             if($customerComplaints->count() == 0){
                 return Response::json("Saat ini belum Ada complaint", 482);
             }
+            $complaintModels = collect();
+
+            foreach($customerComplaints as $customerComplaint){
+                $customerComplaintModel = collect([
+                    'id'                    => $customerComplaint->id,
+                    'project_id'            => $customerComplaint->project_id,
+                    'project_name'          => $customerComplaint->project->name,
+                    'customer_id'           => $customerComplaint->customer_id,
+                    'employee_id'           => $customerComplaint->employee_id,
+                    'employee_handler_id'   => $customerComplaint->employee_handler_id,
+                    'customer_name'         => $customerComplaint->customer_name,
+                    'subject'               => $customerComplaint->subject,
+                    'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y'),
+                    'status_id'             => $customerComplaint->status_id,
+                ]);
+                $complaintModels->push($customerComplaintModel);
+            }
+
 
             return Response::json($customerComplaints, 200);
         }
