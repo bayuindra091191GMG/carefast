@@ -16,7 +16,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $name
  * @property string $latitude
  * @property string $longitude
- * @property int $customer_id
+ * @property string $customer_id
  * @property string $phone
  * @property string $address
  * @property string $description
@@ -47,7 +47,6 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 class Project extends Eloquent
 {
 	protected $casts = [
-		'customer_id' => 'int',
 		'total_manday' => 'int',
 		'total_mp_onduty' => 'int',
 		'total_mp_off' => 'int',

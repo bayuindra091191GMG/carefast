@@ -19,6 +19,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $customer_id
  * @property int $employee_id
  * @property int $employee_handler_id
+ * @property int $employee_handler_role_id
  * @property string $customer_name
  * @property string $subject
  * @property int $status_id
@@ -46,6 +47,7 @@ class Complaint extends Eloquent
 		'customer_id' => 'int',
 		'employee_id' => 'int',
 		'employee_handler_id' => 'int',
+		'employee_handler_role_id' => 'int',
 		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
@@ -61,6 +63,7 @@ class Complaint extends Eloquent
 		'project_id',
 		'customer_id',
 		'employee_id',
+		'employee_handler_id',
 		'employee_handler_role_id',
 		'customer_name',
 		'subject',

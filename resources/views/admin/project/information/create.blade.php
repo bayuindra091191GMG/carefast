@@ -165,15 +165,20 @@
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label for="customer">Customer *</label>
-                                                        <select id="customer" name="customer" class="form-control"></select>
+                                                        <select id="customer" class="form-control"></select>
+                                                    </div>
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="total_mp_off"></label>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <input type="hidden" id="customer-selected" name="customer">
+
                                             <div class="col-md-2">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label for="customer">&nbsp;</label>
-                                                        <a class="form-control btn btn-success">Tambah</a>
+                                                        <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -267,6 +272,19 @@
                 }
             }
         });
+
+        function addCustomer(){
+            let customerID = $('#customer').val();
+
+            let selectedCustomer = $('#customer-selected').val();
+
+            if(!(selectedCustomer.includes(customerID))){
+                let newSelectedCustomer = selectedCustomer + customerID + "," ;
+                // alert(newSelectedCustomer);
+                $('#customer-selected').val(newSelectedCustomer);
+            }
+
+        }
 
         var map = new google.maps.Map(document.getElementById('map-canvas'), {
             center:{

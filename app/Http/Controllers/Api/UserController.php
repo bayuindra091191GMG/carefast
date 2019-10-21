@@ -106,6 +106,11 @@ class UserController extends Controller
             }
             //pengecekan jika employee adalah pembuat MR pada suatu project
 
+            //mengambil data project_id
+            $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
+                ->where('employee_roles_id', '>', 1)
+                ->where('status_id', 1)
+                ->first();
 
             $userModel = collect([
                 'id'                => $user->id,
@@ -113,6 +118,7 @@ class UserController extends Controller
                 'email'             => $user->email,
                 'role_id'           => $employee->employee_role_id,
                 'role_name'         => $employee->employee_role->name,
+                'project_id'        => empty($employeeDB) ? 0 : $employeeDB->project_id,
                 'image_path'        => $employee->image_path ?? '',
                 'telephone'         => $employee->telephone ?? '',
                 'phone'             => $employee->phone ?? '',
