@@ -6,15 +6,15 @@
     }
 </style>
 <body>
-asdf1 <div id="token"></div>
-asdf2 <div id="msg"></div>
-asdf3 <div id="notis"></div>
-asdf4 <div id="err"></div>
+Token <div id="token"></div>
+Msg <div id="msg"></div>
+Notis <div id="notis"></div>
+Error <div id="err"></div>
 
-<script src="https://www.gstatic.com/firebasejs/5.8.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
 
 <!-- Add additional services that you want to use -->
-<script src="https://www.gstatic.com/firebasejs/5.8.2/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-messaging.js"></script>
 {{--<script src="{{ asset('js/fcm-notif.js') }}"></script>--}}
 <script>
     MsgElem = document.getElementById("msg")
@@ -23,6 +23,7 @@ asdf4 <div id="err"></div>
     ErrElem = document.getElementById("err")
     // Initialize Firebase
     // TODO: Replace with your project's customized code snippet
+
     var config = {
         apiKey: "{{env('FCM_API_KEY')}}",
         authDomain: "{{env('FCM_DOMAIN')}}.firebaseapp.com",

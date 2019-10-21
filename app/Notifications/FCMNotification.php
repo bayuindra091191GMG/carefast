@@ -9,9 +9,12 @@
 namespace App\Notifications;
 
 
+use App\Models\FcmTokenAdmin;
 use App\Models\FcmTokenApp;
 use App\Models\FcmTokenBrowser;
 use App\Models\FcmTokenCollector;
+use App\Models\FcmTokenCustomer;
+use App\Models\FcmTokenUser;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 
@@ -19,40 +22,40 @@ use Illuminate\Support\Facades\Log;
 class FCMNotification
 {
     public static function SaveToken($userId, $token, $type){
-        if($type == 'app'){
-            $isExistToken = FcmTokenApp::where('user_id', $userId)->first();
+        if($type == 'user'){
+            $isExistToken = FcmTokenUser::where('user_id', $userId)->first();
             if(!empty($isExistToken)){
                 $isExistToken->token = $token;
                 $isExistToken->save();
             }
             else{
-                $fcmToken = FcmTokenApp::create([
+                $fcmToken = FcmTokenUser::create([
                     'user_id' => $userId,
                     'token' => $token
                 ]);
             }
         }
-        else if($type == 'collector'){
-            $isExistToken = FcmTokenCollector::where('collector_id', $userId)->first();
+        else if($type == 'customer'){
+            $isExistToken = FcmTokenCustomer::where('customer_id', $userId)->first();
             if(!empty($isExistToken)){
                 $isExistToken->token = $token;
                 $isExistToken->save();
             }
             else{
-                $fcmToken = FcmTokenCollector::create([
-                    'collector_id' => $userId,
+                $fcmToken = FcmTokenCustomer::create([
+                    'customer_id' => $userId,
                     'token' => $token
                 ]);
             }
         }
         else{
-            $isExistToken = FcmTokenBrowser::where('user_admin_id', $userId)->first();
+            $isExistToken = FcmTokenAdmin::where('user_admin_id', $userId)->first();
             if(!empty($isExistToken)){
                 $isExistToken->token = $token;
                 $isExistToken->save();
             }
             else{
-                $fcmToken = FcmTokenBrowser::create([
+                $fcmToken = FcmTokenAdmin::create([
                     'user_admin_id' => $userId,
                     'token' => $token
                 ]);
@@ -62,14 +65,14 @@ class FCMNotification
 
     public static function SendNotification($userId, $type, $title, $body, $notifData){
         try{
-            if($type == 'app'){
-                $user  = FcmTokenApp::where('user_id', $userId)->first();
+            if($type == 'user'){
+                $user  = FcmTokenUser::where('user_id', $userId)->first();
             }
-            elseif($type == 'collector'){
-                $user  = FcmTokenCollector::where('collector_id', $userId)->first();
+            else if($type == 'customer'){
+                $user  = FcmTokenCustomer::where('customer_id', $userId)->first();
             }
             else{
-                $user  = FcmTokenBrowser::where('user_admin_id', $userId)->first();
+                $user  = FcmTokenAdmin::where('user_admin_id', $userId)->first();
             }
 
             if(empty($user)){

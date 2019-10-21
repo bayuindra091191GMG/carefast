@@ -11,6 +11,7 @@ use App\Models\Employee;
 use App\Models\Customer;
 use App\Models\ProjectEmployee;
 use App\Models\User;
+use App\Notifications\FCMNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -103,6 +104,24 @@ class ComplainController extends Controller
                     'updated_at'          => $datetimenow,
                 ]);
 
+            //Send notification to
+            //Employee
+            $title = "ICare";
+            $body = "Customer membuat complaint baru";
+            $data = array(
+                "complaint_id" => $newComplaint->id,
+            );
+            //Push Notification to employee App.
+            $ProjectEmployees = ProjectEmployee::where('project_id', $request->input('project_id'))
+                ->where('employee_roles_id', $employeeDB->employee_roles_id)
+                ->get();
+            if($ProjectEmployees->count() >= 0){
+                foreach ($ProjectEmployees as $ProjectEmployee){
+                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                }
+            }
+
             return Response::json($newComplaint->id, 200);
         }
         catch (\Exception $ex){
@@ -164,6 +183,23 @@ class ComplainController extends Controller
                 'message'           => $newComplaint->message,
                 'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
             ]);
+            //Send notification to
+            //Employee
+            $title = "ICare";
+            $body = "Customer me-reply complaint ".$complaint->subject;
+            $data = array(
+                "complaint_id" => $complaint->id,
+            );
+            //Push Notification to employee App.
+            $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
+                ->where('employee_roles_id', $complaint->employee_handler_role_id)
+                ->get();
+            if($ProjectEmployees->count() >= 0){
+                foreach ($ProjectEmployees as $ProjectEmployee){
+                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                }
+            }
 
             return Response::json($customerComplaintDetailModel, 200);
         }
@@ -241,6 +277,24 @@ class ComplainController extends Controller
                 'updated_at'          => $datetimenow,
             ]);
 
+            //Send notification to
+            //Employee
+            $title = "ICare";
+            $body = "Employee membuat complaint baru";
+            $data = array(
+                "complaint_id" => $newComplaint->id,
+            );
+            //Push Notification to employee App.
+            $ProjectEmployees = ProjectEmployee::where('project_id', $request->input('project_id'))
+                ->where('employee_roles_id', $employeeDB->employee_roles_id)
+                ->get();
+            if($ProjectEmployees->count() >= 0){
+                foreach ($ProjectEmployees as $ProjectEmployee){
+                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                }
+            }
+
             return Response::json($newComplaint->id, 200);
         }
         catch (\Exception $ex){
@@ -292,6 +346,16 @@ class ComplainController extends Controller
                 'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
             ]);
 
+            //Send notification to
+            //Customer
+            $title = "ICare";
+            $body = "Employee me-reply complaint ".$complaint->subject;
+            $data = array(
+                "complaint_id" => $complaint->id,
+            );
+            //Push Notification to customer App.
+            FCMNotification::SendNotification($user->id, 'customer', $title, $body, $data);
+
             return Response::json($employeeComplaintDetailModel, 200);
         }
         catch (\Exception $ex){
@@ -305,7 +369,7 @@ class ComplainController extends Controller
             $customer = Customer::find($user->id);
 
             $skip = intval($request->input('skip'));
-            $statusId = intval($request->input('compliant_status'));
+            $statusId = intval($request->input('complaint_status'));
             $orderingType = $request->input('ordering_type');
 
 //            Log::info('skip: '. $skip);
@@ -345,7 +409,7 @@ class ComplainController extends Controller
                 $complaintModels->push($customerComplaintModel);
             }
 
-            return Response::json($customerComplaints, 200);
+            return Response::json($complaintModels, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - getComplaint error EX: '. $ex);
@@ -362,7 +426,7 @@ class ComplainController extends Controller
                 ->first();
 
             $skip = intval($request->input('skip'));
-            $statusId = intval($request->input('compliant_status'));
+            $statusId = intval($request->input('complaint_status'));
             $orderingType = $request->input('ordering_type');
 
             $customerComplaints =  Complaint::where('project_id', $employeeDB->project_id);
@@ -396,7 +460,7 @@ class ComplainController extends Controller
                 ]);
                 $complaintModels->push($customerComplaintModel);
             }
-            return Response::json($customerComplaints, 200);
+            return Response::json($complaintModels, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - getComplaint error EX: '. $ex);
@@ -454,7 +518,7 @@ class ComplainController extends Controller
                 ->get();
 
             if($complaintDetails->count() == 0){
-                return Response::json("Complaint tidak ditemukan", 482);
+                return Response::json($complaintDetailModels, 200);
             }
             else{
                 foreach($complaintDetails as $customerComplaintDetail){

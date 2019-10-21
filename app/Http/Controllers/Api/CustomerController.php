@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\FCMNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
 class CustomerController extends Controller
@@ -46,13 +47,14 @@ class CustomerController extends Controller
             $customer = auth('customer')->user();
 
             //Save user deviceID
-            FCMNotification::SaveToken($customer->id, $data['device_id'], "customer");
+            FCMNotification::SaveToken($customer->id, $request->input('device_id'), "customer");
 
             return Response::json([
                 'message' => "Success Save Customer Token!",
             ], 200);
         }
         catch(\Exception $ex){
+            Log::error('Api/CustomerController - saveCustomerToken error EX: '. $ex);
             return Response::json([
                 'message' => "Sorry Something went Wrong!",
                 'ex' => $ex,
@@ -93,6 +95,7 @@ class CustomerController extends Controller
             return Response::json($customerModel, 200);
         }
         catch(\Exception $ex){
+            Log::error('Api/CustomerController - show error EX: '. $ex);
             return Response::json([
                 'error'   => $ex,
             ], 500);

@@ -53,13 +53,14 @@ class UserController extends Controller
             $user = auth('api')->user();
 
             //Save user deviceID
-            FCMNotification::SaveToken($user->id, $data['device_id'], "user");
+            FCMNotification::SaveToken($user->id, $request->input('device_id'), "user");
 
             return Response::json([
                 'message' => "Success Save User Token!",
             ], 200);
         }
         catch(\Exception $ex){
+            Log::error('Api/UserController - saveUserToken error EX: '. $ex);
             return Response::json([
                 'message' => "Sorry Something went Wrong!",
                 'ex' => $ex,
