@@ -167,9 +167,6 @@
                                                         <label for="customer">Customer *</label>
                                                         <select id="customer" class="form-control"></select>
                                                     </div>
-                                                    <div class="form-line">
-                                                        <label class="form-label" for="total_mp_off"></label>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <input type="hidden" id="customer-selected" name="customer">
@@ -186,6 +183,18 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
+                                            <table class="table table-bordered table-hover" id="tab_logic">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center" style="width: 25%">
+                                                        Customer*
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr id='sch1'></tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
 
@@ -273,17 +282,21 @@
             }
         });
 
+        var i=1;
         function addCustomer(){
             let customerID = $('#customer').val();
-
             let selectedCustomer = $('#customer-selected').val();
 
             if(!(selectedCustomer.includes(customerID))){
-                let newSelectedCustomer = selectedCustomer + customerID + "," ;
-                // alert(newSelectedCustomer);
+                let newSelectedCustomer = selectedCustomer + customerID + "#" ;
                 $('#customer-selected').val(newSelectedCustomer);
-            }
 
+                $('#sch'+i).html(
+                    "<td><span>" + $('#customer').text() + "</span></td>"
+                );
+                $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+                i++;
+            }
         }
 
         var map = new google.maps.Map(document.getElementById('map-canvas'), {

@@ -168,11 +168,6 @@ class ComplainController extends Controller
                 'updated_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
             ]);
 
-            $complaint = Complaint::find($request->input('complaint_id'));
-            $complaint->status_id = 11;
-            $complaint->response_limit_date = $datetimenow;
-            $complaint->save();
-
             $customerComplaintDetailModel = ([
                 'customer_id'       => $newComplaint->customer_id,
                 'customer_name'     => $newComplaint->customer->name,
@@ -183,6 +178,8 @@ class ComplainController extends Controller
                 'message'           => $newComplaint->message,
                 'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
             ]);
+
+            $complaint = Complaint::find($request->input('complaint_id'));
             //Send notification to
             //Employee
             $title = "ICare";
@@ -221,9 +218,9 @@ class ComplainController extends Controller
             if(!$request->filled('message')){
                 return response()->json("Message harus terisi", 400);
             }
-//            Log::error('project_id = '.$request->input('project_id').
-//                ', subject = '.$request->input('subject').
-//                ', message = '.$request->input('message'));
+            Log::error('project_id = '.$request->input('project_id').
+                ', subject = '.$request->input('subject').
+                ', message = '.$request->input('message'));
 
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
@@ -377,7 +374,7 @@ class ComplainController extends Controller
 //            Log::info('ordering_type: '. $orderingType);
 
             $customerComplaints =  Complaint::where('customer_id', $customer->id);
-            if($statusId !== 0) {
+            if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
             }
 
@@ -430,7 +427,7 @@ class ComplainController extends Controller
             $orderingType = $request->input('ordering_type');
 
             $customerComplaints =  Complaint::where('project_id', $employeeDB->project_id);
-            if($statusId !== 0) {
+            if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
             }
 

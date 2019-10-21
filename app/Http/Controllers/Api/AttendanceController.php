@@ -55,8 +55,10 @@ class AttendanceController extends Controller
                 ->first();
             $place = Place::find($schedule->place_id);
 
-            $isPlace = Utilities::checkingQrCode($data->qr_code);
-            if(!$isPlace){
+//            $isPlace = Utilities::checkingQrCode($data->qr_code);
+//            if(!$isPlace){
+
+            if($place->qr_code != $data->qr_code){
                 return Response::json("Tempat yang discan tidak tepat!", 400);
             }
 
@@ -122,18 +124,26 @@ class AttendanceController extends Controller
 //                return response()->json($validator->messages(), 400);
 //            }
 
+            Log::info('qr_code: '. $request->input('qr_code'));
+            Log::info('notes: '. $request->input('notes'));
+
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
             $attendance = Attendance::where('employee_id', $employee->id)
                 ->where('status_id', 6)
-                ->where('is_done', 0)->first();
+                ->where('is_done', 0)
+                ->first();
+            if(empty($attendance)){
+                return Response::json("Tidak ditemukan Jadwal Sesuai!", 400);
+            }
             $schedule = Schedule::find($attendance->schedule_id);
             $place = Place::find($attendance->place_id);
 
-            $isPlace = Utilities::checkingQrCode($request->input('qr_code'));
-            if(!$isPlace){
+//            $isPlace = Utilities::checkingQrCode($request->input('qr_code'));
+//            if(!$isPlace){
+            if($place->qr_code != $request->input('qr_code')){
                 return Response::json("Tempat yang discan tidak tepat!", 400);
             }
 
@@ -144,7 +154,7 @@ class AttendanceController extends Controller
             //Check if Check in or Check out
             //Check in  = 1
             //Check out = 2
-            if($request->filled('schedule_details')){
+            if(!$request->filled('schedule_details')){
                 return Response::json("Tidak ada data Dac yang diterima!", 500);
             }
 
@@ -199,6 +209,8 @@ class AttendanceController extends Controller
             $date = Carbon::now('Asia/Jakarta');
             $time = $date->format('H:i:s');
             $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+
+            //pengecekan harus di ganti dengan pengecekan weeks dan days dan finish
             $schedule = Schedule::where('project_id', $projectEmployee->project_id)
                 ->where('project_employee_id', $projectEmployee->id)
                 ->first();
@@ -214,10 +226,11 @@ class AttendanceController extends Controller
             //checking checkin with attendance
             $attendance = Attendance::where('employee_id', $employee->id)
                 ->where('schedule_id', $schedule->id)
+                ->where('is_done', 0)
                 ->first();
 
             if(empty($attendance)){
-                return Response::json("Place Tidak ditemukan!", 482);
+                return Response::json("Tidak ada Attendance!", 482);
             }
             else{
                 $place = Place::find($attendance->place_id);
@@ -284,7 +297,8 @@ class AttendanceController extends Controller
             //Submit Data
             $place = Place::where('qr_code', $request->input('qr_code'))->first();
 
-            if($place->qr_code != Crypt::decryptString($request->input('qr_code'))){
+//            if($place->qr_code != Crypt::decryptString($request->input('qr_code'))){
+            if($place->qr_code != $request->input('qr_code')){
                 return Response::json("Tempat yang discan tidak tepat!", 400);
             }
             $date = Carbon::now('Asia/Jakarta');

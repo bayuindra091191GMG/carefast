@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class Attendance
- * 
+ *
  * @property int $id
  * @property int $employee_id
  * @property int $schedule_id
@@ -19,11 +19,12 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $date
  * @property int $status_id
  * @property string $image_path
+ * @property int $is_done
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
- * 
+ *
  * @property \App\Models\Employee $employee
  * @property \App\Models\Place $place
  * @property \App\Models\Schedule $schedule
@@ -40,7 +41,8 @@ class Attendance extends Eloquent
 		'place_id' => 'int',
 		'status_id' => 'int',
 		'created_by' => 'int',
-		'updated_by' => 'int'
+		'updated_by' => 'int',
+		'is_done' => 'int'
 	];
 
 	protected $dates = [
@@ -54,6 +56,7 @@ class Attendance extends Eloquent
 		'date',
 		'status_id',
 		'image_path',
+		'is_done',
 		'created_by',
 		'updated_by'
 	];

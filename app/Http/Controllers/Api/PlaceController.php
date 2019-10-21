@@ -32,12 +32,13 @@ class PlaceController extends Controller
             $place->qr_code = $number;
             $place->save();
 
-            $codeEncrypted = Crypt::encryptString($number.'-'.$place->id);
+            $codeEncrypted = Crypt::encryptString($number);
+//            $codeEncrypted = Crypt::encryptString($number.'-'.$place->id);
 
             return Response::json($codeEncrypted, 200);
         }
         catch (\Exception $exception){
-            Log::error('Api/AttendanceController - qrCode error EX: '. $exception);
+            Log::error('Api/PlaceController - qrCode error EX: '. $exception);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -56,10 +57,10 @@ class PlaceController extends Controller
             if(empty($request->input('qr_code'))){
                 return response()->json("Bad Request", 400);
             }
-            Log::info("hasil decrypt dr apps  = ".Crypt::decryptString($request->input('qr_code')));
+//            Log::info("hasil decrypt dr apps  = ".Crypt::decryptString($request->input('qr_code')));
 
-//            $place = Place::where('qr_code', $request->input('qr_code'))->first();
-            $place = Place::where('qr_code', Crypt::decryptString($request->input('qr_code')))->first();
+            $place = Place::where('qr_code', $request->input('qr_code'))->first();
+//            $place = Place::where('qr_code', Crypt::decryptString($request->input('qr_code')))->first();
 
             if(empty($place)){
                 return Response::json("Place Tidak ditemukan!", 482);
@@ -74,7 +75,7 @@ class PlaceController extends Controller
             }
         }
         catch (\Exception $ex){
-            Log::error('Api/AttendanceController - checkinChecking error EX: '. $ex);
+            Log::error('Api/PlaceController - getPlaceByQr error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
