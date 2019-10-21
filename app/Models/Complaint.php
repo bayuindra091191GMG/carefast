@@ -84,6 +84,11 @@ class Complaint extends Eloquent
 
 	public function employee()
 	{
+		return $this->belongsTo(\App\Models\Employee::class, 'employee_id');
+	}
+
+	public function employee_handler()
+	{
 		return $this->belongsTo(\App\Models\Employee::class, 'employee_handler_id');
 	}
 
