@@ -229,9 +229,21 @@
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
                         <li class="sidebar-item">
-                            <a href="{{route('admin.complaint.index')}}" class="sidebar-link">
+                            <a href="{{route('admin.complaint.index', ['type' => 'customers'])}}" class="sidebar-link">
                                 <i class="mdi mdi-format-list-bulleted"></i>
-                                <span class="hide-menu"> Daftar Keluhan </span>
+                                <span class="hide-menu"> Daftar Keluhan Customer </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.complaint.index', ['type' => 'internals'])}}" class="sidebar-link">
+                                <i class="mdi mdi-format-list-bulleted"></i>
+                                <span class="hide-menu"> Daftar Keluhan Internal </span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.complaint.index', ['type' => 'others'])}}" class="sidebar-link">
+                                <i class="mdi mdi-format-list-bulleted"></i>
+                                <span class="hide-menu"> Daftar Keluhan Other</span>
                             </a>
                         </li>
                     </ul>

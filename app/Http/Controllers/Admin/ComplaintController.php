@@ -41,7 +41,17 @@ class ComplaintController extends Controller
                 'filterDateEnd'     => $filterDateEnd
             ];
 
-            return view('admin.complaint.index')->with($data);
+            if($request->type == "customers"){
+                return view('admin.complaint.index-customers')->with($data);
+            }
+            else if($request->type == "internals"){
+                return view('admin.complaint.index-internals')->with($data);
+            }
+            else if($request->type == "others"){
+                return view('admin.complaint.index-others')->with($data);
+
+            }
+//            return view('admin.complaint.index')->with($data);
         }
         catch (\Exception $ex){
             Log::error('Admin/ComplaintHeaderController - index error EX: '. $ex);
@@ -49,7 +59,37 @@ class ComplaintController extends Controller
         }
     }
 
-    public function getIndex(Request $request){
+    public function getIndexCustomers(Request $request){
+        $start = Carbon::createFromFormat('d M Y', $request->input('date_start'), 'Asia/Jakarta');
+        $end = Carbon::createFromFormat('d M Y', $request->input('date_end'), 'Asia/Jakarta');
+        $start->subDays(1);
+        $end->addDays(1);
+
+        $complaints = Complaint::whereBetween('date', array($start->toDateTimeString(), $end->toDateTimeString()))
+            ->where('customer_id', '!=', null)
+            ->get();
+
+        return DataTables::of($complaints)
+            ->setTransformer(new ComplaintTransformer)
+            ->make(true);
+    }
+
+    public function getIndexInternals(Request $request){
+        $start = Carbon::createFromFormat('d M Y', $request->input('date_start'), 'Asia/Jakarta');
+        $end = Carbon::createFromFormat('d M Y', $request->input('date_end'), 'Asia/Jakarta');
+        $start->subDays(1);
+        $end->addDays(1);
+
+        $complaints = Complaint::whereBetween('date', array($start->toDateTimeString(), $end->toDateTimeString()))
+            ->where('employee_id', '!=', null)
+            ->get();
+
+        return DataTables::of($complaints)
+            ->setTransformer(new ComplaintTransformer)
+            ->make(true);
+    }
+
+    public function getIndexOthers(Request $request){
         $start = Carbon::createFromFormat('d M Y', $request->input('date_start'), 'Asia/Jakarta');
         $end = Carbon::createFromFormat('d M Y', $request->input('date_end'), 'Asia/Jakarta');
         $start->subDays(1);

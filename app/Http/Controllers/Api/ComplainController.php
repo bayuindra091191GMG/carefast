@@ -226,15 +226,6 @@ class ComplainController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            //checking if complain more than 5 or not
-            $customerComplaintCount = Complaint::where('project_id', $request->input('project_id'))
-                ->where('employee_id', $employee->id)
-                ->where('status_id', '!=', 12)
-                ->count();
-            if($customerComplaintCount >= 5){
-                return response()->json("Quota complaint anda sudah mencapai maksimal", 482);
-            }
-
             $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
             //create first complaint
 
@@ -400,7 +391,7 @@ class ComplainController extends Controller
                     'employee_handler_id'   => $customerComplaint->employee_handler_id,
                     'customer_name'         => $customerComplaint->customer_name,
                     'subject'               => $customerComplaint->subject,
-                    'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y'),
+                    'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                     'status_id'             => $customerComplaint->status_id,
                 ]);
                 $complaintModels->push($customerComplaintModel);
@@ -452,7 +443,7 @@ class ComplainController extends Controller
                     'employee_handler_id'   => $customerComplaint->employee_handler_id,
                     'customer_name'         => $customerComplaint->customer_name,
                     'subject'               => $customerComplaint->subject,
-                    'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y'),
+                    'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                     'status_id'             => $customerComplaint->status_id,
                 ]);
                 $complaintModels->push($customerComplaintModel);
@@ -486,7 +477,7 @@ class ComplainController extends Controller
                 'employee_handler_id'   => $complaint->employee_handler_id,
                 'customer_name'         => $complaint->customer_name,
                 'subject'               => $complaint->subject,
-                'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y'),
+                'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                 'status_id'             => $complaint->status_id,
             ]);
 

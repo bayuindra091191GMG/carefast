@@ -34,6 +34,7 @@ class ComplaintTransformer extends TransformerAbstract
                 'code'          => $code,
                 'date'          => $createdDate,
                 'project'       => $complaint->project->name,
+                'subject'       => $complaint->subject,
                 'type'          => $type,
                 'complainer'    => $complainer,
                 'handled_by'    => $complaint->employee_role->name,

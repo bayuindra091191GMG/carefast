@@ -42,6 +42,7 @@
                                     <th class="text-center">Kode</th>
                                     <th class="text-center">Tanggal</th>
                                     <th class="text-center">Project</th>
+                                    <th class="text-center">Subyek</th>
                                     <th class="text-center">Jenis</th>
                                     <th class="text-center">Keluhan Oleh</th>
                                     <th class="text-center">Diproses Oleh</th>
@@ -85,12 +86,12 @@
             let dateStart = $('#date_start').val();
             let dateEnd = $('#date_end').val();
 
-            let url = '{{ route('admin.complaint.index') }}';
+            let url = '{{ route('admin.complaint.index', ['type' => 'customers']) }}';
             window.location = url + '?date_start=' + dateStart + "&date_end=" + dateEnd;
         });
 
         $(document).on("click", "#btn_reset", function(){
-            let url = '{{ route('admin.complaint.index') }}';
+            let url = '{{ route('admin.complaint.index', ['type' => 'customers']) }}';
             window.location = url;
         });
 
@@ -100,7 +101,7 @@
             pageLength: 25,
             responsive: true,
             ajax: {
-                url: '{!! route('datatables.complaints') !!}',
+                url: '{!! route('datatables.complaint-customers') !!}',
                 data: {
                     'date_start': '{{ $filterDateStart }}',
                     'date_end': '{{ $filterDateEnd }}'
@@ -118,6 +119,7 @@
                     }
                 },
                 { data: 'project', name: 'project', class: 'text-center' },
+                { data: 'subject', name: 'subject', class: 'text-center' },
                 { data: 'type', name: 'type', class: 'text-center' },
                 { data: 'complainer', name: 'complainer'},
                 { data: 'handled_by', name: 'handled_by', class: 'text-center'},

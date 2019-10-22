@@ -292,9 +292,9 @@
                 $('#customer-selected').val(newSelectedCustomer);
 
                 $('#sch'+i).html(
-                    "<td><span>" + $('#customer').text() + "</span></td>"
+                    // "<td><span>" + $('#customer').text() + "</span></td>"
                 );
-                $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+                // $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
                 i++;
             }
         }

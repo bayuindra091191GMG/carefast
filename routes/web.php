@@ -325,7 +325,9 @@ Route::get('/datatables-sub1unit', 'Admin\Sub1UnitController@getIndex')->name('d
 Route::get('/datatables-sub2unit', 'Admin\Sub2UnitController@getIndex')->name('datatables.sub2_units');
 Route::get('/datatables-project_schedule_employees', 'Admin\project\ProjectScheduleController@getScheduleEmployees')->name('datatables.project_schedule_employees');
 Route::get('/datatables-attendances', 'Admin\AttendanceController@getIndex')->name('datatables.attendances');
-Route::get('/datatables-complaint', 'Admin\ComplaintController@getIndex')->name('datatables.complaints');
+Route::get('/datatables-complaint-customers', 'Admin\ComplaintController@getIndexCustomers')->name('datatables.complaint-customers');
+Route::get('/datatables-complaint-internals', 'Admin\ComplaintController@getIndexInternals')->name('datatables.complaint-internals');
+Route::get('/datatables-complaint-others', 'Admin\ComplaintController@getIndexOthers')->name('datatables.complaint-others');
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
