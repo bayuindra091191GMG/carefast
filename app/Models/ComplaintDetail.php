@@ -18,6 +18,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $customer_id
  * @property int $employee_id
  * @property string $message
+ * @property string $image
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -44,6 +45,7 @@ class ComplaintDetail extends Eloquent
 		'customer_id',
 		'employee_id',
 		'message',
+		'image',
 		'created_by',
         'created_at',
 		'updated_by',
