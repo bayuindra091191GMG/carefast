@@ -8,6 +8,7 @@
 
 namespace App\libs;
 
+use App\Models\AutoNumber;
 use App\Models\Place;
 use App\Models\TransactionNumber;
 use Carbon\Carbon;
@@ -108,9 +109,9 @@ class Utilities
     public static function GetNextTransactionNumber($prepend){
         try{
             $nextNo = 1;
-            $orderNumber = TransactionNumber::find($prepend);
+            $orderNumber = AutoNumber::find($prepend);
             if(empty($orderNumber)){
-                TransactionNumber::create([
+                AutoNumber::create([
                     'id'        => $prepend,
                     'next_no'   => 1
                 ]);
@@ -133,7 +134,7 @@ class Utilities
      */
     public static function UpdateTransactionNumber($prepend){
         try{
-            $orderNumber = TransactionNumber::find($prepend);
+            $orderNumber = AutoNumber::find($prepend);
             $orderNumber->next_no++;
             $orderNumber->save();
         }

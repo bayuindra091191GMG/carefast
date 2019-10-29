@@ -31,6 +31,7 @@ class ComplainController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+
     public function createComplaintCustomer(Request $request)
     {
         try{
@@ -106,7 +107,7 @@ class ComplainController extends Controller
                 $count = 1;
                 foreach($request->file('images') as $exampleImage){
                     $imageFolder = str_replace('/','-', $newComplaint->code);
-                    Log::info('imagefolder = '.$imageFolder);
+//                    Log::info('imagefolder = '.$imageFolder);
                     $publicPath = 'storage/complaints/'. $imageFolder;
                     if(!File::isDirectory($publicPath)){
                         File::makeDirectory(public_path($publicPath), 0777, true, true);
@@ -171,10 +172,14 @@ class ComplainController extends Controller
 //            if ($validator->fails()) {
 //                return response()->json($validator->messages(), 400);
 //            }
-            if(!$request->filled('message')){
-                return response()->json("Message harus terisi", 400);
+            $data = json_decode($request->input('complaint_reply_model'));
+
+            if(!($request->hasFile('image'))){
+                if(empty($data->message)){
+                    return response()->json("Message harus terisi", 400);
+                }
             }
-            if(!$request->filled('complaint_id')){
+            if(empty($data->complaint_id)){
                 return response()->json("Complaint harus terisi", 400);
             }
 
@@ -185,11 +190,11 @@ class ComplainController extends Controller
             $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
             //create complaint detail
-            $newComplaint = ComplaintDetail::create([
-                'complaint_id'        => $request->input('complaint_id'),
+            $newComplaintDetail = ComplaintDetail::create([
+                'complaint_id'        => $data->complaint_id,
                 'customer_id'         => $customer->id,
                 'employee_id'         => null,
-                'message'             => $request->input('message'),
+                'message'             => $data->message,
                 'created_by'          => $user->id,
                 'created_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'updated_by'          => $user->id,
@@ -197,7 +202,7 @@ class ComplainController extends Controller
             ]);
 
             if($request->hasFile('image')){
-                $complaint = Complaint::find($request->input('complaint_id'));
+                $complaint = Complaint::find($data->complaint_id);
 
                 $imageFolder = str_replace('/','-', $complaint->code);
                 $publicPath = 'storage/complaints/'. $imageFolder;
@@ -208,28 +213,28 @@ class ComplainController extends Controller
                 $image = $request->file('image');
                 $avatar = Image::make($image);
                 $extension = $image->extension();
-                $filename = $imageFolder . '_'. $request->input('complaint_id') . '_' .
+                $filename = $imageFolder . '_'. $data->complaint_id . '_' .
                     Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                 $avatar->save(public_path($publicPath ."/". $filename));
 
-                $newComplaint->image = $imageFolder."/".$filename;
-                $newComplaint->save();
+                $newComplaintDetail->image = $imageFolder."/".$filename;
+                $newComplaintDetail->save();
             }
 
-            $messageImage = empty($newComplaint->image) ? null : asset('storage/complaints/'. $newComplaint->image);
+            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
             $customerComplaintDetailModel = ([
-                'customer_id'       => $newComplaint->customer_id,
-                'customer_name'     => $newComplaint->customer->name,
-                'customer_image'    => asset('storage/customers/'. $newComplaint->customer->image_path),
+                'customer_id'       => $newComplaintDetail->customer_id,
+                'customer_name'     => $newComplaintDetail->customer->name,
+                'customer_avatar'    => asset('storage/customers/'. $newComplaintDetail->customer->image_path),
                 'employee_id'       => null,
                 'employee_name'     => "",
-                'employee_image'    => "",
-                'message'           => $newComplaint->message,
+                'employee_avatar'    => "",
+                'message'           => $newComplaintDetail->message,
                 'image'             => $messageImage,
-                'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
             ]);
 
-            $complaint = Complaint::find($request->input('complaint_id'));
+            $complaint = Complaint::find($data->complaint_id);
             //Send notification to
             //Employee
             $title = "ICare";
@@ -259,18 +264,21 @@ class ComplainController extends Controller
     {
         try{
 
-            if(!$request->filled('project_id')){
+            $data = json_decode($request->input('complaint_model'));
+
+            if(empty($data->project_id)){
                 return response()->json("Project ID harus terisi", 400);
             }
-            if(!$request->filled('subject')){
+            if(empty($data->subject)){
                 return response()->json("Subject harus terisi", 400);
             }
-            if(!$request->filled('message')){
+            if(empty($data->message)){
                 return response()->json("Message harus terisi", 400);
             }
-            Log::error('project_id = '.$request->input('project_id').
-                ', subject = '.$request->input('subject').
-                ', message = '.$request->input('message'));
+
+//            Log::error('project_id = '.$request->input('project_id').
+//                ', subject = '.$request->input('subject').
+//                ', message = '.$request->input('message'));
 
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
@@ -280,17 +288,17 @@ class ComplainController extends Controller
             //create first complaint
 
             //get employee ID
-            $employeeDB = ProjectEmployee::where('project_id', $request->input('project_id'))
+            $employeeDB = ProjectEmployee::where('project_id', $data->project_id)
                 ->where('employee_roles_id', '>', 1)
                 ->orderBy('employee_roles_id', 'asc')
                 ->first();
 
             //create customer complaint
             $newComplaint = Complaint::create([
-                'project_id'        => $request->input('project_id'),
+                'project_id'        => $data->project_id,
                 'employee_id'       => $employee->id,
                 'customer_name'     => $employee->first_name." ".$employee->last_name,
-                'subject'           => $request->input('subject'),
+                'subject'           => $data->subject,
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
                 'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
@@ -308,7 +316,7 @@ class ComplainController extends Controller
                 'complaint_id'        => $newComplaint->id,
                 'customer_id'         => null,
                 'employee_id'         => $employee->id,
-                'message'             => $request->input('message'),
+                'message'             => $data->message,
                 'created_by'          => $employee->id,
                 'created_at'          => $datetimenow,
                 'updated_by'          => $employee->id,
@@ -316,19 +324,18 @@ class ComplainController extends Controller
             ]);
 
             if($request->hasFile('images')){
-                $exampleImages = $request->file('images');
-
-                for($i=0;$i<sizeof($exampleImages);$i++) {
+                $count = 1;
+                foreach($request->file('images') as $exampleImage){
                     $imageFolder = str_replace('/','-', $newComplaint->code);
                     $publicPath = 'storage/complaints/'. $imageFolder;
                     if(!File::isDirectory($publicPath)){
                         File::makeDirectory(public_path($publicPath), 0777, true, true);
                     }
 
-                    $image = $exampleImages[$i];
-                    $avatar = Image::make($exampleImages[$i]);
+                    $image = $exampleImage;
+                    $avatar = Image::make($exampleImage);
                     $extension = $image->extension();
-                    $filename = $imageFolder . '_'. $newComplaintDetail->id . '_' . $i . '_' .
+                    $filename = $imageFolder . '_'. $newComplaintDetail->id . '_' . $count . '_' .
                         Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                     $avatar->save(public_path($publicPath ."/". $filename));
 
@@ -340,6 +347,7 @@ class ComplainController extends Controller
                         'updated_by'    => $user->id,
                         'updated_at'    => $datetimenow,
                     ]);
+                    $count++;
                 }
             }
 
@@ -351,7 +359,7 @@ class ComplainController extends Controller
                 "complaint_id" => $newComplaint->id,
             );
             //Push Notification to employee App.
-            $ProjectEmployees = ProjectEmployee::where('project_id', $request->input('project_id'))
+            $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
                 ->where('employee_roles_id', $employeeDB->employee_roles_id)
                 ->get();
             if($ProjectEmployees->count() >= 0){
@@ -371,10 +379,14 @@ class ComplainController extends Controller
     public function replyComplaintEmployee(Request $request)
     {
         try{
-            if(!$request->filled('message')){
-                return response()->json("Message harus terisi", 400);
+            $data = json_decode($request->input('complaint_reply_model'));
+
+            if(!($request->hasFile('image'))){
+                if(empty($data->message)){
+                    return response()->json("Message harus terisi", 400);
+                }
             }
-            if(!$request->filled('complaint_id')){
+            if(empty($data->complaint_id)){
                 return response()->json("Complaint harus terisi", 400);
             }
 
@@ -385,18 +397,18 @@ class ComplainController extends Controller
             $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
             //create complaint detail
-            $newComplaint = ComplaintDetail::create([
-                'complaint_id'        => $request->input('complaint_id'),
+            $newComplaintDetail = ComplaintDetail::create([
+                'complaint_id'        => $data->complaint_id,
                 'customer_id'         => null,
                 'employee_id'         => $employee->id,
-                'message'             => $request->input('message'),
+                'message'             => $data->message,
                 'created_by'          => $employee->id,
                 'created_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'updated_by'          => $employee->id,
                 'updated_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
             ]);
 
-            $complaint = Complaint::find($request->input('complaint_id'));
+            $complaint = Complaint::find($data->complaint_id);
             $complaint->status_id = 11;
             $complaint->response_limit_date = $datetimenow;
             $complaint->save();
@@ -411,23 +423,25 @@ class ComplainController extends Controller
                 $image = $request->file('image');
                 $avatar = Image::make($image);
                 $extension = $image->extension();
-                $filename = $imageFolder . '_'. $request->input('complaint_id') . '_' .
+                $filename = $imageFolder . '_'. $data->complaint_id . '_' .
                     Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                 $avatar->save(public_path($publicPath ."/". $filename));
 
-                $newComplaint->image = $imageFolder."/".$filename;
-                $newComplaint->save();
+                $newComplaintDetail->image = $imageFolder."/".$filename;
+                $newComplaintDetail->save();
             }
 
+            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
             $employeeComplaintDetailModel = ([
                 'customer_id'       => null,
                 'customer_name'     => "",
-                'customer_image'    => "",
-                'employee_id'       => $newComplaint->employee_id,
-                'employee_name'     => $newComplaint->employee->first_name." ".$newComplaint->employee->last_name,
-                'employee_image'    => asset('storage/employees/'. $newComplaint->employee->image_path),
-                'message'           => $newComplaint->message,
-                'date'              => Carbon::parse($newComplaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                'customer_avatar'    => "",
+                'employee_id'       => $newComplaintDetail->employee_id,
+                'employee_name'     => $newComplaintDetail->employee->first_name." ".$newComplaintDetail->employee->last_name,
+                'employee_avatar'    => asset('storage/employees/'. $newComplaintDetail->employee->image_path),
+                'message'           => $newComplaintDetail->message,
+                'image'             => $messageImage,
+                'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
             ]);
 
             //Send notification to
@@ -481,9 +495,7 @@ class ComplainController extends Controller
                 $complaintImageDBs = $customerComplaint->complaint_header_images;
                 $complaintImages = collect();
                 foreach ($complaintImageDBs as $complaintImageDB){
-                    $complaintImage = [
-                        'image'  => asset('storage/complaints/'. $complaintImageDB->image)
-                    ];
+                    $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
                     $complaintImages->push($complaintImage);
                 }
                 $customerComplaintModel = collect([
@@ -497,7 +509,7 @@ class ComplainController extends Controller
                     'subject'               => $customerComplaint->subject,
                     'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                     'status_id'             => $customerComplaint->status_id,
-                    'image'                 => $complaintImages
+                    'images'                 => $complaintImages
                 ]);
                 $complaintModels->push($customerComplaintModel);
             }
@@ -542,9 +554,7 @@ class ComplainController extends Controller
                 $complaintImageDBs = $customerComplaint->complaint_header_images;
                 $complaintImages = collect();
                 foreach ($complaintImageDBs as $complaintImageDB){
-                    $complaintImage = [
-                        'image'  => asset('storage/complaints/'. $complaintImageDB->image)
-                    ];
+                    $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
                     $complaintImages->push($complaintImage);
                 }
                 $customerComplaintModel = collect([
@@ -558,7 +568,7 @@ class ComplainController extends Controller
                     'subject'               => $customerComplaint->subject,
                     'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                     'status_id'             => $customerComplaint->status_id,
-                    'image'                 => $complaintImages
+                    'images'                 => $complaintImages
                 ]);
                 $complaintModels->push($customerComplaintModel);
             }
@@ -585,9 +595,7 @@ class ComplainController extends Controller
             $complaintImageDBs = $complaint->complaint_header_images;
             $complaintImages = collect();
             foreach ($complaintImageDBs as $complaintImageDB){
-                $complaintImage = [
-                    'image'  => asset('storage/complaints/'. $complaintImageDB->image)
-                ];
+                $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
                 $complaintImages->push($complaintImage);
             }
             $customerComplaintModel = collect([
@@ -601,7 +609,7 @@ class ComplainController extends Controller
                 'subject'               => $complaint->subject,
                 'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                 'status_id'             => $complaint->status_id,
-                'image'                 => $complaintImages
+                'images'                 => $complaintImages
             ]);
 
             return Response::json($customerComplaintModel, 200);
