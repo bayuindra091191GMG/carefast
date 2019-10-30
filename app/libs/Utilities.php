@@ -150,7 +150,7 @@ class Utilities
      * @return string
      * @throws \Exception
      */
-    public static function GenerateTransactionNumber($prepend, $nextNumber){
+    public static function GenerateAutoNumber($prepend, $nextNumber){
         try{
             $modulus = "";
             $nxt = $nextNumber. '';
@@ -158,28 +158,25 @@ class Utilities
             switch (strlen($nxt))
             {
                 case 1:
-                    $modulus = "000000";
-                    break;
-                case 2:
                     $modulus = "00000";
                     break;
-                case 3:
+                case 2:
                     $modulus = "0000";
                     break;
-                case 4:
+                case 3:
                     $modulus = "000";
                     break;
-                case 5:
+                case 4:
                     $modulus = "00";
                     break;
-                case 6:
+                case 5:
                     $modulus = "0";
                     break;
             }
 
-            $day = Carbon::today()->format("d");
+            $month = Carbon::today('Asia/Jakarta')->month;
 
-            return $prepend. $day. "/". $modulus. $nextNumber;
+            return $prepend. '/'. $month. '/'. $modulus. $nextNumber;
         }
         catch (\Exception $ex){
             throw $ex;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\libs\Utilities;
 use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\Complaint;
@@ -10,6 +11,7 @@ use App\Models\ComplaintDetail;
 use App\Models\ComplaintHeaderImage;
 use App\Models\Employee;
 use App\Models\Customer;
+use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\User;
 use App\Notifications\FCMNotification;
@@ -17,6 +19,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -66,7 +69,21 @@ class ComplainController extends Controller
                 return response()->json("Quota complaint anda sudah mencapai maksimal", 482);
             }
 
-            $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $datetimenow = Carbon::now('Asia/Jakarta');
+            $project = Project::find($data->project_id);
+
+            //generate autonumber
+            $prepend = 'CMP/'. $project->code. '/'. $datetimenow->year;
+            $nextNo = Utilities::GetNextTransactionNumber($prepend);
+            $complainCode = Utilities::GenerateAutoNumber($prepend, $nextNo);
+
+            if(DB::table('complaints')
+                ->where('code', $complainCode)
+                ->exists()){
+                $nextNo = Utilities::GetNextTransactionNumber($prepend);
+                $complainCode = Utilities::GenerateAutoNumber($prepend, $nextNo);
+            }
+
             //create first complaint
             //get employee ID
             $employeeDB = ProjectEmployee::where('project_id', $data->project_id)
@@ -75,6 +92,7 @@ class ComplainController extends Controller
                         ->first();
             //create customer complaint
             $newComplaint = Complaint::create([
+                'code'              => $complainCode,
                 'project_id'        => $data->project_id,
                 'customer_id'       => $customer->id,
                 'customer_name'     => $customer->name,
@@ -84,12 +102,12 @@ class ComplainController extends Controller
                 'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
                 'response_limit_date'  => Carbon::now('Asia/Jakarta')->addHours(6)->toDateTimeString(),
                 'created_by'          => $user->id,
-                'created_at'          => $datetimenow,
+                'created_at'          => $datetimenow->toDateTimeString(),
                 'updated_by'          => $user->id,
-                'updated_at'          => $datetimenow,
+                'updated_at'          => $datetimenow->toDateTimeString(),
             ]);
-            $newComplaint->code = "COMP/X/".$newComplaint->id;
-            $newComplaint->save();
+            //$newComplaint->code = "COMP/X/".$newComplaint->id;
+            //$newComplaint->save();
 
             //create complaint detail
             $newComplaintDetail = ComplaintDetail::create([
@@ -98,9 +116,9 @@ class ComplainController extends Controller
                 'employee_id'         => null,
                 'message'             => $data->message,
                 'created_by'          => $user->id,
-                'created_at'          => $datetimenow,
+                'created_at'          => $datetimenow->toDateTimeString(),
                 'updated_by'          => $user->id,
-                'updated_at'          => $datetimenow,
+                'updated_at'          => $datetimenow->toDateTimeString(),
             ]);
 
             if($request->hasFile('images')){
@@ -124,14 +142,17 @@ class ComplainController extends Controller
                         'complaint_id'  => $newComplaint->id,
                         'image'         => $imageFolder."/".$filename,
                         'created_by'    => $user->id,
-                        'created_at'    => $datetimenow,
+                        'created_at'    => $datetimenow->toDateTimeString(),
                         'updated_by'    => $user->id,
-                        'updated_at'    => $datetimenow,
+                        'updated_at'    => $datetimenow->toDateTimeString(),
                     ]);
                     $count++;
 
                 }
             }
+
+            //Update auto number
+            Utilities::UpdateTransactionNumber($prepend);
 
             //Send notification to
             //Employee
@@ -285,6 +306,20 @@ class ComplainController extends Controller
             $employee = $user->employee;
 
             $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $project = Project::find($data->project_id);
+
+            //generate autonumber
+            $prepend = 'CMP/'. $project->code. '/'. Carbon::today('Asia/Jakarta')->year;
+            $nextNo = Utilities::GetNextTransactionNumber($prepend);
+            $complainCode = Utilities::GenerateAutoNumber($prepend, $nextNo);
+
+            if(DB::table('complaints')
+                ->where('code', $complainCode)
+                ->exists()){
+                $nextNo = Utilities::GetNextTransactionNumber($prepend);
+                $complainCode = Utilities::GenerateAutoNumber($prepend, $nextNo);
+            }
+
             //create first complaint
 
             //get employee ID
@@ -295,6 +330,7 @@ class ComplainController extends Controller
 
             //create customer complaint
             $newComplaint = Complaint::create([
+                'code'              => $complainCode,
                 'project_id'        => $data->project_id,
                 'employee_id'       => $employee->id,
                 'customer_name'     => $employee->first_name." ".$employee->last_name,
@@ -308,8 +344,8 @@ class ComplainController extends Controller
                 'updated_by'          => $user->id,
                 'updated_at'          => $datetimenow,
             ]);
-            $newComplaint->code = "COMP/X/".$newComplaint->id;
-            $newComplaint->save();
+            //$newComplaint->code = "COMP/X/".$newComplaint->id;
+            //$newComplaint->save();
 
             //create complaint detail
             $newComplaintDetail = ComplaintDetail::create([
@@ -350,6 +386,9 @@ class ComplainController extends Controller
                     $count++;
                 }
             }
+
+            //Update auto number
+            Utilities::UpdateTransactionNumber($prepend);
 
             //Send notification to
             //Employee
