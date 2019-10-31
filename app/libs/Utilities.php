@@ -10,7 +10,6 @@ namespace App\libs;
 
 use App\Models\AutoNumber;
 use App\Models\Place;
-use App\Models\TransactionNumber;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Monolog\Handler\StreamHandler;

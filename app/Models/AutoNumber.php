@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class AutoNumber
- * 
+ *
  * @property string $id
  * @property int $next_no
  *
@@ -27,6 +27,7 @@ class AutoNumber extends Eloquent
 	];
 
 	protected $fillable = [
-		'next_no'
+		'id',
+		'next_no',
 	];
 }

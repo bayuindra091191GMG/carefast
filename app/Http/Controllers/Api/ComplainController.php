@@ -394,7 +394,7 @@ class ComplainController extends Controller
             //Employee
             $title = "ICare";
             $body = "Employee membuat complaint baru";
-            $data = array(
+            $notifData = array(
                 "complaint_id" => $newComplaint->id,
             );
             //Push Notification to employee App.
@@ -404,7 +404,7 @@ class ComplainController extends Controller
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
                     $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
-                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $notifData);
                 }
             }
 
@@ -726,6 +726,7 @@ class ComplainController extends Controller
                 return response()->json("Complaint harus terisi", 400);
             }
 
+
             $user = auth('customer')->user();
             $customer = Customer::find($user->id);
 
@@ -739,7 +740,35 @@ class ComplainController extends Controller
             return Response::json("Berhasil menutup complaint", 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/ComplainController - getComplaint error EX: '. $ex);
+            Log::error('Api/ComplainController - closeComplaint error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function closeComplaintEmployee(Request $request){
+        try{
+            if(!$request->filled('complaint_id')){
+                return response()->json("Complaint harus terisi", 400);
+            }
+
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $employeeComplaint =  Complaint::find($request->input('complaint_id'));
+            if(empty($employeeComplaint)){
+                return Response::json("Complaint tidak ditemukan", 482);
+            }
+            if($employee->id != $employeeComplaint->employee_id){
+                return Response::json("Anda tidak dapat menutup complaint", 482);
+            }
+            $employeeComplaint->status_id = 12;
+            $employeeComplaint->save();
+
+            return Response::json("Berhasil menutup complaint", 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - closeComplaint error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

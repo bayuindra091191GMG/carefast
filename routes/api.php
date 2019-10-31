@@ -58,6 +58,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/get-complaints', 'Api\ComplainController@getComplaintEmployee');
     Route::post('/get-complaint-header', 'Api\ComplainController@getComplaintHeader');
     Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
+    Route::post('/complaint-close', 'Api\ComplainController@closeComplaintEmployee');
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintEmployee');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintEmployee');
     //New Route Finish
