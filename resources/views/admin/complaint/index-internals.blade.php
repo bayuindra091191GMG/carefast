@@ -7,7 +7,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12">
-                        <h3>DAFTAR KELUHAN</h3>
+                        <h3>DAFTAR KELUHAN INTERNAL</h3>
                         @include('partials.admin._messages')
                     </div>
                 </div>
@@ -22,6 +22,24 @@
                                 <div class="form-group pt-2 ml-3">
                                     <label for="date_end">Tanggal Berakhir:</label>
                                     <input id="date_end" type="text" class="form-control" value="{{ $filterDateEnd }}">
+                                </div>
+                                <div class="form-group pt-2 ml-3">
+                                    <label for="status_id">Status:</label>
+                                    <select class="select2 form-control custom-select" id="status_id" style="width: 100%; height:36px;">
+                                        <option value="0" @if($filterStatus == 0) selected @endif>All</option>
+                                        <option value="10" @if($filterStatus == 10) selected @endif>BELUM DIPROSES</option>
+                                        <option value="11" @if($filterStatus == 11) selected @endif>SEDANG DIPROSES</option>
+                                        <option value="12" @if($filterStatus == 12) selected @endif>TUTUP</option>
+                                    </select>
+                                </div>
+                                <div class="form-group pt-2 ml-3">
+                                    <label for="project_id">Project Name:</label>
+                                    <select class="select2 form-control custom-select" id="project_id" style="width: 100%; height:36px;">
+                                        <option value="0">All</option>
+                                        @foreach($projects as $project)
+                                            <option value="{{ $project->id }}" @if($project->id == $filterProject) selected @endif > {{ $project->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group ml-3" style="padding-top: 1.8rem !important;">
                                     <a id="btn_filter" class="btn btn-primary mt-2 text-white" style="cursor: pointer;">FILTER</a>
@@ -85,9 +103,11 @@
         $(document).on("click", "#btn_filter", function(){
             let dateStart = $('#date_start').val();
             let dateEnd = $('#date_end').val();
+            let projectId = $('#project_id').val();
+            let statusId = $('#status_id').val();
 
             let url = '{{ route('admin.complaint.index', ['type' => 'internals']) }}';
-            window.location = url + '?date_start=' + dateStart + "&date_end=" + dateEnd;
+            window.location = url + '&date_start=' + dateStart + "&date_end=" + dateEnd + "&project_id=" + projectId + "&status_id=" + statusId;
         });
 
         $(document).on("click", "#btn_reset", function(){
@@ -104,7 +124,9 @@
                 url: '{!! route('datatables.complaint-internals') !!}',
                 data: {
                     'date_start': '{{ $filterDateStart }}',
-                    'date_end': '{{ $filterDateEnd }}'
+                    'date_end': '{{ $filterDateEnd }}',
+                    'project_id': '{{ $filterProject }}',
+                    'status_id': '{{ $filterStatus }}',
                 }
             },
             order: [ [1, 'desc'] ],

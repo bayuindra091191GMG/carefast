@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Complaint;
+use App\Models\Project;
 use App\Transformer\ComplaintTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,6 +24,8 @@ class ComplaintController extends Controller
         try{
             $filterDateStart = Carbon::today()->subMonths(1)->format('d M Y');
             $filterDateEnd = Carbon::today()->format('d M Y');
+            $filterProject = 0;
+            $filterStatus = 0;
 
             if($request->date_start != null && $request->date_end != null){
                 $dateStartDecoded = rawurldecode($request->date_start);
@@ -35,10 +38,20 @@ class ComplaintController extends Controller
                     $filterDateEnd = $dateEndDecoded;
                 }
             }
+            if($request->project_id != null){
+                $filterProject = $request->project_id;
+            }
+            if($request->status_id != null){
+                $filterStatus = $request->status_id;
+            }
 
+            $projects = Project::where('status_id', 1)->get();
             $data = [
+                'projects'   => $projects,
                 'filterDateStart'   => $filterDateStart,
-                'filterDateEnd'     => $filterDateEnd
+                'filterDateEnd'     => $filterDateEnd,
+                'filterProject'     => $filterProject,
+                'filterStatus'     => $filterStatus
             ];
 
             if($request->type == "customers"){
@@ -64,10 +77,18 @@ class ComplaintController extends Controller
         $end = Carbon::createFromFormat('d M Y', $request->input('date_end'), 'Asia/Jakarta');
         $start->subDays(1);
         $end->addDays(1);
+        $projectId = $request->input('project_id');
+        $statusId = $request->input('status_id');
 
         $complaints = Complaint::whereBetween('date', array($start->toDateTimeString(), $end->toDateTimeString()))
-            ->where('customer_id', '!=', null)
-            ->get();
+            ->where('customer_id', '!=', null);
+
+        if($statusId != 0) {
+            $complaints = $complaints->where('status_id', $statusId);
+        }
+        if($projectId != 0) {
+            $complaints = $complaints->where('project_id', $projectId);
+        }
 
         return DataTables::of($complaints)
             ->setTransformer(new ComplaintTransformer)
@@ -79,10 +100,18 @@ class ComplaintController extends Controller
         $end = Carbon::createFromFormat('d M Y', $request->input('date_end'), 'Asia/Jakarta');
         $start->subDays(1);
         $end->addDays(1);
+        $projectId = $request->input('project_id');
+        $statusId = $request->input('status_id');
 
         $complaints = Complaint::whereBetween('date', array($start->toDateTimeString(), $end->toDateTimeString()))
-            ->where('employee_id', '!=', null)
-            ->get();
+            ->where('employee_id', '!=', null);
+
+        if($statusId != 0) {
+            $complaints = $complaints->where('status_id', $statusId);
+        }
+        if($projectId != 0) {
+            $complaints = $complaints->where('project_id', $projectId);
+        }
 
         return DataTables::of($complaints)
             ->setTransformer(new ComplaintTransformer)
