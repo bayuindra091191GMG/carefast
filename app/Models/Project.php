@@ -14,6 +14,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  *
  * @property int $id
  * @property string $name
+ * @property string $code
  * @property string $latitude
  * @property string $longitude
  * @property string $customer_id
@@ -64,6 +65,7 @@ class Project extends Eloquent
 
 	protected $fillable = [
 		'name',
+		'code',
 		'latitude',
 		'longitude',
 		'customer_id',

@@ -734,6 +734,9 @@ class ComplainController extends Controller
             if(empty($customerComplaint)){
                 return Response::json("Complaint tidak ditemukan", 482);
             }
+            if($customer->id != $customerComplaint->customer_id){
+                return Response::json("Anda tidak dapat menutup complaint ini", 482);
+            }
             $customerComplaint->status_id = 12;
             $customerComplaint->save();
 
@@ -765,7 +768,7 @@ class ComplainController extends Controller
             $employeeComplaint->status_id = 12;
             $employeeComplaint->save();
 
-            return Response::json("Berhasil menutup complaint", 200);
+            return Response::json("Berhasil menutup complaint ini", 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - closeComplaint error EX: '. $ex);
