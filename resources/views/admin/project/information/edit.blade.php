@@ -162,15 +162,6 @@
 
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="customer">Customer *</label>
-                                            <select id="customer" name="customer" class="form-control">
-                                                <option value="{{ $project->customer_id }}">{{ $project->customer->name . ' - ' . $project->customer->email }}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group">
                                             <label for="status">Status</label>
                                             <select id="status" name="status" class="form-control">
                                                 <option value="1" @if($project->status_id === 1) selected @endif>Aktif</option>
@@ -182,7 +173,64 @@
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
                                                 <label class="form-label" for="address">Deksripsi *</label>
-                                                <textarea name="description" id="description" class="form-control" rows="10">{{ $project->description }}</textarea>
+                                                <textarea name="description" id="description" class="form-control" rows="3">{{ $project->description }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="col-md-10">
+                                                        <div class="form-group form-float form-group-lg">
+                                                            <div class="form-line">
+                                                                <label for="customer">Customer *</label>
+                                                                <select id="customer" class="form-control"></select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <input type="hidden" id="customer-selected" name="customer" value="{{$project->customer_id}}#">
+
+                                                    <div class="col-md-2">
+                                                        <div class="form-group form-float form-group-lg">
+                                                            <div class="form-line">
+                                                                <label for="customer">&nbsp;</label>
+                                                                <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <table class="table table-bordered table-hover" id="tab_logic">
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="text-center" style="width: 75%">
+                                                                Customer*
+                                                            </th>
+                                                            <th class="text-center" style="width: 25%">
+                                                                Action
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @php $idx = 1 @endphp
+
+                                                        @if($customerList->count() > 0)
+                                                            @foreach($customerList as $customer)
+                                                                <tr id='sch{{$idx}}'>
+                                                                    <td><span>{{$customer->name}} - {{$customer->email}}</span></td>
+                                                                    <td><a class='form-control btn btn-danger' onclick='deleteCustomer({{ $idx }})'>Delete</a></td>
+                                                                </tr>
+                                                                @php $idx++ @endphp
+                                                            @endforeach
+                                                            <tr id='sch{{$idx}}'></tr>
+                                                        @endif
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -250,6 +298,33 @@
                 }
             }
         });
+
+        var i = '{{$idx}}';
+        function addCustomer(){
+            let customerID = $('#customer').val();
+            let selectedCustomer = $('#customer-selected').val();
+
+            if(!(selectedCustomer.includes(customerID))){
+                let newSelectedCustomer = selectedCustomer + customerID + "#" ;
+                $('#customer-selected').val(newSelectedCustomer);
+
+                $('#sch'+i).html(
+                    "<td><span>" + $('#select2-customer-container').text() + "</span></td>" +
+                    "<td><a class='form-control btn btn-danger' onclick='deleteCustomer(" + i + ")'>Delete</a></td>"
+                );
+                $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+                i++;
+            }
+        }
+        function deleteCustomer(rowId){
+            let selectedCustomer = $('#customer-selected').val();
+            let selectedCustomerSplit = selectedCustomer.split("#");
+            let deletedCustomer = selectedCustomerSplit[parseInt(rowId)-1];
+            let newSelectedCustomer = selectedCustomer.replace(deletedCustomer + "#", "");
+
+            $('#customer-selected').val(newSelectedCustomer);
+            $('#sch' + rowId).remove();
+        }
 
         var map = new google.maps.Map(document.getElementById('map-canvas'), {
             center:{

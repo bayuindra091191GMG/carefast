@@ -307,7 +307,6 @@ Route::get('/datatables-admin-users', 'Admin\AdminUserController@getIndex')->nam
 Route::get('/datatables-admin-products', 'Admin\ProductController@getIndex')->name('datatables.admin_products');
 Route::get('/datatables-users', 'Admin\UserController@getIndex')->name('datatables.users');
 Route::get('/datatables-categories', 'Admin\CategoryController@getIndex')->name('datatables.categories');
-Route::get('/datatables-brands', 'Admin\BrandController@getIndex')->name('datatables.brands');
 Route::get('/datatables-orders', 'Admin\OrderController@getIndex')->name('datatables.orders');
 Route::get('/datatables-user-categories', 'Admin\UserCategoryController@getIndex')->name('datatables.user_categories');
 Route::get('/datatables-faqs', 'Admin\FaqController@getIndex')->name('datatables.faqs');

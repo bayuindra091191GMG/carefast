@@ -130,6 +130,8 @@ class ProjectController extends Controller
         $project = Project::find($id);
         $start_date = !empty($project->start_date) ? Carbon::parse($project->start_date)->format("d M Y") : "-";
         $finish_date = !empty($project->finish_date) ? Carbon::parse($project->finish_date)->format("d M Y") : "-";
+        $customerIds = explode('#', $project->customer_id);
+        $customerList = Customer::whereIn('id', $customerIds)->get();
 
         if(empty($project)){
             return redirect()->back();
@@ -137,6 +139,7 @@ class ProjectController extends Controller
 
         $data = [
             'project'          => $project,
+            'customerList'          => $customerList,
             'start_date'          => $start_date,
             'finish_date'          => $finish_date,
         ];

@@ -159,44 +159,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="row">
-                                            <div class="col-md-10">
-                                                <div class="form-group form-float form-group-lg">
-                                                    <div class="form-line">
-                                                        <label for="customer">Customer *</label>
-                                                        <select id="customer" class="form-control"></select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <input type="hidden" id="customer-selected" name="customer">
-
-                                            <div class="col-md-2">
-                                                <div class="form-group form-float form-group-lg">
-                                                    <div class="form-line">
-                                                        <label for="customer">&nbsp;</label>
-                                                        <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <table class="table table-bordered table-hover" id="tab_logic">
-                                                <thead>
-                                                <tr>
-                                                    <th class="text-center" style="width: 25%">
-                                                        Customer*
-                                                    </th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr id='sch1'></tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
 
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -212,7 +174,52 @@
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
                                                 <label class="form-label" for="address">Deksripsi *</label>
-                                                <textarea name="description" id="description" class="form-control" rows="10">{{ old('description') }}</textarea>
+                                                <textarea name="description" id="description" class="form-control" rows="3">{{ old('description') }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="col-md-10">
+                                                        <div class="form-group form-float form-group-lg">
+                                                            <div class="form-line">
+                                                                <label for="customer">Customer *</label>
+                                                                <select id="customer" class="form-control"></select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <input type="hidden" id="customer-selected" name="customer">
+
+                                                    <div class="col-md-2">
+                                                        <div class="form-group form-float form-group-lg">
+                                                            <div class="form-line">
+                                                                <label for="customer">&nbsp;</label>
+                                                                <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <table class="table table-bordered table-hover" id="tab_logic">
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="text-center" style="width: 75%">
+                                                                Customer*
+                                                            </th>
+                                                            <th class="text-center" style="width: 25%">
+                                                                Action
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr id='sch1'></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -292,11 +299,21 @@
                 $('#customer-selected').val(newSelectedCustomer);
 
                 $('#sch'+i).html(
-                    // "<td><span>" + $('#customer').text() + "</span></td>"
+                    "<td><span>" + $('#select2-customer-container').text() + "</span></td>" +
+                    "<td><a class='form-control btn btn-danger' onclick='deleteCustomer(" + i + ")'>Delete</a></td>"
                 );
-                // $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+                $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
                 i++;
             }
+        }
+        function deleteCustomer(rowId){
+            let selectedCustomer = $('#customer-selected').val();
+            let selectedCustomerSplit = selectedCustomer.split("#");
+            let deletedCustomer = selectedCustomerSplit[parseInt(rowId)-1];
+            let newSelectedCustomer = selectedCustomer.replace(deletedCustomer + "#", "");
+
+            $('#customer-selected').val(newSelectedCustomer);
+            $('#sch' + rowId).remove();
         }
 
         var map = new google.maps.Map(document.getElementById('map-canvas'), {

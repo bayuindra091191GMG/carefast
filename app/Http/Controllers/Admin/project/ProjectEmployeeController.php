@@ -62,27 +62,6 @@ class ProjectEmployeeController extends Controller
         return view('admin.project.employee.show')->with($data);
     }
 
-//    public function create(int $project_id){
-//        try{
-//            $project = Project::find($project_id);
-//            if(empty($project)){
-//                return redirect()->back();
-//            }
-//
-//            $manpower = $project->total_manpower - 2;
-//
-//            $data = [
-//                'project'       => $project,
-//                'manpower'      => $manpower
-//            ];
-//
-//            return view('admin.project.employee.create')->with($data);
-//        }
-//        catch (\Exception $ex){
-//            Log::error('Admin/information/ProjectEmployeeController - create error EX: '. $ex);
-//            return "Something went wrong! Please contact administrator!";
-//        }
-//    }
     public function create(int $project_id){
         try{
             $project = Project::find($project_id);
@@ -107,28 +86,16 @@ class ProjectEmployeeController extends Controller
             return "Something went wrong! Please contact administrator!";
         }
     }
-
     public function store(Request $request, int $project_id)
     {
         try{
             // Validate input
-            $upperEmployeeIds = $request->input('upper_employee_ids');
-            $cleanerEmployeeIds = $request->input('cleaner_employee_ids');
-
-            if(empty($upperEmployeeIds) && empty($cleanerEmployeeIds)){
-                return back()->withErrors("INVALID INPUT!")->withInput($request->all());
-            }
+            $employeeTotalList = $request->input('employee_total');
 
             $valid = true;
-            if(!empty($upperEmployeeIds)){
-                foreach ($upperEmployeeIds as $upperEmployeeId){
-                    if(empty($upperEmployeeId)) $valid = false;
-                }
-            }
-
-            if(!empty($cleanerEmployeeIds)){
-                foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
-                    if(empty($cleanerEmployeeId)) $valid = false;
+            if(!empty($employeeTotalList)){
+                foreach ($employeeTotalList as $employeeTotal){
+                    if(empty($employeeTotal)) $valid = false;
                 }
             }
 
@@ -160,25 +127,6 @@ class ProjectEmployeeController extends Controller
                 }
             }
 
-            if(!empty($cleanerEmployeeIds)){
-                foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
-                    $emp = Employee::find($cleanerEmployeeId);
-                    if(!empty($emp)){
-                        ProjectEmployee::create([
-                            'project_id'        => $project_id,
-                            'employee_id'       => $cleanerEmployeeId,
-                            'employee_roles_id' => $emp->employee_role_id,
-                            'status_id'         => 1,
-                            'created_by'        => $adminUser->id,
-                            'created_at'        => $now->toDateTimeString(),
-                            'updated_by'        => $adminUser->id,
-                            'updated_at'        => $now->toDateTimeString(),
-                        ]);
-                    }
-                    $manpowerUsed++;
-                }
-            }
-
             $project = Project::find($project_id);
             $project->total_manpower_used = $manpowerUsed;
             $project->save();
@@ -191,6 +139,153 @@ class ProjectEmployeeController extends Controller
             return "Something went wrong! Please contact administrator!";
         }
     }
+
+    /*
+     * =================================================================================================================
+     * old function
+     * =================================================================================================================
+     * */
+
+//    public function show(int $project_id)
+//    {
+//        $project = Project::find($project_id);
+//        if(empty($project)){
+//            return redirect()->back();
+//        }
+//
+//        $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
+//
+//        $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
+//            ->where('project_id', $project_id)
+//            ->whereIn('employee_roles_id', [2,3,4])
+//            ->get();
+//
+//        $cleanerEmployees = ProjectEmployee::with('employee')
+//            ->where('project_id', $project_id)
+//            ->where('employee_roles_id', 1)
+//            ->get();
+//
+//        $isCreate = false;
+//        if($upperEmployees->count() === 0 && $cleanerEmployees->count() === 0){
+//            $isCreate = true;
+//        }
+//
+//        $data = [
+//            'project'               => $project,
+//            'manpowerLeft'          => $manpowerLeft,
+//            'isCreate'              => $isCreate,
+//            'upperEmployees'        => $upperEmployees,
+//            'cleanerEmployees'      => $cleanerEmployees
+//        ];
+//
+//        return view('admin.project.employee.show')->with($data);
+//    }
+
+//    public function create(int $project_id){
+//        try{
+//            $project = Project::find($project_id);
+//            if(empty($project)){
+//                return redirect()->back();
+//            }
+//
+//            $manpower = $project->total_manpower - 2;
+//
+//            $data = [
+//                'project'       => $project,
+//                'manpower'      => $manpower
+//            ];
+//
+//            return view('admin.project.employee.create')->with($data);
+//        }
+//        catch (\Exception $ex){
+//            Log::error('Admin/information/ProjectEmployeeController - create error EX: '. $ex);
+//            return "Something went wrong! Please contact administrator!";
+//        }
+//    }
+
+//    public function store(Request $request, int $project_id)
+//    {
+//        try{
+//            // Validate input
+//            $upperEmployeeIds = $request->input('upper_employee_ids');
+//            $cleanerEmployeeIds = $request->input('cleaner_employee_ids');
+//
+//            if(empty($upperEmployeeIds) && empty($cleanerEmployeeIds)){
+//                return back()->withErrors("INVALID INPUT!")->withInput($request->all());
+//            }
+//
+//            $valid = true;
+//            if(!empty($upperEmployeeIds)){
+//                foreach ($upperEmployeeIds as $upperEmployeeId){
+//                    if(empty($upperEmployeeId)) $valid = false;
+//                }
+//            }
+//
+//            if(!empty($cleanerEmployeeIds)){
+//                foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
+//                    if(empty($cleanerEmployeeId)) $valid = false;
+//                }
+//            }
+//
+//            if(!$valid){
+//                return back()->withErrors("INVALID INPUT!")->withInput($request->all());
+//            }
+//
+//            $adminUser = Auth::guard('admin')->user();
+//            $now = Carbon::now('Asia/Jakarta');
+//
+//            $manpowerUsed = 0;
+//            if(!empty($upperEmployeeIds)){
+//                foreach ($upperEmployeeIds as $upperEmployeeId){
+//                    $emp = Employee::find($upperEmployeeId);
+//                    if(!empty($emp)){
+//                        $valueArr = explode('#', $upperEmployeeId);
+//                        ProjectEmployee::create([
+//                            'project_id'        => $project_id,
+//                            'employee_id'       => $valueArr[0],
+//                            'employee_roles_id' => $emp->employee_role_id,
+//                            'status_id'         => 1,
+//                            'created_by'        => $adminUser->id,
+//                            'created_at'        => $now->toDateTimeString(),
+//                            'updated_by'        => $adminUser->id,
+//                            'updated_at'        => $now->toDateTimeString(),
+//                        ]);
+//                    }
+//                    $manpowerUsed++;
+//                }
+//            }
+//
+//            if(!empty($cleanerEmployeeIds)){
+//                foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
+//                    $emp = Employee::find($cleanerEmployeeId);
+//                    if(!empty($emp)){
+//                        ProjectEmployee::create([
+//                            'project_id'        => $project_id,
+//                            'employee_id'       => $cleanerEmployeeId,
+//                            'employee_roles_id' => $emp->employee_role_id,
+//                            'status_id'         => 1,
+//                            'created_by'        => $adminUser->id,
+//                            'created_at'        => $now->toDateTimeString(),
+//                            'updated_by'        => $adminUser->id,
+//                            'updated_at'        => $now->toDateTimeString(),
+//                        ]);
+//                    }
+//                    $manpowerUsed++;
+//                }
+//            }
+//
+//            $project = Project::find($project_id);
+//            $project->total_manpower_used = $manpowerUsed;
+//            $project->save();
+//
+//            Session::flash('success', 'Sukses menugaskan employee ke project!');
+//            return redirect()->route('admin.project.employee.show', ['project_id' => $project_id]);
+//        }
+//        catch (\Exception $ex){
+//            Log::error('Admin/project/ProjectEmployeeController - store error EX: '. $ex);
+//            return "Something went wrong! Please contact administrator!";
+//        }
+//    }
 
     public function edit(int $project_id)
     {
