@@ -110,9 +110,11 @@
                                                             <span id="upper_employee_role_">{{$employeeRole->name}}</span>
                                                         </td>
                                                         <td class="text-center">
-                                                            <input name="employee_total[]" min="0" step="1" pattern="\d+">
+                                                            <input name="employee_total[]" min="0" step="1" pattern="\d+" class="form-control">
+                                                            <input type="hidden" name="employee_role_id[]" value="{{$employeeRole->id}}">
                                                         </td>
                                                     </tr>
+                                                    @php($count++)
                                                 @endforeach
                                             </tbody>
                                         </table>

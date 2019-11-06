@@ -47,6 +47,16 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
+                                                <label class="form-label" for="phone">Kode Project *</label>
+                                                <input id="code" type="text" class="form-control"
+                                                       name="code" value="{{ old('code') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
                                                 <label class="form-label" for="phone">Nomor Telepon *</label>
                                                 <input id="phone" type="text" class="form-control"
                                                        name="phone" value="{{ old('phone') }}">
@@ -252,7 +262,7 @@
             type="text/javascript"></script>
 
     <script type="text/javascript">
-        jQuery('#start_date').datepicker({
+        jQuery('#start_date').  datepicker({
             autoclose: true,
             todayHighlight: true,
             format: "dd M yyyy"

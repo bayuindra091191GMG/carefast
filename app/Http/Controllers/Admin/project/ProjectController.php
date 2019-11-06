@@ -77,6 +77,7 @@ class ProjectController extends Controller
                 'name'          => 'required',
                 'address'       => 'required',
                 'phone'         => 'required',
+                'code'         => 'required',
                 'start_date'         => 'required',
                 'finish_date'         => 'required',
                 'customer'          => 'required',
@@ -96,7 +97,8 @@ class ProjectController extends Controller
 
             $user = Auth::guard('admin')->user();
             $project = Project::create([
-                'name'              => $request->input('name'),
+                'name'              => strtoupper($request->input('name')),
+                'code'             => strtoupper($request->input('code')),
                 'phone'             => $request->input('phone'),
                 'customer_id'       => $request->input('customer'),
                 'latitude'          => $request->input('latitude'),
@@ -152,6 +154,7 @@ class ProjectController extends Controller
                 'name'              => 'required',
                 'address'           => 'required',
                 'phone'             => 'required',
+                'code'             => 'required',
                 'customer'          => 'required',
                 'latitude'          => 'required',
                 'longitude'         => 'required',
@@ -174,6 +177,7 @@ class ProjectController extends Controller
             $finish_date = Carbon::createFromFormat('d M Y', $request->input('finish_date'), 'Asia/Jakarta');
 
             $project->name = strtoupper($request->input('name'));
+            $project->code = strtoupper($request->input('code'));
             $project->phone = $request->input('phone') ?? '';
             $project->customer_id = $request->input('customer');
             $project->latitude = $request->input('latitude');

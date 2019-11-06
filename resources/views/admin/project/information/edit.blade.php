@@ -57,6 +57,16 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
+                                                <label class="form-label" for="phone">Kode Project *</label>
+                                                <input id="code" type="text" class="form-control"
+                                                       name="code" value="{{ $project->code }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
                                                 <label class="form-label" for="address">Alamat *</label>
                                                 <textarea name="address" id="address" class="form-control" rows="3">{{ $project->address }}</textarea>
                                             </div>
@@ -190,7 +200,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <input type="hidden" id="customer-selected" name="customer" value="{{$project->customer_id}}#">
+                                                    <input type="hidden" id="customer-selected" name="customer" value="{{$project->customer_id}}">
 
                                                     <div class="col-md-2">
                                                         <div class="form-group form-float form-group-lg">

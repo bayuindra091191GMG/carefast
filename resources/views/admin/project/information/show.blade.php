@@ -84,6 +84,16 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group form-float form-group-lg">
                                                         <div class="form-line">
+                                                            <label class="form-label" for="phone">Kode Project *</label>
+                                                            <input id="code" type="text" class="form-control"
+                                                                   name="code" value="{{ $project->code }}" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group form-float form-group-lg">
+                                                        <div class="form-line">
                                                             <label class="form-label" for="address">Alamat *</label>
                                                             <textarea name="address" id="address" class="form-control" rows="3" readonly>{{ $project->address }}</textarea>
                                                         </div>
