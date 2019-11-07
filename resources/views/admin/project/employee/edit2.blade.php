@@ -88,7 +88,9 @@
                                                         <span id="upper_employee_role_">{{$employeeRole->name}}</span>
                                                     </td>
                                                     <td class="text-center">
-                                                        <input name="employee_total[]" class="form-control" min="0" step="1" pattern="\d+" value="{{ $employeeRoleAssigned[$count] }}">
+                                                        <input name="employee_total[]" class="form-control"
+                                                               min="0" step="1" pattern="\d+"
+                                                               value="{{ $employeeRoleAssigned[$count] }}">
                                                         <input type="hidden" name="employee_role_id[]" value="{{$employeeRole->id}}">
                                                     </td>
                                                 </tr>

@@ -103,6 +103,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
+                                            <input type="hidden" id="employee_total_buffer" value="0">
                                                 @php($count=0)
                                                 @foreach($employeeRoles as $employeeRole)
                                                     <tr id="upper_employee_row_{{$count}}">
@@ -110,7 +111,9 @@
                                                             <span id="upper_employee_role_">{{$employeeRole->name}}</span>
                                                         </td>
                                                         <td class="text-center">
-                                                            <input name="employee_total[]" min="0" step="1" pattern="\d+" class="form-control">
+                                                            <input name="employee_total[]" min="0" id="employee_total_{{$count}}"
+                                                                   step="1" pattern="\d+" class="form-control"
+                                                                   onkeyup="employeeTotalChecking({{$count}})">
                                                             <input type="hidden" name="employee_role_id[]" value="{{$employeeRole->id}}">
                                                         </td>
                                                     </tr>
@@ -152,71 +155,29 @@
             $('#general-form').submit();
         });
 
-        $('#upper_employee_id_0').select2({
-            placeholder: {
-                id: '-1',
-                text: ' - Pilih Employee - '
-            },
-            width: '100%',
-            minimumInputLength: 0,
-            ajax: {
-                url: '{{ route('select.upper.employees') }}',
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: $.trim(params.term),
-                        ids: employeeIds
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
-            }
-        });
-
-        $('#upper_employee_id_0').on('select2:select', function (e) {
-            let data = e.params.data;
-            let valueArr = data.id.split('#');
-
-            employeeIds.push(parseInt(valueArr[0]));
-
-            $('#upper_employee_role_0').html(valueArr[1]);
-        });
-
-        $('#cleaner_employee_id_0').select2({
-            placeholder: {
-                id: '-1',
-                text: ' - Pilih Cleaner - '
-            },
-            width: '100%',
-            minimumInputLength: 0,
-            ajax: {
-                url: '{{ route('select.cleaner.employees') }}',
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: $.trim(params.term),
-                        ids: employeeIds
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: data
-                    };
-                }
-            }
-        });
-
-        $('#cleaner_employee_id_0').on('select2:select', function (e) {
-            let data = e.params.data;
-            let value = data.id;
-
-            employeeIds.push(parseInt(value));
-        });
-
         var idx = 1;
+        function employeeTotalChecking(count){
+            let manpower = parseInt($('#manpower').val());
+            if(manpower === 0){
+                alert('MANPOWER SUDAH MENCAPAI KAPASITAS MAKSIMUM!');
+                return false;
+            }
+            let manpowerBuffer = parseInt($('#employee_total_buffer').val());
+            let manpowerCurrent = parseInt($('#employee_total_'+ count).val());
+
+            alert(manpowerBuffer + " " + manpowerCurrent + " " + manpower);
+            if(manpowerBuffer + manpowerCurrent > manpower){
+                $('#employee_total_'+ count).val("");
+                alert('MANPOWER MELEBIHI KAPASITAS MAKSIMUM!');
+                return false;
+            }
+            else{
+                $('#manpower').val(manpowerBuffer + manpowerCurrent);
+                $('#employee_total_buffer').val(manpowerBuffer + manpowerCurrent);
+            }
+
+
+        }
         function addRow(){
             let bufferIdx = idx;
 
