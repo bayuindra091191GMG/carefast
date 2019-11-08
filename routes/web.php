@@ -275,11 +275,15 @@ Route::prefix('admin')->group(function(){
     Route::post('/project/employee/update/{project_id}', 'Admin\project\ProjectEmployeeController@update')->name('admin.project.employee.update');
 
     // Project Schedule
-    Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectScheduleController@show')->name('admin.project.schedule.show');
-    Route::get('/project/schedule/create/{employee_id}', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
+//    Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectScheduleController@show')->name('admin.project.schedule.show');
+//    Route::get('/project/schedule/create/{employee_id}', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
     Route::get('/project/schedule/edit/{employee_id}', 'Admin\project\ProjectScheduleController@edit')->name('admin.project.schedule.edit');
     Route::post('/project/schedule/store', 'Admin\project\ProjectScheduleController@store')->name('admin.project.schedule.store');
     Route::post('/project/schedule/update/{employee_id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
+
+    // Project Schedule New
+    Route::get('/project/schedule/show/{id}', 'Admin\project\ScheduleController@show')->name('admin.project.schedule.show');
+    Route::get('/project/schedule/create/{id}', 'Admin\project\ScheduleController@create')->name('admin.project.schedule.create');
 
     Route::get('/project/schedule/create-detail/{employee_id}', 'Admin\project\ProjectScheduleController@createDetail')->name('admin.project.schedule.create-detail');
     Route::get('/project/schedule/edit-detail/{employee_id}', 'Admin\project\ProjectScheduleController@editDetail')->name('admin.project.schedule.edit-detail');
@@ -343,7 +347,7 @@ Route::get('/select-upper-employees', 'Admin\EmployeeController@getUpperEmployee
 Route::get('/select-cleaner-employees', 'Admin\EmployeeController@getCleanerEmployees')->name('select.cleaner.employees');
 Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('select.employees');
 Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('select.employees');
-Route::get('/select-projectObjects', 'Admin\project\ProjectObjectController@getProjectObjects')->name('select.projectObjects');
+Route::get('/select-projectObjects', 'Admin\project\ProjectObjectController@getProjectObjects2')->name('select.projectObjects');
 Route::get('/select-actions', 'Admin\ActionController@getActions')->name('select.actions');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
