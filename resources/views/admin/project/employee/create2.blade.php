@@ -157,26 +157,23 @@
 
         var idx = 1;
         function employeeTotalChecking(count){
-            let manpower = parseInt($('#manpower').val());
-            if(manpower === 0){
-                alert('MANPOWER SUDAH MENCAPAI KAPASITAS MAKSIMUM!');
-                return false;
-            }
-            let manpowerBuffer = parseInt($('#employee_total_buffer').val());
-            let manpowerCurrent = parseInt($('#employee_total_'+ count).val());
-
-            alert(manpowerBuffer + " " + manpowerCurrent + " " + manpower);
-            if(manpowerBuffer + manpowerCurrent > manpower){
-                $('#employee_total_'+ count).val("");
-                alert('MANPOWER MELEBIHI KAPASITAS MAKSIMUM!');
-                return false;
-            }
-            else{
-                $('#manpower').val(manpowerBuffer + manpowerCurrent);
-                $('#employee_total_buffer').val(manpowerBuffer + manpowerCurrent);
-            }
-
-
+            // let manpower = parseInt($('#manpower').val());
+            // if(manpower === 0){
+            //     alert('MANPOWER SUDAH MENCAPAI KAPASITAS MAKSIMUM!');
+            //     return false;
+            // }
+            // let manpowerBuffer = parseInt($('#employee_total_buffer').val());
+            // let manpowerCurrent = parseInt($('#employee_total_'+ count).val());
+            //
+            // if(manpowerBuffer + manpowerCurrent > manpower){
+            //     $('#employee_total_'+ count).val("");
+            //     alert('MANPOWER MELEBIHI KAPASITAS MAKSIMUM!');
+            //     return false;
+            // }
+            // else{
+            //     $('#manpower').val(manpowerBuffer + manpowerCurrent);
+            //     $('#employee_total_buffer').val(manpowerBuffer + manpowerCurrent);
+            // }
         }
         function addRow(){
             let bufferIdx = idx;
