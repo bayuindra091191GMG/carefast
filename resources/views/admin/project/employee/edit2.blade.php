@@ -122,28 +122,4 @@
     {{--    <script src="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/autonumeric@4.2.0"></script>
-    <script type="text/javascript">
-        var employeeIds = JSON.parse('{{ $includeIds }}');
-
-        $(document).on('click', '#btn_submit', function() {
-            $('#btn_submit').hide(500);
-            $('#btn_loading').show(500);
-            $('#general-form').submit();
-        });
-
-        // Auto onfocusout when enter is pressed
-        $('.auto-blur').keypress(function (e) {
-            if (e.which == 13) {
-                $(this).blur();
-            }
-        });
-
-        function rupiahFormat(nStr) {
-            let valueStr = nStr.toLocaleString(
-                "de-DE"
-            );
-
-            return valueStr;
-        }
-    </script>
 @endsection
