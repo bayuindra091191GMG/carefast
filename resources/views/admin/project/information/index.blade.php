@@ -29,8 +29,8 @@
                                     <th class="text-center">Nama</th>
                                     <th class="text-center">Nama Customer</th>
                                     <th class="text-center">Nomor Telpon/Ponsel</th>
-                                    <th class="text-center">Status</th>
                                     <th class="text-center">Alamat</th>
+                                    <th class="text-center">Status</th>
                                     <th class="text-center">Tanggal Dibuat</th>
                                     <th class="text-center">Tindakan</th>
                                 </tr>

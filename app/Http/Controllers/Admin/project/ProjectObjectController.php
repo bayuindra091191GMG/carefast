@@ -74,6 +74,7 @@ class ProjectObjectController extends Controller
     public function store(Request $request)
     {
         try{
+//            dd($request);
             $places = $request->input('places');
             $placeNews = $request->input('place_new');
             $units = $request->input('units');
@@ -148,7 +149,8 @@ class ProjectObjectController extends Controller
                     $selectedSubUnit1Name = $placeDB->name;
                 }
                 else{
-                    $sub1unitDBNew = Unit::create([
+                    $sub1unitDBNew = Sub1Unit::create([
+                        'unit_id'           => $selectedUnit,
                         'name'              => strtoupper($sub_1_unit_news[$i]),
                         'description'       => strtoupper($sub_1_unit_news[$i]),
                         'status_id'         => 1,
@@ -168,7 +170,8 @@ class ProjectObjectController extends Controller
                     $selectedSubUnit2Name = $placeDB->name;
                 }
                 else{
-                    $sub2unitDBNew = Unit::create([
+                    $sub2unitDBNew = Sub2Unit::create([
+                        'sub_1_unit_id'           => $selectedSubUnit1,
                         'name'              => strtoupper($sub_2_unit_news[$i]),
                         'description'       => strtoupper($sub_2_unit_news[$i]),
                         'status_id'         => 1,
@@ -180,7 +183,7 @@ class ProjectObjectController extends Controller
                     $selectedSubUnit2 = $sub2unitDBNew->id;
                     $selectedSubUnit2Name = $sub2unitDBNew->name;
                 }
-
+//                dd($selectedPlace,$selectedUnit, $selectedSubUnit1, $selectedSubUnit2, $selectedPlaceName, $selectedUnitName, $selectedSubUnit1Name, $selectedSubUnit2Name);
                 //Create Project Object
                 $projectObject = ProjectObject::create([
                     'project_id'        => $project->id,
@@ -303,7 +306,8 @@ class ProjectObjectController extends Controller
                     $selectedSubUnit1Name = $placeDB->name;
                 }
                 else{
-                    $sub1unitDBNew = Unit::create([
+                    $sub1unitDBNew = Sub1Unit::create([
+                        'unit_id'           => $selectedUnit,
                         'name'              => strtoupper($sub_1_unit_news[$i]),
                         'description'       => strtoupper($sub_1_unit_news[$i]),
                         'status_id'         => 1,
@@ -323,7 +327,8 @@ class ProjectObjectController extends Controller
                     $selectedSubUnit2Name = $placeDB->name;
                 }
                 else{
-                    $sub2unitDBNew = Unit::create([
+                    $sub2unitDBNew = Sub2Unit::create([
+                        'sub_1_unit_id'           => $selectedSubUnit1,
                         'name'              => strtoupper($sub_2_unit_news[$i]),
                         'description'       => strtoupper($sub_2_unit_news[$i]),
                         'status_id'         => 1,
@@ -369,7 +374,7 @@ class ProjectObjectController extends Controller
                 }
                 else{
                     //Create Project Object
-                    if($selectedPlace != '-1' && $selectedUnit != '-1' && $selectedSubUnit1 != '-1' && $selectedSubUnit2 != '-1'){
+                    if($selectedPlace != '-1'){
                         $projectObject = ProjectObject::create([
                             'project_id'        => $project->id,
                             'place_id'          => $selectedPlace,

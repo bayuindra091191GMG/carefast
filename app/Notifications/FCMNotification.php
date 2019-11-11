@@ -76,7 +76,7 @@ class FCMNotification
             }
 
             if(empty($user)){
-                Log::error("FCMNotification - SendNotification Error: FCM Token Null, userId = ".$userId);
+                Log::error("FCMNotification - SendNotification Error: FCM Token Null, userId = ".$userId.", type = ".$type);
                 return "";
             }
             else{
@@ -103,6 +103,7 @@ class FCMNotification
                 ]);
                 $responseJSON = json_decode($response->getBody());
                 //dd($responseJSON);
+                Log::info("FCMNotification - SendNotification sent success");
 
                 return $responseJSON->results[0]->message_id;
             }

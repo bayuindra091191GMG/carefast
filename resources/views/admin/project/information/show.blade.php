@@ -26,10 +26,10 @@
                                 <a class="nav-link active" id="information-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="information-tab" aria-selected="true">INFORMASI</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="object-tab" href="{{ route('admin.project.object.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">DAFTAR OBJECT</a>
+                                <a class="nav-link" id="employee-tab" href="{{ route('admin.project.employee.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">DAFTAR EMPLOYEE</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="employee-tab" href="{{ route('admin.project.employee.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">DAFTAR EMPLOYEE</a>
+                                <a class="nav-link" id="object-tab" href="{{ route('admin.project.object.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">DAFTAR OBJECT</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="schedule-tab" href="{{ route('admin.project.schedule.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">JADWAL</a>
@@ -199,7 +199,8 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="customer">Customer *</label>
-                                                        <input type="text" name="customer" id="customer" class="form-control" value="{{ $project->customer->name . ' - ' . $project->customer->email }}" readonly/>
+                                                        <input type="text" name="customer" id="customer" class="form-control"
+                                                               value="{{ $project->customer->name . ' - ' . $project->customer->email }}" readonly/>
                                                     </div>
                                                 </div>
 

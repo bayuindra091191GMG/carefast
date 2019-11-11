@@ -524,11 +524,16 @@ class ComplainController extends Controller
                 ->limit(10)
                 ->get();
 
-            if($customerComplaints->count() == 0){
-                return Response::json("Saat ini belum Ada complaint", 482);
-            }
 
             $complaintModels = collect();
+            if($customerComplaints->count() == 0){
+                if($skip == 0){
+                    return Response::json("Saat ini belum Ada complaint", 482);
+                }
+                else{
+                    return Response::json($complaintModels, 200);
+                }
+            }
 
             foreach($customerComplaints as $customerComplaint){
                 $complaintImageDBs = $customerComplaint->complaint_header_images;

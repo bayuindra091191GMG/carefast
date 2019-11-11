@@ -26,19 +26,18 @@
                                 <a class="nav-link" id="information-tab" href="{{ route('admin.project.information.show', ['id' => $project->id]) }}" role="tab" aria-controls="home" aria-selected="true">INFORMASI</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="object-tab" href="{{ route('admin.project.object.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">DAFTAR OBJECT</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" id="employee-tab" href="{{ route('admin.project.employee.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">DAFTAR EMPLOYEE</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" id="schedule-tab" href="#" role="tab" aria-controls="profile" aria-selected="false">JADWAL / SCHEDULE</a>
+                                <a class="nav-link" id="object-tab" href="{{ route('admin.project.object.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">DAFTAR OBJECT</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" id="schedule-tab" href="#" role="tab" aria-controls="profile" aria-selected="false">JADWAL</a>
                             </li>
                         </ul>
 
                         <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="object" role="tabpanel" aria-labelledby="object-tab">
-
                                 @include('partials.admin._messages')
                                 @if(count($errors))
                                     <div class="col-md-12">
@@ -78,14 +77,18 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            @foreach($employeeRoles as $employeeRole)
-                                                                <tr>
-                                                                    <td>{{$employeeRole->name}}</td>
-                                                                    <td>
-                                                                        <a href='{{route('admin.project.schedule.create', ['id' => $employeeRole->id])}}' class='btn btn-primary'>UBAH/TAMBAH</a>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
+                                                            @if($employeeRoles->count() > 0)
+                                                                @foreach($employeeRoles as $employeeRole)
+                                                                    <tr>
+                                                                        <td>{{$employeeRole->name}}</td>
+                                                                        <td>
+                                                                            <a href='{{route('admin.project.schedule.create', ['id' => $employeeRole->id, 'project'=>$project->id])}}' class='btn btn-primary'>UBAH/TAMBAH</a>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            @else
+                                                                <h4>BELUM ADA JADWAL EMPLOYEE</h4>
+                                                            @endif
                                                             </tbody>
                                                         </table>
                                                     </div>

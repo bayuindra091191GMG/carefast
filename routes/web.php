@@ -278,12 +278,13 @@ Route::prefix('admin')->group(function(){
 //    Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectScheduleController@show')->name('admin.project.schedule.show');
 //    Route::get('/project/schedule/create/{employee_id}', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
     Route::get('/project/schedule/edit/{employee_id}', 'Admin\project\ProjectScheduleController@edit')->name('admin.project.schedule.edit');
-    Route::post('/project/schedule/store', 'Admin\project\ProjectScheduleController@store')->name('admin.project.schedule.store');
+//    Route::post('/project/schedule/store', 'Admin\project\ProjectScheduleController@store')->name('admin.project.schedule.store');
     Route::post('/project/schedule/update/{employee_id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
 
     // Project Schedule New
     Route::get('/project/schedule/show/{id}', 'Admin\project\ScheduleController@show')->name('admin.project.schedule.show');
     Route::get('/project/schedule/create/{id}', 'Admin\project\ScheduleController@create')->name('admin.project.schedule.create');
+    Route::post('/project/schedule/store', 'Admin\project\ScheduleController@store')->name('admin.project.schedule.store');
 
     Route::get('/project/schedule/create-detail/{employee_id}', 'Admin\project\ProjectScheduleController@createDetail')->name('admin.project.schedule.create-detail');
     Route::get('/project/schedule/edit-detail/{employee_id}', 'Admin\project\ProjectScheduleController@editDetail')->name('admin.project.schedule.edit-detail');

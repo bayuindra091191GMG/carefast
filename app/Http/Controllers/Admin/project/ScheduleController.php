@@ -48,7 +48,13 @@ class ScheduleController extends Controller
         if(empty($project)){
             return redirect()->back();
         }
-        $employeeRoles = EmployeeRole::where('id', '<', 5)->get();
+        $employeeRoleIds = ProjectEmployee::select('employee_roles_id')->where('project_id', $id)->distinct('employee_roles_id')->get();
+        $ids = array();
+        foreach ($employeeRoleIds as $employeeRoleId){
+            array_push($ids, $employeeRoleId->employee_roles_id);
+        }
+
+        $employeeRoles = EmployeeRole::whereIn('id', $ids)->get();
 
         $data = [
             'employeeRoles'   => $employeeRoles,
@@ -57,12 +63,13 @@ class ScheduleController extends Controller
         return view('admin.project.schedule.show2')->with($data);
     }
 
-    public function create(int $id){
+    public function create(Request $request, int $id){
         try{
-            $projectEmployee = ProjectEmployee::find($id);
-            $project = $projectEmployee->project;
 
+            $projectEmployee = ProjectEmployee::find($id);
             $employeeRole = EmployeeRole::find($id);
+            $projectId = $request->project;
+            $project = Project::find($projectId);
 
             if(empty($projectEmployee)){
                 return redirect()->back();
@@ -78,6 +85,130 @@ class ScheduleController extends Controller
         catch (\Exception $ex){
             Log::error('Admin/schedule/ProjectScheduleController - create error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
+        }
+    }
+
+    public function store(Request $request)
+    {
+        try{
+//            dd($request);
+            $weeks = $request->input('week');
+            $days = $request->input('day');
+            $start_times = $request->input('start_times');
+            $finish_times = $request->input('finish_times');
+            $places = $request->input('places');
+            $shiftType = $request->input('shift_type');
+            $periodType = $request->input('period');
+            $start = Carbon::parse('00-00-00 '.$start_times[0])->format('Y-m-d H:i:s');
+            $finish = Carbon::parse('00-00-00 '.$finish_times[0])->format('Y-m-d H:i:s');
+
+//            dd($start, $finish);
+//            dd($weeks, $days, $start_times, $finish_times);
+
+            //validation for every input
+            $j = 0;
+            foreach($periodType as $periodValue){
+                if($periodValue != "Daily"){
+                    foreach($days[$j] as $dayValue){
+                        if(empty($dayValue)){
+                            return back()->withErrors("Terdapat HARI yang belum terpilih untuk periodic weekly dan monthly!")->withInput($request->all());
+                        }
+                    }
+                }
+                $j++;
+            }
+
+//            $j = 0;
+//            if(empty($request->input('day'))){
+//                return back()->withErrors("Terdapat HARI yang belum terpilih!")->withInput($request->all());
+//            }
+//            if(empty($request->input('week'))){
+//                return back()->withErrors("Terdapat HARI yang belum terpilih!")->withInput($request->all());
+//            }
+//            foreach ($start_times as $start_time){
+//                if(empty($weeks[$j])){
+//                    return back()->withErrors("Terdapat MINGGU yang belum terpilih!")->withInput($request->all());
+//                }
+//                if(empty($days[$j])){
+//                    return back()->withErrors("Terdapat MINGGU yang belum terpilih!")->withInput($request->all());
+//                }
+//                if($places[$j] == '-1'){
+//                    return back()->withErrors("Terdapat PLACE yang belum terpilih!")->withInput($request->all());
+//                }
+//                $j++;
+//            }
+//            dd($request);
+
+            $i = 0;
+            $user = Auth::guard('admin')->user();
+            //create schedule
+            foreach ($start_times as $start_time){
+                $daysString = "";
+                $weekString = "";
+//                foreach($weeks[$i] as $weekValue){
+//                    $weekString .= $weekValue."#";
+//                }
+                $start = Carbon::parse('00-00-00 '.$start_times[$i])->format('Y-m-d H:i:s');
+                $finish = Carbon::parse('00-00-00 '.$finish_times[$i])->format('Y-m-d H:i:s');
+
+                $schedule = Schedule::create([
+                    'project_id'            => $request->input('project_id'),
+//                    'project_employee_id'   => $request->input('project_employee_id'),
+                    'shift_type'            => $shiftType,
+                    'place_id'              => $places,
+                    'weeks'                 => $weekString,
+//                    'days'                  => $daysString,
+                    'start'                 => $start,
+                    'finish'                => $finish,
+                    'status_id'             => 1,
+                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_by'            => $user->id,
+                    'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'updated_by'            => $user->id,
+                ]);
+
+                if($periodType[$i]  == "Daily"){
+                    $day = "1#2#3#4#5#6#7#";
+                }
+                else{
+                    foreach($days[$i] as $dayValue){
+                        $daysString .= $dayValue."#";
+                    }
+                    $day = $daysString;
+                }
+                $schedule->days = $day;
+                $schedule->save();
+
+                $actionsString = "";
+                $objectsString = "";
+                $actions = $request->input('actions'.$i);
+                foreach($actions as $actionValue){
+                    $actionsString .= $actionValue."#";
+                }
+
+                $objects = $request->input('project_objects'.$i);
+                foreach($objects as $objectValue){
+                    $objectsString .= $objectValue."#";
+                }
+                $scheduleDetail = ScheduleDetail::create([
+                    'schedule_id'           => $schedule->id,
+                    'project_object_id'     => $objectsString,
+                    'action_id'             => $actionsString,
+                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_by'            => $user->id,
+                    'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'updated_by'            => $user->id,
+                ]);
+
+
+                $i++;
+            }
+
+            return redirect()->route('admin.project.schedule.show', ['id' => $request->input('project_id')]);
+        }
+        catch (\Exception $ex){
+            Log::error('Admin/schedule/ProjectScheduleController - store error EX: '. $ex);
+            return "Something went wrong! Please contact administrator!" . $ex;
         }
     }
 }

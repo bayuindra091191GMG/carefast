@@ -137,9 +137,9 @@ class ProjectEmployeeController extends Controller
                             'updated_by'        => $adminUser->id,
                             'updated_at'        => $now->toDateTimeString(),
                         ]);
+                        $manpowerUsed++;
                     }
                     $idx++;
-                    $manpowerUsed++;
                 }
             }
 

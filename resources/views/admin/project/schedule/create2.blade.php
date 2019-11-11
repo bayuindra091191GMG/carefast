@@ -53,7 +53,19 @@
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label" for="place0">Place*</label>
-                                                                    <select id='place0' name='places[]' class='form-control'><option value='-1'>-</option></select>
+                                                                    <select id='place0' name='places' class='form-control'><option value='-1'>-</option></select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label">Shift*</label>
+                                                                    <select name='shift_type' class='form-control'>
+                                                                        <option value='1'>SHIFT 1</option>
+                                                                        <option value='2'>SHIFT 2</option>
+                                                                        <option value='3'>SHIFT 3</option>
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -66,22 +78,22 @@
                                                         <table class="table table-bordered table-hover" id="tab_logic">
                                                             <thead>
                                                             <tr>
-                                                                <th class="text-center">
+                                                                <th class="text-center" width="10">
                                                                     Jam Mulai
                                                                 </th>
-                                                                <th class="text-center">
+                                                                <th class="text-center"  width="10">
                                                                     Jam Berakhir
                                                                 </th>
-                                                                <th class="text-center">
+                                                                <th class="text-center" width="30">
                                                                     Object
                                                                 </th>
-                                                                <th class="text-center">
+                                                                <th class="text-center" width="30">
                                                                     Action
                                                                 </th>
-                                                                <th class="text-center">
+                                                                <th class="text-center" width="10">
                                                                     QT
                                                                 </th>
-                                                                <th class="text-center">
+                                                                <th class="text-center" width="10">
                                                                     Hari
                                                                 </th>
                                                             </tr>
@@ -95,18 +107,18 @@
                                                                     <input id='finish0' class='form-control time-inputmask' name='finish_times[]' placeholder="HH:MM" required/>
                                                                 </td>
                                                                 <td>
-                                                                    <select id="project_object0" name="project_objects[]" class='form-control'><option value='-1'>-</option></select>
+                                                                    <select id="project_object0" name="project_objects0[]" class='form-control' multiple="multiple"></select>
                                                                 </td>
                                                                 <td>
-                                                                    <select id="action0" name="actions[]" class='form-control'><option value='-1'>-</option></select>
-                                                                    <span><br>Atau tambah Baru</span>
-                                                                    <input type='text' id='actionNew0' name='action_new[]' class='form-control'>
+                                                                    <select id="action0" name="actions0[]" class='form-control' multiple="multiple"></select>
+{{--                                                                    <span><br>Atau tambah Baru</span>--}}
+{{--                                                                    <input type='text' id='actionNew0' name='action_new[]' class='form-control'>--}}
                                                                 </td>
                                                                 <td>
-                                                                    <select id="qt0" name='qt[]' class='form-control'>
-                                                                        <option value='D'>Daily</option>
-                                                                        <option value='W'>Weekly</option>
-                                                                        <option value='M'>Monthly</option>
+                                                                    <select id="period0" name='period[]' class='form-control'>
+                                                                        <option value='Daily' selected>Daily</option>
+                                                                        <option value='Weekly'>Weekly</option>
+                                                                        <option value='Monthly'>Monthly</option>
                                                                     </select>
                                                                 </td>
                                                                 <td>
@@ -166,6 +178,12 @@
 @section('styles')
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/bootstrap-datepicker.min.css') }}" rel="stylesheet"/>
+    <style>
+        .select2-selection--multiple{
+            overflow: hidden !important;
+            height: auto !important;
+        }
+    </style>
 @endsection
 
 @section('scripts')
@@ -210,7 +228,7 @@
                 text: ' - Pilih Object - '
             },
             width: '100%',
-            minimumInputLength: 1,
+            minimumInputLength: 0,
             ajax: {
                 url: '{{ route('select.projectObjects') }}',
                 dataType: 'json',
@@ -235,7 +253,7 @@
                 text: ' - Pilih Action - '
             },
             width: '100%',
-            minimumInputLength: 1,
+            minimumInputLength: 0,
             ajax: {
                 url: '{{ route('select.actions') }}',
                 dataType: 'json',
@@ -267,19 +285,19 @@
                 "</td>" +
 
                 "<td>" +
-                "<select id='project_object" + i + "' name='project_objects[]' class='form-control'><option value='-1'>-</option></select>" +
+                "<select id='project_object" + i + "' name='project_objects" + i + "[]' class='form-control' multiple='multiple'></select>" +
                 "</td>" +
 
-                "<td><select id='action"+ i +"' name='actions[]' class='form-control'><option value='-1'>-</option></select>" +
-                "<span><br>Atau tambah Baru</span>" +
-                "<input type='text' id='actionNew" + i +"' name='action_new[]' class='form-control'>" +
+                "<td><select id='action"+ i +"' name='actions" + i + "[]' class='form-control' multiple='multiple'></select>" +
+                // "<span><br>Atau tambah Baru</span>" +
+                // "<input type='text' id='actionNew" + i +"' name='action_new[]' class='form-control'>" +
                 "</td>" +
 
                 "<td>" +
-                "<select id='qt"+ i +"' name='qt[]' class='form-control'>" +
-                "<option value='D'>Daily</option>" +
-                "<option value='W'>Weekly</option>" +
-                "<option value='M'>Monthly</option>" +
+                "<select id='period"+ i +"' name='period[]' class='form-control'>" +
+                "<option value='Daily' selected>Daily</option>" +
+                "<option value='Weekly'>Weekly</option>" +
+                "<option value='Monthly'>Monthly</option>" +
                 "</select>" +
                 "</td>" +
 

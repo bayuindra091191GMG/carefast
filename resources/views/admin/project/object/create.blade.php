@@ -124,7 +124,7 @@
                 text: ' - Pilih Place - '
             },
             width: '100%',
-            minimumInputLength: 1,
+            minimumInputLength: 0,
             ajax: {
                 url: '{{ route('select.places') }}',
                 dataType: 'json',
@@ -190,6 +190,7 @@
                                     .text(data[j].text));
                         }
                     }
+                    $('#sub_2_unit0').empty();
                     $('#sub_2_unit0')
                         .append($("<option></option>")
                             .attr("value","-1")
@@ -252,7 +253,7 @@
                     text: ' - Pilih Place - '
                 },
                 width: '100%',
-                minimumInputLength: 1,
+                minimumInputLength: 0,
                 ajax: {
                     url: '{{ route('select.places') }}',
                     dataType: 'json',
@@ -317,6 +318,7 @@
                                         .text(data[j].text));
                             }
                         }
+                        $('#sub_2_unit' + bufferID).empty();
                         $('#sub_2_unit' + bufferID)
                             .append($("<option></option>")
                                 .attr("value","-1")

@@ -256,7 +256,7 @@
                 text: ' - Pilih Place - '
             },
             width: '100%',
-            minimumInputLength: 1,
+            minimumInputLength: 0,
             ajax: {
                 url: '{{ route('select.places') }}',
                 dataType: 'json',
@@ -385,7 +385,7 @@
                     text: ' - Pilih Place - '
                 },
                 width: '100%',
-                minimumInputLength: 1,
+                minimumInputLength: 0,
                 ajax: {
                     url: '{{ route('select.places') }}',
                     dataType: 'json',

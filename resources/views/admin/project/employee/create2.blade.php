@@ -10,7 +10,7 @@
                         <h3>TAMBAH EMPLOYEE KE PROJECT</h3>
                     </div>
                     <div class="col-md-4 col-12 text-right">
-                        <a href="{{ route('admin.project.information.index') }}" class="btn btn-danger">BATAL</a>
+                        <a href="{{ route('admin.project.employee.show', ['project_id' => $project->id]) }}" class="btn btn-danger">BATAL</a>
                         <a id="btn_submit" class="btn btn-success text-white">SIMPAN</a>
                         <a id="btn_loading" class="btn btn-success text-white" style="display: none"><i class="fas fa-sync-alt fa-spin"></i>&nbsp;&nbsp;MENYIMPAN DATA EMPLOYEE...</a>
                     </div>

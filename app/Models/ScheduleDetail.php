@@ -11,17 +11,17 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class ScheduleDetail
- * 
+ *
  * @property int $id
  * @property int $schedule_id
- * @property int $project_object_id
- * @property int $action_id
+ * @property string $project_object_id
+ * @property string $action_id
  * @property string $description
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
- * 
+ *
  * @property \App\Models\Action $action
  * @property \App\Models\ProjectObject $project_object
  * @property \App\Models\Schedule $schedule

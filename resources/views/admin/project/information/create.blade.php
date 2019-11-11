@@ -190,47 +190,48 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
-                                                    <div class="col-md-10">
+                                                    <div class="col-md-12">
                                                         <div class="form-group form-float form-group-lg">
                                                             <div class="form-line">
                                                                 <label for="customer">Customer *</label>
-                                                                <select id="customer" class="form-control"></select>
+                                                                <select id="customer" name="customer[]" class="form-control" multiple></select>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <input type="hidden" id="customer-selected" name="customer">
+{{--                                                    <input type="hidden" id="customer-selected" name="customer">--}}
 
-                                                    <div class="col-md-2">
-                                                        <div class="form-group form-float form-group-lg">
-                                                            <div class="form-line">
-                                                                <label for="customer">&nbsp;</label>
-                                                                <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+{{--                                                    <div class="col-md-2">--}}
+{{--                                                        <div class="form-group form-float form-group-lg">--}}
+{{--                                                            <div class="form-line">--}}
+{{--                                                                <label for="customer">&nbsp;</label>--}}
+{{--                                                                <a class="form-control btn btn-success" id="add-customer" onclick="addCustomer()"--}}
+{{--                                                                   style="color: white;">Tambah</a>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group form-float form-group-lg">
-                                                    <table class="table table-bordered table-hover" id="tab_logic">
-                                                        <thead>
-                                                        <tr>
-                                                            <th class="text-center" style="width: 75%">
-                                                                Customer*
-                                                            </th>
-                                                            <th class="text-center" style="width: 25%">
-                                                                Action
-                                                            </th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr id='sch1'></tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group form-float form-group-lg">--}}
+{{--                                                    <table class="table table-bordered table-hover" id="tab_logic">--}}
+{{--                                                        <thead>--}}
+{{--                                                        <tr>--}}
+{{--                                                            <th class="text-center" style="width: 75%">--}}
+{{--                                                                Customer*--}}
+{{--                                                            </th>--}}
+{{--                                                            <th class="text-center" style="width: 25%">--}}
+{{--                                                                Action--}}
+{{--                                                            </th>--}}
+{{--                                                        </tr>--}}
+{{--                                                        </thead>--}}
+{{--                                                        <tbody>--}}
+{{--                                                        <tr id='sch1'></tr>--}}
+{{--                                                        </tbody>--}}
+{{--                                                    </table>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
                                         </div>
                                     </div>
                                     <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
@@ -253,6 +254,12 @@
 @section('styles')
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    <style>
+        .select2-selection--multiple{
+            overflow: hidden !important;
+            height: auto !important;
+        }
+    </style>
 @endsection
 
 @section('scripts')
@@ -304,18 +311,24 @@
             let customerID = $('#customer').val();
             let selectedCustomer = $('#customer-selected').val();
 
-            if(!(selectedCustomer.includes(customerID))){
-                let newSelectedCustomer = selectedCustomer + customerID + "#" ;
-                $('#customer-selected').val(newSelectedCustomer);
+            if(customerID === null){
 
-                $('#sch'+i).html(
-                    "<td><span>" + $('#select2-customer-container').text() + "</span></td>" +
-                    "<td><a class='form-control btn btn-danger' onclick='deleteCustomer(" + i + ")'>Delete</a></td>"
-                );
-                $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
-                i++;
+            }
+            else{
+                if(!(selectedCustomer.includes(customerID))){
+                    let newSelectedCustomer = selectedCustomer + customerID + "#" ;
+                    $('#customer-selected').val(newSelectedCustomer);
+
+                    $('#sch'+i).html(
+                        "<td><span>" + $('#select2-customer-container').text() + "</span></td>" +
+                        "<td><a class='form-control btn btn-danger' onclick='deleteCustomer(" + i + ")' style='color: white;'>Delete</a></td>"
+                    );
+                    $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+                    i++;
+                }
             }
         }
+
         function deleteCustomer(rowId){
             let selectedCustomer = $('#customer-selected').val();
             let selectedCustomerSplit = selectedCustomer.split("#");

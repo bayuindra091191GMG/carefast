@@ -190,58 +190,58 @@
 
                                     <div class="col-md-12">
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group form-float form-group-lg">
-                                                    <div class="col-md-10">
+                                                    <div class="col-md-12">
                                                         <div class="form-group form-float form-group-lg">
                                                             <div class="form-line">
                                                                 <label for="customer">Customer *</label>
-                                                                <select id="customer" class="form-control"></select>
+                                                                <select id="customer" name="customer[]" class="form-control" multiple></select>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <input type="hidden" id="customer-selected" name="customer" value="{{$project->customer_id}}">
+{{--                                                    <input type="hidden" id="customer-selected" name="customer" value="{{$project->customer_id}}">--}}
 
-                                                    <div class="col-md-2">
-                                                        <div class="form-group form-float form-group-lg">
-                                                            <div class="form-line">
-                                                                <label for="customer">&nbsp;</label>
-                                                                <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+{{--                                                    <div class="col-md-2">--}}
+{{--                                                        <div class="form-group form-float form-group-lg">--}}
+{{--                                                            <div class="form-line">--}}
+{{--                                                                <label for="customer">&nbsp;</label>--}}
+{{--                                                                <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group form-float form-group-lg">
-                                                    <table class="table table-bordered table-hover" id="tab_logic">
-                                                        <thead>
-                                                        <tr>
-                                                            <th class="text-center" style="width: 75%">
-                                                                Customer*
-                                                            </th>
-                                                            <th class="text-center" style="width: 25%">
-                                                                Action
-                                                            </th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        @php $idx = 1 @endphp
+{{--                                            <div class="col-md-6">--}}
+{{--                                                <div class="form-group form-float form-group-lg">--}}
+{{--                                                    <table class="table table-bordered table-hover" id="tab_logic">--}}
+{{--                                                        <thead>--}}
+{{--                                                        <tr>--}}
+{{--                                                            <th class="text-center" style="width: 75%">--}}
+{{--                                                                Customer*--}}
+{{--                                                            </th>--}}
+{{--                                                            <th class="text-center" style="width: 25%">--}}
+{{--                                                                Action--}}
+{{--                                                            </th>--}}
+{{--                                                        </tr>--}}
+{{--                                                        </thead>--}}
+{{--                                                        <tbody>--}}
+{{--                                                        @php $idx = 1 @endphp--}}
 
-                                                        @if($customerList->count() > 0)
-                                                            @foreach($customerList as $customer)
-                                                                <tr id='sch{{$idx}}'>
-                                                                    <td><span>{{$customer->name}} - {{$customer->email}}</span></td>
-                                                                    <td><a class='form-control btn btn-danger' onclick='deleteCustomer({{ $idx }})'>Delete</a></td>
-                                                                </tr>
-                                                                @php $idx++ @endphp
-                                                            @endforeach
-                                                            <tr id='sch{{$idx}}'></tr>
-                                                        @endif
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
+{{--                                                        @if($customerList->count() > 0)--}}
+{{--                                                            @foreach($customerList as $customer)--}}
+{{--                                                                <tr id='sch{{$idx}}'>--}}
+{{--                                                                    <td><span>{{$customer->name}} - {{$customer->email}}</span></td>--}}
+{{--                                                                    <td><a class='form-control btn btn-danger' onclick='deleteCustomer({{ $idx }})'>Delete</a></td>--}}
+{{--                                                                </tr>--}}
+{{--                                                                @php $idx++ @endphp--}}
+{{--                                                            @endforeach--}}
+{{--                                                            <tr id='sch{{$idx}}'></tr>--}}
+{{--                                                        @endif--}}
+{{--                                                        </tbody>--}}
+{{--                                                    </table>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
                                         </div>
                                     </div>
                                     <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">

@@ -71,7 +71,11 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-//        dd($request);
+        $customersString = "";
+        foreach ($request->input('customer') as $customer){
+            $customersString .= $customer."#";
+        }
+//        dd($customersString);
         try{
             $validator = Validator::make($request->all(), [
                 'name'          => 'required',
@@ -95,12 +99,17 @@ class ProjectController extends Controller
             $start_date = Carbon::createFromFormat('d M Y', $request->input('start_date'), 'Asia/Jakarta');
             $finish_date = Carbon::createFromFormat('d M Y', $request->input('finish_date'), 'Asia/Jakarta');
 
+            $customersString = "";
+            foreach ($request->input('customer') as $customer){
+                $customersString .= $customer."#";
+            }
+
             $user = Auth::guard('admin')->user();
             $project = Project::create([
                 'name'              => strtoupper($request->input('name')),
                 'code'             => strtoupper($request->input('code')),
                 'phone'             => $request->input('phone'),
-                'customer_id'       => $request->input('customer'),
+                'customer_id'       => $customersString,
                 'latitude'          => $request->input('latitude'),
                 'longitude'         => $request->input('longitude'),
                 'address'           => $request->input('address'),
@@ -119,7 +128,7 @@ class ProjectController extends Controller
             ]);
 
             Session::flash('success', 'Sukses membuat information baru!');
-            return redirect()->route('admin.project.information.index');
+            return redirect()->route('admin.project.information.show', ['id'=>$project->id]);
         }
         catch (\Exception $ex){
             Log::error('Admin/information/ProjectController - store error EX: '. $ex);
@@ -176,10 +185,15 @@ class ProjectController extends Controller
             $start_date = Carbon::createFromFormat('d M Y', $request->input('start_date'), 'Asia/Jakarta');
             $finish_date = Carbon::createFromFormat('d M Y', $request->input('finish_date'), 'Asia/Jakarta');
 
+            $customersString = "";
+            foreach ($request->input('customer') as $customer){
+                $customersString .= $customer."#";
+            }
+
             $project->name = strtoupper($request->input('name'));
             $project->code = strtoupper($request->input('code'));
             $project->phone = $request->input('phone') ?? '';
-            $project->customer_id = $request->input('customer');
+            $project->customer_id = $customersString;
             $project->latitude = $request->input('latitude');
             $project->longitude =$request->input('longitude');
             $project->address = $request->input('address');
