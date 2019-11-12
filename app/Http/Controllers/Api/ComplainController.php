@@ -159,7 +159,7 @@ class ComplainController extends Controller
             $title = "ICare";
             $body = "Customer membuat complaint baru";
             $notifData = array(
-                "complaint_id" => $newComplaint->id,
+                "complaint_model" => $newComplaintDetail,
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
@@ -259,9 +259,9 @@ class ComplainController extends Controller
             //Send notification to
             //Employee
             $title = "ICare";
-            $body = "Customer me-reply complaint ".$complaint->subject;
+            $body = "Customer reply complaint ".$complaint->subject;
             $data = array(
-                "complaint_id" => $complaint->id,
+                "complaint_model" => $newComplaintDetail,
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
@@ -284,7 +284,6 @@ class ComplainController extends Controller
     public function createComplaintEmployee(Request $request)
     {
         try{
-
             $data = json_decode($request->input('complaint_model'));
 
             if(empty($data->project_id)){
@@ -395,7 +394,7 @@ class ComplainController extends Controller
             $title = "ICare";
             $body = "Employee membuat complaint baru";
             $notifData = array(
-                "complaint_id" => $newComplaint->id,
+                "complaint_model" => $newComplaintDetail,
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
@@ -486,9 +485,9 @@ class ComplainController extends Controller
             //Send notification to
             //Customer
             $title = "ICare";
-            $body = "Employee me-reply complaint ".$complaint->subject;
+            $body = "Employee reply complaint ".$complaint->subject;
             $data = array(
-                "complaint_id" => $complaint->id,
+                "complaint_model" => $newComplaintDetail,
             );
             //Push Notification to customer App.
             FCMNotification::SendNotification($user->id, 'customer', $title, $body, $data);
@@ -589,10 +588,15 @@ class ComplainController extends Controller
                 ->limit(10)
                 ->get();
 
-            if($customerComplaints->count() == 0){
-                return Response::json("Saat ini belum Ada complaint", 482);
-            }
             $complaintModels = collect();
+            if($customerComplaints->count() == 0){
+                if($skip == 0){
+                    return Response::json("Saat ini belum Ada complaint", 482);
+                }
+                else{
+                    return Response::json($complaintModels, 200);
+                }
+            }
 
             foreach($customerComplaints as $customerComplaint){
                 $complaintImageDBs = $customerComplaint->complaint_header_images;
