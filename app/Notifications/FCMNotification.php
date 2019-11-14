@@ -22,44 +22,52 @@ use Illuminate\Support\Facades\Log;
 class FCMNotification
 {
     public static function SaveToken($userId, $token, $type){
-        if($type == 'user'){
-            $isExistToken = FcmTokenUser::where('user_id', $userId)->first();
-            if(!empty($isExistToken)){
-                $isExistToken->token = $token;
-                $isExistToken->save();
+        try{
+//            Log::info("FCMNotification - SaveToken data = ".$userId.", type = ".$type);
+            if($type == 'user'){
+                $isExistToken = FcmTokenUser::where('user_id', $userId)->first();
+                if(!empty($isExistToken)){
+                    $isExistToken->token = $token;
+                    $isExistToken->save();
+                }
+                else{
+                    $fcmToken = FcmTokenUser::create([
+                        'user_id' => $userId,
+                        'token' => $token
+                    ]);
+                }
+            }
+            else if($type == 'customer'){
+                $isExistToken = FcmTokenCustomer::where('customer_id', $userId)->first();
+                if(!empty($isExistToken)){
+                    $isExistToken->token = $token;
+                    $isExistToken->save();
+                }
+                else{
+                    $fcmToken = FcmTokenCustomer::create([
+                        'customer_id' => $userId,
+                        'token' => $token
+                    ]);
+                }
             }
             else{
-                $fcmToken = FcmTokenUser::create([
-                    'user_id' => $userId,
-                    'token' => $token
-                ]);
+                $isExistToken = FcmTokenAdmin::where('user_admin_id', $userId)->first();
+                if(!empty($isExistToken)){
+                    $isExistToken->token = $token;
+                    $isExistToken->save();
+                }
+                else{
+                    $fcmToken = FcmTokenAdmin::create([
+                        'user_admin_id' => $userId,
+                        'token' => $token
+                    ]);
+                }
             }
+//            Log::info("FCMNotification - SaveToken success, user = ".$userId.", type = ".$type);
         }
-        else if($type == 'customer'){
-            $isExistToken = FcmTokenCustomer::where('customer_id', $userId)->first();
-            if(!empty($isExistToken)){
-                $isExistToken->token = $token;
-                $isExistToken->save();
-            }
-            else{
-                $fcmToken = FcmTokenCustomer::create([
-                    'customer_id' => $userId,
-                    'token' => $token
-                ]);
-            }
-        }
-        else{
-            $isExistToken = FcmTokenAdmin::where('user_admin_id', $userId)->first();
-            if(!empty($isExistToken)){
-                $isExistToken->token = $token;
-                $isExistToken->save();
-            }
-            else{
-                $fcmToken = FcmTokenAdmin::create([
-                    'user_admin_id' => $userId,
-                    'token' => $token
-                ]);
-            }
+        catch (\Exception $exception){
+//            dd($exception);
+            Log::error("FCMNotification - SaveToken Error: ". $exception);
         }
     }
 
@@ -83,10 +91,10 @@ class FCMNotification
                 $token = $user->token;
                 $data = array(
                     "to" => $token,
-                    "notification" => [
-                        "title"=> $title,
-                        "body"=> $body,
-                    ],
+//                    "notification" => [
+//                        "title"=> $title,
+//                        "body"=> $body,
+//                    ],
                     "data" => $notifData,
                 );
                 $data_string = json_encode($data);
@@ -103,7 +111,7 @@ class FCMNotification
                 ]);
                 $responseJSON = json_decode($response->getBody());
                 //dd($responseJSON);
-                Log::info("FCMNotification - SendNotification sent success");
+//                Log::info("FCMNotification - SendNotification sent success");
 
                 return $responseJSON->results[0]->message_id;
             }

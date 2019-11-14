@@ -7,6 +7,7 @@ use App\libs\Utilities;
 use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\Complaint;
+use App\Models\ComplaintCategory;
 use App\Models\ComplaintDetail;
 use App\Models\ComplaintHeaderImage;
 use App\Models\Employee;
@@ -35,6 +36,13 @@ class ComplainController extends Controller
      * @return JsonResponse
      */
 
+
+    public function complaintCategories(){
+        $categories = ComplaintCategory::all();
+
+        return $categories;
+    }
+
     public function createComplaintCustomer(Request $request)
     {
         try{
@@ -48,6 +56,9 @@ class ComplainController extends Controller
 
             if(empty($data->project_id)){
                 return response()->json("Project ID harus terisi", 400);
+            }
+            if(empty($data->category_id)){
+                return response()->json("Category ID harus terisi", 400);
             }
             if(empty($data->subject)){
                 return response()->json("Subject harus terisi", 400);
@@ -93,6 +104,7 @@ class ComplainController extends Controller
             //create customer complaint
             $newComplaint = Complaint::create([
                 'code'              => $complainCode,
+                'category_id'       => $data->category_id,
                 'project_id'        => $data->project_id,
                 'customer_id'       => $customer->id,
                 'customer_name'     => $customer->name,
@@ -153,13 +165,26 @@ class ComplainController extends Controller
 
             //Update auto number
             Utilities::UpdateTransactionNumber($prepend);
-
+            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
+            $customerComplaintDetailModel = ([
+                'customer_id'       => $newComplaintDetail->customer_id,
+                'customer_name'     => $newComplaintDetail->customer->name,
+                'customer_avatar'    => asset('storage/customers/'. $newComplaintDetail->customer->image_path),
+                'employee_id'       => null,
+                'employee_name'     => "",
+                'employee_avatar'    => "",
+                'message'           => $newComplaintDetail->message,
+                'image'             => $messageImage,
+                'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+            ]);
             //Send notification to
             //Employee
             $title = "ICare";
             $body = "Customer membuat complaint baru";
             $notifData = array(
-                "complaint_model" => $newComplaintDetail,
+                "type_id" => 301,
+                "complaint_id" => $newComplaint->id,
+                "complaint_detail_model" => $customerComplaintDetailModel,
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
@@ -261,7 +286,9 @@ class ComplainController extends Controller
             $title = "ICare";
             $body = "Customer reply complaint ".$complaint->subject;
             $data = array(
-                "complaint_model" => $newComplaintDetail,
+                "type_id" => 302,
+                "complaint_id" => $complaint->id,
+                "complaint_detail_model" => $customerComplaintDetailModel,
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
@@ -288,6 +315,9 @@ class ComplainController extends Controller
 
             if(empty($data->project_id)){
                 return response()->json("Project ID harus terisi", 400);
+            }
+            if(empty($data->category_id)){
+                return response()->json("Category ID harus terisi", 400);
             }
             if(empty($data->subject)){
                 return response()->json("Subject harus terisi", 400);
@@ -330,6 +360,7 @@ class ComplainController extends Controller
             //create customer complaint
             $newComplaint = Complaint::create([
                 'code'              => $complainCode,
+                'category_id'       => $data->category_id,
                 'project_id'        => $data->project_id,
                 'employee_id'       => $employee->id,
                 'customer_name'     => $employee->first_name." ".$employee->last_name,
@@ -389,12 +420,26 @@ class ComplainController extends Controller
             //Update auto number
             Utilities::UpdateTransactionNumber($prepend);
 
+            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
+            $employeeComplaintDetailModel = ([
+                'customer_id'       => null,
+                'customer_name'     => "",
+                'customer_avatar'    => "",
+                'employee_id'       => $newComplaintDetail->employee_id,
+                'employee_name'     => $newComplaintDetail->employee->first_name." ".$newComplaintDetail->employee->last_name,
+                'employee_avatar'    => asset('storage/employees/'. $newComplaintDetail->employee->image_path),
+                'message'           => $newComplaintDetail->message,
+                'image'             => $messageImage,
+                'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+            ]);
             //Send notification to
             //Employee
             $title = "ICare";
             $body = "Employee membuat complaint baru";
             $notifData = array(
-                "complaint_model" => $newComplaintDetail,
+                "type_id" => 301,
+                "complaint_id" => $newComplaint->id,
+                "complaint_detail_model" => $employeeComplaintDetailModel,
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
@@ -487,7 +532,9 @@ class ComplainController extends Controller
             $title = "ICare";
             $body = "Employee reply complaint ".$complaint->subject;
             $data = array(
-                "complaint_model" => $newComplaintDetail,
+                "type_id" => 302,
+                "complaint_id" => $complaint->id,
+                "complaint_detail_model" => $employeeComplaintDetailModel,
             );
             //Push Notification to customer App.
             FCMNotification::SendNotification($user->id, 'customer', $title, $body, $data);
@@ -543,6 +590,7 @@ class ComplainController extends Controller
                 }
                 $customerComplaintModel = collect([
                     'id'                    => $customerComplaint->id,
+//                    'category_id'           => $customerComplaint->complaint_categories->description,
                     'project_id'            => $customerComplaint->project_id,
                     'project_name'          => $customerComplaint->project->name,
                     'customer_id'           => $customerComplaint->customer_id,
@@ -607,6 +655,7 @@ class ComplainController extends Controller
                 }
                 $customerComplaintModel = collect([
                     'id'                    => $customerComplaint->id,
+//                    'category_id'           => $customerComplaint->complaint_categories->description,
                     'project_id'            => $customerComplaint->project_id,
                     'project_name'          => $customerComplaint->project->name,
                     'customer_id'           => $customerComplaint->customer_id,
@@ -648,6 +697,7 @@ class ComplainController extends Controller
             }
             $customerComplaintModel = collect([
                 'id'                    => $complaint->id,
+//                'category_id'           => $complaint->complaint_categories->description,
                 'project_id'            => $complaint->project_id,
                 'project_name'          => $complaint->project->name,
                 'customer_id'           => $complaint->customer_id,

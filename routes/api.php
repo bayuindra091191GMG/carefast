@@ -28,6 +28,8 @@ Route::post('/register/exist/email', 'Api\RegisterController@isEmailExist');
 Route::post('/register/exist/phone', 'Api\RegisterController@isPhoneExist');
 
 Route::post('/places/get/qr-code', 'Api\PlaceController@qrCode');
+Route::get('/complaint-categories', 'Api\ComplainController@complaintCategories');
+
 //User Management
 //Route::group(['namespace' => 'Api', 'middleware' => 'api', 'prefix' => 'user'], function () {
 Route::middleware('auth:api')->prefix('user')->group(function(){

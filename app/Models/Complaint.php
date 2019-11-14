@@ -16,6 +16,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $id
  * @property string $code
  * @property int $project_id
+ * @property int $category_id
  * @property int $customer_id
  * @property int $employee_id
  * @property int $employee_handler_id
@@ -34,6 +35,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \App\Models\EmployeeRole $employee_role
  * @property \App\Models\Customer $customer
  * @property \App\Models\Project $project
+ * @property \App\Models\ComplaintCategory $complaint_categories
  * @property \App\Models\Status $status
  * @property \Illuminate\Database\Eloquent\Collection $complaint_absent_histories
  * @property \Illuminate\Database\Eloquent\Collection $complaint_details
@@ -45,6 +47,7 @@ class Complaint extends Eloquent
 {
 	protected $casts = [
 		'project_id' => 'int',
+		'category_id' => 'int',
 		'customer_id' => 'int',
 		'employee_id' => 'int',
 		'employee_handler_id' => 'int',
@@ -101,6 +104,11 @@ class Complaint extends Eloquent
 	public function customer()
 	{
 		return $this->belongsTo(\App\Models\Customer::class);
+	}
+
+	public function complaint_categories()
+	{
+		return $this->belongsTo(\App\Models\ComplaintCategory::class);
 	}
 
 	public function project()
