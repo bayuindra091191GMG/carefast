@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Complaint;
+use App\Models\ComplaintCategory;
 use App\Models\Project;
 use App\Transformer\ComplaintTransformer;
 use Carbon\Carbon;
@@ -24,6 +25,7 @@ class ComplaintController extends Controller
         try{
             $filterDateStart = Carbon::today()->subMonths(1)->format('d M Y');
             $filterDateEnd = Carbon::today()->format('d M Y');
+            $filterCategory = 0;
             $filterProject = 0;
             $filterStatus = 0;
 
@@ -38,6 +40,9 @@ class ComplaintController extends Controller
                     $filterDateEnd = $dateEndDecoded;
                 }
             }
+            if($request->category_id != null){
+                $filterCategory = $request->category_id;
+            }
             if($request->project_id != null){
                 $filterProject = $request->project_id;
             }
@@ -45,13 +50,16 @@ class ComplaintController extends Controller
                 $filterStatus = $request->status_id;
             }
 
-            $projects = Project::where('status_id', 1)->get();
+            $projects = Project::where('status_id', 1)->orderBy('name')->get();
+            $categories = ComplaintCategory::all();
             $data = [
-                'projects'   => $projects,
-                'filterDateStart'   => $filterDateStart,
-                'filterDateEnd'     => $filterDateEnd,
-                'filterProject'     => $filterProject,
-                'filterStatus'     => $filterStatus
+                'projects'              => $projects,
+                'categories'            => $categories,
+                'filterDateStart'       => $filterDateStart,
+                'filterDateEnd'         => $filterDateEnd,
+                'filterCategory'        => $filterCategory,
+                'filterProject'         => $filterProject,
+                'filterStatus'          => $filterStatus
             ];
 
             if($request->type == "customers"){
@@ -77,6 +85,7 @@ class ComplaintController extends Controller
         $end = Carbon::createFromFormat('d M Y', $request->input('date_end'), 'Asia/Jakarta');
         $start->subDays(1);
         $end->addDays(1);
+        $categoryId = $request->input('category_id');
         $projectId = $request->input('project_id');
         $statusId = $request->input('status_id');
 
@@ -88,6 +97,9 @@ class ComplaintController extends Controller
         }
         if($projectId != 0) {
             $complaints = $complaints->where('project_id', $projectId);
+        }
+        if($categoryId != 0) {
+            $complaints = $complaints->where('category_id', $categoryId);
         }
 
         return DataTables::of($complaints)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Imports\CustomerImport;
 use App\Imports\InitialDataImport;
 use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
@@ -88,15 +89,17 @@ class HomeController extends Controller
     public function importExcel(Request $request){
         try{
             $excel = request()->file('excel');
-            Excel::import(new InitialDataImport(), $excel);
+//            Excel::import(new InitialDataImport(), $excel);
+            Excel::import(new CustomerImport(), $excel);
 
             Session::flash('success', 'Berhasil Import Data!');
             return redirect(route('admin.import.form'));
         }
         catch (\Exception $ex){
+            dd($ex);
             Log::error('Frontend/HomeController - importExcel error EX: '. $ex);
 
-            Session::flash('success', 'Berhasil Import Data!');
+            Session::flash('success', 'Gagal Import Data!');
             return redirect(route('admin.import.form'));
         }
     }

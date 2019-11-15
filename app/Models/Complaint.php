@@ -65,6 +65,7 @@ class Complaint extends Eloquent
 	protected $fillable = [
 		'code',
 		'project_id',
+		'category_id',
 		'customer_id',
 		'employee_id',
 		'employee_handler_id',

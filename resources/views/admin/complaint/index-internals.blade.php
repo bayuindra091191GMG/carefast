@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-9">
+                    <div class="col-12">
                         <form class="form-horizontal" style="margin-bottom: 10px;">
                             <div class="row">
                                 <div class="form-group pt-2 ml-3">
@@ -24,21 +24,30 @@
                                     <input id="date_end" type="text" class="form-control" value="{{ $filterDateEnd }}">
                                 </div>
                                 <div class="form-group pt-2 ml-3">
+                                    <label for="project_id">Project:</label>
+                                    <select class="select2 form-control custom-select" id="project_id" style="width: 100%; height:36px;">
+                                        <option value="0">All</option>
+                                        @foreach($projects as $project)
+                                            <option value="{{ $project->id }}" @if($project->id == $filterProject) selected @endif > {{ $project->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group pt-2 ml-3">
+                                    <label for="category_id">Kategori Komplain:</label>
+                                    <select class="select2 form-control custom-select" id="category_id" style="width: 100%; height:36px;">
+                                        <option value="0">All</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}" @if($category->id == $filterCategory) selected @endif > {{ $category->description }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group pt-2 ml-3">
                                     <label for="status_id">Status:</label>
                                     <select class="select2 form-control custom-select" id="status_id" style="width: 100%; height:36px;">
                                         <option value="0" @if($filterStatus == 0) selected @endif>All</option>
                                         <option value="10" @if($filterStatus == 10) selected @endif>BELUM DIPROSES</option>
                                         <option value="11" @if($filterStatus == 11) selected @endif>SEDANG DIPROSES</option>
                                         <option value="12" @if($filterStatus == 12) selected @endif>TUTUP</option>
-                                    </select>
-                                </div>
-                                <div class="form-group pt-2 ml-3">
-                                    <label for="project_id">Project Name:</label>
-                                    <select class="select2 form-control custom-select" id="project_id" style="width: 100%; height:36px;">
-                                        <option value="0">All</option>
-                                        @foreach($projects as $project)
-                                            <option value="{{ $project->id }}" @if($project->id == $filterProject) selected @endif > {{ $project->name }}</option>
-                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group ml-3" style="padding-top: 1.8rem !important;">
@@ -104,10 +113,11 @@
             let dateStart = $('#date_start').val();
             let dateEnd = $('#date_end').val();
             let projectId = $('#project_id').val();
+            let categoryId = $('#category_id').val();
             let statusId = $('#status_id').val();
 
             let url = '{{ route('admin.complaint.index', ['type' => 'internals']) }}';
-            window.location = url + '&date_start=' + dateStart + "&date_end=" + dateEnd + "&project_id=" + projectId + "&status_id=" + statusId;
+            window.location = url + '&date_start=' + dateStart + "&date_end=" + dateEnd + "&project_id=" + projectId + "&category_id=" + categoryId + "&status_id=" + statusId;
         });
 
         $(document).on("click", "#btn_reset", function(){
@@ -126,6 +136,7 @@
                     'date_start': '{{ $filterDateStart }}',
                     'date_end': '{{ $filterDateEnd }}',
                     'project_id': '{{ $filterProject }}',
+                    'category_id': '{{ $filterCategory }}',
                     'status_id': '{{ $filterStatus }}',
                 }
             },
