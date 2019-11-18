@@ -55,6 +55,11 @@ return [
             'driver' => 'passport',
             'provider' => 'customers',
         ],
+
+        'external' => [
+            'driver' => 'passport',
+            'provider' => 'externals',
+        ],
     ],
 
     /*
@@ -88,6 +93,11 @@ return [
         'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
+        ],
+
+        'externals' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\External::class,
         ],
 
         // 'users' => [

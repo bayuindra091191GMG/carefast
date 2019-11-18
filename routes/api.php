@@ -19,6 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::middleware('auth:api')->get('/users', 'Api\UserController@index');
 Route::get('/noauth/users', 'Api\UserController@index');
+Route::post('/integration/employees', 'Api\IntegrationController@employees');
+Route::post('/integration/projects', 'Api\IntegrationController@projects');
+Route::post('/integration/job_assignments', 'Api\IntegrationController@jobAssignments');
 
 // Register
 Route::post('/register', 'Api\RegisterController@register');
