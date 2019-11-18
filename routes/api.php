@@ -13,15 +13,20 @@ use Illuminate\Http\Request;
 |
 */
 
+// External API (For InSys)
+Route::middleware('auth:external')->prefix('integration')->group(function() {
+    Route::post('/employees', 'Api\IntegrationController@employees');
+    Route::post('/projects', 'Api\IntegrationController@projects');
+    Route::post('/job_assignments', 'Api\IntegrationController@jobAssignments');
+});
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 Route::middleware('auth:api')->get('/users', 'Api\UserController@index');
 Route::get('/noauth/users', 'Api\UserController@index');
-Route::post('/integration/employees', 'Api\IntegrationController@employees');
-Route::post('/integration/projects', 'Api\IntegrationController@projects');
-Route::post('/integration/job_assignments', 'Api\IntegrationController@jobAssignments');
+
 
 // Register
 Route::post('/register', 'Api\RegisterController@register');
