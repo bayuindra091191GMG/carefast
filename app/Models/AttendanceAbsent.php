@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Mon, 18 Nov 2019 15:41:29 +0700.
+ * Date: Mon, 18 Nov 2019 16:05:52 +0700.
  */
 
 namespace App\Models;
@@ -14,7 +14,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * 
  * @property int $id
  * @property int $employee_id
- * @property int $place_id
+ * @property int $project_id
  * @property \Carbon\Carbon $date
  * @property int $status_id
  * @property \Carbon\Carbon $created_at
@@ -23,6 +23,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $updated_by
  * 
  * @property \App\Models\Employee $employee
+ * @property \App\Models\Project $project
  *
  * @package App\Models
  */
@@ -30,7 +31,7 @@ class AttendanceAbsent extends Eloquent
 {
 	protected $casts = [
 		'employee_id' => 'int',
-		'place_id' => 'int',
+		'project_id' => 'int',
 		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
@@ -42,7 +43,7 @@ class AttendanceAbsent extends Eloquent
 
 	protected $fillable = [
 		'employee_id',
-		'place_id',
+		'project_id',
 		'date',
 		'status_id',
 		'created_by',
@@ -52,5 +53,10 @@ class AttendanceAbsent extends Eloquent
 	public function employee()
 	{
 		return $this->belongsTo(\App\Models\Employee::class);
+	}
+
+	public function project()
+	{
+		return $this->belongsTo(\App\Models\Project::class);
 	}
 }
