@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\Address;
+use App\Models\AttendanceAbsent;
 use App\Models\Configuration;
 use App\Models\Employee;
 use App\Models\Project;
@@ -34,7 +35,7 @@ class IntegrationController extends Controller
             $employees = $request->json()->all();
 
             foreach ($employees as $employee) {
-                if (!DB::table('employees')->where('code', $employee['code'])->any()) {
+                if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
                     $nEmployee = Employee::create([
                         'code' => $employee['code'],
                         'first_name' => $employee['first_name'],
@@ -92,7 +93,7 @@ class IntegrationController extends Controller
             $projects = $request->json()->all();
 
             foreach ($projects as $project) {
-                if (!DB::table('projects')->where('code', $project['code'])->any()) {
+                if (!DB::table('projects')->where('code', $project['code'])->exists()) {
                     Project::create([
                         'code' => $project['code'],
                         'name' => $project['name'],
@@ -137,11 +138,11 @@ class IntegrationController extends Controller
             $projects = $request->json()->all();
 
             foreach ($projects as $project){
-                if(DB::table('projects')->where('code', $project['project_code'])->any()){
+                if(DB::table('projects')->where('code', $project['project_code'])->exists()){
                     $nProject = Project::where('code', $project['project_code'])->first();
 
                     foreach ($project['employee_codes'] as $employee){
-                        if(DB::table('employees')->where('code', $employee)->any()){
+                        if(DB::table('employees')->where('code', $employee)->exists()){
                             $nEmployee = Employee::where('code', $employee)->first();
                             ProjectEmployee::create([
                                 'project_id'        => $nProject->id,
@@ -164,5 +165,44 @@ class IntegrationController extends Controller
                 'error' => $ex
             ], 500);
         }
+    }
+
+    /**
+     * Function to get Attendances with Filters.
+     * @param Request $request
+     * @return
+     */
+    public function getAttendances(Request $request){
+        if(!DB::table('projects')->where('code', $request->project_code)->exists()){
+            return Response::json([
+                'error' => 'Project code not found!'
+            ], 400);
+        }
+
+        if($request->start_date != null && $request->finish_date != null && $request->status != null){
+            $result = AttendanceAbsent::whereHas('project', function($query) use ($request){
+                $query->where('code', $request->project_code);
+            })
+                ->whereBetween('created_at', array($request->start_date.' 00:00:00', $request->finish_date.' 23:59:00'))
+                ->where('status_id', $request->status)
+                ->get();
+        }
+        else if($request->start_date != null && $request->finish_date != null){
+            $result = AttendanceAbsent::whereHas('project', function($query) use ($request){
+                $query->where('code', $request->project_code);
+            })
+                ->whereBetween('created_at', array($request->start_date.' 00:00:00', $request->finish_date.' 23:59:00'))
+                ->get();
+        }
+        else {
+            $result = AttendanceAbsent::whereHas('project', function ($query) use ($request) {
+                $query->where('code', $request->project_code);
+            })->get();
+        }
+
+        return Response::json([
+            'message' => 'Success Getting Attendance Data!',
+            'result'  => $result
+        ], 200);
     }
 }

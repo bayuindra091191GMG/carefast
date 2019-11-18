@@ -18,6 +18,7 @@ Route::middleware('auth:external')->prefix('integration')->group(function() {
     Route::post('/employees', 'Api\IntegrationController@employees');
     Route::post('/projects', 'Api\IntegrationController@projects');
     Route::post('/job_assignments', 'Api\IntegrationController@jobAssignments');
+    Route::get('/attendance', 'Api\IntegrationController@getAttendances');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
