@@ -102,7 +102,15 @@ class IntegrationController extends Controller
                         'description' => $project['description'],
                         'start_date' => $project['start_date'],
                         'finish_date' => $project['finish_date'],
-                        'status_id' => 1
+                        'status_id' => 1,
+                        'customer_id'       => '2#4',
+                        'latitude'          => '-6.1560448',
+                        'longitude'         => '106.79019979999998',
+                        'total_manday'      => 10,
+                        'total_mp_onduty'   => 10,
+                        'total_mp_off'      => 10,
+                        'total_manpower'    => 10,
+                        'total_manpower_used'=> 0,
                     ]);
                 } else {
                     $oProject = Project::where('code', $project['code'])->first();
@@ -173,36 +181,43 @@ class IntegrationController extends Controller
      * @return
      */
     public function getAttendances(Request $request){
-        if(!DB::table('projects')->where('code', $request->project_code)->exists()){
+        try{
+            if(!DB::table('projects')->where('code', $request->project_code)->exists()){
+                return Response::json([
+                    'error' => 'Project code not found!'
+                ], 400);
+            }
+
+            if($request->start_date != null && $request->finish_date != null && $request->status != null){
+                $result = AttendanceAbsent::whereHas('project', function($query) use ($request){
+                    $query->where('code', $request->project_code);
+                })
+                    ->whereBetween('created_at', array($request->start_date.' 00:00:00', $request->finish_date.' 23:59:00'))
+                    ->where('status_id', $request->status)
+                    ->get();
+            }
+            else if($request->start_date != null && $request->finish_date != null){
+                $result = AttendanceAbsent::whereHas('project', function($query) use ($request){
+                    $query->where('code', $request->project_code);
+                })
+                    ->whereBetween('created_at', array($request->start_date.' 00:00:00', $request->finish_date.' 23:59:00'))
+                    ->get();
+            }
+            else {
+                $result = AttendanceAbsent::whereHas('project', function ($query) use ($request) {
+                    $query->where('code', $request->project_code);
+                })->get();
+            }
+
             return Response::json([
-                'error' => 'Project code not found!'
-            ], 400);
+                'message' => 'Success Getting Attendance Data!',
+                'result'  => $result
+            ], 200);
         }
-
-        if($request->start_date != null && $request->finish_date != null && $request->status != null){
-            $result = AttendanceAbsent::whereHas('project', function($query) use ($request){
-                $query->where('code', $request->project_code);
-            })
-                ->whereBetween('created_at', array($request->start_date.' 00:00:00', $request->finish_date.' 23:59:00'))
-                ->where('status_id', $request->status)
-                ->get();
+        catch (\Exception $ex){
+            return Response::json([
+                'error' => $ex
+            ], 500);
         }
-        else if($request->start_date != null && $request->finish_date != null){
-            $result = AttendanceAbsent::whereHas('project', function($query) use ($request){
-                $query->where('code', $request->project_code);
-            })
-                ->whereBetween('created_at', array($request->start_date.' 00:00:00', $request->finish_date.' 23:59:00'))
-                ->get();
-        }
-        else {
-            $result = AttendanceAbsent::whereHas('project', function ($query) use ($request) {
-                $query->where('code', $request->project_code);
-            })->get();
-        }
-
-        return Response::json([
-            'message' => 'Success Getting Attendance Data!',
-            'result'  => $result
-        ], 200);
     }
 }

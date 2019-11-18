@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
+use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\ProjectObject;
 use App\Models\Schedule;
@@ -68,6 +69,44 @@ class EmployeeController extends Controller
                 'message' => "Sorry Something went Wrong!",
                 'ex' => $ex,
             ], 500);
+        }
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getEmployeeCSO(Request $request)
+    {
+        $id = $request->input('id');
+        try{
+            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+            $projectCSOs = ProjectEmployee::where('project_id', $projectEmployee->project_id)
+                ->where('employee_roles_id', 1)
+                ->get();
+            $projectCSOModels = collect();
+            //check if cleaner null
+            if($projectCSOs->count() == 0){
+                return Response::json($projectCSOModels, 200);
+            }
+
+            foreach($projectCSOs as $projectCSO){
+                $employeeImage = empty($projectCSO->employee->image_path) ? null : asset('storage/employees/'. $projectCSO->employee->image_path);
+                $projectCSOModel = ([
+                    'id'       => $projectCSO->employee_id,
+                    'name'     => $projectCSO->employee->first_name." ".$projectCSO->employee->last_name,
+                    'avatar'   => $employeeImage,
+                ]);
+                $projectCSOModels->push($projectCSOModel);
+            }
+
+            return Response::json($projectCSOModels, 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeController - getEmployeeCSO error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
 
