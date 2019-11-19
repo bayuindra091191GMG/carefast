@@ -11,17 +11,18 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class AttendanceAbsent
- * 
+ *
  * @property int $id
  * @property int $employee_id
  * @property int $project_id
  * @property \Carbon\Carbon $date
  * @property int $status_id
+ * @property int $is_done
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
- * 
+ *
  * @property \App\Models\Employee $employee
  * @property \App\Models\Project $project
  *
@@ -33,6 +34,7 @@ class AttendanceAbsent extends Eloquent
 		'employee_id' => 'int',
 		'project_id' => 'int',
 		'status_id' => 'int',
+		'is_done' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
 	];
@@ -45,6 +47,7 @@ class AttendanceAbsent extends Eloquent
 		'employee_id',
 		'project_id',
 		'date',
+		'is_done',
 		'status_id',
 		'created_by',
 		'updated_by'

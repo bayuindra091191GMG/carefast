@@ -33,7 +33,7 @@ class AttendanceAbsentController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function submitCheckin(Request $request)
+    public function absentProcess(Request $request)
     {
         try{
 
@@ -46,14 +46,35 @@ class AttendanceAbsentController extends Controller
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 400);
             }
+            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
+                ->where('project_id', $project->id)
+                ->where('is_done', 0)
+                ->first();
+            //if not exist, checkin absent
+            if(empty($attendanceData)){
+                $newAttendance = AttendanceAbsent::create([
+                    'employee_id'   => $employee->id,
+                    'project_id'    => $project->id,
+                    'is_done'       => 0,
+                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'status_id'     => 6
+                ]);
+            }
+            //else, checkout absent
+            else{
+                $attendanceData->is_done = 1;
+                $attendanceData->save();
 
-            $newAttendance = AttendanceAbsent::create([
-                'employee_id'   => $employee->id,
-                'project_id'   => $project->id,
-                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'status_id'     => 6
-            ]);
-            return Response::json("Berhasil Checkin Absensi", 200);
+                $newAttendance = AttendanceAbsent::create([
+                    'employee_id'   => $employee->id,
+                    'project_id'    => $project->id,
+                    'is_done'       => 1,
+                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'status_id'     => 7
+                ]);
+            }
+
+            return Response::json("Berhasil Proses Absensi", 200);
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceAbsentController - submitCheckin error EX: '. $ex);
@@ -67,30 +88,45 @@ class AttendanceAbsentController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function submitCheckout(Request $request)
+//    public function submitCheckout(Request $request)
+//    {
+//        try{
+//
+//            $userLogin = auth('api')->user();
+//            $user = User::where('phone', $userLogin->phone)->first();
+//            $employee = $user->employee;
+//
+//            $projectCode = Crypt::decryptString($request->input('qr_code'));
+//            $project = Project::where('code', $projectCode)->first();
+//            if(empty($project)){
+//                return Response::json("Project Tidak ditemukan!", 400);
+//            }
+//
+//            $newAttendance = AttendanceAbsent::create([
+//                'employee_id'   => $employee->id,
+//                'project_id'   => $project->id,
+//                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+//                'status_id'     => 7
+//            ]);
+//            return Response::json("Berhasil Check out Absensi", 200);
+//        }
+//        catch (\Exception $ex){
+//            Log::error('Api/AttendanceAbsentController - submitCheckout error EX: '. $ex);
+//            return Response::json("Maaf terjadi kesalahan!", 500);
+//        }
+//    }
+
+    public function getProjectCodeEncrypted(Request $request)
     {
         try{
+            $projectCode = $request->input('project_code');
 
-            $userLogin = auth('api')->user();
-            $user = User::where('phone', $userLogin->phone)->first();
-            $employee = $user->employee;
+            $codeEncrypted = Crypt::encryptString($projectCode);
 
-            $projectCode = Crypt::decryptString($request->input('qr_code'));
-            $project = Project::where('code', $projectCode)->first();
-            if(empty($project)){
-                return Response::json("Project Tidak ditemukan!", 400);
-            }
-
-            $newAttendance = AttendanceAbsent::create([
-                'employee_id'   => $employee->id,
-                'project_id'   => $project->id,
-                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'status_id'     => 7
-            ]);
-            return Response::json("Berhasil Check out Absensi", 200);
+            return Response::json($codeEncrypted, 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/AttendanceAbsentController - submitCheckout error EX: '. $ex);
+            Log::error('Api/AttendanceAbsentController - getProjectCodeEncrypted error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
