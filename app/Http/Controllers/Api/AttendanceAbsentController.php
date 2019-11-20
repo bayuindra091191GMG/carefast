@@ -48,6 +48,7 @@ class AttendanceAbsentController extends Controller
             }
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
+                ->where('status_id', 6)
                 ->where('is_done', 0)
                 ->first();
             //if not exist, checkin absent

@@ -40,6 +40,11 @@ class Customer extends Authenticatable
 {
     use Notifiable, HasMultiAuthApiTokens;
 
+    public function findForPassport($username)
+    {
+        return $this->where('phone', $username)->first();
+    }
+
 	protected $casts = [
 		'id' => 'int',
 		'category_id' => 'int',
