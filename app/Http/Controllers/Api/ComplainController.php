@@ -165,7 +165,10 @@ class ComplainController extends Controller
 
             //Update auto number
             Utilities::UpdateTransactionNumber($prepend);
-            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
+            $complaintheaderImage = ComplaintHeaderImage::where('complaint_id', $newComplaint->id)->first();
+            $messageImage = empty($complaintheaderImage) ? null : asset('storage/complaints/'. $complaintheaderImage->image);
+//            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
+
             $customerComplaintDetailModel = ([
                 'customer_id'       => $newComplaintDetail->customer_id,
                 'customer_name'     => $newComplaintDetail->customer->name,
@@ -184,6 +187,7 @@ class ComplainController extends Controller
             $notifData = array(
                 "type_id" => 301,
                 "complaint_id" => $newComplaint->id,
+                "complaint_subject" => $newComplaint->subject,
                 "complaint_detail_model" => $customerComplaintDetailModel,
             );
             //Push Notification to employee App.
@@ -419,8 +423,10 @@ class ComplainController extends Controller
 
             //Update auto number
             Utilities::UpdateTransactionNumber($prepend);
+            $complaintheaderImage = ComplaintHeaderImage::where('complaint_id', $newComplaint->id)->first();
+            $messageImage = empty($complaintheaderImage) ? null : asset('storage/complaints/'. $complaintheaderImage->image);
+//            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
 
-            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
             $employeeComplaintDetailModel = ([
                 'customer_id'       => null,
                 'customer_name'     => "",
@@ -439,6 +445,7 @@ class ComplainController extends Controller
             $notifData = array(
                 "type_id" => 301,
                 "complaint_id" => $newComplaint->id,
+                "complaint_subject" => $newComplaint->subject,
                 "complaint_detail_model" => $employeeComplaintDetailModel,
             );
             //Push Notification to employee App.
@@ -537,7 +544,9 @@ class ComplainController extends Controller
                 "complaint_detail_model" => $employeeComplaintDetailModel,
             );
             //Push Notification to customer App.
-            FCMNotification::SendNotification($user->id, 'customer', $title, $body, $data);
+            if(!empty($complaint->customer_id)){
+                FCMNotification::SendNotification($complaint->customer_id, 'customer', $title, $body, $data);
+            }
 
             return Response::json($employeeComplaintDetailModel, 200);
         }

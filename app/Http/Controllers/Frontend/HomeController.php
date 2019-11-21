@@ -8,6 +8,8 @@ use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\Complaint;
+use App\Models\ComplaintDetail;
+use App\Models\ComplaintHeaderImage;
 use App\Models\Employee;
 use App\Models\Place;
 use App\Models\ProjectEmployee;
@@ -139,6 +141,91 @@ class HomeController extends Controller
 //        $isSuccess = FCMNotification::SendNotification(1, 'browser', $title, $body, $data);
 
         return $isSuccess;
+    }
+    public function testNotifSendToAndroid(){
+        $newComplaint = Complaint::where('project_id', 1)
+            ->orderBy('date', 'desc')
+            ->first();
+        $newComplaintDetail = ComplaintDetail::where('complaint_id', $newComplaint->id)
+            ->whereNotNull('customer_id')
+            ->orderBy('created_at', 'desc')
+            ->first();
+        $employeeDB = ProjectEmployee::where('project_id', $newComplaint->project_id)
+            ->where('employee_roles_id', '>', 1)
+            ->orderBy('employee_roles_id', 'asc')
+            ->first();
+        $type = 1;
+
+        switch ($type){
+            case 1:
+                $complaintheaderImage = ComplaintHeaderImage::where('complaint_id', $newComplaint->id)->first();
+                $messageImage = empty($complaintheaderImage) ? null : asset('storage/complaints/'. $complaintheaderImage->image);
+//            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
+
+                $customerComplaintDetailModel = ([
+                    'customer_id'       => $newComplaintDetail->customer_id,
+                    'customer_name'     => $newComplaintDetail->customer->name,
+                    'customer_avatar'    => asset('storage/customers/'. $newComplaintDetail->customer->image_path),
+                    'employee_id'       => null,
+                    'employee_name'     => "",
+                    'employee_avatar'    => "",
+                    'message'           => $newComplaintDetail->message,
+                    'image'             => $messageImage,
+                    'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                ]);
+                //Send notification to
+                //Employee
+                $title = "ICare";
+                $body = "Customer membuat complaint baru";
+                $notifData = array(
+                    "type_id" => 301,
+                    "complaint_id" => $newComplaint->id,
+                    "complaint_subject" => $newComplaint->subject,
+                    "complaint_detail_model" => $customerComplaintDetailModel,
+                );
+                //Push Notification to employee App.
+                $ProjectEmployees = ProjectEmployee::where('project_id', $newComplaint->project_id)
+                    ->where('employee_roles_id', $employeeDB->employee_roles_id)
+                    ->get();
+                if($ProjectEmployees->count() >= 0){
+                    foreach ($ProjectEmployees as $ProjectEmployee){
+                        $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                        $isSuccess = FCMNotification::SendNotification($user->id, 'user', $title, $body, $notifData);
+                    }
+                }
+                return $isSuccess;
+                break;
+            case 2:
+                $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
+                $employeeComplaintDetailModel = ([
+                    'customer_id'       => null,
+                    'customer_name'     => "",
+                    'customer_avatar'    => "",
+                    'employee_id'       => $newComplaintDetail->employee_id,
+                    'employee_name'     => $newComplaintDetail->employee->first_name." ".$newComplaintDetail->employee->last_name,
+                    'employee_avatar'    => asset('storage/employees/'. $newComplaintDetail->employee->image_path),
+                    'message'           => $newComplaintDetail->message,
+                    'image'             => $messageImage,
+                    'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                ]);
+
+                //Send notification to
+                //Customer
+                $title = "ICare";
+                $body = "Employee reply complaint ".$newComplaint->subject;
+                $data = array(
+                    "type_id" => 302,
+                    "complaint_id" => $newComplaint->id,
+                    "complaint_detail_model" => $employeeComplaintDetailModel,
+                );
+                $isSuccess = "false";
+                //Push Notification to customer App.
+                if(!empty($newComplaint->customer_id)){
+                    $isSuccess = FCMNotification::SendNotification($newComplaint->customer_id, 'customer', $title, $body, $data);
+                }
+                return $isSuccess;
+                break;
+        }
     }
     public function testEmail(){
         try{
