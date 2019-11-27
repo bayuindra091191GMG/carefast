@@ -111,21 +111,91 @@ class AttendanceController extends Controller
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
+//    public function submitCheckin(Request $request)
+//    {
+//        try{
+//
+//            $data = json_decode($request->input('checkin_model'));
+//            $userLogin = auth('api')->user();
+//            $user = User::where('phone', $userLogin->phone)->first();
+//            $employee = $user->employee;
+//
+////            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+////                ->where('project_employee_id', $projectEmployee->id)
+////                ->first();
+//            //Check Schedule
+//            $date = Carbon::now('Asia/Jakarta');
+//            $time = $date->format('H:i:s');
+//            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+//            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+//                ->where('project_employee_id', $projectEmployee->id)
+////                ->whereTime('start', '<=', $time)
+////                ->whereTime('finish', '>=', $time)
+//                ->first();
+//            $place = Place::find($schedule->place_id);
+//
+////            $isPlace = Utilities::checkingQrCode($data->qr_code);
+////            if(!$isPlace){
+//
+//            if($place->qr_code != $data->qr_code){
+//                return Response::json("Tempat yang discan tidak tepat!", 400);
+//            }
+//
+//            if($schedule == null){
+//                return Response::json("Jadwal Tidak ditemukan!", 400);
+//            }
+//
+//            //Check if Check in or Check out
+//            //Check in  = 1
+//            //Check out = 2
+//            $message = "";
+//            if($request->hasFile('image')){
+//                $newAttendance = Attendance::create([
+//                    'employee_id'   => $employee->id,
+//                    'schedule_id'   => $schedule->id,
+//                    'place_id'      => $place->id,
+//                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+//                    'is_done'       => 0,
+//                    'status_id'     => 6
+//                ]);
+//
+//                //Upload Image
+//                //Creating Path Everyday
+//                $today = Carbon::now('Asia/Jakarta');
+//                $todayStr = $today->format('l d-m-y');
+//                $publicPath = 'storage/checkins/'. $todayStr;
+//                if(!File::isDirectory($publicPath)){
+//                    File::makeDirectory(public_path($publicPath), 0777, true, true);
+//                }
+//
+//                $image = $request->file('image');
+//                $avatar = Image::make($image);
+//                $extension = $image->extension();
+//                $filename = $employee->first_name . ' ' . $employee->last_name . '_checkin_'. $newAttendance->id . '_' .
+//                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+//                $avatar->save(public_path($publicPath ."/". $filename));
+//
+//                $newAttendance->image_path = $filename;
+//                $newAttendance->save();
+//                $message = "Berhasil Check in";
+//                return Response::json($message, 200);
+//            }
+//            else{
+//                return Response::json('Harus mengupload Gambar!', 400);
+//            }
+//
+//        }
+//        catch (\Exception $ex){
+//            Log::error('Api/AttendanceController - submitCheckin error EX: '. $ex);
+//            return Response::json("Maaf terjadi kesalahan!", 500);
+//        }
+//    }
     public function submitCheckout(Request $request)
     {
         try{
-//            $rules = array(
-//                'type'      => 'required',
-//                'qr_code'   => 'required'
-//            );
 
-//            $validator = Validator::make($data, $rules);
-//            if ($validator->fails()) {
-//                return response()->json($validator->messages(), 400);
-//            }
-
-            Log::info('qr_code: '. $request->input('qr_code'));
-            Log::info('notes: '. $request->input('notes'));
+//            Log::info('qr_code: '. $request->input('qr_code'));
+//            Log::info('notes: '. $request->input('notes'));
 
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
@@ -199,6 +269,85 @@ class AttendanceController extends Controller
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
+//    public function submitCheckout(Request $request)
+//    {
+//        try{
+//
+//            Log::info('qr_code: '. $request->input('qr_code'));
+//            Log::info('notes: '. $request->input('notes'));
+//
+//            $userLogin = auth('api')->user();
+//            $user = User::where('phone', $userLogin->phone)->first();
+//            $employee = $user->employee;
+//
+//            $attendance = Attendance::where('employee_id', $employee->id)
+//                ->where('status_id', 6)
+//                ->where('is_done', 0)
+//                ->first();
+//            if(empty($attendance)){
+//                return Response::json("Tidak ditemukan Jadwal Sesuai!", 400);
+//            }
+//            $schedule = Schedule::find($attendance->schedule_id);
+//            $place = Place::find($attendance->place_id);
+//
+////            $isPlace = Utilities::checkingQrCode($request->input('qr_code'));
+////            if(!$isPlace){
+//            if($place->qr_code != $request->input('qr_code')){
+//                return Response::json("Tempat yang discan tidak tepat!", 400);
+//            }
+//
+//            if($schedule == null){
+//                return Response::json("Jadwal Tidak ditemukan!", 400);
+//            }
+//
+//            //Check if Check in or Check out
+//            //Check in  = 1
+//            //Check out = 2
+//            if(!$request->filled('schedule_details')){
+//                return Response::json("Tidak ada data Dac yang diterima!", 500);
+//            }
+//
+//            $newAttendance = Attendance::create([
+//                'employee_id'   => $employee->id,
+//                'schedule_id'   => $schedule->id,
+//                'place_id'      => $place->id,
+//                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+//                'is_done'       => 1,
+//                'notes'         => $request->input('notes'),
+//                'status_id'     => 7
+//            ]);
+//            $attendance->is_done = 1;
+//            $attendance->save();
+//
+//            //Create Attendance Detail
+//            $submittedDac = $request->input('schedule_details');
+//            $i=0;
+//
+//            //Done = 8
+//            //Not Done =9
+////            $scheduleDetails = ScheduleDetail::where('schedule_id', $schedule->id)->get();
+//            foreach ($submittedDac as $dac){
+//
+//                AttendanceDetail::create([
+//                    'attendance_id' => $newAttendance->id,
+//                    'unit'          => $dac['object_name'],
+//                    'action'        => $dac['action_name'],
+//                    'status_id'     => $dac['status'],
+//                    'created_at'    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+//                ]);
+//                $i++;
+//            }
+//
+//            //Add to the DAC work
+//            $message = "Berhasil Check out";
+//            return Response::json($message, 200);
+//
+//        }
+//        catch (\Exception $ex){
+//            Log::error('Api/AttendanceController - submitCheckout error EX: '. $ex);
+//            return Response::json("Maaf terjadi kesalahan!", 500);
+//        }
+//    }
 
     public function checkinChecking(Request $request){
         try{
