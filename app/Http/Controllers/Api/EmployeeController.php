@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Action;
 use App\Models\Employee;
 use App\Models\Project;
+use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
 use App\Models\ProjectObject;
 use App\Models\Schedule;
@@ -124,29 +126,37 @@ class EmployeeController extends Controller
         $id = $employee->id;
         try{
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
-            $projectCSOs = ProjectEmployee::where('project_id', $projectEmployee->project_id)
-                ->where('employee_roles_id', 1)
+            $projectActivities = ProjectActivity::where('project_id', $projectEmployee->project_id)
                 ->get();
-            $projectCSOModels = collect();
+            $projectActivityModels = collect();
             //check if cleaner null
-            if($projectCSOs->count() == 0){
-                return Response::json($projectCSOModels, 200);
+            if($projectActivities->count() == 0){
+                return Response::json($projectActivityModels, 200);
             }
 
-            foreach($projectCSOs as $projectCSO){
-                $employeeImage = empty($projectCSO->employee->image_path) ? null : asset('storage/employees/'. $projectCSO->employee->image_path);
+            foreach($projectActivities as $projectActivity){
+                $actionName = "";
+                if(!empty($projectActivity->action_id)){
+                    $actionList = explode('#', $projectActivity->action_id);
+                    foreach ($actionList as $action){
+                        if(!empty($action)){
+                            $action = Action::find($action);
+                            $actionName .= $action->name. ", ";
+                        }
+                    }
+                }
                 $projectCSOModel = ([
-                    'id'       => $projectCSO->employee_id,
-                    'name'     => $projectCSO->employee->first_name." ".$projectCSO->employee->last_name,
-                    'avatar'   => $employeeImage,
+                    'id'       => $projectActivity->employee_id,
+                    'plot_name'     => $projectActivity->place->name." | ".$projectActivity->plotting_name,
+                    'activities'   => $actionName,
                 ]);
-                $projectCSOModels->push($projectCSOModel);
+                $projectActivityModels->push($projectCSOModel);
             }
 
-            return Response::json($projectCSOModels, 200);
+            return Response::json($projectActivityModels, 200);
         }
         catch(\Exception $ex){
-            Log::error('Api/EmployeeController - getEmployeeCSO error EX: '. $ex);
+            Log::error('Api/EmployeeController - getPlottings error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

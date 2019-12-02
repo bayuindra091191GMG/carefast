@@ -79,7 +79,7 @@
                                                                     Jam Berakhir
                                                                 </th>
                                                                 <th class="text-center" width="30">
-                                                                    Object / subobject
+                                                                    Object / Sub Object
                                                                 </th>
                                                                 <th class="text-center" width="30">
                                                                     Action

@@ -176,9 +176,38 @@ class ActivityController extends Controller
             return redirect()->route('admin.project.activity.show', ['id' => $request->input('project_id')]);
         }
         catch (\Exception $ex){
-            dd($ex);
+//            dd($ex);
             Log::error('Admin/activity/ActivityController - store error EX: '. $ex);
             return "Something went wrong! Please contact administrator!" . $ex;
+        }
+    }
+
+    public function edit(int $id)
+    {
+        $projectActivity = ProjectActivity::find($id);
+        $project = Project::find($projectActivity->project_id);
+        if(empty($projectActivity)){
+            return redirect()->back();
+        }
+
+        $data = [
+            'projectActivity'           => $projectActivity,
+            'project'           => $project,
+        ];
+//        dd($data);
+        return view('admin.project.activity.edit')->with($data);
+    }
+
+    public function update(Request $request, int $id){
+        try{
+
+            Session::flash('success', 'Sukses mengubah data plotting!');
+            return redirect()->route('admin.project.activity.show',['id' => $id]);
+
+        }
+        catch (\Exception $ex){
+            Log::error('Admin/activity/ActivityController - update error EX: '. $ex);
+            return "Something went wrong! Please contact administrator!";
         }
     }
 }
