@@ -275,6 +275,13 @@ Route::prefix('admin')->group(function(){
     Route::post('/project/employee/store/{project_id}', 'Admin\project\ProjectEmployeeController@store')->name('admin.project.employee.store');
     Route::post('/project/employee/update/{project_id}', 'Admin\project\ProjectEmployeeController@update')->name('admin.project.employee.update');
 
+    // Project Plotting
+    Route::get('/project/activity/show/{id}', 'Admin\project\ActivityController@show')->name('admin.project.activity.show');
+    Route::get('/project/activity/create/{id}', 'Admin\project\ActivityController@create')->name('admin.project.activity.create');
+    Route::get('/project/activity/edit/{id}', 'Admin\project\ActivityController@edit')->name('admin.project.activity.edit');
+    Route::post('/project/activity/store', 'Admin\project\ActivityController@store')->name('admin.project.activity.store');
+    Route::post('/project/activity/update/{id}', 'Admin\project\ActivityController@update')->name('admin.project.activity.update');
+
     // Project Schedule
 //    Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectScheduleController@show')->name('admin.project.schedule.show');
 //    Route::get('/project/schedule/create/{employee_id}', 'Admin\project\ProjectScheduleController@create')->name('admin.project.schedule.create');
@@ -336,6 +343,7 @@ Route::get('/datatables-attendances', 'Admin\AttendanceController@getIndex')->na
 Route::get('/datatables-complaint-customers', 'Admin\ComplaintController@getIndexCustomers')->name('datatables.complaint-customers');
 Route::get('/datatables-complaint-internals', 'Admin\ComplaintController@getIndexInternals')->name('datatables.complaint-internals');
 Route::get('/datatables-complaint-others', 'Admin\ComplaintController@getIndexOthers')->name('datatables.complaint-others');
+Route::get('/datatables-project-activity', 'Admin\project\ActivityController@getIndexActivities')->name('datatables.project-activity');
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
@@ -350,6 +358,7 @@ Route::get('/select-cleaner-employees', 'Admin\EmployeeController@getCleanerEmpl
 Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('select.employees');
 Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('select.employees');
 Route::get('/select-projectObjects', 'Admin\project\ProjectObjectController@getProjectObjects2')->name('select.projectObjects');
+Route::get('/select-projectObjectActivities', 'Admin\project\ProjectObjectController@getProjectObjectActivities')->name('select.projectObjectActivities');
 Route::get('/select-actions', 'Admin\ActionController@getActions')->name('select.actions');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');

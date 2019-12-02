@@ -72,6 +72,12 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/complaint-close', 'Api\ComplainController@closeComplaintEmployee');
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintEmployee');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintEmployee');
+
+    //Plotting
+    Route::get('/plotting/get-employees', 'Api\EmployeeController@getEmployeeCSO');
+    Route::get('/plotting/get-plottings', 'Api\UserController@show');
+    Route::post('/plotting/submit-plottings', 'Api\UserController@saveUserToken');
+
 });
 
 

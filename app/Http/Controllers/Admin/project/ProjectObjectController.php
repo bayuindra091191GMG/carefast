@@ -486,4 +486,44 @@ class ProjectObjectController extends Controller
 
         return \Response::json($formatted_tags);
     }
+    public function getProjectObjectActivities(Request $request){
+        $term = trim($request->q);
+        $project_id = $request->project_id;
+        $place_id = $request->place_id;
+        $term = strtoupper($term);
+//        Log::info('project_id = '.$project_id.", term = ".$term);
+
+        $projectObjects = ProjectObject::where(function ($q) use ($term) {
+            $q->where('place_name', 'LIKE', '%' . $term . '%')
+                ->orWhere('unit_name', 'LIKE', '%' . $term . '%')
+                ->orWhere('sub1_unit_name', 'LIKE', '%' . $term . '%')
+                ->orWhere('sub2_unit_name', 'LIKE', '%' . $term . '%');
+        })
+            ->get();
+        $projectObjectSelected = $projectObjects->where('project_id', $project_id)->where('place_id', $place_id);
+
+        $formatted_tags = [];
+
+        foreach ($projectObjectSelected as $projectObject) {
+            $objectName = "";
+            if($projectObject->unit_name != "-"){
+                $unitName = $projectObject->unit_name;
+                $objectName = $unitName;
+                $formatted_tags[] = ['id' => $objectName, 'text' => $objectName];
+            }
+            if($projectObject->sub1_unit_name != "-"){
+                $sub1unitName = $projectObject->sub1_unit_name;
+                $objectName = $objectName." - ".$sub1unitName;
+                $formatted_tags[] = ['id' => $objectName, 'text' => $objectName];
+            }
+            if($projectObject->sub2_unit_name != "-"){
+                $sub2unitName = $projectObject->sub2_unit_name;
+                $objectName = $objectName." - ".$sub2unitName;
+                $formatted_tags[] = ['id' => $objectName, 'text' => $objectName];
+            }
+
+        }
+
+        return \Response::json($formatted_tags);
+    }
 }

@@ -110,6 +110,47 @@ class EmployeeController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getPlottings(Request $request)
+    {
+        $userLogin = auth('api')->user();
+        $user = User::where('phone', $userLogin->phone)->first();
+        $employee = $user->employee;
+        $id = $employee->id;
+        try{
+            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+            $projectCSOs = ProjectEmployee::where('project_id', $projectEmployee->project_id)
+                ->where('employee_roles_id', 1)
+                ->get();
+            $projectCSOModels = collect();
+            //check if cleaner null
+            if($projectCSOs->count() == 0){
+                return Response::json($projectCSOModels, 200);
+            }
+
+            foreach($projectCSOs as $projectCSO){
+                $employeeImage = empty($projectCSO->employee->image_path) ? null : asset('storage/employees/'. $projectCSO->employee->image_path);
+                $projectCSOModel = ([
+                    'id'       => $projectCSO->employee_id,
+                    'name'     => $projectCSO->employee->first_name." ".$projectCSO->employee->last_name,
+                    'avatar'   => $employeeImage,
+                ]);
+                $projectCSOModels->push($projectCSOModel);
+            }
+
+            return Response::json($projectCSOModels, 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeController - getEmployeeCSO error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
 
     public function employeeSchedule(){
         try{

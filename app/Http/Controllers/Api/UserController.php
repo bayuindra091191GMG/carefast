@@ -112,6 +112,7 @@ class UserController extends Controller
                 ->where('status_id', 1)
                 ->first();
 
+            $employeeImage = empty($employee->image_path) ? "" : asset('storage/employees/'. $employee->image_path);
             $userModel = collect([
                 'id'                => $user->id,
                 'name'              => $user->name,
@@ -119,7 +120,7 @@ class UserController extends Controller
                 'role_id'           => $employee->employee_role_id,
                 'role_name'         => $employee->employee_role->name,
                 'project_id'        => empty($employeeDB) ? 0 : $employeeDB->project_id,
-                'image_path'        => $employee->image_path ?? '',
+                'image_path'        => $employeeImage,
                 'telephone'         => $employee->telephone ?? '',
                 'phone'             => $employee->phone ?? '',
                 'dob'               => $dob,
