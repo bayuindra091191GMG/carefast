@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Imports\CustomerImport;
 use App\Imports\InitialDataImport;
+use App\Imports\ProjectEmployeeImport;
 use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
@@ -90,9 +91,11 @@ class HomeController extends Controller
 
     public function importExcel(Request $request){
         try{
+//            dd($request);
             $excel = request()->file('excel');
 //            Excel::import(new InitialDataImport(), $excel);
-            Excel::import(new CustomerImport(), $excel);
+//            Excel::import(new CustomerImport(), $excel);
+            Excel::import(new ProjectEmployeeImport(), $excel);
 
             Session::flash('success', 'Berhasil Import Data!');
             return redirect(route('admin.import.form'));

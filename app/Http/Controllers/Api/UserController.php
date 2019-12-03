@@ -102,7 +102,7 @@ class UserController extends Controller
                 $accessible_menus = "1,2,3";
             }
             else{
-                $accessible_menus = "1,4,5,6";
+                $accessible_menus = "1,4,5,6,11";
             }
             //pengecekan jika employee adalah pembuat MR pada suatu project
 

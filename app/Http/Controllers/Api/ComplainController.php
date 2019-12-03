@@ -197,7 +197,9 @@ class ComplainController extends Controller
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
                     $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
-                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $notifData);
+                    if(!empty($user)){
+                        FCMNotification::SendNotification($user->id, 'user', $title, $body, $notifData);
+                    }
                 }
             }
 
@@ -547,6 +549,10 @@ class ComplainController extends Controller
             if(!empty($complaint->customer_id)){
                 FCMNotification::SendNotification($complaint->customer_id, 'customer', $title, $body, $data);
             }
+            //Push Notification to employee App.
+            if(!empty($complaint->customer_id)){
+                FCMNotification::SendNotification($complaint->employee_id, 'user', $title, $body, $data);
+            }
 
             return Response::json($employeeComplaintDetailModel, 200);
         }
@@ -629,13 +635,17 @@ class ComplainController extends Controller
             $employee = $user->employee;
 
             $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
-                ->first();
+                ->get();
+            $ids = collect();
+            foreach ($employeeDB as $employee){
+                $ids->push($employee->project_id);
+            }
 
             $skip = intval($request->input('skip'));
             $statusId = intval($request->input('complaint_status'));
             $orderingType = $request->input('ordering_type');
 
-            $customerComplaints =  Complaint::where('project_id', $employeeDB->project_id);
+            $customerComplaints =  Complaint::whereIn('project_id', $ids);
             if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
             }
@@ -684,6 +694,56 @@ class ComplainController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - getComplaint error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function getProjectListCustomer(){
+        try{
+            $user = auth('customer')->user();
+
+            $customer = Customer::find($user->id);
+
+            $projectModels = collect();
+            $projects = Project::where('customer_id', 'like', '%'.$customer->id."%")->get();
+            foreach ($projects as $project){
+                $projectDetailModel = collect([
+                    'id'            => $project->id,
+                    'name'          => $project->name,
+                ]);
+                $projectModels->push($projectDetailModel);
+            }
+
+            return Response::json($projectModels, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getProjectListEmployee error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function getProjectListEmployee(){
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $projectModels = collect();
+            $projectLists = ProjectEmployee::where('employee_id', $employee->id)
+                ->get();
+            foreach ($projectLists as $projectList){
+                $projects = Project::find($projectList->project_id);
+                $projectDetailModel = collect([
+                    'id'            => $projects->id,
+                    'name'          => $projects->name,
+                ]);
+                $projectModels->push($projectDetailModel);
+            }
+
+            return Response::json($projectModels, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getProjectListEmployee error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
