@@ -127,6 +127,7 @@ class UserController extends Controller
                 'nik'               => $employee->nik ?? '',
                 'address'           => $employee->address ?? '',
                 'accessible_menus'  => $accessible_menus,
+                'employee_id'       => $employee->id
             ]);
 
             return Response::json($userModel, 200);
