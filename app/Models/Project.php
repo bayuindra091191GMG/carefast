@@ -21,6 +21,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $phone
  * @property string $address
  * @property string $description
+ * @property string $image_path
  * @property \Carbon\Carbon $start_date
  * @property \Carbon\Carbon $finish_date
  * @property int $total_manday
@@ -72,6 +73,7 @@ class Project extends Eloquent
 		'phone',
 		'address',
 		'description',
+		'image_path',
 		'start_date',
 		'finish_date',
 		'total_manday',

@@ -34,6 +34,15 @@
                                             </div>
                                         </div>
                                     @endif
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="image_main">Foto *</label>
+                                                {!! Form::file('photo', array('id' => 'photo', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
@@ -196,52 +205,53 @@
                                                         <div class="form-group form-float form-group-lg">
                                                             <div class="form-line">
                                                                 <label for="customer">Customer *</label>
-                                                                <select id="customer" name="customer[]" class="form-control" multiple></select>
+                                                                <select id="customer" name="customer[]" class="form-control" multiple>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                     </div>
-{{--                                                    <input type="hidden" id="customer-selected" name="customer" value="{{$project->customer_id}}">--}}
+                                                    <input type="hidden" id="customer-selected" name="customer" value="{{$project->customer_id}}">
 
-{{--                                                    <div class="col-md-2">--}}
-{{--                                                        <div class="form-group form-float form-group-lg">--}}
-{{--                                                            <div class="form-line">--}}
-{{--                                                                <label for="customer">&nbsp;</label>--}}
-{{--                                                                <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>--}}
-{{--                                                            </div>--}}
-{{--                                                        </div>--}}
-{{--                                                    </div>--}}
+                                                    <div class="col-md-2">
+                                                        <div class="form-group form-float form-group-lg">
+                                                            <div class="form-line">
+                                                                <label for="customer">&nbsp;</label>
+                                                                <a class="form-control btn btn-success" onclick="addCustomer()">Tambah</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-{{--                                            <div class="col-md-6">--}}
-{{--                                                <div class="form-group form-float form-group-lg">--}}
-{{--                                                    <table class="table table-bordered table-hover" id="tab_logic">--}}
-{{--                                                        <thead>--}}
-{{--                                                        <tr>--}}
-{{--                                                            <th class="text-center" style="width: 75%">--}}
-{{--                                                                Customer*--}}
-{{--                                                            </th>--}}
-{{--                                                            <th class="text-center" style="width: 25%">--}}
-{{--                                                                Action--}}
-{{--                                                            </th>--}}
-{{--                                                        </tr>--}}
-{{--                                                        </thead>--}}
-{{--                                                        <tbody>--}}
-{{--                                                        @php $idx = 1 @endphp--}}
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <table class="table table-bordered table-hover" id="tab_logic">
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="text-center" style="width: 75%">
+                                                                Customer*
+                                                            </th>
+                                                            <th class="text-center" style="width: 25%">
+                                                                Action
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @php $idx = 1 @endphp
 
-{{--                                                        @if($customerList->count() > 0)--}}
-{{--                                                            @foreach($customerList as $customer)--}}
-{{--                                                                <tr id='sch{{$idx}}'>--}}
-{{--                                                                    <td><span>{{$customer->name}} - {{$customer->email}}</span></td>--}}
-{{--                                                                    <td><a class='form-control btn btn-danger' onclick='deleteCustomer({{ $idx }})'>Delete</a></td>--}}
-{{--                                                                </tr>--}}
-{{--                                                                @php $idx++ @endphp--}}
-{{--                                                            @endforeach--}}
-{{--                                                            <tr id='sch{{$idx}}'></tr>--}}
-{{--                                                        @endif--}}
-{{--                                                        </tbody>--}}
-{{--                                                    </table>--}}
-{{--                                                </div>--}}
-{{--                                            </div>--}}
+                                                        @if($customerList->count() > 0)
+                                                            @foreach($customerList as $customer)
+                                                                <tr id='sch{{$idx}}'>
+                                                                    <td><span>{{$customer->name}} - {{$customer->email}}</span></td>
+                                                                    <td><a class='form-control btn btn-danger' onclick='deleteCustomer({{ $idx }})'>Delete</a></td>
+                                                                </tr>
+                                                                @php $idx++ @endphp
+                                                            @endforeach
+                                                            <tr id='sch{{$idx}}'></tr>
+                                                        @endif
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
@@ -264,15 +274,54 @@
 @section('styles')
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    <link href="{{ asset('kartik-v-bootstrap-fileinput/css/fileinput.min.css') }}" rel="stylesheet"/>
 @endsection
 
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
     <script src="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
             type="text/javascript"></script>
 
     <script type="text/javascript">
+
+        // $(document).ready(function() {
+            // var selectedValues = $("#customer-selected").val().split('#');
+            // alert(selectedValues[1]);
+            // $('#customer').select2('val',selectedValues);
+            // $('#customer').trigger('change');
+
+            // var data = { id: 3, text: 'Barn owl' };
+            // var newOption = new Option(data.text, data.id, false, false);
+            // $('#customer').append(newOption).trigger('change');
+
+            {{--var append = "";--}}
+            {{--    @foreach($customerList as $customer)--}}
+            {{--    append += "<option value='{{$customer->id}}' data-select2-id='81'>{{$customer->name}} - {{$customer->email}}</option>";--}}
+            {{--    @endforeach--}}
+            {{--$('#customer').html(append);--}}
+        // });
+
+        @if(!empty($employee->image_path))
+            var photoUrl = '{{ asset('storage/projects/'. $employee->image_path) }}';
+            $("#photo").fileinput({
+                theme: 'fas',
+                initialPreview : [photoUrl],
+                initialPreviewAsData: true,
+                overwriteInitial: true,
+                showUpload: false,
+                allowedFileExtensions: ["jpg", "png", "gif"],
+                maxFileCount: 1
+            });
+        @else
+            $("#photo").fileinput({
+                theme: 'fas',
+                showUpload: false,
+                allowedFileExtensions: ["jpg", "png", "gif"],
+                maxFileCount: 1
+            });
+        @endif
         jQuery('#start_date').datepicker({
             autoclose: true,
             todayHighlight: true,

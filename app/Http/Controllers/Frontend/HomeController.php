@@ -11,8 +11,10 @@ use App\Models\Attendance;
 use App\Models\Complaint;
 use App\Models\ComplaintDetail;
 use App\Models\ComplaintHeaderImage;
+use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Place;
+use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\Schedule;
 use App\Models\User;
@@ -21,6 +23,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use GuzzleHttp\Client;
@@ -96,6 +99,7 @@ class HomeController extends Controller
 //            Excel::import(new InitialDataImport(), $excel);
 //            Excel::import(new CustomerImport(), $excel);
             Excel::import(new ProjectEmployeeImport(), $excel);
+//            Excel::import(new ProjectUserImport(), $excel);
 
             Session::flash('success', 'Berhasil Import Data!');
             return redirect(route('admin.import.form'));
@@ -247,6 +251,51 @@ class HomeController extends Controller
     }
     public function generalFunction(){
         try{
+//            $ids = [6033, 6034, 6035];
+//            $ids = [6013, 6017, 6022, 6024, 6025,
+//                6028, 6030, 6031, 6033, 6034, 6035];
+//            $emails = ["heriekaputra.care@gmail.com",
+//                "eddy_efendy@yahoo.com",
+//                "yongki@carefast.co.id",
+//                "saryanto@carefast.co.id",
+//                "Sahattn76@yahoo.co.id",
+//                "suprayitno@carefast.co.id",
+//                "zulkahar@carefast.co.id",
+//                "charles.adrian@carefast.co.id",
+//                "sigit@carefast.co.id",
+//                "anto@carefast.co.id",
+//                "charles.iskandar@carefast.co.id"
+//            ];
+            $ids = [6026];
+            $emails = ["amy@carefast.co.id"];
+
+            $dateTimeNow = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $projectEmployees = ProjectEmployee::where('employee_id', 6031)->get();
+            for($i=0; $i<1; $i++){
+                $employee = Employee::find($ids[$i]);
+
+                $customer = Customer::create([
+                    'name'              => $employee->first_name." ".$employee->last_name,
+                    'category_id'       => 2,
+                    'email'             => $emails[$i],
+                    'image_path'         => '1_photo_20191007021015.png',
+                    'phone'             => $employee->phone,
+                    'status_id'         => 1,
+                    'password'          => Hash::make('carefastid'),
+                    'created_at'        => $dateTimeNow,
+                    'updated_at'        => $dateTimeNow,
+                ]);
+                $customerID = $customer->id;
+
+                foreach ($projectEmployees as $projectEmployee){
+                    $project = Project::find($projectEmployee->project_id);
+                    $projectCustomer = $project->customer_id.'#'.$customerID;
+                    $project->customer_id = $projectCustomer;
+                    $project->save();
+                }
+            }
+            return "yes";
+
             $employee = Employee::find(9);
             $date = Carbon::now('Asia/Jakarta');
             $time = $date->format('H:i');
@@ -271,7 +320,7 @@ class HomeController extends Controller
             dd($attendance);
         }
         catch(\Exception $ex){
-            return $ex;
+            dd($ex);
         }
     }
     public function getLocation(){

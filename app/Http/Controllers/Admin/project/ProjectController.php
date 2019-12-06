@@ -71,11 +71,6 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        $customersString = "";
-        foreach ($request->input('customer') as $customer){
-            $customersString .= $customer."#";
-        }
-//        dd($customersString);
         try{
             $validator = Validator::make($request->all(), [
                 'name'          => 'required',
@@ -104,6 +99,7 @@ class ProjectController extends Controller
                 $customersString .= $customer."#";
             }
 
+            $now = Carbon::now('Asia/Jakarta');
             $user = Auth::guard('admin')->user();
             $project = Project::create([
                 'name'              => strtoupper($request->input('name')),
@@ -121,12 +117,23 @@ class ProjectController extends Controller
                 'total_mp_off'      => $request->input('total_mp_off'),
                 'total_manpower'    => $request->input('total_manpower'),
                 'status_id'         => $request->input('status'),
-                'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'created_at'        => $now->toDateTimeString(),
                 'created_by'        => $user->id,
-                'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_at'        => $now->toDateTimeString(),
                 'updated_by'        => $user->id,
             ]);
 
+            if($request->hasFile('photo')){
+                $img = Image::make($request->file('photo'));
+                $extStr = $img->mime();
+                $ext = explode('/', $extStr, 2);
+
+                $filename = $project->id.'_project_'. $now->format('Ymdhms'). '.'. $ext[1];
+
+                $img->save(public_path('storage/projects/'. $filename), 75);
+                $project->image_path = $filename;
+                $project->save();
+            }
             Session::flash('success', 'Sukses membuat information baru!');
             return redirect()->route('admin.project.information.show', ['id'=>$project->id]);
         }
@@ -154,6 +161,7 @@ class ProjectController extends Controller
             'start_date'          => $start_date,
             'finish_date'          => $finish_date,
         ];
+//        dd($data);
         return view('admin.project.information.edit')->with($data);
     }
 
@@ -208,6 +216,23 @@ class ProjectController extends Controller
             $project->updated_by = $adminUser->id;
             $project->updated_at = $now->toDateTimeString();
             $project->save();
+
+            if($request->hasFile('photo')){
+                // Delete old image
+                if(!empty($project->image_path)){
+                    $deletedPath = public_path('storage/projects/'. $project->image_path);
+                    if(file_exists($deletedPath)) unlink($deletedPath);
+                }
+
+                $img = Image::make($request->file('photo'));
+                $extStr = $img->mime();
+                $ext = explode('/', $extStr, 2);
+
+                $filename = $project->id.'_photo_'. $now->format('Ymdhms'). '.'. $ext[1];
+
+                $img->save(public_path('storage/projects/'. $filename), 75);
+                $project->image_path = $filename;
+            }
 
             Session::flash('success', 'Sukses mengubah data information!');
             return redirect()->route('admin.project.information.show',['id' => $project->id]);

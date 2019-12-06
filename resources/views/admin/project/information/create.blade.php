@@ -34,6 +34,15 @@
                                             </div>
                                         </div>
                                     @endif
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="image_main">Foto *</label>
+                                                {!! Form::file('photo', array('id' => 'photo', 'class' => 'file-loading', 'accept' => 'image/*')) !!}
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
@@ -254,6 +263,7 @@
 @section('styles')
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    <link href="{{ asset('kartik-v-bootstrap-fileinput/css/fileinput.min.css') }}" rel="stylesheet"/>
     <style>
         .select2-selection--multiple{
             overflow: hidden !important;
@@ -264,11 +274,19 @@
 
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
     <script src="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
             type="text/javascript"></script>
 
     <script type="text/javascript">
+        $("#photo").fileinput({
+            theme: 'fas',
+            showUpload: false,
+            allowedFileExtensions: ["jpg", "png", "gif"],
+            maxFileCount: 1
+        });
+
         jQuery('#start_date').  datepicker({
             autoclose: true,
             todayHighlight: true,

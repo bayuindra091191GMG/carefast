@@ -710,6 +710,8 @@ class ComplainController extends Controller
                 $projectDetailModel = collect([
                     'id'            => $project->id,
                     'name'          => $project->name,
+                    'lat'          => $project->lat,
+                    'lng'          => $project->long,
                 ]);
                 $projectModels->push($projectDetailModel);
             }
@@ -732,10 +734,14 @@ class ComplainController extends Controller
             $projectLists = ProjectEmployee::where('employee_id', $employee->id)
                 ->get();
             foreach ($projectLists as $projectList){
-                $projects = Project::find($projectList->project_id);
+                $project = Project::find($projectList->project_id);
                 $projectDetailModel = collect([
-                    'id'            => $projects->id,
-                    'name'          => $projects->name,
+                    'id'            => $project->id,
+                    'name'          => $project->name,
+                    'address'       => $project->address,
+                    'image'         => $project->name,
+                    'lat'          => $project->lat,
+                    'lng'          => $project->long,
                 ]);
                 $projectModels->push($projectDetailModel);
             }

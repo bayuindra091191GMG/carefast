@@ -76,8 +76,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
     //Plotting
     Route::get('/plotting/get-employees', 'Api\EmployeeController@getEmployeeCSO');
-    Route::get('/plotting/get-plottings', 'Api\UserController@show');
-    Route::post('/plotting/submit-plottings', 'Api\UserController@saveUserToken');
+    Route::get('/plotting/get-plottings', 'Api\EmployeeController@getPlottings');
+    Route::post('/plotting/submit-delegated-plottings', 'Api\UserController@saveUserToken');
 
 });
 
