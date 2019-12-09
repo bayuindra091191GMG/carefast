@@ -710,8 +710,11 @@ class ComplainController extends Controller
                 $projectDetailModel = collect([
                     'id'            => $project->id,
                     'name'          => $project->name,
-                    'lat'          => $project->lat,
-                    'lng'          => $project->long,
+                    'image'          => $project->image_path == null ? asset('storage/projects/default.jpg') : $project->image_path,
+                    'lat'          => $project->latitude,
+                    'lng'          => $project->longitude,
+                    'address'          => $project->address,
+
                 ]);
                 $projectModels->push($projectDetailModel);
             }
@@ -738,10 +741,10 @@ class ComplainController extends Controller
                 $projectDetailModel = collect([
                     'id'            => $project->id,
                     'name'          => $project->name,
-                    'address'       => $project->address,
-                    'image'         => $project->name,
-                    'lat'          => $project->lat,
-                    'lng'          => $project->long,
+                    'image'          => $project->image_path == null ? asset('storage/projects/default.jpg') : $project->image_path,
+                    'lat'          => $project->latitude,
+                    'lng'          => $project->longitude,
+                    'address'          => $project->address,
                 ]);
                 $projectModels->push($projectDetailModel);
             }
