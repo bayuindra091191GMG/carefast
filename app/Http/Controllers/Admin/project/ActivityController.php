@@ -9,6 +9,7 @@ use App\Models\Action;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\EmployeeRole;
+use App\Models\Place;
 use App\Models\Project;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
@@ -60,7 +61,7 @@ class ActivityController extends Controller
         return view('admin.project.activity.show')->with($data);
     }
 
-    public function create(Request $request, int $id){
+    public function createStepOne(Request $request, int $id){
         try{
 
             $project = Project::find($id);
@@ -69,13 +70,93 @@ class ActivityController extends Controller
                 'project'           => $project,
             ];
 
-            return view('admin.project.activity.create')->with($data);
+            return view('admin.project.activity.create-one')->with($data);
         }
         catch (\Exception $ex){
             Log::error('Admin/activity/ActivityController - create error EX: '. $ex);
             return "Something went wrong! Please contact administrator!";
         }
     }
+
+    public function submitCreateOne(Request $request){
+        try{
+            $start_times = $request->input('start_times');
+            $finish_times = $request->input('finish_times');
+            $shiftType = $request->input('shift_type');
+            $projectId = $request->input('project_id');
+
+            $validStart = true;
+            if(!empty($start_times)){
+                foreach ($start_times as $start_time){
+                    if(empty($start_time)) $validStart = false;
+                }
+            }
+            if(!$validStart){
+                return back()->withErrors("Terdapat JAM MULAI yang belum terisi!")->withInput($request->all());
+            }
+
+            $validFinish = true;
+            if(!empty($finish_times)){
+                foreach ($finish_times as $finish_time){
+                    if(empty($finish_time)) $validFinish = false;
+                }
+            }
+            if(!$validFinish){
+                return back()->withErrors("Terdapat JAM BERAKHIR yang belum terisi!")->withInput($request->all());
+            }
+            $timeModel = collect();
+            $ct = 0;
+            foreach ($start_times as $start_time){
+                $dayModel = collect();
+                for($i=0;$i<365;$i++){
+                    $day = collect([
+                        "day"       => $i,
+				        "action"    => '',
+                        "type"      => ''
+                    ]);
+                    $dayModel->push($day);
+                }
+                $time = collect([
+                    'time_value'     => $start_times[$ct]."#".$finish_times[$ct],
+                    'time_string'    => $start_times[$ct]." - ".$finish_times[$ct],
+                    "action_daily"   => "",
+                    'weekly_datas'   => [],
+                    "days"           => $dayModel,
+                ]);
+                $timeModel->push($time);
+                $ct++;
+            }
+            $data = [
+                'project'           => Project::find($projectId),
+                'place'             => Place::find($request->input('places')),
+                'shift'             => "SHIFT ".$shiftType,
+                'times'             => $timeModel,
+            ];
+//dd($data);
+            return view('admin.project.activity.create-two')->with($data);
+        }
+        catch (\Exception $ex){
+            Log::error('Admin/activity/ActivityController - submitCreateOne error EX: '. $ex);
+            return "Something went wrong! Please contact administrator!";
+        }
+    }
+//
+//    public function createStepTwo(Request $request){
+//        try{
+//
+//            $project = Project::find($id);
+//
+//            $data = [
+//                'project'           => $project,
+//            ];
+//
+//            return view('admin.project.activity.create-two')->with($data);
+//        }
+//        catch (\Exception $ex){
+//            Log::error('Admin/activity/ActivityController - create error EX: '. $ex);
+//            return "Something went wrong! Please contact administrator!";
+//        }
+//    }
 
     public function store(Request $request)
     {

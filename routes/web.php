@@ -277,9 +277,13 @@ Route::prefix('admin')->group(function(){
 
     // Project Plotting
     Route::get('/project/activity/show/{id}', 'Admin\project\ActivityController@show')->name('admin.project.activity.show');
-    Route::get('/project/activity/create/{id}', 'Admin\project\ActivityController@create')->name('admin.project.activity.create');
-    Route::get('/project/activity/edit/{id}', 'Admin\project\ActivityController@edit')->name('admin.project.activity.edit');
+
+    Route::get('/project/activity/create-step-1/{id}', 'Admin\project\ActivityController@createStepOne')->name('admin.project.activity.create');
+    Route::post('/project/activity/create/', 'Admin\project\ActivityController@submitCreateOne')->name('admin.project.activity.store-one');
+//    Route::get('/project/activity/create-step-2/', 'Admin\project\ActivityController@createStepTwo')->name('admin.project.activity.create-two');
     Route::post('/project/activity/store', 'Admin\project\ActivityController@store')->name('admin.project.activity.store');
+
+    Route::get('/project/activity/edit/{id}', 'Admin\project\ActivityController@edit')->name('admin.project.activity.edit');
     Route::post('/project/activity/update/{id}', 'Admin\project\ActivityController@update')->name('admin.project.activity.update');
 
     // Project Schedule

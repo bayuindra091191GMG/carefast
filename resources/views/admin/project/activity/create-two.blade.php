@@ -8,7 +8,7 @@
                 {{ Form::open(['route'=>['admin.project.activity.store'],'method' => 'post','id' => 'general-form']) }}
                     <div class="row">
                         <div class="col-md-8 col-12">
-                            <h3>TAMBAH BARU PLOTTING - {{$project->name}}</h3>
+                            <h3>TAMBAH BARU PLOTTING - {{$project->name}} - STEP 2</h3>
                         </div>
                         <div class="col-md-4 col-12 text-right">
                             <a href="{{ route('admin.project.activity.show', ['id'=>$project->id]) }}" class="btn btn-danger">BATAL</a>
@@ -38,17 +38,61 @@
                                         </div>
                                     @endif
 
-                                    <div class="col-md-12 p-t-20">
+                                    <div class="col-md-12 p-t-20" id="app">
                                         <div class="accordion" id="accordionExample">
                                             <div class="card m-b-0">
+                                                <div>
+                                                    <table class="scrollmenu">
+                                                        <tr>
+                                                            <td>Time</td>
+                                                            @for($ct=1;$ct<=365;$ct++)
+                                                                <td>Day {{$ct}}</td>
+                                                            @endfor
+                                                        </tr>
+                                                        <tr v-for="time in times">
+                                                            <td>@{{ time.time_string }}</td>
+                                                            <td v-for="(day, index) in time.days" class="tr-class">
+                                                                <input type="text"
+                                                                       v-if="time.weekly_datas.length > 0" disabled/>
+                                                                <input type="text"
+                                                                       v-else disabled/>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <hr/>
+
+                                                <input type="hidden" id="project_id" name="project_id" value="{{$project->id}}">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label">Object / Sub Object*</label>
+                                                                    <select id="project_object0" name="project_objects0[]" class='form-control' multiple="multiple"></select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="place0">Action*</label>
+                                                                    <select id="action0" name="actions0[]" class='form-control' multiple="multiple"></select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                                 <div class="col-md-12">
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
-                                                                    <label class="form-label" for="place0">Place*</label>
-                                                                    <select id='place0' name='places' class='form-control'><option value='-1'>-</option></select>
+                                                                    <label class="form-label" for="place0">Pilih Jam*</label>
+                                                                    <select name='shift_type' class='form-control'>
+                                                                        <option v-for="time in times">@{{ time.time_string }}</option>
+                                                                    </select>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -66,25 +110,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="app">
-                                                    <table>
-                                                        <tr>
-                                                            <td>Time</td>
-                                                            <td><input name="action[]" v-model="days.action" disabled/></td>
-                                                        </tr>
-                                                        <tr
-                                                            v-for="data in datas"
-                                                        >
-                                                            <td>@{{ data.time }}</td>
-                                                            <td
-                                                                v-for="day in data.days"
-                                                            >
-                                                                <input type="text" v-model="data.weeklyDatas[day.day]"
-                                                                       v-if="day.type == daily" disabled/>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
+
                                                 <div class="col-md-12 p-t-20">
                                                     <a id="add_row" class="btn btn-success" style="color: #fff;">Tambah</a>
                                                     &nbsp;
@@ -113,6 +139,19 @@
             overflow: hidden !important;
             height: auto !important;
         }
+        /*.scrollmenu {*/
+        /*    background-color: #333;*/
+        /*    overflow: auto;*/
+        /*    white-space: nowrap;*/
+        /*}*/
+        table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .tr-class{
+            padding: 5px;
+        }
     </style>
 @endsection
 
@@ -124,122 +163,65 @@
             type="text/javascript"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script>
-    //Create a new component for product-details with a prop of details.
-
-
-    Vue.component('timeline-detail-row', {
-        props: {
-            detailRows: [{
-                'id'    : null,
-                'time'  : null
-            }],
+    $('#project_object0').select2({
+        placeholder: {
+            id: '-1',
+            text: ' - Pilih Object - '
         },
-        template: `
-        <tr v-for="detailRow in detailRows">
-           <td>{{ time }}</td>
-          <timeline-detail-column></timeline-detail-column>
-        </tr>
-      `
+        width: '100%',
+        minimumInputLength: 0,
+        ajax: {
+            url: '{{ route('select.projectObjectActivities') }}',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term),
+                    'project_id': $('#project_id').val(),
+                    'place_id': $('#place0').val(),
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                };
+            }
+        }
     });
-
-    Vue.component('timeline-detail-column', {
-        props: {
-            detailColumns: [{
-                'id'            : null,
-                'actions'       : null,
-                'period_type'   : null,
-                'color'         : null,
-            }]
+    $('#action0').select2({
+        placeholder: {
+            id: '-1',
+            text: ' - Pilih Action - '
         },
-        template: `
-            <td v-for="detail in detailColumns">
-              {{ detail }}
-            </td>
-          `
-    });
-
-    Vue.component('product', {
-        props: {
-            premium: {
-                type: Boolean,
-                required: true
-            }
-        },
-        template: ` `,
-        data() {
-            return {
-                product: 'Socks',
-                brand: 'Vue Mastery',
-                selectedVariant: 0,
-                details: ['80% cotton', '20% polyester', 'Gender-neutral'],
-                variants: [
-                    {
-                        variantId: 2234,
-                        variantColor: 'green',
-                        variantImage:  'https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg',
-                        variantQuantity: 10
-                    },
-                    {
-                        variantId: 2235,
-                        variantColor: 'blue',
-                        variantImage: 'https://www.vuemastery.com/images/challenges/vmSocks-blue-onWhite.jpg',
-                        variantQuantity: 0
-                    }
-                ],
-                cart: 0
-            }
-        },
-        methods: {
-            addToCart: function() {
-                this.cart += 1
+        width: '100%',
+        minimumInputLength: 0,
+        ajax: {
+            url: '{{ route('select.actions') }}',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: $.trim(params.term)
+                };
             },
-            updateProduct: function(index) {
-                this.selectedVariant = index
-            }
-        },
-        computed: {
-            title() {
-                return this.brand + ' ' + this.product
-            },
-            image(){
-                return this.variants[this.selectedVariant].variantImage
-            },
-            inStock(){
-                return this.variants[this.selectedVariant].variantQuantity
-            },
-            shipping() {
-                if (this.premium) {
-                    return "Free"
-                }
-                return 2.99
+            processResults: function (data) {
+                return {
+                    results: data
+                };
             }
         }
     });
 
+    //Create a new component for product-details with a prop of details.
+    var data = '{{ $times }}';
+    var subData = JSON.parse(data.replace(/&quot;/g,'"'));
+    // console.log(subData);
+
     new Vue({
         el: '#app',
         data: {
-            premium: true,
-            headerId: 1,
-            variants: [
-                {
-                    variantId: 2234,
-                    variantColor: 'green',
-                    variantImage:  'https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg',
-                    variantQuantity: 10
-                },
-                {
-                    variantId: 2235,
-                    variantColor: 'blue',
-                    variantImage: 'https://www.vuemastery.com/images/challenges/vmSocks-blue-onWhite.jpg',
-                    variantQuantity: 0
-                }
-            ]
+            times: subData,
         },
         computed: {
-            headerCount(){
-                return this.headerId = this.headerId + 1;
-            }
+
         }
     });
 </script>
