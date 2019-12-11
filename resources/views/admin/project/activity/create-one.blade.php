@@ -184,8 +184,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 {{--    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>--}}
     <script src="{{ asset('js/jquery.inputmask.bundle.min.js') }}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
-            type="text/javascript"></script>
 
     <script type="text/javascript">
         $(".time-inputmask").inputmask("hh:mm", {
