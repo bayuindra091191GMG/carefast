@@ -32,8 +32,9 @@ class ComplaintController extends Controller
             if($request->date_start != null && $request->date_end != null){
                 $dateStartDecoded = rawurldecode($request->date_start);
                 $dateEndDecoded = rawurldecode($request->date_end);
-                $start = Carbon::createFromFormat('d M Y', $dateStartDecoded, 'Asia/Jakarta');
-                $end = Carbon::createFromFormat('d M Y', $dateEndDecoded, 'Asia/Jakarta');
+                $start = Carbon::createFromFormat('!d M Y', $dateStartDecoded, 'Asia/Jakarta');
+                $end = Carbon::createFromFormat('!d M Y', $dateEndDecoded, 'Asia/Jakarta');
+                $end = $end->addDays(1);
 
                 if($end->greaterThanOrEqualTo($start)){
                     $filterDateStart = $dateStartDecoded;

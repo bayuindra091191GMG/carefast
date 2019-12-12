@@ -53,9 +53,9 @@
                                                             <td>@{{ time.time_string }}</td>
                                                             <td v-for="(day, index) in time.days" class="tr-class">
                                                                 <input type="text"
-                                                                       v-if="time.weekly_datas.length > 0" disabled/>
+                                                                       v-if="time.weekly_datas.length > 0" v-model="day.action" disabled/>
                                                                 <input type="text"
-                                                                       v-else disabled/>
+                                                                       v-else v-model="day.action" disabled/>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -69,7 +69,7 @@
                                                         <div class="form-line">
                                                             <label class="form-label">Period*</label>
                                                             <select name='period' class='form-control' v-model="period">
-                                                                <option value='1'>Daily</option>
+                                                                <option value='1' selected>Daily</option>
                                                                 <option value='2'>Weekly</option>
                                                                 <option value='3'>Monthly</option>
                                                             </select>
@@ -85,7 +85,8 @@
                                                                 <div class="form-line">
                                                                     <label class="form-label" >Pilih Jam*</label>
                                                                     <select name='shift_type' class='form-control' v-model="selected_time">
-                                                                        <option v-for="time in times" :value="time.time_value">@{{ time.time_string }}</option>
+                                                                        <option disabled value="-1">-- Pilih Jam --</option>
+                                                                        <option v-for="time in times" :value="time.time_value" >@{{ time.time_string }}</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -105,7 +106,7 @@
 {{--                                                                    <select id="project_object0" name="project_objects0[]" v-model="project_objects"--}}
 {{--                                                                            class='form-control' multiple="multiple"></select>--}}
 
-                                                                    <select2 :disabled="isDisabled()" name="project_objects0[]" v-model="project_objects" url="{{route('select.projectObjectActivities') }}" placeholder=" -- Pilih Object -- ">
+                                                                    <select2 name="project_objects0[]" v-model="project_objects" url="{{route('select.projectObjectActivities', ['project_id'=>$project->id, 'place_id'=>$place->id]) }}" placeholder=" -- Pilih Object -- " multiple="multiple">
                                                                     </select2>
                                                                 </div>
                                                             </div>
@@ -116,7 +117,7 @@
                                                                     <label class="form-label">Action*</label>
 {{--                                                                    <select id="action0" name="actions0[]" v-model="actions"--}}
 {{--                                                                            class='form-control' multiple="multiple"></select>--}}
-                                                                    <select2 :disabled="isDisabled()" name="actions0[]" v-model="actions" url="{{route('select.actions') }}" placeholder=" -- Pilih Action -- ">
+                                                                    <select2 name="actions0[]" v-model="actions" url="{{route('select.actions') }}" placeholder=" -- Pilih Action -- " @selected_action="receiveSelectedAction">
                                                                     </select2>
                                                                 </div>
                                                             </div>
@@ -168,7 +169,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 {{--    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>--}}
     <script src="{{ asset('js/jquery.inputmask.bundle.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-toasted"></script>
+
     <script type="text/x-template" id="select2-template">
         <select>
             <slot></slot>
@@ -181,7 +186,7 @@
     // console.log(subData);
 
     Vue.component('select2', {
-        props: ['options','value', 'url' ,'placeholder','extra'],
+        props: ['options','value', 'url' ,'placeholder','extra', 'selected_action'],
         template: '#select2-template',
         data : function() {
             var thisVal = this;
@@ -204,7 +209,6 @@
                         }
                     },
                     processResults: function(data) {
-
                         return {
                             results: data
                         };
@@ -231,8 +235,13 @@
                     .trigger('change')
                     // emit event on change.
                     .on('change', function () {
-                        vm.$emit('input', this.value)
+                        // vm.$emit('input', this.value)
+                        vm.$emit('input', $(this).val());
+                        console.log($(this).text());
+                        vm.$emit('selected_action', $(this).text());
+                        debugger;
                     });
+
 
                 if (this.value !== 0 && this.value !== null){
                     //there is preselected value, we need to query right away.
@@ -247,12 +256,12 @@
                                     $(vm.$el).append(option).trigger('change');
 
                                     // manually trigger the `select2:select` event
-                                    $(vm.$el).trigger({
-                                        type: 'select2:select',
-                                        params: {
-                                            data: val.data[idx]
-                                        }
-                                    });
+                                    // $(vm.$el).trigger({
+                                    //     type: 'select2:select',
+                                    //     params: {
+                                    //         data: val.data[idx]
+                                    //     }
+                                    // });
                                 }
                             }
                         }
@@ -274,17 +283,22 @@
                     .trigger('change')
                     // emit event on change.
                     .on('change', function () {
-                        vm.$emit('input', this.value)
+                        // vm.$emit('input', this.value)
+                        vm.$emit('input', $(this).val());
+                        console.log($(this).text());
+                        vm.$emit('selected_action', $(this).text());
                     });
             }
 
         },
         watch: {
             value: function (value) {
+                if ([...value].sort().join(",") !== [...$(this.$el).val()].sort().join(","))
+                    $(this.$el).val(value).trigger('change');
                 // update value
-                $(this.$el)
-                    .val(value)
-                    .trigger('change');
+                // $(this.$el)
+                //     .val(value)
+                //     .trigger('change');
             },
             options: function (value) {
                 this.options = value;
@@ -335,17 +349,18 @@
         }
     });
 
-    new Vue({
+    $root = new Vue({
         el: '#app',
         data: {
             times: subData,
-            period: "",
-            selected_time: "",
-            project_objects: "",
-            actions: "",
+            period: 1,
+            selected_time: -1,
+            project_objects: [],
+            actions: null,
+            selected_action: null,
         },
         methods:{
-            testing(){
+            changePeriod(){
                 alert('asdf');
             },
             changePlotting(){
@@ -353,11 +368,42 @@
                 var selected_time = this.selected_time;
                 var project_objects = this.project_objects;
                 var actions = this.actions;
+                var selected_action = this.selected_action;
+                console.log(selected_action);
 
-                console.log(period);
-                console.log(selected_time);
-                console.log(project_objects);
-                console.log(actions);
+                //get index of time
+                let index=0;
+                for(let j=0; j<this.times.length; j++){
+                    if(this.times[j].time_value === selected_time){
+                        index = j;
+                    }
+                }
+
+                //for daily period
+                if(period === 1){
+                    for(let i=0; i<this.times[index].days.length; i++){
+                        this.selected_plot = project_objects + " / " + actions;
+                        this.times[index].days[i].action = this.selected_plot;
+                    }
+                }
+                //for weekly period
+                else if(period === 2){
+                    for(let i=0; i<this.times[index].days.length; i++){
+                        this.selected_plot = project_objects + " / " + actions;
+                        this.times[index].days[i].action = this.selected_plot;
+                    }
+                }
+                //for monthly period
+                else if(period === 3){
+                    for(let i=0; i<this.times[index].days.length; i++){
+                        this.selected_plot = project_objects + " / " + actions;
+                        this.times[index].days[i].action = this.selected_plot;
+                    }
+                }
+            },
+            receiveSelectedAction(val){
+                var splitVar = val.split('\n');
+                this.selected_action = splitVar[splitVar.length];
             }
         },
         computed: {
