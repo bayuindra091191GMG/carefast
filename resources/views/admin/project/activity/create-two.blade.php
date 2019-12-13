@@ -68,7 +68,7 @@
                                                     <div class="form-group form-float form-group-lg">
                                                         <div class="form-line">
                                                             <label class="form-label">Period*</label>
-                                                            <select name='period' class='form-control' v-model="period">
+                                                            <select name='period' class='form-control' v-model="period" @change="changePeriod($event)">
                                                                 <option value='1' selected>Daily</option>
                                                                 <option value='2'>Weekly</option>
                                                                 <option value='3'>Monthly</option>
@@ -91,8 +91,35 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6">
-
+                                                        <div class="col-md-6" v-if="dayEnable">
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day1' name='day[0][]' value='1'>
+                                                                <label class='custom-control-label' for='day1'>Senin</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day2' name='day[0][]' value='2'>
+                                                                <label class='custom-control-label' for='day2'>Selasa</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day3' name='day[0][]' value='3'>
+                                                                <label class='custom-control-label' for='day3'>Rabu</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day4' name='day[0][]' value='4'>
+                                                                <label class='custom-control-label' for='day4'>Kamis</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day5' name='day[0][]' value='5'>
+                                                                <label class='custom-control-label' for='day5'>Jumat</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day6' name='day[0][]' value='6'>
+                                                                <label class='custom-control-label' for='day6'>Sabtu</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day7' name='day[0][]' value='7'>
+                                                                <label class='custom-control-label' for='day7'>Minggu</label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -354,14 +381,32 @@
         data: {
             times: subData,
             period: 1,
+            dayEnable: false,
+            monthEnable: false,
             selected_time: -1,
             project_objects: [],
             actions: null,
             selected_action: null,
         },
         methods:{
-            changePeriod(){
-                alert('asdf');
+            changePeriod(event){
+                console.log(event.target.value);
+                //for daily period
+                if(event.target.value === 1){
+                    this.dayEnable = false;
+                    this.monthEnable = false;
+                }
+                //for weekly period
+                else if(event.target.value === 2){
+                    this.dayEnable = true;
+                    this.monthEnable = false;
+                }
+                //for monthly period
+                else if(event.target.value === 3){
+                    this.dayEnable = true;
+                    this.monthEnable = true;
+                }
+                console.log(this.dayEnable);
             },
             changePlotting(){
                 var period = this.period;
