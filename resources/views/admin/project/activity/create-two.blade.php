@@ -53,9 +53,9 @@
                                                             <td>@{{ time.time_string }}</td>
                                                             <td v-for="(day, index) in time.days" class="tr-class">
                                                                 <input type="text"
-                                                                       v-if="time.weekly_datas.length > 0" v-model="day.action" disabled/>
+                                                                       v-if="day.action == null" v-model="day.action" disabled/>
                                                                 <input type="text"
-                                                                       v-else v-model="day.action" disabled/>
+                                                                       v-else v-model="day.action" :style="{backgroundColor: day.color}" disabled/>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -402,7 +402,7 @@
         el: '#app',
         data: {
             times: subData,
-            period: 1,
+            period: "1",
             dayEnable: false,
             selectedDay: [],
             monthEnable: false,
@@ -453,7 +453,10 @@
                 if(period === "1"){
                     for(let i=0; i<this.times[index].days.length; i++){
                         this.selected_plot = project_objects + " / " + selected_action;
+
                         this.times[index].days[i].action = this.selected_plot;
+                        this.times[index].days[i].color = '#00ccff';
+                        this.times[index].days[i].type = 1;
                     }
                 }
                 //for weekly period
@@ -462,18 +465,21 @@
                     for(let i=0; i<this.times[index].days.length; i++){
                         this.selected_plot = project_objects + " / " + selected_action;
                         let tempI = i+1;
+                        let tempIString = tempI.toString();
                         for(let j=0; j<this.selectedDay.length; j++){
-                            if(tempI === this.selectedDay[j]){
+                            if(tempIString === this.selectedDay[j]){
                                 this.times[index].days[i].action = this.selected_plot;
-                                this.times[index].days[i].action = this.selected_plot;
+                                this.times[index].days[i].color = '#00cc66';
+                                this.times[index].days[i].type = 2;
 
-                                this.selectedDay[j] = this.selectedDay[j] + 6;
+                                let valueInt = parseInt(this.selectedDay[j]);
+                                this.selectedDay[j] = (valueInt + 6).toString();
                             }
                         }
                     }
                     //add to time array data
                     for(let j=0; j<this.selectedDay.length; j++){
-                        this.time.weekly_datas.push({
+                        this.time[index].weekly_datas.push({
                             actionWeeklyDay : this.selectedDay[j],
                             actionWeekly : project_objects + " / " + selected_action,
                         });
@@ -484,6 +490,8 @@
                     for(let i=0; i<this.times[index].days.length; i++){
                         this.selected_plot = project_objects + " / " + selected_action;
                         this.times[index].days[i].action = this.selected_plot;
+                        this.times[index].days[i].color = '#ff9933';
+                        this.times[index].days[i].type = 3;
                     }
                 }
             },

@@ -112,7 +112,8 @@ class ActivityController extends Controller
                     $day = collect([
                         "day"       => $i,
 				        "action"    => '',
-                        "type"      => ''
+				        "type"    => '',
+                        "color"      => ''
                     ]);
                     $dayModel->push($day);
                 }
