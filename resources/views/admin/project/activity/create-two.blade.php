@@ -65,14 +65,68 @@
                                                 <input type="hidden" id="project_id" name="project_id" value="{{$project->id}}">
                                                 <input type="hidden" id="place0" value="{{$place->id}}">
                                                 <div class="col-md-12">
-                                                    <div class="form-group form-float form-group-lg">
-                                                        <div class="form-line">
-                                                            <label class="form-label">Period*</label>
-                                                            <select name='period' class='form-control' v-model="period" @change="changePeriod($event)">
-                                                                <option value='1' selected>Daily</option>
-                                                                <option value='2'>Weekly</option>
-                                                                <option value='3'>Monthly</option>
-                                                            </select>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label">Period*</label>
+                                                                    <select name='period' class='form-control' v-model="period" @change="changePeriod($event)">
+                                                                        <option value='1' selected>Daily</option>
+                                                                        <option value='2'>Weekly</option>
+                                                                        <option value='3'>Monthly</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-3" v-if="dayEnable">
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day1' name='day[0][]' value='1' v-model="selectedDay">
+                                                                <label class='custom-control-label' for='day1'>Day 1</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day2' name='day[0][]' value='2' v-model="selectedDay">
+                                                                <label class='custom-control-label' for='day2'>Day 2</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day3' name='day[0][]' value='3' v-model="selectedDay">
+                                                                <label class='custom-control-label' for='day3'>Day 3</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day4' name='day[0][]' value='4' v-model="selectedDay">
+                                                                <label class='custom-control-label' for='day4'>Day 4</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day5' name='day[0][]' value='5' v-model="selectedDay">
+                                                                <label class='custom-control-label' for='day5'>Day 5</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day6' name='day[0][]' value='6' v-model="selectedDay">
+                                                                <label class='custom-control-label' for='day6'>Day 6</label>
+                                                            </div>
+{{--                                                            <div class='custom-control custom-checkbox mr-sm-2'>--}}
+{{--                                                                <input type='checkbox' class='custom-control-input' id='day7' name='day[0][]' value='7' v-model="selectedDay">--}}
+{{--                                                                <label class='custom-control-label' for='day7'>Minggu</label>--}}
+{{--                                                            </div>--}}
+                                                        </div>
+
+                                                        <div class="col-md-3" v-if="monthEnable">
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='week1' name='week[0][]' value='1' v-model="selectedWeeks">
+                                                                <label class='custom-control-label' for='week1'>Minggu I</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='week2' name='week[0][]' value='2' v-model="selectedWeeks">
+                                                                <label class='custom-control-label' for='week2'>Minggu II</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='week3' name='week[0][]' value='3' v-model="selectedWeeks">
+                                                                <label class='custom-control-label' for='week3'>Minggu III</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='week4' name='week[0][]' value='4' v-model="selectedWeeks">
+                                                                <label class='custom-control-label' for='week4'>Minggu IV</label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -89,36 +143,6 @@
                                                                         <option v-for="time in times" :value="time.time_value" >@{{ time.time_string }}</option>
                                                                     </select>
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6" v-if="dayEnable">
-                                                            <div class='custom-control custom-checkbox mr-sm-2'>
-                                                                <input type='checkbox' class='custom-control-input' id='day1' name='day[0][]' value='1'>
-                                                                <label class='custom-control-label' for='day1'>Senin</label>
-                                                            </div>
-                                                            <div class='custom-control custom-checkbox mr-sm-2'>
-                                                                <input type='checkbox' class='custom-control-input' id='day2' name='day[0][]' value='2'>
-                                                                <label class='custom-control-label' for='day2'>Selasa</label>
-                                                            </div>
-                                                            <div class='custom-control custom-checkbox mr-sm-2'>
-                                                                <input type='checkbox' class='custom-control-input' id='day3' name='day[0][]' value='3'>
-                                                                <label class='custom-control-label' for='day3'>Rabu</label>
-                                                            </div>
-                                                            <div class='custom-control custom-checkbox mr-sm-2'>
-                                                                <input type='checkbox' class='custom-control-input' id='day4' name='day[0][]' value='4'>
-                                                                <label class='custom-control-label' for='day4'>Kamis</label>
-                                                            </div>
-                                                            <div class='custom-control custom-checkbox mr-sm-2'>
-                                                                <input type='checkbox' class='custom-control-input' id='day5' name='day[0][]' value='5'>
-                                                                <label class='custom-control-label' for='day5'>Jumat</label>
-                                                            </div>
-                                                            <div class='custom-control custom-checkbox mr-sm-2'>
-                                                                <input type='checkbox' class='custom-control-input' id='day6' name='day[0][]' value='6'>
-                                                                <label class='custom-control-label' for='day6'>Sabtu</label>
-                                                            </div>
-                                                            <div class='custom-control custom-checkbox mr-sm-2'>
-                                                                <input type='checkbox' class='custom-control-input' id='day7' name='day[0][]' value='7'>
-                                                                <label class='custom-control-label' for='day7'>Minggu</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -144,7 +168,7 @@
                                                                     <label class="form-label">Action*</label>
 {{--                                                                    <select id="action0" name="actions0[]" v-model="actions"--}}
 {{--                                                                            class='form-control' multiple="multiple"></select>--}}
-                                                                    <select2 name="actions0[]" v-model="actions" url="{{route('select.actions') }}" placeholder=" -- Pilih Action -- " @selected_action="receiveSelectedAction">
+                                                                    <select2 name="actions0" v-model="actions" url="{{route('select.actions') }}" placeholder=" -- Pilih Action -- " @selected_action="receiveSelectedAction">
                                                                     </select2>
                                                                 </div>
                                                             </div>
@@ -264,9 +288,8 @@
                     .on('change', function () {
                         // vm.$emit('input', this.value)
                         vm.$emit('input', $(this).val());
-                        console.log($(this).text());
-                        vm.$emit('selected_action', $(this).text());
-                        debugger;
+                        vm.$emit('selected_action', $(this).val());
+                        // debugger;
                     });
 
 
@@ -312,8 +335,7 @@
                     .on('change', function () {
                         // vm.$emit('input', this.value)
                         vm.$emit('input', $(this).val());
-                        console.log($(this).text());
-                        vm.$emit('selected_action', $(this).text());
+                        vm.$emit('selected_action', $(this).val());
                     });
             }
 
@@ -382,7 +404,9 @@
             times: subData,
             period: 1,
             dayEnable: false,
+            selectedDay: [],
             monthEnable: false,
+            selectedWeeks: [],
             selected_time: -1,
             project_objects: [],
             actions: null,
@@ -390,31 +414,32 @@
         },
         methods:{
             changePeriod(event){
-                console.log(event.target.value);
                 //for daily period
-                if(event.target.value === 1){
+                if(event.target.value === "1"){
                     this.dayEnable = false;
                     this.monthEnable = false;
                 }
                 //for weekly period
-                else if(event.target.value === 2){
+                else if(event.target.value === "2"){
                     this.dayEnable = true;
                     this.monthEnable = false;
                 }
                 //for monthly period
-                else if(event.target.value === 3){
+                else if(event.target.value === "3"){
                     this.dayEnable = true;
                     this.monthEnable = true;
                 }
-                console.log(this.dayEnable);
             },
             changePlotting(){
                 var period = this.period;
                 var selected_time = this.selected_time;
                 var project_objects = this.project_objects;
+                var selected_day = this.selectedDay;
+                var selected_weeks = this.selectedWeeks;
                 var actions = this.actions;
                 var selected_action = this.selected_action;
-                console.log(selected_action);
+                console.log("selected_day data = " + selected_day);
+                console.log("selected_weeks data = " + selected_weeks);
 
                 //get index of time
                 let index=0;
@@ -425,30 +450,46 @@
                 }
 
                 //for daily period
-                if(period === 1){
+                if(period === "1"){
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = project_objects + " / " + actions;
+                        this.selected_plot = project_objects + " / " + selected_action;
                         this.times[index].days[i].action = this.selected_plot;
                     }
                 }
                 //for weekly period
-                else if(period === 2){
+                else if(period === "2"){
+                    let currentDay = this.selectedDay;
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = project_objects + " / " + actions;
-                        this.times[index].days[i].action = this.selected_plot;
+                        this.selected_plot = project_objects + " / " + selected_action;
+                        let tempI = i+1;
+                        for(let j=0; j<this.selectedDay.length; j++){
+                            if(tempI === this.selectedDay[j]){
+                                this.times[index].days[i].action = this.selected_plot;
+                                this.times[index].days[i].action = this.selected_plot;
+
+                                this.selectedDay[j] = this.selectedDay[j] + 6;
+                            }
+                        }
+                    }
+                    //add to time array data
+                    for(let j=0; j<this.selectedDay.length; j++){
+                        this.time.weekly_datas.push({
+                            actionWeeklyDay : this.selectedDay[j],
+                            actionWeekly : project_objects + " / " + selected_action,
+                        });
                     }
                 }
                 //for monthly period
-                else if(period === 3){
+                else if(period === "3"){
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = project_objects + " / " + actions;
+                        this.selected_plot = project_objects + " / " + selected_action;
                         this.times[index].days[i].action = this.selected_plot;
                     }
                 }
             },
             receiveSelectedAction(val){
-                var splitVar = val.split('\n');
-                this.selected_action = splitVar[splitVar.length];
+                var splitVar = this.actions.split('-');
+                this.selected_action = splitVar[1];
             }
         },
         computed: {

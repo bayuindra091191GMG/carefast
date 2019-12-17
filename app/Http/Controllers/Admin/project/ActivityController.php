@@ -132,7 +132,7 @@ class ActivityController extends Controller
                 'shift'             => "SHIFT ".$shiftType,
                 'times'             => $timeModel,
             ];
-//dd($data);
+//dd(json_encode($timeModel));
             return view('admin.project.activity.create-two')->with($data);
         }
         catch (\Exception $ex){

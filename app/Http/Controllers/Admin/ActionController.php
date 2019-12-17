@@ -144,7 +144,7 @@ class ActionController extends Controller
         $formatted_tags = [];
 
         foreach ($actions as $action) {
-            $formatted_tags[] = ['id' => $action->id, 'text' => $action->name];
+            $formatted_tags[] = ['id' => $action->id."-".$action->name, 'text' => $action->name];
         }
 
         return \Response::json($formatted_tags);

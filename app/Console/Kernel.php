@@ -28,9 +28,8 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')
         //          ->hourly();
 
-        $schedule->call(function(){
-            Log::info('CRON JOB ACTIVATED!');
-        })->everyFiveMinutes();
+        $schedule->command('complaint_escalation:cron')
+            ->everyThirtyMinutes();
     }
 
     /**

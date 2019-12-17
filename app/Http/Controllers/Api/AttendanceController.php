@@ -48,8 +48,16 @@ class AttendanceController extends Controller
             $date = Carbon::now('Asia/Jakarta');
             $time = $date->format('H:i:s');
             $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+
+
+            //checking kalau leader yg checkin atau cso langsung yg checkin
+            $checkinEmployeeId = $projectEmployee->id;
+            if($projectEmployee->employee_roles_id != 1){
+                $checkinEmployeeId = $data->cso_id;
+            }
+
             $schedule = Schedule::where('project_id', $projectEmployee->project_id)
-                ->where('project_employee_id', $projectEmployee->id)
+                ->where('project_employee_id', $checkinEmployeeId)
 //                ->whereTime('start', '<=', $time)
 //                ->whereTime('finish', '>=', $time)
                 ->first();
@@ -217,9 +225,9 @@ class AttendanceController extends Controller
                 return Response::json("Tempat yang discan tidak tepat!", 400);
             }
 
-            if($schedule == null){
-                return Response::json("Jadwal Tidak ditemukan!", 400);
-            }
+//            if($schedule == null){
+//                return Response::json("Jadwal Tidak ditemukan!", 400);
+//            }
 
             //Check if Check in or Check out
             //Check in  = 1

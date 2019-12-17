@@ -298,7 +298,8 @@ class ComplainController extends Controller
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
-                ->where('employee_roles_id', $complaint->employee_handler_role_id)
+                ->where('employee_roles_id', '!=', 1)
+                ->where('employee_roles_id', '<=', $complaint->employee_handler_role_id)
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){

@@ -45,11 +45,31 @@ return [
             'level' => 'debug',
         ],
 
+//        'daily' => [
+//            'driver' => 'daily',
+//            'path' => storage_path('logs/laravel.log'),
+//            'level' => 'debug',
+//            'days' => 14,
+//        ],
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => storage_path('logs/error/error.log'),
             'level' => 'debug',
-            'days' => 14,
+            'days' => 31,
+        ],
+
+        'info' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/info/info.log'),
+            'level' => 'debug',
+            'days' => 31,
+        ],
+
+        'cronjob' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/cronjob/cronjob.log'),
+            'level' => 'debug',
+            'days' => 31,
         ],
 
         'slack' => [
