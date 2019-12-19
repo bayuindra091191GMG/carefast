@@ -122,6 +122,7 @@ class ActivityController extends Controller
                     'time_string'    => $start_times[$ct]." - ".$finish_times[$ct],
                     "action_daily"   => "",
                     'weekly_datas'   => [],
+                    'monthly_datas'   => [],
                     "days"           => $dayModel,
                 ]);
                 $timeModel->push($time);
@@ -162,7 +163,7 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
         try{
-//            dd($request);
+            dd($request);
             $weeks = $request->input('week');
             $days = $request->input('day');
             $start_times = $request->input('start_times');

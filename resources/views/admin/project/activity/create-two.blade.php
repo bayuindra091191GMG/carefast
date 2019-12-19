@@ -5,14 +5,14 @@
     <div class="row">
         <div class="col-12">
             <div class="card-body">
-                {{ Form::open(['route'=>['admin.project.activity.store'],'method' => 'post','id' => 'general-form']) }}
+                {{ Form::open(['route'=>['admin.project.activity.store'],'method' => 'post','id' => 'general-form','v-on:submit.prevent']) }}
                     <div class="row">
                         <div class="col-md-8 col-12">
                             <h3>TAMBAH BARU PLOTTING - {{$project->name}} - STEP 2</h3>
                         </div>
                         <div class="col-md-4 col-12 text-right">
                             <a href="{{ route('admin.project.activity.show', ['id'=>$project->id]) }}" class="btn btn-danger">BATAL</a>
-                            <input type="submit" class="btn btn-success" value="SIMPAN">
+                            <button type="button" class="btn btn-success" onclick="root.submit();">SIMPAN</button>
                         </div>
                     </div>
 
@@ -41,21 +41,31 @@
                                     <div class="col-md-12 p-t-20" id="app">
                                         <div class="accordion" id="accordionExample">
                                             <div class="card m-b-0">
-                                                <div>
+                                                <div class="mb-4">
                                                     <table class="scrollmenu">
                                                         <tr>
                                                             <td>Time</td>
                                                             @for($ct=1;$ct<=365;$ct++)
-                                                                <td>Day {{$ct}}</td>
+                                                                <td>Day <br/>{{$ct}}</td>
                                                             @endfor
                                                         </tr>
                                                         <tr v-for="time in times">
                                                             <td>@{{ time.time_string }}</td>
                                                             <td v-for="(day, index) in time.days" class="tr-class">
-                                                                <input type="text"
-                                                                       v-if="day.action == null" v-model="day.action" disabled/>
-                                                                <input type="text"
-                                                                       v-else v-model="day.action" :style="{backgroundColor: day.color}" disabled/>
+                                                                <button type="button" class="btn btn-lg"
+                                                                        v-if="day.action == '' "
+                                                                        data-toggle="popover" title="Plot"
+                                                                        data-content="Pilih Action Dibawah ini">
+                                                                </button>
+                                                                <button type="button" class="btn btn-lg"
+                                                                        v-else :style="{backgroundColor: day.color}"
+                                                                        data-toggle="popover" title="Plot"
+                                                                        :data-content="day.action">
+                                                                </button>
+{{--                                                                <input type="text"--}}
+{{--                                                                       v-if="day.action == null" v-model="day.action" disabled/>--}}
+{{--                                                                <input type="text"--}}
+{{--                                                                       v-else v-model="day.action" :style="{backgroundColor: day.color}" disabled/>--}}
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -231,6 +241,10 @@
         </select>
     </script>
 <script>
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    });
+
     //Create a new component for product-details with a prop of details.
     var data = '{{ $times }}';
     var subData = JSON.parse(data.replace(/&quot;/g,'"'));
@@ -398,7 +412,7 @@
         }
     });
 
-    $root = new Vue({
+    var root = new Vue({
         el: '#app',
         data: {
             times: subData,
@@ -438,8 +452,6 @@
                 var selected_weeks = this.selectedWeeks;
                 var actions = this.actions;
                 var selected_action = this.selected_action;
-                console.log("selected_day data = " + selected_day);
-                console.log("selected_weeks data = " + selected_weeks);
 
                 //get index of time
                 let index=0;
@@ -452,53 +464,107 @@
                 //for daily period
                 if(period === "1"){
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = project_objects + " / " + selected_action;
+                        if(this.times[index].days[i].action === ""){
+                            this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
 
-                        this.times[index].days[i].action = this.selected_plot;
-                        this.times[index].days[i].color = '#00ccff';
-                        this.times[index].days[i].type = 1;
+                            this.times[index].days[i].action = this.selected_plot;
+                            this.times[index].days[i].color = '#00ccff';
+                            this.times[index].days[i].type = 1;
+                        }
                     }
                 }
                 //for weekly period
                 else if(period === "2"){
-                    let currentDay = this.selectedDay;
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = project_objects + " / " + selected_action;
+                        this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
                         let tempI = i+1;
                         let tempIString = tempI.toString();
-                        for(let j=0; j<this.selectedDay.length; j++){
-                            if(tempIString === this.selectedDay[j]){
+                        for(let j=0; j<selected_day.length; j++){
+                            if(tempIString === selected_day[j]){
                                 this.times[index].days[i].action = this.selected_plot;
                                 this.times[index].days[i].color = '#00cc66';
                                 this.times[index].days[i].type = 2;
 
-                                let valueInt = parseInt(this.selectedDay[j]);
-                                this.selectedDay[j] = (valueInt + 6).toString();
+                                let valueInt = parseInt(selected_day[j]);
+                                selected_day[j] = (valueInt + 6).toString();
                             }
                         }
                     }
                     //add to time array data
-                    for(let j=0; j<this.selectedDay.length; j++){
-                        this.time[index].weekly_datas.push({
-                            actionWeeklyDay : this.selectedDay[j],
-                            actionWeekly : project_objects + " / " + selected_action,
+                    for(let j=0; j<selected_day.length; j++){
+                        this.times[index].weekly_datas.push({
+                            actionTimeValue : selected_time,
+                            actionWeeklyDay : selected_day[j],
+                            actionWeekly : project_objects + "/" + selected_action,
                         });
                     }
                 }
                 //for monthly period
                 else if(period === "3"){
+                    let initialData = [];
+                    for(let j=0; j<selected_weeks.length; j++){
+                        for(let i=0; i<selected_day.length; i++){
+                            //add to time array data
+                            this.times[index].monthly_datas.push({
+                                actionTimeValue : selected_time,
+                                actionMonthlyWeek : selected_weeks[j],
+                                actionMonthlyDay : selected_day[i],
+                                actionMonthly : project_objects + "/" + selected_action,
+                            });
+
+                            let valueData = parseInt( selected_day[i]) + (6* (parseInt(selected_weeks[j])-1))
+                            initialData.push(valueData.toString());
+                        }
+                    }
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = project_objects + " / " + selected_action;
-                        this.times[index].days[i].action = this.selected_plot;
-                        this.times[index].days[i].color = '#ff9933';
-                        this.times[index].days[i].type = 3;
+                        this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
+                        let tempI = i+1;
+                        let tempIString = tempI.toString();
+                        for(let k=0; k<initialData.length; k++){
+                            if(tempIString === initialData[k]){
+                                this.times[index].days[i].action = this.selected_plot;
+                                this.times[index].days[i].color = '#ff9933';
+                                this.times[index].days[i].type = 3;
+
+                                let valueInt = parseInt(initialData[k]);
+                                initialData[k] = (valueInt + (6*4)).toString();
+                            // debugger;
+                            }
+                        }
                     }
                 }
             },
             receiveSelectedAction(val){
                 var splitVar = this.actions.split('-');
                 this.selected_action = splitVar[1];
-            }
+            },
+            validateSubmission : function(){
+                return true;
+            },
+            submit : function(){
+                var submittedItem = this.times;
+                // console.log(submittedItem);
+                if (this.validateSubmission()){
+                    axios.post('{{route('admin.project.activity.store')}}',submittedItem).then(response => {
+                        console.log(response);
+                        if (response.data.errors){
+                            //there is error
+                            var errors = Object.entries(response.data.errors);
+                            this.errors = [];
+                            //create new array.
+                            for(var idx = 0 ; idx < errors.length; idx++){
+                                this.errors.push({
+                                    attribute : errors[idx][0],
+                                    messages : errors[idx][1]
+                                })
+                            }
+                        }else{
+                            //here success, change the page to view the record. return the sales order id.
+                        }
+                    })
+                }
+
+            },
         },
         computed: {
 
