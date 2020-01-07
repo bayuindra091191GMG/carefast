@@ -163,7 +163,8 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
         try{
-            dd($request);
+            Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
+
             $weeks = $request->input('week');
             $days = $request->input('day');
             $start_times = $request->input('start_times');

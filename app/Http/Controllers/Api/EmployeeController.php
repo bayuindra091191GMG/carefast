@@ -95,10 +95,11 @@ class EmployeeController extends Controller
             }
 
             foreach($projectCSOs as $projectCSO){
-                $employeeImage = empty($projectCSO->employee->image_path) ? null : asset('storage/employees/'. $projectCSO->employee->image_path);
+                $employee = Employee::find($projectCSO->employee_id);
+                $employeeImage = empty($employee->image_path) ? null : asset('storage/employees/'. $employee->image_path);
                 $projectCSOModel = ([
                     'id'       => $projectCSO->employee_id,
-                    'name'     => $projectCSO->employee->first_name." ".$projectCSO->employee->last_name,
+                    'name'     => $employee->first_name." ".$employee->last_name,
                     'avatar'   => $employeeImage,
                 ]);
                 $projectCSOModels->push($projectCSOModel);

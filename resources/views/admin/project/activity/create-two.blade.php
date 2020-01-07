@@ -466,6 +466,7 @@
                     for(let i=0; i<this.times[index].days.length; i++){
                         if(this.times[index].days[i].action === ""){
                             this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
+                            this.action_daily =  project_objects + "/" + selected_action;
 
                             this.times[index].days[i].action = this.selected_plot;
                             this.times[index].days[i].color = '#00ccff';
@@ -475,6 +476,14 @@
                 }
                 //for weekly period
                 else if(period === "2"){
+                    //add to time array data
+                    for(let j=0; j<selected_day.length; j++){
+                        this.times[index].weekly_datas.push({
+                            actionTimeValue : selected_time,
+                            actionWeeklyDay : selected_day[j],
+                            actionWeekly : project_objects + "/" + selected_action,
+                        });
+                    }
                     for(let i=0; i<this.times[index].days.length; i++){
                         this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
                         let tempI = i+1;
@@ -489,14 +498,6 @@
                                 selected_day[j] = (valueInt + 6).toString();
                             }
                         }
-                    }
-                    //add to time array data
-                    for(let j=0; j<selected_day.length; j++){
-                        this.times[index].weekly_datas.push({
-                            actionTimeValue : selected_time,
-                            actionWeeklyDay : selected_day[j],
-                            actionWeekly : project_objects + "/" + selected_action,
-                        });
                     }
                 }
                 //for monthly period
@@ -542,7 +543,9 @@
                 return true;
             },
             submit : function(){
-                var submittedItem = this.times;
+                var submittedItem = {
+                    times : this.times,
+                };
                 // console.log(submittedItem);
                 if (this.validateSubmission()){
                     axios.post('{{route('admin.project.activity.store')}}',submittedItem).then(response => {
