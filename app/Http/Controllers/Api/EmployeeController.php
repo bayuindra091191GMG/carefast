@@ -132,7 +132,7 @@ class EmployeeController extends Controller
             $projectActivityModels = collect();
             //check if cleaner null
             if($projectActivities->count() == 0){
-                return Response::json($projectActivityModels, 200);
+                return Response::json($projectActivityModels, 482);
             }
 
             foreach($projectActivities as $projectActivity){
