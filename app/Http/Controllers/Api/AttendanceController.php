@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\libs\Checkout;
+use App\libs\AttendanceProcess;
 use App\libs\Utilities;
 use App\Models\Attendance;
 use App\Models\AttendanceDetail;
@@ -42,77 +42,9 @@ class AttendanceController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-//            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
-//                ->where('project_employee_id', $projectEmployee->id)
-//                ->first();
-            //Check Schedule
-            $date = Carbon::now('Asia/Jakarta');
-            $time = $date->format('H:i:s');
-            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+            $result = AttendanceProcess::checkinProcess($employee, $request, $data);
 
-
-            //checking kalau leader yg checkin atau cso langsung yg checkin
-            $checkinEmployeeId = $projectEmployee->id;
-            if($projectEmployee->employee_roles_id != 1){
-                $checkinEmployeeId = $data->cso_id;
-            }
-
-            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
-                ->where('project_employee_id', $checkinEmployeeId)
-//                ->whereTime('start', '<=', $time)
-//                ->whereTime('finish', '>=', $time)
-                ->first();
-            $place = Place::find($schedule->place_id);
-
-//            $isPlace = Utilities::checkingQrCode($data->qr_code);
-//            if(!$isPlace){
-
-            if($place->qr_code != $data->qr_code){
-                return Response::json("Tempat yang discan tidak tepat!", 400);
-            }
-
-            if($schedule == null){
-                return Response::json("Jadwal Tidak ditemukan!", 400);
-            }
-
-            //Check if Check in or Check out
-            //Check in  = 1
-            //Check out = 2
-            $message = "";
-            if($request->hasFile('image')){
-                $newAttendance = Attendance::create([
-                    'employee_id'   => $employee->id,
-                    'schedule_id'   => $schedule->id,
-                    'place_id'      => $place->id,
-                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'is_done'       => 0,
-                    'status_id'     => 6
-                ]);
-
-                //Upload Image
-                //Creating Path Everyday
-                $today = Carbon::now('Asia/Jakarta');
-                $todayStr = $today->format('l d-m-y');
-                $publicPath = 'storage/checkins/'. $todayStr;
-                if(!File::isDirectory($publicPath)){
-                    File::makeDirectory(public_path($publicPath), 0777, true, true);
-                }
-
-                $image = $request->file('image');
-                $avatar = Image::make($image);
-                $extension = $image->extension();
-                $filename = $employee->first_name . ' ' . $employee->last_name . '_checkin_'. $newAttendance->id . '_' .
-                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
-                $avatar->save(public_path($publicPath ."/". $filename));
-
-                $newAttendance->image_path = $filename;
-                $newAttendance->save();
-                $message = "Berhasil Check in";
-                return Response::json($message, 200);
-            }
-            else{
-                return Response::json('Harus mengupload Gambar!', 400);
-            }
+            return Response::json($result["desc"], $result["status_code"]);
 
         }
         catch (\Exception $ex){
@@ -120,85 +52,36 @@ class AttendanceController extends Controller
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
-//    public function submitCheckin(Request $request)
-//    {
-//        try{
-//
-//            $data = json_decode($request->input('checkin_model'));
-//            $userLogin = auth('api')->user();
-//            $user = User::where('phone', $userLogin->phone)->first();
-//            $employee = $user->employee;
-//
-////            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
-////                ->where('project_employee_id', $projectEmployee->id)
-////                ->first();
-//            //Check Schedule
-//            $date = Carbon::now('Asia/Jakarta');
-//            $time = $date->format('H:i:s');
-//            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
-//            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
-//                ->where('project_employee_id', $projectEmployee->id)
-////                ->whereTime('start', '<=', $time)
-////                ->whereTime('finish', '>=', $time)
-//                ->first();
-//            $place = Place::find($schedule->place_id);
-//
-////            $isPlace = Utilities::checkingQrCode($data->qr_code);
-////            if(!$isPlace){
-//
-//            if($place->qr_code != $data->qr_code){
-//                return Response::json("Tempat yang discan tidak tepat!", 400);
-//            }
-//
-//            if($schedule == null){
-//                return Response::json("Jadwal Tidak ditemukan!", 400);
-//            }
-//
-//            //Check if Check in or Check out
-//            //Check in  = 1
-//            //Check out = 2
-//            $message = "";
-//            if($request->hasFile('image')){
-//                $newAttendance = Attendance::create([
-//                    'employee_id'   => $employee->id,
-//                    'schedule_id'   => $schedule->id,
-//                    'place_id'      => $place->id,
-//                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-//                    'is_done'       => 0,
-//                    'status_id'     => 6
-//                ]);
-//
-//                //Upload Image
-//                //Creating Path Everyday
-//                $today = Carbon::now('Asia/Jakarta');
-//                $todayStr = $today->format('l d-m-y');
-//                $publicPath = 'storage/checkins/'. $todayStr;
-//                if(!File::isDirectory($publicPath)){
-//                    File::makeDirectory(public_path($publicPath), 0777, true, true);
-//                }
-//
-//                $image = $request->file('image');
-//                $avatar = Image::make($image);
-//                $extension = $image->extension();
-//                $filename = $employee->first_name . ' ' . $employee->last_name . '_checkin_'. $newAttendance->id . '_' .
-//                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
-//                $avatar->save(public_path($publicPath ."/". $filename));
-//
-//                $newAttendance->image_path = $filename;
-//                $newAttendance->save();
-//                $message = "Berhasil Check in";
-//                return Response::json($message, 200);
-//            }
-//            else{
-//                return Response::json('Harus mengupload Gambar!', 400);
-//            }
-//
-//        }
-//        catch (\Exception $ex){
-//            Log::error('Api/AttendanceController - submitCheckin error EX: '. $ex);
-//            return Response::json("Maaf terjadi kesalahan!", 500);
-//        }
-//    }
+    /**
+     * Function to Submit Attendance by leader.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function submitCheckinByLeader(Request $request)
+    {
+        try{
+
+            $data = json_decode($request->input('checkin_model'));
+
+            $employee = Employee::find($request->input('employee_id'));
+
+            $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+
+            return Response::json($result["desc"], $result["status_code"]);
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceController - submitCheckin error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+    /**
+     * Function to Submit Attendance checkout.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function submitCheckout(Request $request)
     {
         try{
@@ -210,7 +93,7 @@ class AttendanceController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            $result = Checkout::checkoutProcess($employee, $request);
+            $result = AttendanceProcess::checkoutProcess($employee, $request);
 
             return Response::json($result["desc"], $result["status_code"]);
 
@@ -220,6 +103,12 @@ class AttendanceController extends Controller
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
+    /**
+     * Function to Submit Attendance checkout by leader.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function submitCheckoutByLeader(Request $request)
     {
         try{
@@ -229,7 +118,7 @@ class AttendanceController extends Controller
 
             $employee = Employee::find($request->input('employee_id'));
 
-            $result = Checkout::checkoutProcess($employee, $request);
+            $result = AttendanceProcess::checkoutProcess($employee, $request);
 
             return Response::json($result["desc"], $result["status_code"]);
 
@@ -240,6 +129,12 @@ class AttendanceController extends Controller
         }
     }
 
+    /**
+     * Function to checking employee already checkin or not.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function checkinChecking(Request $request){
         try{
             $userLogin = auth('api')->user();
@@ -294,35 +189,14 @@ class AttendanceController extends Controller
         }
     }
 
-    public function employeeList(Request $request){
-        try{
-            $rules = array(
-                'qr_code'   => 'required'
-            );
 
-            $data = $request->json()->all();
-            $validator = Validator::make($data, $rules);
-            if ($validator->fails()) {
-                return response()->json($validator->messages(), 400);
-            }
-
-            //Submit Data
-            $place = Place::where('qr_code', $request->input('qr_code'))->first();
-            $date = Carbon::now('Asia/Jakarta');
-            $time = $date->format('H:i:s');
-            $schedule = Schedule::where('place_id', $place->id)->where('finish' <= $time)->with('employee')->get();
-
-            return Response::json([
-                'message'   => 'Sukses mengambil data Schedule!',
-                'model'     => $schedule
-            ]);
-        }
-        catch (\Exception $ex){
-            return Response::json("Maaf terjadi kesalahan!", 500);
-        }
-    }
-
-    public function supervisorSubmit(Request $request){
+    /**
+     * Function to assestment employee works.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function leaderSubmit(Request $request){
         try {
             $rules = array(
                 'attendance_id' => 'required'

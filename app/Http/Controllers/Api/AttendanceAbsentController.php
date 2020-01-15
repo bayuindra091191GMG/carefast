@@ -78,7 +78,7 @@ class AttendanceAbsentController extends Controller
             return Response::json("Berhasil Proses Absensi", 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/AttendanceAbsentController - submitCheckin error EX: '. $ex);
+            Log::error('Api/AttendanceAbsentController - absentProcess error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

@@ -43,6 +43,11 @@ class PlaceController extends Controller
         }
     }
 
+    /**
+     * Function to get place information by qr code
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function getPlaceByQr(Request $request){
         try{
 //            $rules = array(
