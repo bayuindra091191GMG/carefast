@@ -28,7 +28,7 @@ use Intervention\Image\Facades\Image;
 class AttendanceAbsentController extends Controller
 {
     /**
-     * Function to Submit Attendance Absent Check in.
+     * Function to Submit Attendance Absent Checkin or checkout.
      *
      * @param Request $request
      * @return JsonResponse

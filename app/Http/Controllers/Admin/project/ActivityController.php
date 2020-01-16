@@ -163,101 +163,23 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
         try{
-            Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
+//            Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
+            $items = $request->input('times');
 
-            $weeks = $request->input('week');
-            $days = $request->input('day');
-            $start_times = $request->input('start_times');
-            $finish_times = $request->input('finish_times');
-            $places = $request->input('places');
-            $shiftType = $request->input('shift_type');
-            $periodType = $request->input('period');
-
-            $validStart = true;
-            if(!empty($start_times)){
-                foreach ($start_times as $start_time){
-                    if(empty($start_time)) $validStart = false;
-                }
-            }
-            if(!$validStart){
-                return back()->withErrors("Terdapat JAM MULAI yang belum terisi!")->withInput($request->all());
-            }
-
-            $validFinish = true;
-            if(!empty($finish_times)){
-                foreach ($finish_times as $finish_time){
-                    if(empty($finish_time)) $validFinish = false;
-                }
-            }
-            if(!$validFinish){
-                return back()->withErrors("Terdapat JAM BERAKHIR yang belum terisi!")->withInput($request->all());
-            }
-
-            //validation for every input
-            $j = 0;
-            foreach($periodType as $periodValue){
-                if($periodValue != "Daily"){
-                    foreach($days[$j] as $dayValue){
-                        if(empty($dayValue)){
-                            return back()->withErrors("Terdapat HARI yang belum terpilih untuk periodic weekly dan monthly!")->withInput($request->all());
-                        }
+            foreach ($items as $item){
+                if(!empty($item["action_daily"])){
+                    Log::info('Admin/activity/ActivityController - store time_value : '. $item["time_value"]);
+                    Log::info('Admin/activity/ActivityController - store action_daily : '. $item["action_daily"]);
+                    $weeklyDatas = $item["weekly_datas"];
+                    $i = 1;
+                    foreach ($weeklyDatas as $weeklyData){
+                        Log::info('Admin/activity/ActivityController - store weekly_datas'.$i.' -> actionTimeValue : '. $weeklyData["actionTimeValue"]);
+                        Log::info('Admin/activity/ActivityController - store weekly_datas'.$i.' -> actionWeeklyDay : '. $weeklyData["actionWeeklyDay"]);
+                        Log::info('Admin/activity/ActivityController - store weekly_datas'.$i.' -> actionWeekly : '. $weeklyData["actionWeekly"]);
+                        $i++;
                     }
                 }
-                $j++;
             }
-
-            $i = 0;
-            $user = Auth::guard('admin')->user();
-            //create schedule
-            foreach ($start_times as $start_time){
-                $daysString = "";
-                $start = Carbon::parse('00-00-00 '.$start_times[$i])->format('Y-m-d H:i:s');
-                $finish = Carbon::parse('00-00-00 '.$finish_times[$i])->format('Y-m-d H:i:s');
-
-                if($periodType[$i]  == "Daily"){
-                    $day = "1#2#3#4#5#6#7#";
-                }
-                else{
-                    foreach($days[$i] as $dayValue){
-                        $daysString .= $dayValue."#";
-                    }
-                    $day = $daysString;
-                }
-
-                $actionsString = "";
-                $objectsString = "";
-                $actions = $request->input('actions'.$i);
-                foreach($actions as $actionValue){
-                    $actionsString .= $actionValue."#";
-                }
-
-                $objects = $request->input('project_objects'.$i);
-                foreach($objects as $objectValue){
-//                    $objectsString .= $objectValue."#";
-//                    dd($objectsString, $actionsString);
-
-                    $projectActivity = ProjectActivity::create([
-                        'project_id'            => $request->input('project_id'),
-                        'plotting_name'         => $objectValue,
-                        'action_id'             => $actionsString,
-                        'shift_type'            => $shiftType,
-                        'place_id'              => $places,
-//                    'weeks'                 => $weekString,
-                        'days'                  => $day,
-                        'start'                 => $start,
-                        'finish'                => $finish,
-                        'period_type'           => $periodType[$i],
-                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'created_by'            => $user->id,
-                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'updated_by'            => $user->id,
-                    ]);
-                }
-
-                $i++;
-            }
-
-            return redirect()->route('admin.project.activity.show', ['id' => $request->input('project_id')]);
         }
         catch (\Exception $ex){
 //            dd($ex);
@@ -265,6 +187,111 @@ class ActivityController extends Controller
             return "Something went wrong! Please contact administrator!" . $ex;
         }
     }
+//    public function store(Request $request)
+//    {
+//        try{
+//            Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
+//
+//            $weeks = $request->input('week');
+//            $days = $request->input('day');
+//            $start_times = $request->input('start_times');
+//            $finish_times = $request->input('finish_times');
+//            $places = $request->input('places');
+//            $shiftType = $request->input('shift_type');
+//            $periodType = $request->input('period');
+//
+//            $validStart = true;
+//            if(!empty($start_times)){
+//                foreach ($start_times as $start_time){
+//                    if(empty($start_time)) $validStart = false;
+//                }
+//            }
+//            if(!$validStart){
+//                return back()->withErrors("Terdapat JAM MULAI yang belum terisi!")->withInput($request->all());
+//            }
+//
+//            $validFinish = true;
+//            if(!empty($finish_times)){
+//                foreach ($finish_times as $finish_time){
+//                    if(empty($finish_time)) $validFinish = false;
+//                }
+//            }
+//            if(!$validFinish){
+//                return back()->withErrors("Terdapat JAM BERAKHIR yang belum terisi!")->withInput($request->all());
+//            }
+//
+//            //validation for every input
+//            $j = 0;
+//            foreach($periodType as $periodValue){
+//                if($periodValue != "Daily"){
+//                    foreach($days[$j] as $dayValue){
+//                        if(empty($dayValue)){
+//                            return back()->withErrors("Terdapat HARI yang belum terpilih untuk periodic weekly dan monthly!")->withInput($request->all());
+//                        }
+//                    }
+//                }
+//                $j++;
+//            }
+//
+//            $i = 0;
+//            $user = Auth::guard('admin')->user();
+//            //create schedule
+//            foreach ($start_times as $start_time){
+//                $daysString = "";
+//                $start = Carbon::parse('00-00-00 '.$start_times[$i])->format('Y-m-d H:i:s');
+//                $finish = Carbon::parse('00-00-00 '.$finish_times[$i])->format('Y-m-d H:i:s');
+//
+//                if($periodType[$i]  == "Daily"){
+//                    $day = "1#2#3#4#5#6#7#";
+//                }
+//                else{
+//                    foreach($days[$i] as $dayValue){
+//                        $daysString .= $dayValue."#";
+//                    }
+//                    $day = $daysString;
+//                }
+//
+//                $actionsString = "";
+//                $objectsString = "";
+//                $actions = $request->input('actions'.$i);
+//                foreach($actions as $actionValue){
+//                    $actionsString .= $actionValue."#";
+//                }
+//
+//                $objects = $request->input('project_objects'.$i);
+//                foreach($objects as $objectValue){
+////                    $objectsString .= $objectValue."#";
+////                    dd($objectsString, $actionsString);
+//
+//                    $projectActivity = ProjectActivity::create([
+//                        'project_id'            => $request->input('project_id'),
+//                        'plotting_name'         => $objectValue,
+//                        'action_id'             => $actionsString,
+//                        'shift_type'            => $shiftType,
+//                        'place_id'              => $places,
+////                    'weeks'                 => $weekString,
+//                        'days'                  => $day,
+//                        'start'                 => $start,
+//                        'finish'                => $finish,
+//                        'period_type'           => $periodType[$i],
+//                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+//                        'created_by'            => $user->id,
+//                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+//                        'updated_by'            => $user->id,
+//                    ]);
+//                }
+//
+//                $i++;
+//            }
+//
+//            return redirect()->route('admin.project.activity.show', ['id' => $request->input('project_id')]);
+//        }
+//        catch (\Exception $ex){
+////            dd($ex);
+//            Log::error('Admin/activity/ActivityController - store error EX: '. $ex);
+//            return "Something went wrong! Please contact administrator!" . $ex;
+//        }
+//    }
 
     public function edit(int $id)
     {

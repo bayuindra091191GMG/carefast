@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Response;
 class EmployeeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Function to listing of the employee.
      *
      * @return JsonResponse
      */
@@ -47,7 +47,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Function to get the employee information.
      *
      * @param $id
      * @return JsonResponse
@@ -75,7 +75,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Function to listing of the employee CSO.
      *
      * @param $id
      * @return JsonResponse
@@ -114,7 +114,7 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Function to listing of the plotting.
      *
      * @param $id
      * @return JsonResponse
@@ -163,6 +163,12 @@ class EmployeeController extends Controller
     }
 
 
+    /**
+     * Function to get the employee schedule.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
     public function employeeSchedule(){
         try{
             $userLogin = auth('api')->user();

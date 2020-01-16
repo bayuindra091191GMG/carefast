@@ -463,20 +463,21 @@
 
                 //for daily period
                 if(period === "1"){
+                    this.times[index].action_daily =  project_objects + "/" + selected_action;
                     for(let i=0; i<this.times[index].days.length; i++){
-                        if(this.times[index].days[i].action === ""){
-                            this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
-                            this.action_daily =  project_objects + "/" + selected_action;
+                        this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
 
-                            this.times[index].days[i].action = this.selected_plot;
-                            this.times[index].days[i].color = '#00ccff';
-                            this.times[index].days[i].type = 1;
-                        }
+                        this.times[index].days[i].action = this.selected_plot;
+                        this.times[index].days[i].color = '#00ccff';
+                        this.times[index].days[i].type = 1;
+                        // if(this.times[index].days[i].action === ""){
+                        // }
                     }
                 }
                 //for weekly period
                 else if(period === "2"){
                     //add to time array data
+                    this.times[index].weekly_datas = [];
                     for(let j=0; j<selected_day.length; j++){
                         this.times[index].weekly_datas.push({
                             actionTimeValue : selected_time,
@@ -499,6 +500,7 @@
                             }
                         }
                     }
+                    this.selectedDay = [];
                 }
                 //for monthly period
                 else if(period === "3"){
