@@ -82,16 +82,20 @@ class EmployeeController extends Controller
      */
     public function getEmployeeCSO(Request $request)
     {
-        $id = $request->input('id');
+        $userLogin = auth('api')->user();
+        $user = User::where('phone', $userLogin->phone)->first();
+        $employee = $user->employee;
+        $id = $employee->id;
         try{
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+
             $projectCSOs = ProjectEmployee::where('project_id', $projectEmployee->project_id)
                 ->where('employee_roles_id', 1)
                 ->get();
             $projectCSOModels = collect();
             //check if cleaner null
             if($projectCSOs->count() == 0){
-                return Response::json($projectCSOModels, 200);
+                return Response::json($projectCSOModels, 482);
             }
 
             foreach($projectCSOs as $projectCSO){
@@ -174,6 +178,88 @@ class EmployeeController extends Controller
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
+
+            //get employee schedule
+            $date = Carbon::now('Asia/Jakarta');
+            $time = $date->format('H:i');
+            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+//            Log::info('employee_id = '.$employee->id);
+
+            // weekOfMonth will returns 1 for the 7 first days of the month, then 2 from the 8th to
+            // the 14th, 3 from the 15th to the 21st, 4 from 22nd to 28th and 5 above
+            $todayWeekOfMonth = $date->weekOfMonth;
+            // dayOfWeekIso returns a number between 1 (monday) and 7 (sunday)
+            $todayOfWeek = $date->dayOfWeekIso;
+
+            $schedules = Schedule::where('project_id', $projectEmployee->project_id)
+                ->where('project_employee_id', $projectEmployee->id)
+                ->where('weeks', 'like', '%'.$todayWeekOfMonth.'%')
+                ->where('days', 'like', '%'.$todayOfWeek.'%')
+//                ->whereTime('start', '<=', $time)
+//                ->whereTime('finish', '>=', $time)
+                ->get();
+
+
+            if($schedules->count() == 0){
+                return Response::json("Tidak ada Jadwal hari ini", 482);
+            }
+
+            $scheduleModels = collect();
+//            Log::info('project_id = '. $projectEmployee->project_id.', project_employee_id = '. $projectEmployee->id);
+            foreach ($schedules as $schedule){
+                $scheduleDetails = ScheduleDetail::where('schedule_id', $schedule->id)->get();
+
+                $scheduleDetailModels = collect();
+                foreach ($scheduleDetails as $scheduleDetail){
+                    $projectObject = ProjectObject::find($scheduleDetail->project_object_id);
+                    $objectName = "";
+                    $unitName = $projectObject->unit_name != "-" ? $projectObject->unit_name." " : "";
+                    $sub1unitName = $projectObject->sub1_unit_name != "-" ? $projectObject->sub1_unit_name." " : "";
+                    $sub2unitName = $projectObject->sub2_unit_name != "-" ? $projectObject->sub2_unit_name." " : "";
+                    $objectName = $objectName.$unitName;
+                    $objectName = $objectName.$sub1unitName;
+                    $objectName = $objectName.$sub2unitName;
+
+                    $scheduleDetailModel = [
+                        'detail_id'        => $scheduleDetail->id,
+                        'place_name'        => $projectObject->place_name,
+                        'object_name'       => $objectName,
+                        'action_name'       => $scheduleDetail->action->name,
+                    ];
+                    $scheduleDetailModels->push($scheduleDetailModel);
+                }
+
+                $scheduleModel = [
+                    'id'                => $schedule->id,
+                    'employee_name'     => $employee->first_name ." ". $employee->last_name,
+                    'project_id'        => $schedule->project_id,
+                    'project_name'      => $schedule->project->name,
+                    'shift_type'        => $schedule->shift_type,
+                    'start'             => Carbon::parse($schedule->start)->toTimeString(),
+                    'finish'            => Carbon::parse($schedule->finish)->toTimeString(),
+                    'schedule_details'  => $scheduleDetailModels
+                ];
+
+                $scheduleModels->push($scheduleModel);
+            }
+            return Response::json($scheduleModels, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    /**
+     * Function to get the employee schedule by leader.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function employeeScheduleByLeader(Request $request){
+        try{
+            $id = $request->input('cso_id');
+            $employee = Employee::find($id);
 
             //get employee schedule
             $date = Carbon::now('Asia/Jakarta');

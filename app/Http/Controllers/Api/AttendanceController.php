@@ -64,12 +64,22 @@ class AttendanceController extends Controller
 
             $data = json_decode($request->input('checkin_model'));
 
-            $employee = Employee::find($request->input('employee_id'));
+            if($data->cso_id != "0"){
+                $employee = Employee::find($data->cso_id);
 
-            $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+                $result = AttendanceProcess::checkinProcess($employee, $request, $data);
 
-            return Response::json($result["desc"], $result["status_code"]);
+                return Response::json($result["desc"], $result["status_code"]);
+            }
+            else{
+                $userLogin = auth('api')->user();
+                $user = User::where('phone', $userLogin->phone)->first();
+                $employee = $user->employee;
 
+                $result = AttendanceProcess::checkinLeaderProcess($employee, $request, $data);
+
+                return Response::json($result["desc"], $result["status_code"]);
+            }
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceController - submitCheckin error EX: '. $ex);
@@ -116,12 +126,24 @@ class AttendanceController extends Controller
 //            Log::info('qr_code: '. $request->input('qr_code'));
 //            Log::info('notes: '. $request->input('notes'));
 
-            $employee = Employee::find($request->input('employee_id'));
+            if($request->input('cso_id') != "0"){
+                $type = 1;
+                $employee = Employee::find($request->input('cso_id'));
 
-            $result = AttendanceProcess::checkoutProcess($employee, $request);
+                $result = AttendanceProcess::checkoutProcess($employee, $request, $type);
 
-            return Response::json($result["desc"], $result["status_code"]);
+                return Response::json($result["desc"], $result["status_code"]);
+            }
+            else{
+                $type = 2;
+                $userLogin = auth('api')->user();
+                $user = User::where('phone', $userLogin->phone)->first();
+                $employee = $user->employee;
 
+                $result = AttendanceProcess::checkoutProcess($employee, $request, $type);
+
+                return Response::json($result["desc"], $result["status_code"]);
+            }
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceController - submitCheckout error EX: '. $ex);

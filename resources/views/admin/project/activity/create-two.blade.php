@@ -72,8 +72,6 @@
                                                 </div>
                                                 <hr/>
 
-                                                <input type="hidden" id="project_id" name="project_id" value="{{$project->id}}">
-                                                <input type="hidden" id="place0" value="{{$place->id}}">
                                                 <div class="col-md-12">
                                                     <div class="row">
                                                         <div class="col-md-6">
@@ -425,6 +423,10 @@
             project_objects: [],
             actions: null,
             selected_action: null,
+
+            project_id : '{{$project->id}}',
+            place_id : '{{$place->id}}',
+            shift_type : '{{$shiftType}}',
         },
         methods:{
             changePeriod(event){
@@ -452,6 +454,11 @@
                 var selected_weeks = this.selectedWeeks;
                 var actions = this.actions;
                 var selected_action = this.selected_action;
+                var dayStringWeekly = "";
+                var dayStringMonthlyDay = "";
+                var dayStringMonthlyWeek = "";
+                console.log(actions);
+                console.log()
 
                 //get index of time
                 let index=0;
@@ -463,7 +470,10 @@
 
                 //for daily period
                 if(period === "1"){
-                    this.times[index].action_daily =  project_objects + "/" + selected_action;
+                    // this.times[index].action_daily =  project_objects + "/" + selected_action;
+
+                    this.times[index].action_daily =  actions;
+                    this.times[index].object_daily =  project_objects;
                     for(let i=0; i<this.times[index].days.length; i++){
                         this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
 
@@ -479,12 +489,15 @@
                     //add to time array data
                     this.times[index].weekly_datas = [];
                     for(let j=0; j<selected_day.length; j++){
-                        this.times[index].weekly_datas.push({
-                            actionTimeValue : selected_time,
-                            actionWeeklyDay : selected_day[j],
-                            actionWeekly : project_objects + "/" + selected_action,
-                        });
+                        dayStringWeekly = dayStringWeekly + "" + selected_day[j] + "#";
                     }
+                    this.times[index].weekly_datas.push({
+                        TimeValue : selected_time,
+                        Day : dayStringWeekly,
+                        Object : project_objects,
+                        Action :  actions,
+                        // Action : project_objects + "/" + selected_action,
+                    });
                     for(let i=0; i<this.times[index].days.length; i++){
                         this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
                         let tempI = i+1;
@@ -507,18 +520,26 @@
                     let initialData = [];
                     for(let j=0; j<selected_weeks.length; j++){
                         for(let i=0; i<selected_day.length; i++){
-                            //add to time array data
-                            this.times[index].monthly_datas.push({
-                                actionTimeValue : selected_time,
-                                actionMonthlyWeek : selected_weeks[j],
-                                actionMonthlyDay : selected_day[i],
-                                actionMonthly : project_objects + "/" + selected_action,
-                            });
-
-                            let valueData = parseInt( selected_day[i]) + (6* (parseInt(selected_weeks[j])-1))
+                            let valueData = parseInt( selected_day[i]) + (6* (parseInt(selected_weeks[j])-1));
                             initialData.push(valueData.toString());
                         }
                     }
+                    for(let j=0; j<selected_weeks.length; j++){
+                        dayStringMonthlyWeek = dayStringMonthlyWeek + "" + selected_weeks[j] + "#";
+                    }
+                    for(let i=0; i<selected_day.length; i++){
+                        dayStringMonthlyDay = dayStringMonthlyDay + "" + selected_day[i] + "#";
+                    }
+                    //add to time array data
+                    this.times[index].monthly_datas.push({
+                        TimeValue : selected_time,
+                        Week : dayStringMonthlyWeek,
+                        Day : dayStringMonthlyDay,
+                        Object : project_objects,
+                        Action :  actions,
+                        // Action : project_objects + "/" + selected_action,
+                    });
+
                     for(let i=0; i<this.times[index].days.length; i++){
                         this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
                         let tempI = i+1;
@@ -547,6 +568,9 @@
             submit : function(){
                 var submittedItem = {
                     times : this.times,
+                    project_id : this.project_id,
+                    place_id : this.place_id,
+                    shift_type : this.shift_type,
                 };
                 // console.log(submittedItem);
                 if (this.validateSubmission()){

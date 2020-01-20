@@ -50,8 +50,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::get('/attendance/checking', 'Api\AttendanceController@checkinChecking');
     Route::post('/attendance/checkin', 'Api\AttendanceController@submitCheckin');
     Route::post('/attendance/checkout', 'Api\AttendanceController@submitCheckout');
-    Route::post('/attendance/leader/checkin-cso', 'Api\AttendanceController@submitCheckinByLeader');
-    Route::post('/attendance/leader/checkout-cso', 'Api\AttendanceController@submitCheckoutByLeader');
+    Route::post('/attendance/leader/checkin', 'Api\AttendanceController@submitCheckinByLeader');
+    Route::post('/attendance/leader/checkout', 'Api\AttendanceController@submitCheckoutByLeader');
     Route::post('/attendance/leader/assessment', 'Api\AttendanceController@leaderSubmit');
 
     // Attendance absent
@@ -62,6 +62,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     //Employee
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');
     Route::get('/employee/schedule', 'Api\EmployeeController@employeeSchedule');
+    Route::post('/employee/leader/schedule', 'Api\EmployeeController@employeeScheduleByLeader');
     Route::post('/employee/get-detail/', 'Api\EmployeeController@getEmployeeDetail');
     Route::get('/employee/get-direct-cso/', 'Api\EmployeeController@getEmployeeCSO');
 
