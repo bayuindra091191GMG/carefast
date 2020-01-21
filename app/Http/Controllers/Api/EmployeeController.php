@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Action;
 use App\Models\Employee;
+use App\Models\Place;
 use App\Models\Project;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
@@ -15,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
@@ -105,6 +107,7 @@ class EmployeeController extends Controller
                     'id'       => $projectCSO->employee_id,
                     'name'     => $employee->first_name." ".$employee->last_name,
                     'avatar'   => $employeeImage,
+                    'role'   => $projectCSO->employee_role->name,
                 ]);
                 $projectCSOModels->push($projectCSOModel);
             }
@@ -140,19 +143,19 @@ class EmployeeController extends Controller
             }
 
             foreach($projectActivities as $projectActivity){
-                $actionName = "";
+                $actionName = collect();
                 if(!empty($projectActivity->action_id)){
                     $actionList = explode('#', $projectActivity->action_id);
                     foreach ($actionList as $action){
                         if(!empty($action)){
                             $action = Action::find($action);
-                            $actionName .= $action->name. ", ";
+                            $actionName->push($action->name);
                         }
                     }
                 }
                 $projectCSOModel = ([
                     'id'       => $projectActivity->employee_id,
-                    'plot_name'     => $projectActivity->place->name." | ".$projectActivity->plotting_name,
+                    'name'     => $projectActivity->place->name." | ".$projectActivity->plotting_name,
                     'activities'   => $actionName,
                 ]);
                 $projectActivityModels->push($projectCSOModel);
@@ -162,6 +165,133 @@ class EmployeeController extends Controller
         }
         catch(\Exception $ex){
             Log::error('Api/EmployeeController - getPlottings error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    /**
+     * Function to listing of the plotting.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getDacs()
+    {
+        $userLogin = auth('api')->user();
+        $user = User::where('phone', $userLogin->phone)->first();
+        $employee = $user->employee;
+        $id = $employee->id;
+        try{
+            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+            $projectActivities = ProjectActivity::where('project_id', $projectEmployee->project_id)
+                ->get();
+            $projectActivityModels = collect();
+            //check if cleaner null
+            if($projectActivities->count() == 0){
+                return Response::json($projectActivityModels, 482);
+            }
+
+            // get group for dac
+            $projectActivitiesGroups = DB::table('project_activities')
+                ->groupBy('plotting_name')
+                ->groupBy('place_id')
+                ->get();
+            $projectActivityModels = collect();
+            foreach ($projectActivitiesGroups as $projectActivitiesGroup){
+                $projectActivities = ProjectActivity::where('project_id', $projectEmployee->project_id)
+                    ->where("plotting_name", $projectActivitiesGroup->plotting_name)
+                    ->where("place_id", $projectActivitiesGroup->place_id)
+                    ->get();
+                $dacDetailModel = collect();
+                foreach ($projectActivities as $projectActivity){
+                    $actionName = collect();
+                    if(!empty($projectActivity->action_id)){
+                        $actionList = explode('#', $projectActivity->action_id);
+                        foreach ($actionList as $action){
+                            if(!empty($action)){
+                                $action = Action::find($action);
+                                $actionName .= $action->name. ", ";
+//                                $actionName->push($action->name);
+                            }
+                        }
+                    }
+                    $dacDetail = ([
+                        'id'       => $projectActivity->id,
+                        'time'     => Carbon::parse($projectActivity->start)->format('H:i')." - ".Carbon::parse($projectActivity->finish)->format('H:i'),
+                        'action'   => $actionName
+                    ]);
+                    $dacDetailModel->push($dacDetail);
+                }
+                $place = Place::find($projectActivitiesGroup->place_id);
+                $dacHeaderModel = ([
+                    'place'     => $place->name,
+                    'object'   => $projectActivitiesGroup->plotting_name,
+                    'shift'     => $projectActivitiesGroup->shift_type,
+                    'project'     => $projectEmployee->project->name,
+                    'details'   => $dacDetailModel
+                ]);
+                $projectActivityModels->push($dacHeaderModel);
+            }
+
+//            foreach($projectActivities as $projectActivity){
+//                $projectCSOModel = ([
+//                    'id'       => $projectActivity->employee_id,
+//                    'name'     => $projectActivity->place->name." | ".$projectActivity->plotting_name,
+//                    'activities'   => $actionName,
+//                    'details'   => null
+//                ]);
+//                $projectActivityModels->push($projectCSOModel);
+//            }
+
+            return Response::json($projectActivityModels, 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeController - getPlottings error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function submitPlottings(Request $request){
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employeeLeader = $user->employee;
+            $projectEmployee = ProjectEmployee::where('employee_id', $employeeLeader->id)->first();
+
+            $employeePlottingModels = json_decode($request->input('employee_plotting_models'));
+            foreach ($employeePlottingModels as $employeePlottingModel){
+                $id = $employeePlottingModel->employee_id;
+                $employee = Employee::find($id);
+                $projectEmployeeCso = ProjectEmployee::where('employee_id', $employee->id)->first();
+
+                $plottings = $employeePlottingModel->dac_details;
+
+                foreach ($plottings as $plotting){
+                    $projectActivity = ProjectActivity::find($plotting);
+                    $schedule = Schedule::create([
+                        'project_id'            => $projectEmployee->project_id,
+                        'employee_id'           => $employee->id,
+                        'project_activity_id'   => $projectActivity->id,
+                        'project_employee_id'   => $projectEmployeeCso->id,
+                        'shift_type'            => $projectActivity->shift_type,
+                        'place_id'              => $projectActivity->place_id,
+//                    'weeks'                 => $weekString,
+//                    'days'                  => $daysString,
+                        'start'                 => $projectActivity->start,
+                        'finish'                => $projectActivity->finish,
+                        'status_id'             => 1,
+                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'created_by'            => $user->id,
+                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'updated_by'            => $user->id,
+                    ]);
+                }
+            }
+            return Response::json("Sukses!", 200);
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/EmployeeController - submitPlottings error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

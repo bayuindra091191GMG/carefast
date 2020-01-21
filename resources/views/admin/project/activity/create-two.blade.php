@@ -153,6 +153,17 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label">Action*</label>
+                                                                    {{--                                                                    <select id="action0" name="actions0[]" v-model="actions"--}}
+                                                                    {{--                                                                            class='form-control' multiple="multiple"></select>--}}
+                                                                    <select2 name="actions0" v-model="actions" url="{{route('select.actions') }}" placeholder=" -- Pilih Action -- " @selected_action="receiveSelectedAction">
+                                                                    </select2>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -161,23 +172,12 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
-                                                                    <label class="form-label">Object / Sub Object*</label>
+{{--                                                                    <label class="form-label">Object / Sub Object*</label>--}}
 {{--                                                                    <select id="project_object0" name="project_objects0[]" v-model="project_objects"--}}
 {{--                                                                            class='form-control' multiple="multiple"></select>--}}
 
-                                                                    <select2 name="project_objects0[]" v-model="project_objects" url="{{route('select.projectObjectActivities', ['project_id'=>$project->id, 'place_id'=>$place->id]) }}" placeholder=" -- Pilih Object -- " multiple="multiple">
-                                                                    </select2>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group form-float form-group-lg">
-                                                                <div class="form-line">
-                                                                    <label class="form-label">Action*</label>
-{{--                                                                    <select id="action0" name="actions0[]" v-model="actions"--}}
-{{--                                                                            class='form-control' multiple="multiple"></select>--}}
-                                                                    <select2 name="actions0" v-model="actions" url="{{route('select.actions') }}" placeholder=" -- Pilih Action -- " @selected_action="receiveSelectedAction">
-                                                                    </select2>
+{{--                                                                    <select2 name="project_objects0[]" v-model="project_objects" url="{{route('select.projectObjectActivities', ['project_id'=>$project->id, 'place_id'=>$place->id]) }}" placeholder=" -- Pilih Object -- " multiple="multiple">--}}
+{{--                                                                    </select2>--}}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -423,10 +423,11 @@
             project_objects: [],
             actions: null,
             selected_action: null,
+            object: '{{$object}}',
 
             project_id : '{{$project->id}}',
             place_id : '{{$place->id}}',
-            shift_type : '{{$shiftType}}',
+            shift_type : '{{$shift}}',
         },
         methods:{
             changePeriod(event){
@@ -449,7 +450,7 @@
             changePlotting(){
                 var period = this.period;
                 var selected_time = this.selected_time;
-                var project_objects = this.project_objects;
+                var project_objects = this.object;
                 var selected_day = this.selectedDay;
                 var selected_weeks = this.selectedWeeks;
                 var actions = this.actions;
@@ -457,8 +458,6 @@
                 var dayStringWeekly = "";
                 var dayStringMonthlyDay = "";
                 var dayStringMonthlyWeek = "";
-                console.log(actions);
-                console.log()
 
                 //get index of time
                 let index=0;
@@ -474,8 +473,15 @@
 
                     this.times[index].action_daily =  actions;
                     this.times[index].object_daily =  project_objects;
+
+                    this.times[index].daily_datas.push({
+                        TimeValue : selected_time,
+                        Day : '1#2#3#4#5#6#7#',
+                        Object : project_objects,
+                        Action :  actions,
+                    });
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
+                        this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
 
                         this.times[index].days[i].action = this.selected_plot;
                         this.times[index].days[i].color = '#00ccff';
@@ -499,7 +505,7 @@
                         // Action : project_objects + "/" + selected_action,
                     });
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
+                        this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
                         let tempI = i+1;
                         let tempIString = tempI.toString();
                         for(let j=0; j<selected_day.length; j++){
@@ -541,7 +547,7 @@
                     });
 
                     for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = "object = " + project_objects + ", Action = " + selected_action;
+                        this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
                         let tempI = i+1;
                         let tempIString = tempI.toString();
                         for(let k=0; k<initialData.length; k++){
@@ -568,6 +574,7 @@
             submit : function(){
                 var submittedItem = {
                     times : this.times,
+                    object : this.object,
                     project_id : this.project_id,
                     place_id : this.place_id,
                     shift_type : this.shift_type,
@@ -589,6 +596,7 @@
                             }
                         }else{
                             //here success, change the page to view the record. return the sales order id.
+                            window.location.href = response.data.url;
                         }
                     })
                 }

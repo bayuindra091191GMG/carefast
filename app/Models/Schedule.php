@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Mon, 23 Sep 2019 16:16:33 +0700.
+ * Date: Tue, 21 Jan 2020 19:53:04 +0700.
  */
 
 namespace App\Models;
@@ -15,10 +15,13 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $id
  * @property int $project_id
  * @property int $project_employee_id
+ * @property int $employee_id
+ * @property int $project_activity_id
  * @property int $place_id
  * @property int $shift_type
  * @property string $weeks
  * @property string $days
+ * @property string $period_type
  * @property \Carbon\Carbon $start
  * @property \Carbon\Carbon $finish
  * @property int $status_id
@@ -28,7 +31,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $updated_by
  * 
  * @property \App\Models\Status $status
+ * @property \App\Models\Employee $employee
  * @property \App\Models\Place $place
+ * @property \App\Models\ProjectActivity $project_activity
  * @property \App\Models\ProjectEmployee $project_employee
  * @property \App\Models\Project $project
  * @property \Illuminate\Database\Eloquent\Collection $attendances
@@ -41,6 +46,8 @@ class Schedule extends Eloquent
 	protected $casts = [
 		'project_id' => 'int',
 		'project_employee_id' => 'int',
+		'employee_id' => 'int',
+		'project_activity_id' => 'int',
 		'place_id' => 'int',
 		'shift_type' => 'int',
 		'status_id' => 'int',
@@ -56,10 +63,13 @@ class Schedule extends Eloquent
 	protected $fillable = [
 		'project_id',
 		'project_employee_id',
+		'employee_id',
+		'project_activity_id',
 		'place_id',
 		'shift_type',
 		'weeks',
 		'days',
+		'period_type',
 		'start',
 		'finish',
 		'status_id',
@@ -72,9 +82,19 @@ class Schedule extends Eloquent
 		return $this->belongsTo(\App\Models\Status::class);
 	}
 
+	public function employee()
+	{
+		return $this->belongsTo(\App\Models\Employee::class);
+	}
+
 	public function place()
 	{
 		return $this->belongsTo(\App\Models\Place::class);
+	}
+
+	public function project_activity()
+	{
+		return $this->belongsTo(\App\Models\ProjectActivity::class);
 	}
 
 	public function project_employee()

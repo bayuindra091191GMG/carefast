@@ -281,7 +281,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
     <script src="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfqCBxMgWfWHG-6pOHG2aehW3HJJNcXp4&libraries=places"
             type="text/javascript"></script>
 
     <script type="text/javascript">

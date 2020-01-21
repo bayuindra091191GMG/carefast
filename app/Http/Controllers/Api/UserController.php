@@ -94,6 +94,7 @@ class UserController extends Controller
             //    5. beri penilaian cso
             //    6. complain management
             //    7. create MR
+            //    11. Plotting oleh leader
             $accessible_menus = "";
             if($user->employee->employee_role_id == 9){
                 $accessible_menus = "1,2,3,4,5,6,7";

@@ -55,8 +55,9 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/attendance/leader/assessment', 'Api\AttendanceController@leaderSubmit');
 
     // Attendance absent
-    Route::post('/attendance/absent/qrcode', 'Api\AttendanceAbsentController@getProjectCodeEncrypted');
-    Route::post('/attendance/absent/process', 'Api\AttendanceAbsentController@absentProcess');
+    Route::post('/attendance/qrcode', 'Api\AttendanceAbsentController@getProjectCodeEncrypted');
+    Route::post('/attendance/in', 'Api\AttendanceAbsentController@attendanceIn');
+    Route::post('/attendance/out', 'Api\AttendanceAbsentController@attendanceOut');
 //    Route::post('/attendance/absent/checkout', 'Api\AttendanceAbsentController@submitCheckout');
 
     //Employee
@@ -81,7 +82,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     //Plotting
     Route::get('/plotting/get-employees', 'Api\EmployeeController@getEmployeeCSO');
     Route::get('/plotting/get-plottings', 'Api\EmployeeController@getPlottings');
-    Route::post('/plotting/submit-delegated-plottings', 'Api\UserController@saveUserToken');
+    Route::get('/plotting/get-dacs', 'Api\EmployeeController@getDacs');
+    Route::post('/plotting/submit-plottings', 'Api\EmployeeController@submitPlottings');
 
 });
 

@@ -50,12 +50,14 @@ class AttendanceProcess
 
 //            $isPlace = Utilities::checkingQrCode($request->input('qr_code'));
 //            if(!$isPlace){
-            if($place->qr_code != $request->input('qr_code')){
-                $returnData = [
-                    'status_code'           => 400,
-                    'desc'                  => "Tempat yang discan tidak tepat",
-                ];
-                return $returnData;
+            if($type == 1){
+                if($place->qr_code != $request->input('qr_code')){
+                    $returnData = [
+                        'status_code'           => 400,
+                        'desc'                  => "Tempat yang discan tidak tepat",
+                    ];
+                    return $returnData;
+                }
             }
 
 //            if($schedule == null){

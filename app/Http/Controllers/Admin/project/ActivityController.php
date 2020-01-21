@@ -84,6 +84,12 @@ class ActivityController extends Controller
             $finish_times = $request->input('finish_times');
             $shiftType = $request->input('shift_type');
             $projectId = $request->input('project_id');
+            $projectObjects = $request->input('project_objects0');
+
+            $objectString = "";
+            foreach ($projectObjects as $projectObject){
+                $objectString = $objectString."".$projectObject.",";
+            }
 
             $validStart = true;
             if(!empty($start_times)){
@@ -121,6 +127,7 @@ class ActivityController extends Controller
                     'time_value'     => $start_times[$ct]."#".$finish_times[$ct],
                     'time_string'    => $start_times[$ct]." - ".$finish_times[$ct],
                     "action_daily"   => "",
+                    "daily_datas"   => [],
                     'weekly_datas'   => [],
                     'monthly_datas'   => [],
                     "days"           => $dayModel,
@@ -131,9 +138,11 @@ class ActivityController extends Controller
             $data = [
                 'project'           => Project::find($projectId),
                 'place'             => Place::find($request->input('places')),
+                'object'             => $objectString,
                 'shift'             => $shiftType,
                 'times'             => $timeModel,
             ];
+//            dd($data);
 //dd(json_encode($timeModel));
             return view('admin.project.activity.create-two')->with($data);
         }
@@ -169,35 +178,37 @@ class ActivityController extends Controller
 
             foreach ($items as $item){
                 //save to database for daily plot
-                if(!empty($item["action_daily"])){
-                    $objectString = "";
-                    foreach ($item["object_daily"] as $object){
-                        $objectString = $objectString."".$object.",";
-                    }
-                    $actionArr = explode("-",$item["action_daily"]);
-                    $action = $actionArr[0]."#";
+                if(!empty($item["daily_datas"])){
+                    foreach ($item["daily_datas"] as $dailyData){
+//                        $objectString = "";
+//                        foreach ($dailyData["Object"] as $object){
+//                            $objectString = $objectString."".$object.",";
+//                        }
+                        $actionArr = explode("-",$dailyData["Action"]);
+                        $action = $actionArr[0]."#";
 
-                    $timeArr = explode("#",$item["time_value"]);
-                    $start = Carbon::parse('00-00-00 '.$timeArr[0])->format('Y-m-d H:i:s');
-                    $finish = Carbon::parse('00-00-00 '.$timeArr[1])->format('Y-m-d H:i:s');
+                        $timeArr = explode("#",$dailyData["TimeValue"]);
+                        $start = Carbon::parse('00-00-00 '.$timeArr[0])->format('Y-m-d H:i:s');
+                        $finish = Carbon::parse('00-00-00 '.$timeArr[1])->format('Y-m-d H:i:s');
 
-                    //save to database
-                    $projectActivity = ProjectActivity::create([
-                        'project_id'            => $request->input('project_id'),
-                        'plotting_name'         => $objectString,
-                        'action_id'             => $action,
-                        'shift_type'            => $request->input('shift_type'),
-                        'place_id'              => $request->input('place_id'),
+                        //save to database
+                        $projectActivity = ProjectActivity::create([
+                            'project_id'            => $request->input('project_id'),
+                            'plotting_name'         => $request->input('object'),
+                            'action_id'             => $action,
+                            'shift_type'            => $request->input('shift_type'),
+                            'place_id'              => $request->input('place_id'),
 //                    'weeks'                 => $weekString,
-                        'days'                  => "1#2#3#4#5#6#",
-                        'start'                 => $start,
-                        'finish'                => $finish,
-                        'period_type'           => "Daily",
-                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'created_by'            => $user->id,
-                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'updated_by'            => $user->id,
-                    ]);
+                            'days'                  => "1#2#3#4#5#6#",
+                            'start'                 => $start,
+                            'finish'                => $finish,
+                            'period_type'           => "Daily",
+                            'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'created_by'            => $user->id,
+                            'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'updated_by'            => $user->id,
+                        ]);
+                    }
                 }
 
                 //save to database for weekly plot
@@ -205,25 +216,25 @@ class ActivityController extends Controller
                     $i = 1;
                     foreach ($item["weekly_datas"] as $weeklyData){
 
-                        $objectStringWeekly = "";
-                        foreach ($weeklyData["Object"] as $objectWeekly){
-                            $objectStringWeekly = $objectStringWeekly."".$objectWeekly.",";
-                        }
+//                        $objectStringWeekly = "";
+//                        foreach ($weeklyData["Object"] as $objectWeekly){
+//                            $objectStringWeekly = $objectStringWeekly."".$objectWeekly.",";
+//                        }
                         $actionArr = explode("-",$weeklyData["Action"]);
                         $actionWeekly = $actionArr[0]."#";
 
-                        $timeWeekArr = explode("#",$weeklyData["time_value"]);
+                        $timeWeekArr = explode("#",$weeklyData["TimeValue"]);
                         $startWeek = Carbon::parse('00-00-00 '.$timeWeekArr[0])->format('Y-m-d H:i:s');
                         $finishWeek = Carbon::parse('00-00-00 '.$timeWeekArr[1])->format('Y-m-d H:i:s');
                         //save to database
                         $projectActivity = ProjectActivity::create([
                             'project_id'            => $request->input('project_id'),
-                            'plotting_name'         => $objectStringWeekly,
+                            'plotting_name'         => $request->input('object'),
                             'action_id'             => $actionWeekly,
                             'shift_type'            => $request->input('shift_type'),
                             'place_id'              => $request->input('place_id'),
 //                                'weeks'                 => $weekString,
-                            'days'                  => "1#2#3#4#5#6#",
+                            'days'                  => $weeklyData['Day'],
                             'start'                 => $startWeek,
                             'finish'                => $finishWeek,
                             'period_type'           => "Weekly",
@@ -239,20 +250,20 @@ class ActivityController extends Controller
                 if(!empty($item["monthly_datas"])){
                     $i = 1;
                     foreach ($item["monthly_datas"] as $monthlyData){
-                        $objectStringMonthly = "";
-                        foreach ($monthlyData["Object"] as $objectWeekly){
-                            $objectStringMonthly = $objectStringMonthly."".$objectWeekly.",";
-                        }
+//                        $objectStringMonthly = "";
+//                        foreach ($monthlyData["Object"] as $objectWeekly){
+//                            $objectStringMonthly = $objectStringMonthly."".$objectWeekly.",";
+//                        }
                         $actionArr = explode("-", $monthlyData["Action"]);
                         $actionMonthly = $actionArr[0]."#";
 
-                        $timeMonthArr = explode("#",$monthlyData["time_value"]);
+                        $timeMonthArr = explode("#",$monthlyData["TimeValue"]);
                         $startMonth = Carbon::parse('00-00-00 '.$timeMonthArr[0])->format('Y-m-d H:i:s');
                         $finishMonth = Carbon::parse('00-00-00 '.$timeMonthArr[1])->format('Y-m-d H:i:s');
                         //save to database
                         $projectActivity = ProjectActivity::create([
                             'project_id'            => $request->input('project_id'),
-                            'plotting_name'         => $objectStringMonthly,
+                            'plotting_name'         => $request->input('object'),
                             'action_id'             => $actionMonthly,
                             'shift_type'            => $request->input('shift_type'),
                             'place_id'              => $request->input('place_id'),
@@ -269,11 +280,15 @@ class ActivityController extends Controller
                     }
                 }
             }
+            return response()->json([
+                'request' => $request,
+                'url' => route('admin.project.activity.show', ['id' => (int)$request->input('project_id')])
+            ]);
         }
         catch (\Exception $ex){
 //            dd($ex);
             Log::error('Admin/activity/ActivityController - store error EX: '. $ex);
-            return "Something went wrong! Please contact administrator!" . $ex;
+            return response()->json(['errors' => "Something went wrong!"]);
         }
     }
 //    public function store(Request $request)

@@ -33,7 +33,10 @@ class ProjectActivityTransformer extends TransformerAbstract
             $action = "<a href='".$routeEditUrl."' class='btn btn-primary'>UBAH</a>";
 
             return[
-                'place_name'     => $project->place->name,
+                'time'              => Carbon::parse($project->start)->format('H:i')." - ".Carbon::parse($project->finish)->format('H:i'),
+                'shift'             => $project->shift_type,
+                'period_type'       => $project->period_type,
+                'place_name'        => $project->place->name,
                 'plotting_name'     => $project->plotting_name,
                 'action_name'       => $actionName,
                 'action'            => $action

@@ -69,9 +69,12 @@
                                                             <table id="general_table" class="table table-striped table-bordered nowrap" style="width: 100%;">
                                                                 <thead>
                                                                 <tr>
-                                                                    <th class="text-center">Nama Place</th>
-                                                                    <th class="text-center">Nama Plotting</th>
+                                                                    <th class="text-center">Waktu</th>
                                                                     <th class="text-center">Aktifitas</th>
+                                                                    <th class="text-center">Period</th>
+                                                                    <th class="text-center">Nama Place</th>
+                                                                    <th class="text-center">Nama Objek</th>
+                                                                    <th class="text-center">Shift</th>
                                                                     <th class="text-center">Tindakan</th>
                                                                 </tr>
                                                                 </thead>
@@ -100,6 +103,7 @@
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
     <link href="{{ asset('css/datatables.css') }}" rel="stylesheet">
+    <style></style>
 @endsection
 
 @section('scripts')
@@ -119,9 +123,12 @@
             },
             order: [ [0, 'asc'] ],
             columns: [
+                { data: 'time', name: 'time', class: 'text-center' },
+                { data: 'action_name', name: 'action_name', class: 'text-center' },
+                { data: 'period_type', name: 'period_type', class: 'text-center' },
                 { data: 'place_name', name: 'place_name', class: 'text-center' },
                 { data: 'plotting_name', name: 'plotting_name', class: 'text-center' },
-                { data: 'action_name', name: 'action_name', class: 'text-center' },
+                { data: 'shift', name: 'shift', class: 'text-center' },
                 { data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
             ],
         });

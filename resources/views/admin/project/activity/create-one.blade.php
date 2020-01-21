@@ -44,7 +44,7 @@
 
                                                 <div class="col-md-12">
                                                     <div class="row">
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-4">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label" for="place0">Place*</label>
@@ -52,7 +52,16 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="project_object0">Object / Sub Object*</label>
+                                                                        <select id="project_object0" name="project_objects0[]"
+                                                                                class='form-control' multiple="multiple"></select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label">Shift*</label>
