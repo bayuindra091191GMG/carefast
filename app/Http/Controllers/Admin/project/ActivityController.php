@@ -87,9 +87,17 @@ class ActivityController extends Controller
             $projectObjects = $request->input('project_objects0');
 
             $objectString = "";
-            foreach ($projectObjects as $projectObject){
-                $objectString = $objectString."".$projectObject.",";
+            for($i=0;$i<count($projectObjects);$i++){
+                if($i == count($projectObjects)-1){
+                    $objectString = $objectString."".$projectObjects[$i];
+                }
+                else{
+                    $objectString = $objectString."".$projectObjects[$i].",";
+                }
             }
+//            foreach ($projectObjects as $projectObject){
+//                $objectString = $objectString."".$projectObject.",";
+//            }
 
             $validStart = true;
             if(!empty($start_times)){
@@ -172,7 +180,7 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
         try{
-            Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
+//            Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
             $items = $request->input('times');
             $user = Auth::guard('admin')->user();
 
