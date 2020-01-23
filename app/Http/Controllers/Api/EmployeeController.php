@@ -223,11 +223,12 @@ class EmployeeController extends Controller
                     $dacDetailModel->push($dacDetail);
                 }
                 $place = Place::find($projectActivitiesGroup->place_id);
+                $project = Project::find($projectEmployee->project_id);
                 $dacHeaderModel = ([
                     'place'     => $place->name,
                     'object'   => $projectActivitiesGroup->plotting_name,
                     'shift'     => $projectActivitiesGroup->shift_type,
-                    'project'     => $projectEmployee->project->name,
+                    'project'     => $project->name,
                     'details'   => $dacDetailModel
                 ]);
                 $projectActivityModels->push($dacHeaderModel);
