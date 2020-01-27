@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\libs\EmployeeProcess;
 use App\Models\Action;
 use App\Models\Employee;
 use App\Models\Place;
 use App\Models\Project;
+use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
 use App\Models\ProjectObject;
@@ -134,7 +136,9 @@ class EmployeeController extends Controller
         $id = $employee->id;
         try{
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
-            $projectActivities = ProjectActivity::where('project_id', $projectEmployee->project_id)
+//            $projectActivities = ProjectActivity::where('project_id', $projectEmployee->project_id)
+//                ->get();
+            $projectActivities = ProjectActivitiesHeader::where('project_id', $projectEmployee->project_id)
                 ->get();
             $projectActivityModels = collect();
             //check if cleaner null
@@ -143,9 +147,10 @@ class EmployeeController extends Controller
             }
 
             foreach($projectActivities as $projectActivity){
+                foreach ($projectActivity->project_activities_details as $projectActivityDetail)
                 $actionName = collect();
-                if(!empty($projectActivity->action_id)){
-                    $actionList = explode('#', $projectActivity->action_id);
+                if(!empty($projectActivityDetail->action_id)){
+                    $actionList = explode('#', $projectActivityDetail->action_id);
                     foreach ($actionList as $action){
                         if(!empty($action)){
                             $action = Action::find($action);
@@ -155,7 +160,7 @@ class EmployeeController extends Controller
                 }
                 $projectCSOModel = ([
                     'id'       => $projectActivity->employee_id,
-                    'name'     => $projectActivity->place->name." | ".$projectActivity->plotting_name,
+                    'name'     => $projectActivityDetail->place->name." | ".$projectActivityDetail->plotting_name,
                     'activities'   => $actionName,
                 ]);
                 $projectActivityModels->push($projectCSOModel);
@@ -183,7 +188,7 @@ class EmployeeController extends Controller
         $id = $employee->id;
         try{
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
-            $projectActivities = ProjectActivity::where('project_id', $projectEmployee->project_id)
+            $projectActivities = ProjectActivitiesHeader::where('project_id', $projectEmployee->project_id)
                 ->get();
             $projectActivityModels = collect();
             //check if cleaner null
@@ -191,22 +196,16 @@ class EmployeeController extends Controller
                 return Response::json($projectActivityModels, 482);
             }
 
-            // get group for dac
-            $projectActivitiesGroups = DB::table('project_activities')
-                ->groupBy('plotting_name')
-                ->groupBy('place_id')
-                ->get();
             $projectActivityModels = collect();
-            foreach ($projectActivitiesGroups as $projectActivitiesGroup){
-                $projectActivities = ProjectActivity::where('project_id', $projectEmployee->project_id)
-                    ->where("plotting_name", $projectActivitiesGroup->plotting_name)
-                    ->where("place_id", $projectActivitiesGroup->place_id)
-                    ->get();
+            foreach ($projectActivities as $projectActivity){
                 $dacDetailModel = collect();
-                foreach ($projectActivities as $projectActivity){
-                    $actionName = collect();
-                    if(!empty($projectActivity->action_id)){
-                        $actionList = explode('#', $projectActivity->action_id);
+
+                $shiftString = "";
+                foreach ($projectActivity->project_activities_details as $projectDetail){
+//                    $actionName = collect();
+                    $actionName = "";
+                    if(!empty($projectDetail->action_id)){
+                        $actionList = explode('#', $projectDetail->action_id);
                         foreach ($actionList as $action){
                             if(!empty($action)){
                                 $action = Action::find($action);
@@ -216,23 +215,68 @@ class EmployeeController extends Controller
                         }
                     }
                     $dacDetail = ([
+                        //id in here for header_id
                         'id'       => $projectActivity->id,
-                        'time'     => Carbon::parse($projectActivity->start)->format('H:i')." - ".Carbon::parse($projectActivity->finish)->format('H:i'),
+                        'time'     => Carbon::parse($projectDetail->start)->format('H:i')." - ".Carbon::parse($projectDetail->finish)->format('H:i'),
                         'action'   => $actionName
                     ]);
                     $dacDetailModel->push($dacDetail);
+                    $shiftString = $projectDetail->shift_type;
                 }
-                $place = Place::find($projectActivitiesGroup->place_id);
-                $project = Project::find($projectEmployee->project_id);
+                $place = Place::find($projectActivity->place_id);
+                $project = Project::find($projectActivity->project_id);
                 $dacHeaderModel = ([
                     'place'     => $place->name,
-                    'object'   => $projectActivitiesGroup->plotting_name,
-                    'shift'     => $projectActivitiesGroup->shift_type,
-                    'project'     => $project->name,
+                    'object'    => $projectActivity->plotting_name,
+                    'shift'     => $shiftString,
+                    'project'   => $project->name,
                     'details'   => $dacDetailModel
                 ]);
                 $projectActivityModels->push($dacHeaderModel);
             }
+
+            // get group for dac
+//            $projectActivitiesGroups = DB::table('project_activities')
+//                ->groupBy('plotting_name')
+//                ->groupBy('place_id')
+//                ->get();
+//            $projectActivityModels = collect();
+//            foreach ($projectActivitiesGroups as $projectActivitiesGroup){
+//                $projectActivities = ProjectActivity::where('project_id', $projectEmployee->project_id)
+//                    ->where("plotting_name", $projectActivitiesGroup->plotting_name)
+//                    ->where("place_id", $projectActivitiesGroup->place_id)
+//                    ->get();
+//                $dacDetailModel = collect();
+//                foreach ($projectActivities as $projectActivity){
+//                    $actionName = collect();
+//                    if(!empty($projectActivity->action_id)){
+//                        $actionList = explode('#', $projectActivity->action_id);
+//                        foreach ($actionList as $action){
+//                            if(!empty($action)){
+//                                $action = Action::find($action);
+//                                $actionName .= $action->name. ", ";
+////                                $actionName->push($action->name);
+//                            }
+//                        }
+//                    }
+//                    $dacDetail = ([
+//                        'id'       => $projectActivity->id,
+//                        'time'     => Carbon::parse($projectActivity->start)->format('H:i')." - ".Carbon::parse($projectActivity->finish)->format('H:i'),
+//                        'action'   => $actionName
+//                    ]);
+//                    $dacDetailModel->push($dacDetail);
+//                }
+//                $place = Place::find($projectActivitiesGroup->place_id);
+//                $project = Project::find($projectEmployee->project_id);
+//                $dacHeaderModel = ([
+//                    'place'     => $place->name,
+//                    'object'   => $projectActivitiesGroup->plotting_name,
+//                    'shift'     => $projectActivitiesGroup->shift_type,
+//                    'project'     => $project->name,
+//                    'details'   => $dacDetailModel
+//                ]);
+//                $projectActivityModels->push($dacHeaderModel);
+//            }
 
 //            foreach($projectActivities as $projectActivity){
 //                $projectCSOModel = ([
@@ -268,24 +312,38 @@ class EmployeeController extends Controller
                 $plottings = $employeePlottingModel->dac_details;
 
                 foreach ($plottings as $plotting){
-                    $projectActivity = ProjectActivity::find($plotting);
-                    $schedule = Schedule::create([
-                        'project_id'            => $projectEmployee->project_id,
-                        'employee_id'           => $employee->id,
-                        'project_activity_id'   => $projectActivity->id,
-                        'project_employee_id'   => $projectEmployeeCso->id,
-                        'shift_type'            => $projectActivity->shift_type,
-                        'place_id'              => $projectActivity->place_id,
-                        'weeks'                 => $projectActivity->weeks,
-                        'days'                  => $projectActivity->days,
-                        'start'                 => $projectActivity->start,
-                        'finish'                => $projectActivity->finish,
-                        'status_id'             => 1,
-                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'created_by'            => $user->id,
-                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'updated_by'            => $user->id,
-                    ]);
+                    $projectActivity = ProjectActivitiesHeader::find($plotting);
+
+                    foreach ($projectActivity->project_activities_details as $projectDetail){
+                        $schedule = Schedule::create([
+                            'project_id'            => $projectActivity->project_id,
+                            'employee_id'           => $employee->id,
+                            'project_activity_id'   => $projectActivity->id,
+                            'project_employee_id'   => $projectEmployeeCso->id,
+                            'shift_type'            => $projectDetail->shift_type,
+                            'place_id'              => $projectActivity->place_id,
+                            'weeks'                 => $projectDetail->weeks,
+                            'days'                  => $projectDetail->days,
+                            'start'                 => $projectDetail->start,
+                            'finish'                => $projectDetail->finish,
+                            'status_id'             => 1,
+                            'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'created_by'            => $user->id,
+                            'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'updated_by'            => $user->id,
+                        ]);
+
+                        if(!empty($projectDetail->action_id)){
+                            $scheduleDetail = ScheduleDetail::create([
+                                'schedule_id'           => $schedule->id,
+                                'action_id'             => $projectDetail->action_id,
+                                'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'created_by'            => $user->id,
+                                'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'updated_by'            => $user->id,
+                            ]);
+                        }
+                    }
                 }
             }
             return Response::json("Sukses!", 200);
@@ -310,70 +368,8 @@ class EmployeeController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            //get employee schedule
-            $date = Carbon::now('Asia/Jakarta');
-            $time = $date->format('H:i');
-            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
-//            Log::info('employee_id = '.$employee->id);
-
-            // weekOfMonth will returns 1 for the 7 first days of the month, then 2 from the 8th to
-            // the 14th, 3 from the 15th to the 21st, 4 from 22nd to 28th and 5 above
-            $todayWeekOfMonth = $date->weekOfMonth;
-            // dayOfWeekIso returns a number between 1 (monday) and 7 (sunday)
-            $todayOfWeek = $date->dayOfWeekIso;
-
-            $schedules = Schedule::where('project_id', $projectEmployee->project_id)
-                ->where('project_employee_id', $projectEmployee->id)
-                ->where('weeks', 'like', '%'.$todayWeekOfMonth.'%')
-                ->where('days', 'like', '%'.$todayOfWeek.'%')
-//                ->whereTime('start', '<=', $time)
-//                ->whereTime('finish', '>=', $time)
-                ->get();
-
-
-            if($schedules->count() == 0){
-                return Response::json("Tidak ada Jadwal hari ini", 482);
-            }
-
-            $scheduleModels = collect();
-//            Log::info('project_id = '. $projectEmployee->project_id.', project_employee_id = '. $projectEmployee->id);
-            foreach ($schedules as $schedule){
-                $scheduleDetails = ScheduleDetail::where('schedule_id', $schedule->id)->get();
-
-                $scheduleDetailModels = collect();
-                foreach ($scheduleDetails as $scheduleDetail){
-                    $projectObject = ProjectObject::find($scheduleDetail->project_object_id);
-                    $objectName = "";
-                    $unitName = $projectObject->unit_name != "-" ? $projectObject->unit_name." " : "";
-                    $sub1unitName = $projectObject->sub1_unit_name != "-" ? $projectObject->sub1_unit_name." " : "";
-                    $sub2unitName = $projectObject->sub2_unit_name != "-" ? $projectObject->sub2_unit_name." " : "";
-                    $objectName = $objectName.$unitName;
-                    $objectName = $objectName.$sub1unitName;
-                    $objectName = $objectName.$sub2unitName;
-
-                    $scheduleDetailModel = [
-                        'detail_id'        => $scheduleDetail->id,
-                        'place_name'        => $projectObject->place_name,
-                        'object_name'       => $objectName,
-                        'action_name'       => $scheduleDetail->action->name,
-                    ];
-                    $scheduleDetailModels->push($scheduleDetailModel);
-                }
-
-                $scheduleModel = [
-                    'id'                => $schedule->id,
-                    'employee_name'     => $employee->first_name ." ". $employee->last_name,
-                    'project_id'        => $schedule->project_id,
-                    'project_name'      => $schedule->project->name,
-                    'shift_type'        => $schedule->shift_type,
-                    'start'             => Carbon::parse($schedule->start)->toTimeString(),
-                    'finish'            => Carbon::parse($schedule->finish)->toTimeString(),
-                    'schedule_details'  => $scheduleDetailModels
-                ];
-
-                $scheduleModels->push($scheduleModel);
-            }
-            return Response::json($scheduleModels, 200);
+            $employeeSchedule = EmployeeProcess::GetEmployeeSchedule($employee->id, $employee->first_name ." ". $employee->last_name);
+            return Response::json($employeeSchedule, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
@@ -392,70 +388,8 @@ class EmployeeController extends Controller
             $id = $request->input('cso_id');
             $employee = Employee::find($id);
 
-            //get employee schedule
-            $date = Carbon::now('Asia/Jakarta');
-            $time = $date->format('H:i');
-            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
-//            Log::info('employee_id = '.$employee->id);
-
-            // weekOfMonth will returns 1 for the 7 first days of the month, then 2 from the 8th to
-            // the 14th, 3 from the 15th to the 21st, 4 from 22nd to 28th and 5 above
-            $todayWeekOfMonth = $date->weekOfMonth;
-            // dayOfWeekIso returns a number between 1 (monday) and 7 (sunday)
-            $todayOfWeek = $date->dayOfWeekIso;
-
-            $schedules = Schedule::where('project_id', $projectEmployee->project_id)
-                ->where('project_employee_id', $projectEmployee->id)
-                ->where('weeks', 'like', '%'.$todayWeekOfMonth.'%')
-                ->where('days', 'like', '%'.$todayOfWeek.'%')
-//                ->whereTime('start', '<=', $time)
-//                ->whereTime('finish', '>=', $time)
-                ->get();
-
-
-            if($schedules->count() == 0){
-                return Response::json("Tidak ada Jadwal hari ini", 482);
-            }
-
-            $scheduleModels = collect();
-//            Log::info('project_id = '. $projectEmployee->project_id.', project_employee_id = '. $projectEmployee->id);
-            foreach ($schedules as $schedule){
-                $scheduleDetails = ScheduleDetail::where('schedule_id', $schedule->id)->get();
-
-                $scheduleDetailModels = collect();
-                foreach ($scheduleDetails as $scheduleDetail){
-                    $projectObject = ProjectObject::find($scheduleDetail->project_object_id);
-                    $objectName = "";
-                    $unitName = $projectObject->unit_name != "-" ? $projectObject->unit_name." " : "";
-                    $sub1unitName = $projectObject->sub1_unit_name != "-" ? $projectObject->sub1_unit_name." " : "";
-                    $sub2unitName = $projectObject->sub2_unit_name != "-" ? $projectObject->sub2_unit_name." " : "";
-                    $objectName = $objectName.$unitName;
-                    $objectName = $objectName.$sub1unitName;
-                    $objectName = $objectName.$sub2unitName;
-
-                    $scheduleDetailModel = [
-                        'detail_id'        => $scheduleDetail->id,
-                        'place_name'        => $projectObject->place_name,
-                        'object_name'       => $objectName,
-                        'action_name'       => $scheduleDetail->action->name,
-                    ];
-                    $scheduleDetailModels->push($scheduleDetailModel);
-                }
-
-                $scheduleModel = [
-                    'id'                => $schedule->id,
-                    'employee_name'     => $employee->first_name ." ". $employee->last_name,
-                    'project_id'        => $schedule->project_id,
-                    'project_name'      => $schedule->project->name,
-                    'shift_type'        => $schedule->shift_type,
-                    'start'             => Carbon::parse($schedule->start)->toTimeString(),
-                    'finish'            => Carbon::parse($schedule->finish)->toTimeString(),
-                    'schedule_details'  => $scheduleDetailModels
-                ];
-
-                $scheduleModels->push($scheduleModel);
-            }
-            return Response::json($scheduleModels, 200);
+            $employeeSchedule = EmployeeProcess::GetEmployeeSchedule($employee->id, $employee->first_name ." ". $employee->last_name);
+            return Response::json($employeeSchedule, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
