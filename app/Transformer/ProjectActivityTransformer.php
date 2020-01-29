@@ -7,6 +7,8 @@ namespace App\Transformer;
 use App\Models\Action;
 use App\Models\Employee;
 use App\Models\Project;
+use App\Models\ProjectActivitiesDetail;
+use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
 use App\Models\Schedule;
@@ -16,10 +18,10 @@ use League\Fractal\TransformerAbstract;
 
 class ProjectActivityTransformer extends TransformerAbstract
 {
-    public function transform(ProjectActivity $project){
+    public function transform(ProjectActivitiesDetail $project){
 
         try{
-            $routeEditUrl = route('admin.project.activity.edit', ['id' => $project->id]);
+            $routeEditUrl = route('admin.project.activity.edit', ['id' => $project->activities_header_id]);
             $actionName = "";
             if(!empty($project->action_id)){
                 $actionList = explode('#', $project->action_id);
@@ -31,13 +33,14 @@ class ProjectActivityTransformer extends TransformerAbstract
                 }
             }
             $action = "<a href='".$routeEditUrl."' class='btn btn-primary'>UBAH</a>";
+            $activityHeader = ProjectActivitiesHeader::find($project->activities_header_id);
 
             return[
                 'time'              => Carbon::parse($project->start)->format('H:i')." - ".Carbon::parse($project->finish)->format('H:i'),
                 'shift'             => $project->shift_type,
                 'period_type'       => $project->period_type,
-                'place_name'        => $project->place->name,
-                'plotting_name'     => $project->plotting_name,
+                'place_name'        => $activityHeader->place->name,
+                'plotting_name'     => $activityHeader->plotting_name,
                 'action_name'       => $actionName,
                 'action'            => $action
             ];

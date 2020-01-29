@@ -20,6 +20,7 @@ Auth::routes();
 
 Route::get('/', 'Admin\DashboardController@dashboard')->name('admin.dashboard');
 Route::get('/test-notif', 'Frontend\HomeController@testNotif')->name('testNotif');
+Route::get('/test-email', 'Frontend\HomeController@testEmail')->name('testEmail');
 Route::get('/test-notif-send', 'Frontend\HomeController@testNotifSend')->name('testNotifSend');
 Route::get('/android-notif-send', 'Frontend\HomeController@testNotifSendToAndroid')->name('testNotifSend');
 // Import

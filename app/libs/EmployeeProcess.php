@@ -44,7 +44,7 @@ class EmployeeProcess
             $todayOfWeek = $date->dayOfWeekIso;
 
             $schedules = Schedule::where('project_id', $projectEmployee->project_id)
-                ->where('project_employee_id', $projectEmployee->id)
+                ->where('employee_id', $employee_id)
                 ->where('weeks', 'like', '%'.$todayWeekOfMonth.'%')
                 ->where('days', 'like', '%'.$todayOfWeek.'%')
 //                ->whereTime('start', '<=', $time)
@@ -53,7 +53,7 @@ class EmployeeProcess
 
 
             if($schedules->count() == 0){
-                return Response::json("Tidak ada Jadwal hari ini", 482);
+                return null;
             }
 
             $scheduleModels = collect();
@@ -63,6 +63,9 @@ class EmployeeProcess
 
                 $place = Place::find($schedule->project_activities_header->place_id);
                 $scheduleDetailModels = collect();
+                $actionName = collect();
+//                $actionName = "";
+                $detailId = "";
                 foreach ($scheduleDetails as $scheduleDetail){
 //                    $projectObject = ProjectObject::find($scheduleDetail->project_object_id);
 //                    $objectName = "";
@@ -73,22 +76,22 @@ class EmployeeProcess
 //                    $objectName = $objectName.$sub1unitName;
 //                    $objectName = $objectName.$sub2unitName;
 
-                    $actionName = "";
                     $actionList = explode('#', $scheduleDetail->action_id);
                     foreach ($actionList as $action){
                         if(!empty($action)){
                             $action = Action::find($action);
-                            $actionName .= $action->name. ", ";
-//                                $actionName->push($action->name);
+//                            $actionName .= $action->name. ", ";
+                                $actionName->push($action->name);
                         }
                     }
-                    $scheduleDetailModel = [
-                        'detail_id'        => $scheduleDetail->id,
-                        'place_name'        => $place->name,
-                        'object_name'       => $schedule->project_activities_header->plotting_name,
-                        'action_name'       => $actionName,
-                    ];
-                    $scheduleDetailModels->push($scheduleDetailModel);
+                    $detailId = $scheduleDetail->id;
+//                    $scheduleDetailModel = [
+//                        'detail_id'        => $scheduleDetail->id,
+//                        'place_name'        => $place->name,
+//                        'object_name'       => $schedule->project_activities_header->plotting_name,
+//                        'action_name'       => $actionName,
+//                    ];
+//                    $scheduleDetailModels->push($scheduleDetailModel);
                 }
                 $checkStatus = 1;
                 $attendanceCheckin = Attendance::where('schedule_id', $schedule->id)
@@ -107,14 +110,14 @@ class EmployeeProcess
                 }
 
                 $scheduleModel = [
-                    'id'                => $schedule->id,
-                    'employee_name'     => $employee_name,
-                    'project_id'        => $schedule->project_id,
-                    'project_name'      => $schedule->project->name,
-                    'shift_type'        => $schedule->shift_type,
-                    'start'             => Carbon::parse($schedule->start)->toTimeString(),
-                    'finish'            => Carbon::parse($schedule->finish)->toTimeString(),
-                    'schedule_details'  => $scheduleDetailModels,
+                    'id'                => $detailId,
+//                    'employee_name'     => $employee_name,
+//                    'project_id'        => $schedule->project_id,
+//                    'project_name'      => $schedule->project->name,
+//                    'shift_type'        => $schedule->shift_type,
+//                    'start'             => Carbon::parse($schedule->start)->toTimeString(),
+//                    'finish'            => Carbon::parse($schedule->finish)->toTimeString(),
+//                    'schedule_details'  => $scheduleDetailModels,
 
                     'start_time'        => Carbon::parse($schedule->start)->format('H:i'),
                     'finish_time'        => Carbon::parse($schedule->finish)->format('H:i'),
@@ -122,7 +125,9 @@ class EmployeeProcess
                     'object'            => $schedule->project_activities_header->plotting_name,
                     'shift'             => $schedule->shift_type,
                     'status_check'      => $checkStatus,
-                    'status_assesment'  => 0,
+                    'status_assessment'  => 0,
+                    'actions'            => $actionName,
+                    'header_id'         => $schedule->id,
                 ];
 
                 $scheduleModels->push($scheduleModel);

@@ -118,9 +118,10 @@ class AttendanceAbsentController extends Controller
 
             $trxDate = Carbon::parse(date_format($attendanceData->created_at, 'j-F-Y H:i:s'));
             $intervalMinute = $now->diffInMinutes($trxDate);
-            if($intervalMinute < 60){
-                return Response::json("Absensi dilakukan kurang dari 1 jam yang lalu!", 483);
-            }
+            //for development comment this code
+//            if($intervalMinute < 300){
+//                return Response::json("Absensi dilakukan kurang dari 1 jam yang lalu!", 483);
+//            }
             $attendanceData->is_done = 1;
             $attendanceData->save();
 

@@ -20,6 +20,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $status_id
  * @property string $image_path
  * @property int $is_done
+ * @property int $assessment_leader
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -42,6 +43,7 @@ class Attendance extends Eloquent
 		'status_id' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int',
+		'assessment_leader' => 'int',
 		'is_done' => 'int'
 	];
 
@@ -57,6 +59,7 @@ class Attendance extends Eloquent
 		'status_id',
 		'image_path',
 		'is_done',
+		'assessment_leader',
 		'created_by',
 		'updated_by'
 	];

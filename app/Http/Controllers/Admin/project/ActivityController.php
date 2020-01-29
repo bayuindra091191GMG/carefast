@@ -39,9 +39,15 @@ class ActivityController extends Controller
         $id = $request->input('id');
 //        $project = Project::find($id);
 //        $employeeSchedule = $project->project_employees->sortByDesc('employee_roles_id');
-        $projectActivity = ProjectActivity::where('project_id', $id)->orderby('created_at', 'desc')->get();
+        $projectActivities = ProjectActivitiesHeader::where('project_id', $id)->orderby('created_at', 'desc')->get();
+        $idArr = collect();
+        foreach ($projectActivities as $projectActivity){
+            $idArr->push($projectActivity->id);
+        }
+        $projectDetails = ProjectActivitiesDetail::whereIn('activities_header_id', $idArr)->get();
 
-        return DataTables::of($projectActivity)
+
+        return DataTables::of($projectDetails)
             ->setTransformer(new ProjectActivityTransformer())
             ->make(true);
     }
@@ -218,7 +224,7 @@ class ActivityController extends Controller
                             'activities_header_id'  => $projectActivityHeader->id,
                             'action_id'             => $action,
                             'shift_type'            => $request->input('shift_type'),
-//                    'weeks'                 => $weekString,
+                            'weeks'                 => "1#2#3#4#",
                             'days'                  => "1#2#3#4#5#6#",
                             'start'                 => $start,
                             'finish'                => $finish,
@@ -252,7 +258,7 @@ class ActivityController extends Controller
                             'activities_header_id'  => $projectActivityHeader->id,
                             'action_id'             => $actionWeekly,
                             'shift_type'            => $request->input('shift_type'),
-//                    'weeks'                 => $weekString,
+                            'weeks'                 => "1#2#3#4#",
                             'days'                  => $weeklyData['Day'],
                             'start'                 => $startWeek,
                             'finish'                => $finishWeek,

@@ -7,6 +7,7 @@ use App\Imports\InitialDataImport;
 use App\Imports\ProjectEmployeeImport;
 use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
+use App\Models\Action;
 use App\Models\Attendance;
 use App\Models\Complaint;
 use App\Models\ComplaintDetail;
@@ -15,6 +16,9 @@ use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Place;
 use App\Models\Project;
+use App\Models\ProjectActivitiesDetail;
+use App\Models\ProjectActivitiesHeader;
+use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
 use App\Models\Schedule;
 use App\Models\User;
@@ -23,6 +27,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -268,6 +273,44 @@ class HomeController extends Controller
     }
     public function testEmail(){
         try{
+            $projectActivitiesGroups = DB::table('project_activities')
+                ->groupBy('plotting_name')
+                ->groupBy('place_id')
+                ->get();
+            foreach ($projectActivitiesGroups as $projectActivitiesGroup){
+
+                $projectActivityHeader = ProjectActivitiesHeader::create([
+                    'project_id'            => $projectActivitiesGroup->project_id,
+                    'plotting_name'         => $projectActivitiesGroup->plotting_name,
+                    'place_id'              => $projectActivitiesGroup->place_id,
+                    'created_at'            => $projectActivitiesGroup->created_at,
+                    'created_by'            => $projectActivitiesGroup->created_by,
+                    'updated_at'            => $projectActivitiesGroup->updated_at,
+                    'updated_by'            => $projectActivitiesGroup->updated_by,
+                ]);
+                $projectActivityDetails = ProjectActivity::where('project_id', 1)
+                    ->where("plotting_name", $projectActivitiesGroup->plotting_name)
+                    ->where("place_id", $projectActivitiesGroup->place_id)
+                    ->get();
+                foreach ($projectActivityDetails as $projectActivityDetail){
+                    $projectActivityDetail = ProjectActivitiesDetail::create([
+                        'activities_header_id'  => $projectActivityHeader->id,
+                        'action_id'             => $projectActivityDetail->action_id,
+                        'shift_type'            => $projectActivityDetail->shift_type,
+                        'weeks'                 => $projectActivityDetail->weeks,
+                        'days'                  => $projectActivityDetail->days,
+                        'start'                 => $projectActivityDetail->start,
+                        'finish'                => $projectActivityDetail->finish,
+                        'period_type'           => $projectActivityDetail->period_type,
+                        'created_at'            => $projectActivityDetail->created_at,
+                        'created_by'            => $projectActivityDetail->created_by,
+                        'updated_at'            => $projectActivityDetail->updated_at,
+                        'updated_by'            => $projectActivityDetail->updated_by,
+                    ]);
+                }
+            }
+            dd("asdf");
+
             $exitCode = Artisan::call('cache:clear');
             $exitCode2 = Artisan::call('config:clear');
 

@@ -8,6 +8,7 @@ use App\Models\Action;
 use App\Models\Employee;
 use App\Models\Place;
 use App\Models\Project;
+use App\Models\ProjectActivitiesDetail;
 use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
@@ -140,6 +141,7 @@ class EmployeeController extends Controller
 //                ->get();
             $projectActivities = ProjectActivitiesHeader::where('project_id', $projectEmployee->project_id)
                 ->get();
+
             $projectActivityModels = collect();
             //check if cleaner null
             if($projectActivities->count() == 0){
@@ -160,8 +162,8 @@ class EmployeeController extends Controller
                 }
                 $projectCSOModel = ([
                     'id'       => $projectActivity->employee_id,
-                    'name'     => $projectActivityDetail->place->name." | ".$projectActivityDetail->plotting_name,
-                    'activities'   => $actionName,
+                    'name'     => $projectActivity->place->name." | ".$projectActivity->plotting_name,
+                    'actions'   => $actionName,
                 ]);
                 $projectActivityModels->push($projectCSOModel);
             }
@@ -202,15 +204,15 @@ class EmployeeController extends Controller
 
                 $shiftString = "";
                 foreach ($projectActivity->project_activities_details as $projectDetail){
-//                    $actionName = collect();
-                    $actionName = "";
+                    $actionName = collect();
+//                    $actionName = "";
                     if(!empty($projectDetail->action_id)){
                         $actionList = explode('#', $projectDetail->action_id);
                         foreach ($actionList as $action){
                             if(!empty($action)){
                                 $action = Action::find($action);
-                                $actionName .= $action->name. ", ";
-//                                $actionName->push($action->name);
+//                                $actionName .= $action->name. ", ";
+                                $actionName->push($action->name);
                             }
                         }
                     }
@@ -288,10 +290,11 @@ class EmployeeController extends Controller
 //                $projectActivityModels->push($projectCSOModel);
 //            }
 
+//            Log::error('Api/EmployeeController - getDacs ' .json_encode($projectActivityModels));
             return Response::json($projectActivityModels, 200);
         }
         catch(\Exception $ex){
-            Log::error('Api/EmployeeController - getPlottings error EX: '. $ex);
+            Log::error('Api/EmployeeController - getDacs error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -301,13 +304,11 @@ class EmployeeController extends Controller
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
             $employeeLeader = $user->employee;
-            $projectEmployee = ProjectEmployee::where('employee_id', $employeeLeader->id)->first();
 
             $employeePlottingModels = json_decode($request->input('employee_plotting_models'));
             foreach ($employeePlottingModels as $employeePlottingModel){
-                $id = $employeePlottingModel->employee_id;
-                $employee = Employee::find($id);
-                $projectEmployeeCso = ProjectEmployee::where('employee_id', $employee->id)->first();
+                $employeeId = $employeePlottingModel->employee_id;
+                $projectEmployeeCso = ProjectEmployee::where('employee_id', $employeeId)->first();
 
                 $plottings = $employeePlottingModel->dac_details;
 
@@ -315,33 +316,44 @@ class EmployeeController extends Controller
                     $projectActivity = ProjectActivitiesHeader::find($plotting);
 
                     foreach ($projectActivity->project_activities_details as $projectDetail){
-                        $schedule = Schedule::create([
-                            'project_id'            => $projectActivity->project_id,
-                            'employee_id'           => $employee->id,
-                            'project_activity_id'   => $projectActivity->id,
-                            'project_employee_id'   => $projectEmployeeCso->id,
-                            'shift_type'            => $projectDetail->shift_type,
-                            'place_id'              => $projectActivity->place_id,
-                            'weeks'                 => $projectDetail->weeks,
-                            'days'                  => $projectDetail->days,
-                            'start'                 => $projectDetail->start,
-                            'finish'                => $projectDetail->finish,
-                            'status_id'             => 1,
-                            'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                            'created_by'            => $user->id,
-                            'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                            'updated_by'            => $user->id,
-                        ]);
-
-                        if(!empty($projectDetail->action_id)){
-                            $scheduleDetail = ScheduleDetail::create([
-                                'schedule_id'           => $schedule->id,
-                                'action_id'             => $projectDetail->action_id,
+                        $existSchedule = Schedule::where('project_activity_id', $projectActivity->id)
+                            ->where('project_id', $projectActivity->project_id)
+                            ->where('place_id', $projectActivity->place_id)
+                            ->first();
+                        if(empty($existSchedule)){
+                            $schedule = Schedule::create([
+                                'project_id'            => $projectActivity->project_id,
+                                'employee_id'           => $employeeId,
+                                'project_activity_id'   => $projectActivity->id,
+                                'project_employee_id'   => $projectEmployeeCso->id,
+                                'shift_type'            => $projectDetail->shift_type,
+                                'place_id'              => $projectActivity->place_id,
+                                'weeks'                 => $projectDetail->weeks,
+                                'days'                  => $projectDetail->days,
+                                'start'                 => $projectDetail->start,
+                                'finish'                => $projectDetail->finish,
+                                'status_id'             => 1,
                                 'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                 'created_by'            => $user->id,
                                 'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                 'updated_by'            => $user->id,
                             ]);
+                            $projectActivityDetails = ProjectActivitiesDetail::where("activities_header_id", $plotting)->get();
+                            foreach ($projectActivityDetails as $projectActivityDetail){
+                                $scheduleDetail = ScheduleDetail::create([
+                                    'schedule_id'           => $schedule->id,
+                                    'action_id'             => $projectActivityDetail->action_id,
+                                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                    'created_by'            => $user->id,
+                                    'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                    'updated_by'            => $user->id,
+                                ]);
+                            }
+                        }
+                        else{
+                            $existSchedule->employee_id = $employeeId;
+                            $existSchedule->project_employee_id = $projectEmployeeCso->id;
+                            $existSchedule->save();
                         }
                     }
                 }
@@ -369,6 +381,9 @@ class EmployeeController extends Controller
             $employee = $user->employee;
 
             $employeeSchedule = EmployeeProcess::GetEmployeeSchedule($employee->id, $employee->first_name ." ". $employee->last_name);
+            if(empty($employeeSchedule)){
+                return Response::json("Tidak ada Jadwal hari ini", 482);
+            }
             return Response::json($employeeSchedule, 200);
         }
         catch (\Exception $ex){
@@ -388,7 +403,10 @@ class EmployeeController extends Controller
             $id = $request->input('cso_id');
             $employee = Employee::find($id);
 
-            $employeeSchedule = EmployeeProcess::GetEmployeeSchedule($employee->id, $employee->first_name ." ". $employee->last_name);
+            $employeeSchedule = EmployeeProcess::GetEmployeeSchedule($id, $employee->first_name ." ". $employee->last_name);
+            if(empty($employeeSchedule)){
+                return Response::json("Tidak ada Jadwal hari ini", 482);
+            }
             return Response::json($employeeSchedule, 200);
         }
         catch (\Exception $ex){
