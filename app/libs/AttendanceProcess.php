@@ -278,6 +278,11 @@ class AttendanceProcess
                 }
             }
 
+            //get location
+//            $location = $request->input('location');
+//            $lat = $location["latitude"];
+//            $long = $location["longitude"];
+
             return $returnData;
         }
         catch (\Exception $ex){

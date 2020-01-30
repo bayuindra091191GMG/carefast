@@ -18,6 +18,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $date
  * @property int $status_id
  * @property int $is_done
+ * @property string $image_path
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -49,6 +50,7 @@ class AttendanceAbsent extends Eloquent
 		'date',
 		'is_done',
 		'status_id',
+        'image_path',
 		'created_by',
 		'updated_by'
 	];

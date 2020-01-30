@@ -67,6 +67,28 @@ class AttendanceAbsentController extends Controller
                     'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'status_id'     => 6
                 ]);
+
+                if($request->hasFile('image')){
+                    //Upload Image
+                    //Creating Path Everyday
+                    $today = Carbon::now('Asia/Jakarta');
+                    $todayStr = $today->format('l d-m-y');
+                    $publicPath = 'storage/attendances/'. $todayStr;
+                    if(!File::isDirectory($publicPath)){
+                        File::makeDirectory(public_path($publicPath), 0777, true, true);
+                    }
+
+                    $image = $request->file('image');
+                    $avatar = Image::make($image);
+                    $extension = $image->extension();
+                    $filename = $employee->first_name . ' ' . $employee->last_name . '_attendance_'. $newAttendance->id . '_' .
+                        Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                    $avatar->save(public_path($publicPath ."/". $filename));
+
+                    $newAttendance->image_path = $filename;
+                    $newAttendance->save();
+                }
+
                 return Response::json("Berhasil Proses Absensi", 200);
             }
             else{
@@ -133,6 +155,26 @@ class AttendanceAbsentController extends Controller
                 'status_id'     => 7
             ]);
 
+            if($request->hasFile('image')){
+                //Upload Image
+                //Creating Path Everyday
+                $today = Carbon::now('Asia/Jakarta');
+                $todayStr = $today->format('l d-m-y');
+                $publicPath = 'storage/attendances/'. $todayStr;
+                if(!File::isDirectory($publicPath)){
+                    File::makeDirectory(public_path($publicPath), 0777, true, true);
+                }
+
+                $image = $request->file('image');
+                $avatar = Image::make($image);
+                $extension = $image->extension();
+                $filename = $employee->first_name . ' ' . $employee->last_name . '_attendance_'. $newAttendance->id . '_' .
+                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                $avatar->save(public_path($publicPath ."/". $filename));
+
+                $newAttendance->image_path = $filename;
+                $newAttendance->save();
+            }
 
             return Response::json("Berhasil Proses Absensi", 200);
         }
