@@ -66,6 +66,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/employee/leader/schedule', 'Api\EmployeeController@employeeScheduleByLeader');
     Route::post('/employee/get-detail/', 'Api\EmployeeController@getEmployeeDetail');
     Route::get('/employee/get-direct-cso/', 'Api\EmployeeController@getEmployeeCSO');
+    Route::get('/employee/get-assessment-history/', 'Api\EmployeeController@employeeAssessments');
 
     Route::get('/get-user-data', 'Api\UserController@show');
     Route::post('/save-user-device', 'Api\UserController@saveUserToken');

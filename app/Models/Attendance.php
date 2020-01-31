@@ -21,6 +21,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $image_path
  * @property int $is_done
  * @property int $assessment_leader
+ * @property int $schedule_detail_id
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -44,6 +45,7 @@ class Attendance extends Eloquent
 		'created_by' => 'int',
 		'updated_by' => 'int',
 		'assessment_leader' => 'int',
+		'schedule_detail_id' => 'int',
 		'is_done' => 'int'
 	];
 
@@ -60,6 +62,7 @@ class Attendance extends Eloquent
 		'image_path',
 		'is_done',
 		'assessment_leader',
+		'schedule_detail_id',
 		'created_by',
 		'updated_by'
 	];
@@ -77,6 +80,11 @@ class Attendance extends Eloquent
 	public function schedule()
 	{
 		return $this->belongsTo(\App\Models\Schedule::class);
+	}
+
+	public function schedule_detail()
+	{
+		return $this->belongsTo(\App\Models\ScheduleDetail::class);
 	}
 
 	public function status()

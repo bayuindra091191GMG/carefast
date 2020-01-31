@@ -99,6 +99,7 @@ class EmployeeProcess
 
                     $checkStatus = 1;
                     $attendanceCheckin = Attendance::where('schedule_id', $schedule->id)
+                        ->where('schedule_detail_id', $detailId)
                         ->where('status_id', 6)
                         ->where('is_done', 0)
                         ->first();
@@ -106,11 +107,23 @@ class EmployeeProcess
                         $checkStatus = 2;
                     }
                     $attendanceCheckout = Attendance::where('schedule_id', $schedule->id)
+                        ->where('schedule_detail_id', $detailId)
                         ->where('status_id', 7)
                         ->where('is_done', 1)
+                        ->where('assessment_leader', 0)
                         ->first();
                     if(!empty($attendanceCheckout)){
                         $checkStatus = 3;
+                    }
+                    $assessmentStatus = 0;
+                    $attendanceAssessment = Attendance::where('schedule_id', $schedule->id)
+                        ->where('schedule_detail_id', $detailId)
+                        ->where('status_id', 7)
+                        ->where('is_done', 1)
+                        ->where('assessment_leader', 1)
+                        ->first();
+                    if(!empty($attendanceAssessment)){
+                        $checkStatus = 1;
                     }
 
                     $scheduleModel = [
@@ -129,7 +142,7 @@ class EmployeeProcess
                         'object'            => $schedule->project_activities_header->plotting_name,
                         'shift'             => $schedule->shift_type,
                         'status_check'      => $checkStatus,
-                        'status_assessment'  => 0,
+                        'status_assessment'  => $assessmentStatus,
                         'actions'            => $actionName,
                         'header_id'         => $schedule->id,
                     ];

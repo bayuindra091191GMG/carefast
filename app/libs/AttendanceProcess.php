@@ -71,13 +71,15 @@ class AttendanceProcess
             //Check out = 2
             $message = "";
             if($request->hasFile('image')){
+
                 $newAttendance = Attendance::create([
-                    'employee_id'   => $employee->id,
-                    'schedule_id'   => $schedule->id,
-                    'place_id'      => $place->id,
-                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'is_done'       => 0,
-                    'status_id'     => 6
+                    'employee_id'           => $employee->id,
+                    'schedule_id'           => $schedule->id,
+                    'schedule_detail_id'    => $data->schedule_detail_id,
+                    'place_id'              => $place->id,
+                    'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'is_done'               => 0,
+                    'status_id'             => 6
                 ]);
 
                 //Upload Image
@@ -144,9 +146,11 @@ class AttendanceProcess
                 $newAttendance = Attendance::create([
                     'employee_id'   => $employee->id,
                     'schedule_id'   => null,
+                    'schedule_detail_id'    => $data->schedule_detail_id,
                     'place_id'      => $place->id,
                     'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'is_done'       => 0,
+                    'assessment_leader'     => 0,
                     'status_id'     => 6
                 ]);
 
@@ -201,6 +205,7 @@ class AttendanceProcess
 
             $attendance = Attendance::where('employee_id', $employee->id)
                 ->where('status_id', 6)
+                ->where('schedule_detail_id', $request->input('schedule_detail_id'))
                 ->where('is_done', 0)
                 ->first();
             if(empty($attendance)){
@@ -247,9 +252,11 @@ class AttendanceProcess
             $newAttendance = Attendance::create([
                 'employee_id'   => $employee->id,
                 'schedule_id'   => $attendance->schedule_id,
+                'schedule_detail_id'    => $attendance->schedule_detail_id,
                 'place_id'      => $place->id,
                 'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'is_done'       => 1,
+                'assessment_leader'     => 0,
                 'notes'         => $request->input('notes'),
                 'status_id'     => 7
             ]);
@@ -305,6 +312,7 @@ class AttendanceProcess
 
             $attendance = Attendance::where('employee_id', $employee->id)
                 ->where('status_id', 7)
+                ->where('schedule_detail_id', $request->input('schedule_detail_id'))
                 ->where('is_done', 1)
                 ->first();
             if(empty($attendance)){

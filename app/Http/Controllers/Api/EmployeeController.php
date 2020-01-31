@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\libs\EmployeeProcess;
 use App\Models\Action;
+use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\Place;
 use App\Models\Project;
@@ -410,6 +411,45 @@ class EmployeeController extends Controller
                 return Response::json("Tidak ada Jadwal hari ini", 482);
             }
             return Response::json($employeeSchedule, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    /**
+     * Function to get the employee assesment history
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function employeeAssessments(Request $request){
+        try{
+            if($request->input('cso_id') != "0"){
+                $employeeId = $request->input('cso_id');
+            }
+            else{
+                $userLogin = auth('api')->user();
+                $user = User::where('phone', $userLogin->phone)->first();
+                $employee = $user->employee;
+                $employeeId = $employee->id;
+            }
+            $attendanceAssessments = Attendance::where('employee_id', $employeeId)
+                ->where('status_id', 7)
+                ->where('is_done', 1)
+                ->where('assessment_leader', 1)
+                ->get();
+
+            $assessmentModels = collect();
+            $assessHeader = collect();
+            foreach ($attendanceAssessments as $attendanceAssessment){
+
+            }
+
+
+
+            return Response::json($assessmentModels, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
