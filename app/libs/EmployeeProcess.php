@@ -96,7 +96,6 @@ class EmployeeProcess
 //                    ];
 //                    $scheduleDetailModels->push($scheduleDetailModel);
 
-
                     $checkStatus = 1;
                     $attendanceCheckin = Attendance::where('schedule_id', $schedule->id)
                         ->where('schedule_detail_id', $detailId)
@@ -109,12 +108,13 @@ class EmployeeProcess
                     $attendanceCheckout = Attendance::where('schedule_id', $schedule->id)
                         ->where('schedule_detail_id', $detailId)
                         ->where('status_id', 7)
-                        ->where('is_done', 1)
+                        ->where('is_done', 0)
                         ->where('assessment_leader', 0)
                         ->first();
                     if(!empty($attendanceCheckout)){
                         $checkStatus = 3;
                     }
+
                     $assessmentStatus = 0;
                     $attendanceAssessment = Attendance::where('schedule_id', $schedule->id)
                         ->where('schedule_detail_id', $detailId)
@@ -123,7 +123,7 @@ class EmployeeProcess
                         ->where('assessment_leader', 1)
                         ->first();
                     if(!empty($attendanceAssessment)){
-                        $checkStatus = 1;
+                        $assessmentStatus = 1;
                     }
 
                     $scheduleModel = [
@@ -137,13 +137,14 @@ class EmployeeProcess
 //                    'schedule_details'  => $scheduleDetailModels,
 
                         'start_time'        => Carbon::parse($scheduleDetail->start)->format('H:i'),
-                        'finish_time'        => Carbon::parse($scheduleDetail->finish)->format('H:i'),
+                        'finish_time'       => Carbon::parse($scheduleDetail->finish)->format('H:i'),
                         'place'             => $place->name,
                         'object'            => $schedule->project_activities_header->plotting_name,
                         'shift'             => $schedule->shift_type,
                         'status_check'      => $checkStatus,
-                        'status_assessment'  => $assessmentStatus,
-                        'actions'            => $actionName,
+                        'status_assessment' => $assessmentStatus,
+                        'is_done'           => $assessmentStatus,
+                        'actions'           => $actionName,
                         'header_id'         => $schedule->id,
                     ];
 

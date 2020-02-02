@@ -36,9 +36,9 @@ class AttendanceAbsentController extends Controller
     public function attendanceIn(Request $request)
     {
         try{
-
-            if($request->input('cso_id') != "0"){
-                $employee = Employee::find($request->input('cso_id'));
+            $data = json_decode($request->input('attendance_model'));
+            if($data->cso_id != "0"){
+                $employee = Employee::find($data->cso_id);
             }
             else{
                 $userLogin = auth('api')->user();
@@ -47,7 +47,7 @@ class AttendanceAbsentController extends Controller
             }
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
-            $projectCode = $request->input('qr_code');
+            $projectCode = $data->qr_code;
             $project = Project::where('code', $projectCode)->first();
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 400);
@@ -81,7 +81,7 @@ class AttendanceAbsentController extends Controller
                     $image = $request->file('image');
                     $avatar = Image::make($image);
                     $extension = $image->extension();
-                    $filename = $employee->first_name . ' ' . $employee->last_name . '_attendance_'. $newAttendance->id . '_' .
+                    $filename = $employee->first_name . ' ' . $employee->last_name . '_attendancein_'. $newAttendance->id . '_' .
                         Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                     $avatar->save(public_path($publicPath ."/". $filename));
 
@@ -110,8 +110,9 @@ class AttendanceAbsentController extends Controller
     public function attendanceOut(Request $request)
     {
         try{
-            if($request->input('cso_id') != "0"){
-                $employee = Employee::find($request->input('cso_id'));
+            $data = json_decode($request->input('attendance_model'));
+            if($data->cso_id != "0"){
+                $employee = Employee::find($data->cso_id);
             }
             else{
                 $userLogin = auth('api')->user();
@@ -120,10 +121,10 @@ class AttendanceAbsentController extends Controller
             }
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
-            $projectCode = $request->input('qr_code');
+            $projectCode = $data->qr_code;
             $project = Project::where('code', $projectCode)->first();
             if(empty($project)){
-                return Response::json("Project Tidak ditemukan!", 400);
+                return Response::json("Project Tidak ditemukan!", 482);
             }
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
@@ -168,7 +169,7 @@ class AttendanceAbsentController extends Controller
                 $image = $request->file('image');
                 $avatar = Image::make($image);
                 $extension = $image->extension();
-                $filename = $employee->first_name . ' ' . $employee->last_name . '_attendance_'. $newAttendance->id . '_' .
+                $filename = $employee->first_name . ' ' . $employee->last_name . '_attendanceout_'. $newAttendance->id . '_' .
                     Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                 $avatar->save(public_path($publicPath ."/". $filename));
 

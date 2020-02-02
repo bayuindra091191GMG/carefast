@@ -444,6 +444,7 @@ class EmployeeController extends Controller
             $assessmentModels = collect();
             $assessHeader = collect();
             foreach ($attendanceAssessments as $attendanceAssessment){
+                $scheduleHeader = Schedule::find($attendanceAssessment->schedule_id);
 
             }
 

@@ -95,6 +95,7 @@ class AttendanceController extends Controller
     public function submitCheckout(Request $request)
     {
         try{
+            $data = json_decode($request->input('checkout_model'));
 
 //            Log::info('qr_code: '. $request->input('qr_code'));
 //            Log::info('notes: '. $request->input('notes'));
@@ -103,7 +104,7 @@ class AttendanceController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            $result = AttendanceProcess::checkoutProcess($employee, $request);
+            $result = AttendanceProcess::checkoutProcess($employee, $request, 1, $data);
 
             return Response::json($result["desc"], $result["status_code"]);
 
@@ -123,14 +124,15 @@ class AttendanceController extends Controller
     {
         try{
 
+            $data = json_decode($request->input('checkout_model'));
 //            Log::info('qr_code: '. $request->input('qr_code'));
 //            Log::info('notes: '. $request->input('notes'));
 
-            if($request->input('cso_id') != "0"){
+            if($data->cso_id != "0"){
                 $type = 1;
-                $employee = Employee::find($request->input('cso_id'));
+                $employee = Employee::find($data->cso_id);
 
-                $result = AttendanceProcess::checkoutProcess($employee, $request, $type);
+                $result = AttendanceProcess::checkoutProcess($employee, $request, $type, $data);
 
                 return Response::json($result["desc"], $result["status_code"]);
             }
@@ -140,7 +142,7 @@ class AttendanceController extends Controller
                 $user = User::where('phone', $userLogin->phone)->first();
                 $employee = $user->employee;
 
-                $result = AttendanceProcess::checkoutProcess($employee, $request, $type);
+                $result = AttendanceProcess::checkoutProcess($employee, $request, $type, $data);
 
                 return Response::json($result["desc"], $result["status_code"]);
             }
@@ -232,23 +234,23 @@ class AttendanceController extends Controller
             return Response::json($result["desc"], $result["status_code"]);
 
 
-            $data = $request->json()->all();
-            $validator = Validator::make($data, $rules);
-            if ($validator->fails()) {
-                return response()->json($validator->messages(), 400);
-            }
+//            $data = $request->json()->all();
+//            $validator = Validator::make($data, $rules);
+//            if ($validator->fails()) {
+//                return response()->json($validator->messages(), 400);
+//            }
 
             //Submit Data
-            $place = Place::where('qr_code', $request->input('qr_code'))->first();
-
-//            if($place->qr_code != Crypt::decryptString($request->input('qr_code'))){
-            if($place->qr_code != $request->input('qr_code')){
-                return Response::json("Tempat yang discan tidak tepat!", 400);
-            }
-            $date = Carbon::now('Asia/Jakarta');
-            $time = $date->format('H:i:s');
-            $schedule = Schedule::where('place_id', $place->id)->where('start' >= $time)->where('finish' <= $time)->first();
-//            $attendance = Attendance::where('schedule_id', $schedule->id)->where('employee_id', )
+//            $place = Place::where('qr_code', $request->input('qr_code'))->first();
+//
+////            if($place->qr_code != Crypt::decryptString($request->input('qr_code'))){
+//            if($place->qr_code != $request->input('qr_code')){
+//                return Response::json("Tempat yang discan tidak tepat!", 400);
+//            }
+//            $date = Carbon::now('Asia/Jakarta');
+//            $time = $date->format('H:i:s');
+//            $schedule = Schedule::where('place_id', $place->id)->where('start' >= $time)->where('finish' <= $time)->first();
+////            $attendance = Attendance::where('schedule_id', $schedule->id)->where('employee_id', )
         }
         catch (\Exception $ex){
             return Response::json("Maaf terjadi kesalahan!", 500);

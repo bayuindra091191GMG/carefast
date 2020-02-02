@@ -508,17 +508,17 @@ class ProjectObjectController extends Controller
             $objectName = "";
             if($projectObject->unit_name != "-"){
                 $unitName = $projectObject->unit_name;
-                $objectName = "[". $unitName. "]";
+                $objectName = $unitName;
                 $formatted_tags[] = ['id' => $objectName, 'text' => $objectName];
             }
             if($projectObject->sub1_unit_name != "-"){
                 $sub1unitName = $projectObject->sub1_unit_name;
-                $objectName = $objectName." - [".$sub1unitName. "]";
+                $objectName = $objectName."--".$sub1unitName;
                 $formatted_tags[] = ['id' => $objectName, 'text' => $objectName];
             }
             if($projectObject->sub2_unit_name != "-"){
                 $sub2unitName = $projectObject->sub2_unit_name;
-                $objectName = $objectName." - [".$sub2unitName. "]";
+                $objectName = $objectName."--".$sub2unitName;
                 $formatted_tags[] = ['id' => $objectName, 'text' => $objectName];
             }
 

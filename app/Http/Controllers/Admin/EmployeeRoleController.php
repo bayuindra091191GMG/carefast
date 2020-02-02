@@ -61,7 +61,7 @@ class EmployeeRoleController extends Controller
     public function create(){
         return view('admin.employee_role.create');
     }
-    
+
 
     // public function store(Request $request){
     //     try{
@@ -143,6 +143,7 @@ class EmployeeRoleController extends Controller
             return redirect()->route('admin.employee_role.index');
         }
         catch(\Exception $ex){
+            dd($ex);
             Log::error('Admin/EmployeeRoleController - store error EX: '. $ex);
             return redirect()->back()->withErrors('Internal Server Error')->withInput();
         }
@@ -165,7 +166,7 @@ class EmployeeRoleController extends Controller
     public function update(Request $request, int $id){
         try{
             $employeeRole = EmployeeRole::find($id);
-            
+
             $validator = Validator::make($request->all(), [
                 'name'              => 'required',
                 'description'       => 'max:255'

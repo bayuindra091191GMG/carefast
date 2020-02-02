@@ -22,6 +22,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $is_done
  * @property int $assessment_leader
  * @property int $schedule_detail_id
+ * @property string $notes
+ * @property string $assessment_notes
+ * @property int $assessment_score
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -46,6 +49,7 @@ class Attendance extends Eloquent
 		'updated_by' => 'int',
 		'assessment_leader' => 'int',
 		'schedule_detail_id' => 'int',
+		'assessment_score' => 'int',
 		'is_done' => 'int'
 	];
 
@@ -63,6 +67,9 @@ class Attendance extends Eloquent
 		'is_done',
 		'assessment_leader',
 		'schedule_detail_id',
+		'notes',
+		'assessment_notes',
+		'assessment_score',
 		'created_by',
 		'updated_by'
 	];
