@@ -126,11 +126,14 @@ class ProjectEmployeeController extends Controller
                 $idx = 0;
                 foreach ($employeeTotalList as $employeeTotal){
                     $employeeRole = EmployeeRole::find((int)$employeeRoleIds[$idx]);
+                    $employees = Employee::where('employee_role_id', (int)$employeeRoleIds[$idx])->get();
+
                     for($i=1; $i<=(int)$employeeTotal; $i++){
                         ProjectEmployee::create([
                             'project_id'        => $project_id,
                             'employee_roles_id' => $employeeRoleIds[$idx],
                             'project_employee_code' => $project->code.'-'.$employeeRole->description.'-'.$i,
+                            'employee_id'       => $employees[$i]->id,
                             'status_id'         => 1,
                             'created_by'        => $adminUser->id,
                             'created_at'        => $now->toDateTimeString(),

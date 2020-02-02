@@ -33,6 +33,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \App\Models\Employee $employee
  * @property \App\Models\Place $place
  * @property \App\Models\Schedule $schedule
+ * @property \App\Models\ScheduleDetail $schedule_detail
  * @property \App\Models\Status $status
  * @property \Illuminate\Database\Eloquent\Collection $attendance_details
  *

@@ -97,6 +97,10 @@ class EmployeeProcess
 //                    $scheduleDetailModels->push($scheduleDetailModel);
 
                     $checkStatus = 1;
+                    //checkout action done =
+                    // true (kalau cso sudah melakukan checkout setelah melakukan pekerjaan)
+                    // or false
+                    $checkoutActionDone = false;
                     $attendanceCheckin = Attendance::where('schedule_id', $schedule->id)
                         ->where('schedule_detail_id', $detailId)
                         ->where('status_id', 6)
@@ -112,10 +116,12 @@ class EmployeeProcess
                         ->where('assessment_leader', 0)
                         ->first();
                     if(!empty($attendanceCheckout)){
+                        $checkoutActionDone = true;
                         $checkStatus = 3;
                     }
 
                     $assessmentStatus = 0;
+                    $assessmentScore = 0;
                     $attendanceAssessment = Attendance::where('schedule_id', $schedule->id)
                         ->where('schedule_detail_id', $detailId)
                         ->where('status_id', 7)
@@ -123,7 +129,9 @@ class EmployeeProcess
                         ->where('assessment_leader', 1)
                         ->first();
                     if(!empty($attendanceAssessment)){
+                        $checkoutActionDone = true;
                         $assessmentStatus = 1;
+                        $assessmentScore = $attendanceAssessment->assessment_score;
                     }
 
                     $scheduleModel = [
@@ -144,6 +152,8 @@ class EmployeeProcess
                         'status_check'      => $checkStatus,
                         'status_assessment' => $assessmentStatus,
                         'is_done'           => $assessmentStatus,
+                        'checkout_action_done' => $checkoutActionDone,
+                        'score'             => $assessmentScore,
                         'actions'           => $actionName,
                         'header_id'         => $schedule->id,
                     ];

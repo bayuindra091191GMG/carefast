@@ -265,6 +265,7 @@ class AttendanceProcess
 //            $isPlace = Utilities::checkingQrCode($request->input('qr_code'));
 //            if(!$isPlace){
             if($type == 1){
+                Log::info('Api/AttendanceController - $data->qr_code: '. $data->qr_code);
                 if($place->qr_code != $data->qr_code){
                     $returnData = [
                         'status_code'           => 483,
@@ -291,15 +292,15 @@ class AttendanceProcess
             }
 
             $newAttendance = Attendance::create([
-                'employee_id'   => $employee->id,
-                'schedule_id'   => $attendance->schedule_id,
+                'employee_id'           => $employee->id,
+                'schedule_id'           => $attendance->schedule_id,
                 'schedule_detail_id'    => $attendance->schedule_detail_id,
-                'place_id'      => $place->id,
-                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'is_done'       => 0,
+                'place_id'              => $place->id,
+                'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'is_done'               => 0,
                 'assessment_leader'     => 0,
-                'notes'         => $data->notes,
-                'status_id'     => 7
+                'notes'                 => $data->notes,
+                'status_id'             => 7
             ]);
             $attendance->is_done = 1;
             $attendance->save();

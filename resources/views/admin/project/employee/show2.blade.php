@@ -48,6 +48,8 @@
                                                             <a href="{{ route('admin.project.employee.create', ['project_id' => $project->id]) }}" class="btn btn-success">TAMBAH EMPLOYEE</a>
                                                         @else
                                                             <a href="{{ route('admin.project.employee.edit', ['project_id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
+{{--                                                            &nbsp;--}}
+{{--                                                            <a href="{{ route('admin.project.employee.set', ['project_id' => $project->id]) }}" class="btn btn-success">UBAH EMPLOYEE</a>--}}
                                                         @endif
                                                     </div>
 

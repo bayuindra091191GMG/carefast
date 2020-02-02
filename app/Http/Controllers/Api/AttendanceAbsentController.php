@@ -132,7 +132,7 @@ class AttendanceAbsentController extends Controller
                 ->where('is_done', 0)
                 ->first();
             if(empty($attendanceData)){
-                return Response::json("Belum pernah melakukan Absen di tempat ini", 483);
+                return Response::json("Anda Belum Absen Masuk", 483);
             }
 
             // checkout absent
@@ -177,7 +177,7 @@ class AttendanceAbsentController extends Controller
                 $newAttendance->save();
             }
 
-            return Response::json("Berhasil Proses Absensi", 200);
+            return Response::json("Berhasil Proses Absen Keluar", 200);
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceAbsentController - absentProcess error EX: '. $ex);

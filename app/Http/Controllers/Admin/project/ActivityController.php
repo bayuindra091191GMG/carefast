@@ -60,7 +60,7 @@ class ActivityController extends Controller
             return redirect()->back();
         }
 
-        $activities = ProjectActivity::where('project_id', $id)->get();
+        $activities = ProjectActivitiesHeader::where('project_id', $id)->get();
         $data = [
             'activities'   => $activities,
             'project'         => $project,
