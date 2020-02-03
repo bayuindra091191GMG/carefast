@@ -123,6 +123,7 @@ class AttendanceAbsentController extends Controller
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
             $projectCode = $data->qr_code;
             $project = Project::where('code', $projectCode)->first();
+//            Log::error('Api/AttendanceAbsentController - project code : '. $projectCode);
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 482);
             }
