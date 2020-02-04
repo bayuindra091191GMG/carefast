@@ -202,13 +202,17 @@
         $('#sub_1_unit0').on('change', function() {
             var objVal = $('#sub_1_unit0').val();
             $.ajax({
-                url: '{{ route('select.units') }}',
+                url: '{{ route('select.sub2unit-dropdown') }}',
                 dataType: 'json',
                 data: {
                     'id': objVal
                 },
                 success: function (data) {
                     $('#sub_2_unit0').empty();
+                    $('#sub_2_unit0')
+                        .append($("<option></option>")
+                            .attr("value","-")
+                            .text("-"));
                     for(let j=0; j<data.length; j++){
                         $('#sub_2_unit0')
                             .append($("<option></option>")
@@ -330,13 +334,17 @@
             $('#sub_1_unit' + bufferID).on('change', function() {
                 var objVal = '#sub_1_unit' + bufferID;
                 $.ajax({
-                    url: '{{ route('select.units') }}',
+                    url: '{{ route('select.sub2unit-dropdown') }}',
                     dataType: 'json',
                     data: {
                         'id': $(objVal).val()
                     },
                     success: function (data) {
                         $('#sub_2_unit' + bufferID).empty();
+                        $('#sub_2_unit' + bufferID)
+                            .append($("<option></option>")
+                                .attr("value","-")
+                                .text("-"));
                         for(let j=0; j<data.length; j++){
                             $('#sub_2_unit' + bufferID)
                                 .append($("<option></option>")

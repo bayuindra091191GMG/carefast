@@ -72,11 +72,11 @@ class Sub2UnitController extends Controller
     public function store(Request $request){
         try{
             $validator = Validator::make($request->all(), [
-                'name'              => 'required|max:100|unique:sub2_units',
+                'name'              => 'required|max:100',
                 'description'       => 'max:255'
             ],[
                 'name.required'     => 'Nama kategori wajib diisi!',
-                'name.unique'       => 'Nama kategori sudah terdaftar!'
+//                'name.unique'       => 'Nama kategori sudah terdaftar!'
             ]);
 
             if ($validator->fails()) return redirect()->back()->withErrors($validator->errors())->withInput($request->all());

@@ -363,6 +363,7 @@ Route::get('/select-placeProjects', 'Admin\PlaceController@getPlaceProjects')->n
 Route::get('/select-units', 'Admin\UnitController@getUnits')->name('select.units');
 Route::get('/select-sub1unit-dropdown', 'Admin\Sub1UnitController@getSub1UnitDropdowns')->name('select.sub1unit-dropdown');
 Route::get('/select-sub1units', 'Admin\Sub1UnitController@getSub1Units')->name('select.sub1units');
+Route::get('/select-sub2unit-dropdown', 'Admin\Sub2UnitController@getSub2UnitDropdowns')->name('select.sub2unit-dropdown');
 Route::get('/select-sub2units', 'Admin\Sub2UnitController@getSub2Units')->name('select.sub2units');
 Route::get('/select-upper-employees', 'Admin\EmployeeController@getUpperEmployees')->name('select.upper.employees');
 Route::get('/select-cleaner-employees', 'Admin\EmployeeController@getCleanerEmployees')->name('select.cleaner.employees');
