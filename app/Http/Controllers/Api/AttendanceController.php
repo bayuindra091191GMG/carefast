@@ -104,7 +104,7 @@ class AttendanceController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            Log::info('Api/AttendanceController - submitCheckout: '. $data);
+//            Log::info('Api/AttendanceController - submitCheckout: '. $data);
 
             $result = AttendanceProcess::checkoutProcess($employee, $request, 1, $data);
 

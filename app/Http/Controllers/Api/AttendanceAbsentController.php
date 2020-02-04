@@ -52,6 +52,14 @@ class AttendanceAbsentController extends Controller
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 400);
             }
+
+            //checking if employee on project
+            $projectEmployeeExistence = ProjectEmployee::where('project_id', $project->id)
+                ->where('employee_id', $employee->id)
+                ->first();
+            if(empty($projectEmployeeExistence)){
+                return Response::json("Bukan pada project yang sesuai", 482);
+            }
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
@@ -85,7 +93,7 @@ class AttendanceAbsentController extends Controller
                         Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                     $avatar->save(public_path($publicPath ."/". $filename));
 
-                    $newAttendance->image_path = $filename;
+                    $newAttendance->image_path = $todayStr.'/'.$filename;
                     $newAttendance->save();
                 }
 
@@ -125,8 +133,17 @@ class AttendanceAbsentController extends Controller
             $project = Project::where('code', $projectCode)->first();
 //            Log::error('Api/AttendanceAbsentController - project code : '. $projectCode);
             if(empty($project)){
-                return Response::json("Project Tidak ditemukan!", 482);
+                return Response::json("Project Tidak ditemukan!", 400);
             }
+
+            //checking if employee on project
+            $projectEmployeeExistence = ProjectEmployee::where('project_id', $project->id)
+                ->where('employee_id', $employee->id)
+                ->first();
+            if(empty($projectEmployeeExistence)){
+                return Response::json("Bukan pada project yang sesuai", 482);
+            }
+
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
@@ -174,7 +191,7 @@ class AttendanceAbsentController extends Controller
                     Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                 $avatar->save(public_path($publicPath ."/". $filename));
 
-                $newAttendance->image_path = $filename;
+                $newAttendance->image_path = $todayStr.'/'.$filename;
                 $newAttendance->save();
             }
 

@@ -9,7 +9,7 @@ use App\Models\Attendance;
 use App\Models\EmployeeRole;
 use App\Models\Unit;
 use App\Models\User;
-use App\Transformer\AttendanceTransformer;
+use App\Transformer\CheckinTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,7 +43,7 @@ class AttendanceController extends Controller
 
         $attendance = Attendance::where("employee_id", $id)->get();
         return DataTables::of($attendance)
-            ->setTransformer(new AttendanceTransformer())
+            ->setTransformer(new CheckinTransformer())
             ->make(true);
     }
 

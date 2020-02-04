@@ -38,7 +38,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group form-float form-group-lg">
                                         <div class="form-line">
-                                            <label class="form-label" for="name">Nama Sub Unit 2 *</label>
+                                            <label class="form-label" for="name">Nama Sub Object 2 *</label>
                                             <input id="name" type="text" class="form-control"
                                                 style="text-transform: uppercase;" name="name"
                                                 value="{{ $sub2unit->name }}">

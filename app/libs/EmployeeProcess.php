@@ -116,7 +116,9 @@ class EmployeeProcess
                         ->where('assessment_leader', 0)
                         ->first();
                     if(!empty($attendanceCheckout)){
-                        $checkoutActionDone = true;
+                        if($attendanceCheckout->is_action_checked == "1"){
+                            $checkoutActionDone = true;
+                        }
                         $checkStatus = 3;
                     }
 
@@ -129,7 +131,10 @@ class EmployeeProcess
                         ->where('assessment_leader', 1)
                         ->first();
                     if(!empty($attendanceAssessment)){
-                        $checkoutActionDone = true;
+                        if($attendanceAssessment->is_action_checked == "1"){
+                            $checkoutActionDone = true;
+                        }
+                        $checkStatus = 3;
                         $assessmentStatus = 1;
                         $assessmentScore = $attendanceAssessment->assessment_score;
                     }

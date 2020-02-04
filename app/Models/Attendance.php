@@ -25,6 +25,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $notes
  * @property string $assessment_notes
  * @property int $assessment_score
+ * @property string $is_action_checked
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -71,6 +72,7 @@ class Attendance extends Eloquent
 		'notes',
 		'assessment_notes',
 		'assessment_score',
+		'is_action_checked',
 		'created_by',
 		'updated_by'
 	];

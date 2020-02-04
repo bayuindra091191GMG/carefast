@@ -111,7 +111,7 @@ class AttendanceProcess
                     Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                 $avatar->save(public_path($publicPath ."/". $filename));
 
-                $newAttendance->image_path = $filename;
+                $newAttendance->image_path = $todayStr.'/'.$filename;
                 $newAttendance->save();
 
                 return $returnData;
@@ -214,7 +214,7 @@ class AttendanceProcess
                     Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
                 $avatar->save(public_path($publicPath ."/". $filename));
 
-                $newAttendance->image_path = $filename;
+                $newAttendance->image_path = $todayStr.'/'.$filename;
                 $newAttendance->save();
 
                 return $returnData;
@@ -290,6 +290,8 @@ class AttendanceProcess
                 ];
                 return $returnData;
             }
+            $submittedDac = $data->schedule_detail;
+            Log::info('Api/AttendanceController - $data->schedule_detail->is_action_checked: '. $submittedDac->is_action_checked);
 
             $newAttendance = Attendance::create([
                 'employee_id'           => $employee->id,
@@ -300,6 +302,7 @@ class AttendanceProcess
                 'is_done'               => 0,
                 'assessment_leader'     => 0,
                 'notes'                 => $data->notes,
+                'is_action_checked'     => $submittedDac->is_action_checked,
                 'status_id'             => 7
             ]);
             $attendance->is_done = 1;
