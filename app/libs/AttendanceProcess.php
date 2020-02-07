@@ -291,20 +291,8 @@ class AttendanceProcess
                 return $returnData;
             }
             $submittedDac = $data->schedule_detail;
-            Log::info('Api/AttendanceController - $data->schedule_detail->is_action_checked: '. $submittedDac->is_action_checked);
+//            Log::info('Api/AttendanceController - $data->schedule_detail->is_action_checked: '. $submittedDac->is_action_checked);
 
-            $newAttendance = Attendance::create([
-                'employee_id'           => $employee->id,
-                'schedule_id'           => $attendance->schedule_id,
-                'schedule_detail_id'    => $attendance->schedule_detail_id,
-                'place_id'              => $place->id,
-                'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'is_done'               => 0,
-                'assessment_leader'     => 0,
-                'notes'                 => $data->notes,
-                'is_action_checked'     => $submittedDac->is_action_checked,
-                'status_id'             => 7
-            ]);
             $attendance->is_done = 1;
             $attendance->save();
 
@@ -348,52 +336,82 @@ class AttendanceProcess
         }
 
     }
-    public static function leaderAssessment($employee, $request, $type){
+    public static function leaderAssessment($employee, $request){
         try{
             $returnData = [
                 'status_code'           => 200,
                 'desc'                  => "Berhasil Check out",
             ];
 
-            $submittedDac = $request->input('schedule_detail');
 
-            $attendance = Attendance::where('employee_id', $employee->id)
-                ->where('status_id', 7)
-                ->where('schedule_detail_id', $submittedDac['schedule_detail_id'])
-                ->where('is_done', 0)
+            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+                ->where('project_employee_id', $projectEmployee->id)
+//                ->whereTime('start', '<=', $time)
+//                ->whereTime('finish', '>=', $time)
                 ->first();
-            if(empty($attendance)){
+
+            if($schedule == null){
                 $returnData = [
                     'status_code'           => 482,
-                    'desc'                  => "Tidak ditemukan checkout",
+                    'desc'                  => "Jadwal Tidak ditemukan",
                 ];
                 return $returnData;
             }
-            $place = Place::find($attendance->place_id);
+            $place = Place::find($schedule->place_id);
 
-            if($type == 1){
-                if($place->qr_code != $request->input('qr_code')){
-                    $returnData = [
-                        'status_code'           => 483,
-                        'desc'                  => "Tempat yang discan tidak tepat",
-                    ];
-                    return $returnData;
-                }
+            if($place->qr_code != $request->input('qr_code')){
+                $returnData = [
+                    'status_code'           => 483,
+                    'desc'                  => "Tempat yang discan tidak tepat",
+                ];
+                return $returnData;
             }
 
-            if(!$request->filled('schedule_detail')){
+            if(!$request->filled('schedule_details')){
                 $returnData = [
                     'status_code'           => 400,
                     'desc'                  => "Tidak ada data Dac yang diterima",
                 ];
                 return $returnData;
             }
+            $submittedDetails = $request->input('schedule_details');
+//            Log::info('libs/AttendanceProcess/leaderAssessment $submittedDetails: '. gettype($submittedDetails));
+//            Log::info('libs/AttendanceProcess/leaderAssessment $submittedDetails: '. json_decode($submittedDetails));
 
-            $attendance->is_done = 1;
-            $attendance->assessment_leader = 1;
-            $attendance->assessment_score = $submittedDac['assessment_leader'];
-            $attendance->assessment_notes = $request->input('notes');
-            $attendance->save();
+            foreach ($submittedDetails as $submittedDetail){
+//            Log::info('libs/AttendanceProcess/leaderAssessment schedule_detail_id: '. $submittedDetail["schedule_detail_id"]);
+                //new attendance checkin
+                $newAttendanceCheckin = Attendance::create([
+                    'employee_id'           => $employee->id,
+                    'schedule_id'           => $schedule->id,
+                    'schedule_detail_id'    => $submittedDetail["schedule_detail_id"],
+                    'place_id'              => $place->id,
+                    'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'is_done'               => 1,
+                    'assessment_leader'     => 0,
+                    'image_path'            => 'default.png',
+                    'status_id'             => 6
+                ]);
+
+
+                $newAttendanceCheckout = Attendance::create([
+                    'employee_id'           => $employee->id,
+                    'schedule_id'           => $schedule->id,
+                    'schedule_detail_id'    => $submittedDetail["schedule_detail_id"],
+                    'place_id'              => $place->id,
+                    'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'is_done'               => 1,
+                    'assessment_leader'     => 1,
+                    'notes'                 => '',
+                    'is_action_checked'     => 1,
+                    'status_id'             => 7
+                ]);
+
+                $newAttendanceCheckout->assessment_score = $submittedDetail["assessment_score"];
+                $newAttendanceCheckout->assessment_notes = $submittedDetail["assessment_notes"];
+                $newAttendanceCheckout->save();
+            }
 
 
             return $returnData;
@@ -409,4 +427,66 @@ class AttendanceProcess
         }
 
     }
+    //old function of leaderassessment
+//    public static function leaderAssessment($employee, $request, $type){
+//        try{
+//            $returnData = [
+//                'status_code'           => 200,
+//                'desc'                  => "Berhasil Check out",
+//            ];
+//
+//            $submittedDac = $request->input('schedule_detail');
+//
+//            $attendance = Attendance::where('employee_id', $employee->id)
+//                ->where('status_id', 7)
+//                ->where('schedule_detail_id', $submittedDac['schedule_detail_id'])
+//                ->where('is_done', 0)
+//                ->first();
+//            if(empty($attendance)){
+//                $returnData = [
+//                    'status_code'           => 482,
+//                    'desc'                  => "Tidak ditemukan checkout",
+//                ];
+//                return $returnData;
+//            }
+//            $place = Place::find($attendance->place_id);
+//
+//            if($type == 1){
+//                if($place->qr_code != $request->input('qr_code')){
+//                    $returnData = [
+//                        'status_code'           => 483,
+//                        'desc'                  => "Tempat yang discan tidak tepat",
+//                    ];
+//                    return $returnData;
+//                }
+//            }
+//
+//            if(!$request->filled('schedule_detail')){
+//                $returnData = [
+//                    'status_code'           => 400,
+//                    'desc'                  => "Tidak ada data Dac yang diterima",
+//                ];
+//                return $returnData;
+//            }
+//
+//            $attendance->is_done = 1;
+//            $attendance->assessment_leader = 1;
+//            $attendance->assessment_score = $submittedDac['assessment_score'];
+//            $attendance->assessment_notes = $request->input('notes');
+//            $attendance->save();
+//
+//
+//            return $returnData;
+//        }
+//        catch (\Exception $ex){
+//            Log::error('libs/AttendanceProcess/leaderAssessment error EX: '. $ex);
+//
+//            $returnData = [
+//                'status_code'           => 500,
+//                'desc'                  => "Maaf terjadi kesalahan",
+//            ];
+//            return $returnData;
+//        }
+//
+//    }
 }

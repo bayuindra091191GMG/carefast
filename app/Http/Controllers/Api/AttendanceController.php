@@ -228,10 +228,9 @@ class AttendanceController extends Controller
                 'attendance_id' => 'required'
             );
 
-            $type = 1;
             $employee = Employee::find($request->input('cso_id'));
 
-            $result = AttendanceProcess::leaderAssessment($employee, $request, $type);
+            $result = AttendanceProcess::leaderAssessment($employee, $request);
 
             return Response::json($result["desc"], $result["status_code"]);
 

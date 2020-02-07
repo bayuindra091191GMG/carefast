@@ -199,19 +199,46 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label for="customer">Customer *</label>
-                                                        <input type="text" name="customer" id="customer" class="form-control"
-                                                               value="{{ $project->customer->name . ' - ' . $project->customer->email }}" readonly/>
-                                                    </div>
-                                                </div>
+{{--                                                <div class="col-md-12">--}}
+{{--                                                    <div class="form-group">--}}
+{{--                                                        <label for="customer">Customer *</label>--}}
+{{--                                                        <input type="text" name="customer" id="customer" class="form-control"--}}
+{{--                                                               value="{{ $project->customer->name . ' - ' . $project->customer->email }}" readonly/>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="status">Status</label>
                                                         <input id="status" type="text" class="form-control"
                                                                name="status" value="{{ strtoupper($project->status->description) }}" readonly="">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group form-float form-group-lg">
+                                                        <table class="table table-bordered table-hover" id="tab_logic">
+                                                            <thead>
+                                                            <tr>
+                                                                <th class="text-center" style="width: 75%">
+                                                                    Customer*
+                                                                </th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            @php $idx = 1 @endphp
+
+                                                            @if($customerList->count() > 0)
+                                                                @foreach($customerList as $customer)
+                                                                    <tr id='sch{{$idx}}'>
+                                                                        <td><span>{{$customer->name}} - {{$customer->email}}</span></td>
+                                                                    </tr>
+                                                                    @php $idx++ @endphp
+                                                                @endforeach
+                                                                <tr id='sch{{$idx}}'></tr>
+                                                            @endif
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>

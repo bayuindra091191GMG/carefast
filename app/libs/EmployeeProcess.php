@@ -128,7 +128,7 @@ class EmployeeProcess
                         ->where('schedule_detail_id', $detailId)
                         ->where('status_id', 7)
                         ->where('is_done', 1)
-                        ->where('assessment_leader', 1)
+                        ->where('assessment_leader', '>', 0)
                         ->first();
                     if(!empty($attendanceAssessment)){
                         if($attendanceAssessment->is_action_checked == "1"){
@@ -151,6 +151,8 @@ class EmployeeProcess
 
                         'start_time'        => Carbon::parse($scheduleDetail->start)->format('H:i'),
                         'finish_time'       => Carbon::parse($scheduleDetail->finish)->format('H:i'),
+//                        'start_time'        => Carbon::parse($scheduleDetail->start)->format('d M Y H:i:s'),
+//                        'finish_time'       => Carbon::parse($scheduleDetail->finish)->format('d M Y H:i:s'),
                         'place'             => $place->name,
                         'object'            => $schedule->project_activities_header->plotting_name,
                         'shift'             => $schedule->shift_type,
@@ -158,7 +160,7 @@ class EmployeeProcess
                         'status_assessment' => $assessmentStatus,
                         'is_done'           => $assessmentStatus,
                         'checkout_action_done' => $checkoutActionDone,
-                        'score'             => $assessmentScore,
+                        'assessment_score'  => $assessmentScore,
                         'actions'           => $actionName,
                         'header_id'         => $schedule->id,
                     ];

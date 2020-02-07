@@ -79,9 +79,9 @@
                                                                 <div class="form-line">
                                                                     <label class="form-label">Period*</label>
                                                                     <select name='period' class='form-control' v-model="period" @change="changePeriod($event)">
-                                                                        <option value='1' selected>Daily</option>
-                                                                        <option value='2'>Weekly</option>
-                                                                        <option value='3'>Monthly</option>
+                                                                        <option value='1' selected>Harian</option>
+                                                                        <option value='2'>Periodik (Minggu)</option>
+                                                                        <option value='3'>Periodik (Bulan)</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -90,32 +90,32 @@
                                                         <div class="col-md-3" v-if="dayEnable">
                                                             <div class='custom-control custom-checkbox mr-sm-2'>
                                                                 <input type='checkbox' class='custom-control-input' id='day1' name='day[0][]' value='1' v-model="selectedDay">
-                                                                <label class='custom-control-label' for='day1'>Day 1</label>
+                                                                <label class='custom-control-label' for='day1'>Hari 1</label>
                                                             </div>
                                                             <div class='custom-control custom-checkbox mr-sm-2'>
                                                                 <input type='checkbox' class='custom-control-input' id='day2' name='day[0][]' value='2' v-model="selectedDay">
-                                                                <label class='custom-control-label' for='day2'>Day 2</label>
+                                                                <label class='custom-control-label' for='day2'>Hari 2</label>
                                                             </div>
                                                             <div class='custom-control custom-checkbox mr-sm-2'>
                                                                 <input type='checkbox' class='custom-control-input' id='day3' name='day[0][]' value='3' v-model="selectedDay">
-                                                                <label class='custom-control-label' for='day3'>Day 3</label>
+                                                                <label class='custom-control-label' for='day3'>Hari 3</label>
                                                             </div>
                                                             <div class='custom-control custom-checkbox mr-sm-2'>
                                                                 <input type='checkbox' class='custom-control-input' id='day4' name='day[0][]' value='4' v-model="selectedDay">
-                                                                <label class='custom-control-label' for='day4'>Day 4</label>
+                                                                <label class='custom-control-label' for='day4'>Hari 4</label>
                                                             </div>
                                                             <div class='custom-control custom-checkbox mr-sm-2'>
                                                                 <input type='checkbox' class='custom-control-input' id='day5' name='day[0][]' value='5' v-model="selectedDay">
-                                                                <label class='custom-control-label' for='day5'>Day 5</label>
+                                                                <label class='custom-control-label' for='day5'>Hari 5</label>
                                                             </div>
                                                             <div class='custom-control custom-checkbox mr-sm-2'>
                                                                 <input type='checkbox' class='custom-control-input' id='day6' name='day[0][]' value='6' v-model="selectedDay">
-                                                                <label class='custom-control-label' for='day6'>Day 6</label>
+                                                                <label class='custom-control-label' for='day6'>Hari 6</label>
                                                             </div>
-{{--                                                            <div class='custom-control custom-checkbox mr-sm-2'>--}}
-{{--                                                                <input type='checkbox' class='custom-control-input' id='day7' name='day[0][]' value='7' v-model="selectedDay">--}}
-{{--                                                                <label class='custom-control-label' for='day7'>Minggu</label>--}}
-{{--                                                            </div>--}}
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='day7' name='day[0][]' value='7' v-model="selectedDay">
+                                                                <label class='custom-control-label' for='day7'>Hari 7</label>
+                                                            </div>
                                                         </div>
 
                                                         <div class="col-md-3" v-if="monthEnable">
@@ -134,6 +134,10 @@
                                                             <div class='custom-control custom-checkbox mr-sm-2'>
                                                                 <input type='checkbox' class='custom-control-input' id='week4' name='week[0][]' value='4' v-model="selectedWeeks">
                                                                 <label class='custom-control-label' for='week4'>Minggu IV</label>
+                                                            </div>
+                                                            <div class='custom-control custom-checkbox mr-sm-2'>
+                                                                <input type='checkbox' class='custom-control-input' id='week5' name='week[0][]' value='5' v-model="selectedWeeks">
+                                                                <label class='custom-control-label' for='week4'>Minggu V</label>
                                                             </div>
                                                         </div>
                                                     </div>

@@ -39,8 +39,7 @@ class ProjectActivityTransformer extends TransformerAbstract
                 'time'              => Carbon::parse($project->start)->format('H:i')." - ".Carbon::parse($project->finish)->format('H:i'),
                 'shift'             => $project->shift_type,
                 'period_type'       => $project->period_type,
-                'place_name'        => $activityHeader->place->name,
-                'plotting_name'     => $activityHeader->plotting_name,
+                'place_object_name'        => $activityHeader->place->name." - ".$activityHeader->plotting_name,
                 'action_name'       => $actionName,
                 'action'            => $action
             ];

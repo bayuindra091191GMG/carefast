@@ -39,7 +39,7 @@ class ActivityController extends Controller
         $id = $request->input('id');
 //        $project = Project::find($id);
 //        $employeeSchedule = $project->project_employees->sortByDesc('employee_roles_id');
-        $projectActivities = ProjectActivitiesHeader::where('project_id', $id)->orderby('created_at', 'desc')->get();
+        $projectActivities = ProjectActivitiesHeader::where('project_id', $id)->orderby('place_id', 'desc')->get();
         $idArr = collect();
         foreach ($projectActivities as $projectActivity){
             $idArr->push($projectActivity->id);

@@ -36,14 +36,16 @@ class AttendanceAbsentController extends Controller
     public function attendanceIn(Request $request)
     {
         try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employeeLogin = $user->employee;
+
             $data = json_decode($request->input('attendance_model'));
             if($data->cso_id != "0"){
                 $employee = Employee::find($data->cso_id);
             }
             else{
-                $userLogin = auth('api')->user();
-                $user = User::where('phone', $userLogin->phone)->first();
-                $employee = $user->employee;
+                $employee =  $employeeLogin;
             }
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
@@ -73,7 +75,8 @@ class AttendanceAbsentController extends Controller
                     'project_id'    => $project->id,
                     'is_done'       => 0,
                     'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'status_id'     => 6
+                    'status_id'     => 6,
+                    'created_by'     => $employeeLogin->id,
                 ]);
 
                 if($request->hasFile('image')){
@@ -118,14 +121,16 @@ class AttendanceAbsentController extends Controller
     public function attendanceOut(Request $request)
     {
         try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employeeLogin = $user->employee;
+
             $data = json_decode($request->input('attendance_model'));
             if($data->cso_id != "0"){
                 $employee = Employee::find($data->cso_id);
             }
             else{
-                $userLogin = auth('api')->user();
-                $user = User::where('phone', $userLogin->phone)->first();
-                $employee = $user->employee;
+                $employee =  $employeeLogin;
             }
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
@@ -171,7 +176,8 @@ class AttendanceAbsentController extends Controller
                 'project_id'    => $project->id,
                 'is_done'       => 1,
                 'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'status_id'     => 7
+                'status_id'     => 7,
+                'created_by'     => $employeeLogin->id,
             ]);
 
             if($request->hasFile('image')){
