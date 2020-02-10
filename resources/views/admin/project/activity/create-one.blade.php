@@ -47,6 +47,18 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
+                                                                    <label class="form-label">Shift*</label>
+                                                                    <select name='shift_type' class='form-control'>
+                                                                        <option value='1'>SHIFT 1</option>
+                                                                        <option value='2'>SHIFT 2</option>
+                                                                        <option value='3'>SHIFT 3</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
                                                                     <label class="form-label" for="place0">Place*</label>
                                                                     <select id='place0' name='places' class='form-control'><option value='-1'>-</option></select>
                                                                 </div>
@@ -61,15 +73,32 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
-                                                                    <label class="form-label">Shift*</label>
-                                                                    <select name='shift_type' class='form-control'>
-                                                                        <option value='1'>SHIFT 1</option>
-                                                                        <option value='2'>SHIFT 2</option>
-                                                                        <option value='3'>SHIFT 3</option>
-                                                                    </select>
+                                                                    <label class="form-label">Jam Mulai Shift*</label>
+                                                                    <input id='start-shift' class='form-control time-inputmask' placeholder="HH:MM"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="place0">Jam Berakhir Shift*</label>
+                                                                    <input id='finish-shift' class='form-control time-inputmask' placeholder="HH:MM"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="place0">Buat Template Waktu</label>
+                                                                    <a class="btn btn-primary" onclick="setTime()">Buat</a>
                                                                 </div>
                                                             </div>
                                                         </div>
