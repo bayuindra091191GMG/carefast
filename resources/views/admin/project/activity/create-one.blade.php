@@ -78,7 +78,7 @@
 
                                                 <div class="col-md-12">
                                                     <div class="row">
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-4">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label">Jam Mulai Shift*</label>
@@ -86,7 +86,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-4">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label" for="place0">Jam Berakhir Shift*</label>
@@ -94,11 +94,22 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label" for="place0">Interval waktu*</label>
+                                                                    <select id='interval' class='form-control'>
+                                                                        <option value='15'>15 menit</option>
+                                                                        <option value='30'>30 menit</option>
+                                                                        <option value='60'>1 jam</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
-                                                                    <label class="form-label" for="place0">Buat Template Waktu</label>
-                                                                    <a class="btn btn-primary" onclick="setTime()">Buat</a>
+                                                                    <a id="set_time" class="btn btn-primary">Buat Template Waktu</a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -116,18 +127,6 @@
                                                                 <th class="text-center"  width="10">
                                                                     Jam Berakhir
                                                                 </th>
-{{--                                                                <th class="text-center" width="30">--}}
-{{--                                                                    Object / Sub Object--}}
-{{--                                                                </th>--}}
-{{--                                                                <th class="text-center" width="30">--}}
-{{--                                                                    Action--}}
-{{--                                                                </th>--}}
-{{--                                                                <th class="text-center" width="10">--}}
-{{--                                                                    QT--}}
-{{--                                                                </th>--}}
-{{--                                                                <th class="text-center" width="10">--}}
-{{--                                                                    Hari--}}
-{{--                                                                </th>--}}
                                                             </tr>
                                                             </thead>
                                                             <tbody>
@@ -138,51 +137,6 @@
                                                                 <td>
                                                                     <input id='finish0' class='form-control time-inputmask' name='finish_times[]' placeholder="HH:MM" required/>
                                                                 </td>
-{{--                                                                <td>--}}
-{{--                                                                    <select id="project_object0" name="project_objects0[]" class='form-control' multiple="multiple"></select>--}}
-{{--                                                                </td>--}}
-{{--                                                                <td>--}}
-{{--                                                                    <select id="action0" name="actions0[]" class='form-control' multiple="multiple"></select>--}}
-{{--                                                                    <span><br>Atau tambah Baru</span>--}}
-{{--                                                                    <input type='text' id='actionNew0' name='action_new[]' class='form-control'>--}}
-{{--                                                                </td>--}}
-{{--                                                                <td>--}}
-{{--                                                                    <select id="period0" name='period[]' class='form-control'>--}}
-{{--                                                                        <option value='Daily' selected>Daily</option>--}}
-{{--                                                                        <option value='Weekly'>Weekly</option>--}}
-{{--                                                                        <option value='Monthly'>Monthly</option>--}}
-{{--                                                                    </select>--}}
-{{--                                                                </td>--}}
-{{--                                                                <td>--}}
-{{--                                                                    <div class='custom-control custom-checkbox mr-sm-2'>--}}
-{{--                                                                        <input type='checkbox' class='custom-control-input' id='day1' name='day[0][]' value='1'>--}}
-{{--                                                                        <label class='custom-control-label' for='day1'>Senin</label>--}}
-{{--                                                                    </div>--}}
-{{--                                                                    <div class='custom-control custom-checkbox mr-sm-2'>--}}
-{{--                                                                        <input type='checkbox' class='custom-control-input' id='day2' name='day[0][]' value='2'>--}}
-{{--                                                                        <label class='custom-control-label' for='day2'>Selasa</label>--}}
-{{--                                                                    </div>--}}
-{{--                                                                    <div class='custom-control custom-checkbox mr-sm-2'>--}}
-{{--                                                                        <input type='checkbox' class='custom-control-input' id='day3' name='day[0][]' value='3'>--}}
-{{--                                                                        <label class='custom-control-label' for='day3'>Rabu</label>--}}
-{{--                                                                    </div>--}}
-{{--                                                                    <div class='custom-control custom-checkbox mr-sm-2'>--}}
-{{--                                                                        <input type='checkbox' class='custom-control-input' id='day4' name='day[0][]' value='4'>--}}
-{{--                                                                        <label class='custom-control-label' for='day4'>Kamis</label>--}}
-{{--                                                                    </div>--}}
-{{--                                                                    <div class='custom-control custom-checkbox mr-sm-2'>--}}
-{{--                                                                        <input type='checkbox' class='custom-control-input' id='day5' name='day[0][]' value='5'>--}}
-{{--                                                                        <label class='custom-control-label' for='day5'>Jumat</label>--}}
-{{--                                                                    </div>--}}
-{{--                                                                    <div class='custom-control custom-checkbox mr-sm-2'>--}}
-{{--                                                                        <input type='checkbox' class='custom-control-input' id='day6' name='day[0][]' value='6'>--}}
-{{--                                                                        <label class='custom-control-label' for='day6'>Sabtu</label>--}}
-{{--                                                                    </div>--}}
-{{--                                                                    <div class='custom-control custom-checkbox mr-sm-2'>--}}
-{{--                                                                        <input type='checkbox' class='custom-control-input' id='day7' name='day[0][]' value='7'>--}}
-{{--                                                                        <label class='custom-control-label' for='day7'>Minggu</label>--}}
-{{--                                                                    </div>--}}
-{{--                                                                </td>--}}
                                                             </tr>
                                                             <tr id='sch1'></tr>
                                                             </tbody>
@@ -313,48 +267,6 @@
                 "<td>" +
                 "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM' required/>" +
                 "</td>"
-                // +
-                //
-                // "<td>" +
-                // "<select id='project_object" + i + "' name='project_objects" + i + "[]' class='form-control' multiple='multiple'></select>" +
-                // "</td>" +
-                //
-                // "<td><select id='action"+ i +"' name='actions" + i + "[]' class='form-control' multiple='multiple'></select>" +
-                // // "<span><br>Atau tambah Baru</span>" +
-                // // "<input type='text' id='actionNew" + i +"' name='action_new[]' class='form-control'>" +
-                // "</td>" +
-                //
-                // "<td>" +
-                // "<select id='period"+ i +"' name='period[]' class='form-control'>" +
-                // "<option value='Daily' selected>Daily</option>" +
-                // "<option value='Weekly'>Weekly</option>" +
-                // "<option value='Monthly'>Monthly</option>" +
-                // "</select>" +
-                // "</td>" +
-                //
-                // "<td>" +
-                // "<div class='custom-control custom-checkbox mr-sm-2'>" +
-                // "<input type='checkbox' class='custom-control-input' id='day1"+ i +"' name='day["+ i +"][]' value='1'>" +
-                // "<label class='custom-control-label' for='day1"+ i +"'>Senin</label></div>" +
-                // "<div class='custom-control custom-checkbox mr-sm-2'>" +
-                // "<input type='checkbox' class='custom-control-input' id='day2"+ i +"' name='day["+ i +"][]' value='2'>" +
-                // "<label class='custom-control-label' for='day2"+ i +"'>Selasa</label></div>" +
-                // "<div class='custom-control custom-checkbox mr-sm-2'>" +
-                // "<input type='checkbox' class='custom-control-input' id='day3"+ i +"' name='day["+ i +"][]' value='3'>" +
-                // "<label class='custom-control-label' for='day3"+ i +"'>Rabu</label></div>" +
-                // "<div class='custom-control custom-checkbox mr-sm-2'>" +
-                // "<input type='checkbox' class='custom-control-input' id='day4"+ i +"' name='day["+ i +"][]' value='4'>" +
-                // "<label class='custom-control-label' for='day4"+ i +"'>Kamis</label></div>" +
-                // "<div class='custom-control custom-checkbox mr-sm-2'>" +
-                // "<input type='checkbox' class='custom-control-input' id='day5"+ i +"' name='day["+ i +"][]' value='5'>" +
-                // "<label class='custom-control-label' for='day5"+ i +"'>Jumat</label></div>" +
-                // "<div class='custom-control custom-checkbox mr-sm-2'>" +
-                // "<input type='checkbox' class='custom-control-input' id='day6"+ i +"' name='day["+ i +"][]' value='6'>" +
-                // "<label class='custom-control-label' for='day6"+ i +"'>Sabtu</label></div>" +
-                // "<div class='custom-control custom-checkbox mr-sm-2'>" +
-                // "<input type='checkbox' class='custom-control-input' id='day7"+ i +"' name='day["+ i +"][]' value='7'>" +
-                // "<label class='custom-control-label' for='day7"+ i +"'>Minggu</label></div>" +
-                // "</td>"
             );
             $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
 
@@ -363,78 +275,33 @@
                 insertMode: false,
                 showMaskOnHover: false
             });
-
-
-            $('#place' + i).select2({
-                placeholder: {
-                    id: '-1',
-                    text: ' - Pilih Place - '
-                },
-                width: '100%',
-                ajax: {
-                    url: '{{ route('select.placeProjects') }}',
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: $.trim(params.term),
-                            'project_id' : $('#project_id').val()
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
-                }
-            });
-            $('#project_object' + i).select2({
-                placeholder: {
-                    id: '-1',
-                    text: ' - Pilih Object - '
-                },
-                width: '100%',
-                minimumInputLength: 0,
-                ajax: {
-                    url: '{{ route('select.projectObjectActivities') }}',
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: $.trim(params.term),
-                            'project_id': $('#project_id').val(),
-                            'place_id': $('#place0').val(),
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
-                }
-            });
-
-            let projectId = $('#project_id').val();
-            $('#action' + i).select2({
-                placeholder: {
-                    id: '-1',
-                    text: ' - Pilih Action - '
-                },
-                width: '100%',
-                minimumInputLength: 0,
-                ajax: {
-                    url: '{{ route('select.actions') }}',
-                    dataType: 'json',
-                    data: function (params) {
-                        return {
-                            q: $.trim(params.term)
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        };
-                    }
-                }
-            });
+            i++;
+        });
+        $("#set_time").click(function(){
+            var startTime = $('#start-shift').val();
+            var finishTime = $('#finish-shift').val();
+            var interval = $('#finish-shift').val();
+            alert(startTime);
+            alert(finishTime);
+            alert(interval);
+            // var bufferID = i;
+            // $('#sch'+i).html(
+            //
+            //     "<td>" +
+            //     "<input id='start"+ i +"' class='form-control time-inputmask' name='start_times[]' placeholder='HH:MM' required/>" +
+            //     "</td>" +
+            //
+            //     "<td>" +
+            //     "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM' required/>" +
+            //     "</td>"
+            // );
+            // $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+            //
+            // $(".time-inputmask").inputmask("hh:mm", {
+            //     placeholder: "HH:MM",
+            //     insertMode: false,
+            //     showMaskOnHover: false
+            // });
             i++;
         });
 

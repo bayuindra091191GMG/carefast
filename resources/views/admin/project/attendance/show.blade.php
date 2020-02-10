@@ -10,7 +10,7 @@
                         <a href="{{ route('admin.project.information.index') }}" class="btn btn-outline-primary float-left mr-3">
                             <i class="fas fa-arrow-left"></i>
                         </a>
-                        <h3>DETIL ABSENSI PROJECT {{ $project->name }}</h3>
+                        <h3>DETIL ABSENSI PROJECT - {{ $project->name }}</h3>
                     </div>
                     <div class="col-md-4 col-12 text-right">
 {{--                        <button class="btn btn-danger " data-toggle="modal" data-target="#deleteModal" data-id="{{$project->id}}">HAPUS</button>--}}
@@ -115,7 +115,7 @@
                 { data: 'date', name: 'date', class: 'text-center',
                     render: function ( data, type, row ){
                         if ( type === 'display' || type === 'filter' ){
-                            return moment(data).format('DD MMM YYYY');
+                            return moment(data).format('DD MMM YYYY HH:mm');
                         }
                         return data;
                     }
