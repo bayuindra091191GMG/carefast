@@ -47,7 +47,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/places/get/place-by-qr', 'Api\PlaceController@getPlaceByQr');
 
     // Attendance job
-    Route::get('/attendance/checking', 'Api\AttendanceController@checkinChecking');
+    Route::get('/attendance/checkin/checking', 'Api\AttendanceController@checkinChecking');
+    Route::get('/attendance/checking', 'Api\AttendanceAbsentController@attendanceChecking');
     Route::post('/attendance/checkin', 'Api\AttendanceController@submitCheckin');
     Route::post('/attendance/checkout', 'Api\AttendanceController@submitCheckout');
     Route::post('/attendance/leader/checkin', 'Api\AttendanceController@submitCheckinByLeader');

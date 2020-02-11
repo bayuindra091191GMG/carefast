@@ -208,6 +208,66 @@ class AttendanceAbsentController extends Controller
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
+    /**
+     * Function to checking employee already checkin or not.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function attendanceChecking(Request $request){
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $date = Carbon::now('Asia/Jakarta');
+            $time = $date->format('H:i:s');
+            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+
+            //pengecekan harus di ganti dengan pengecekan weeks dan days dan finish
+            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+                ->where('project_employee_id', $projectEmployee->id)
+                ->first();
+
+            if(empty($schedule)){
+                return Response::json("Tidak ada schedule saat ini!", 482);
+            }
+//            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+//                ->where('project_employee_id', $projectEmployee->id)
+//                ->where('start' >= $time)
+//                ->where('finish' <= $time)->first();
+
+            //checking checkin with attendance
+            $attendance = AttendanceAbsent::where('employee_id', $employee->id)
+//                ->where('schedule_id', $schedule->id)
+                ->where('status_id', 6)
+                ->where('is_done', 0)
+                ->first();
+
+            if(empty($attendance)){
+                return Response::json("Tidak ada Attendance!", 482);
+            }
+            else{
+                $place = Place::find($attendance->place_id);
+                Log::info('checkinChecking place id = '.$attendance->place_id);
+                if(empty($place)){
+                    return Response::json("Place Tidak ditemukan!", 482);
+                }
+
+                $placeModel = collect([
+                    'id'                => $place->id,
+                    'place_name'        => $place->name,
+                    'project_name'      => $projectEmployee->project->name,
+                ]);
+                return Response::json($placeModel, 200);
+            }
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceController - checkinChecking error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
 
     /**
      * Function to Submit Attendance Absent Check out.

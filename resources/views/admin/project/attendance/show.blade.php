@@ -35,7 +35,7 @@
                                 <a class="nav-link" id="schedule-tab" href="{{ route('admin.project.activity.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">PLOTTING</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" id="attendance-tab" href="#" role="tab" aria-controls="profile" aria-selected="false">ATTENDANCE</a>
+                                <a class="nav-link active" id="attendance-tab" href="#" role="tab" aria-controls="profile" aria-selected="false">ABSENSI</a>
                             </li>
                         </ul>
 

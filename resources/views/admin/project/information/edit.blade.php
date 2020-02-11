@@ -226,14 +226,14 @@
                                                 <div class="form-group form-float form-group-lg">
                                                     <table class="table table-bordered table-hover" id="tab_logic">
                                                         <thead>
-                                                        <tr>
-                                                            <th class="text-center" style="width: 75%">
-                                                                Customer*
-                                                            </th>
-                                                            <th class="text-center" style="width: 25%">
-                                                                Action
-                                                            </th>
-                                                        </tr>
+                                                            <tr>
+                                                                <th class="text-center" style="width: 75%">
+                                                                    Customer*
+                                                                </th>
+                                                                <th class="text-center" style="width: 25%">
+                                                                    Action
+                                                                </th>
+                                                            </tr>
                                                         </thead>
                                                         <tbody>
                                                         @php $idx = 1 @endphp
@@ -241,6 +241,7 @@
                                                         @if($customerList->count() > 0)
                                                             @foreach($customerList as $customer)
                                                                 <tr id='sch{{$idx}}'>
+                                                                    <input type="hidden" name="customer[]" value="{{$customer->id}}">
                                                                     <td><span>{{$customer->name}} - {{$customer->email}}</span></td>
                                                                     <td><a class='form-control btn btn-danger' onclick='deleteCustomer({{ $idx }})'>Delete</a></td>
                                                                 </tr>

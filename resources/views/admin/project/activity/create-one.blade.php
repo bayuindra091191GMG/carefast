@@ -107,11 +107,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <div class="form-group form-float form-group-lg">
-                                                                <div class="form-line">
-                                                                    <a id="set_time" class="btn btn-primary">Buat Template Waktu</a>
-                                                                </div>
-                                                            </div>
+                                                            <a id="set_time" class="btn btn-primary" style="color: white;">Buat Template Waktu</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -130,14 +126,6 @@
                                                             </tr>
                                                             </thead>
                                                             <tbody>
-                                                            <tr id='sch0'>
-                                                                <td>
-                                                                    <input id='start0' class='form-control time-inputmask' name='start_times[]' placeholder="HH:MM" required/>
-                                                                </td>
-                                                                <td>
-                                                                    <input id='finish0' class='form-control time-inputmask' name='finish_times[]' placeholder="HH:MM" required/>
-                                                                </td>
-                                                            </tr>
                                                             <tr id='sch1'></tr>
                                                             </tbody>
                                                         </table>
@@ -176,6 +164,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 {{--    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>--}}
     <script src="{{ asset('js/jquery.inputmask.bundle.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 
     <script type="text/javascript">
         $(".time-inputmask").inputmask("hh:mm", {
@@ -278,31 +267,40 @@
             i++;
         });
         $("#set_time").click(function(){
-            var startTime = $('#start-shift').val();
-            var finishTime = $('#finish-shift').val();
-            var interval = $('#finish-shift').val();
-            alert(startTime);
-            alert(finishTime);
-            alert(interval);
-            // var bufferID = i;
-            // $('#sch'+i).html(
-            //
-            //     "<td>" +
-            //     "<input id='start"+ i +"' class='form-control time-inputmask' name='start_times[]' placeholder='HH:MM' required/>" +
-            //     "</td>" +
-            //
-            //     "<td>" +
-            //     "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM' required/>" +
-            //     "</td>"
-            // );
-            // $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
-            //
-            // $(".time-inputmask").inputmask("hh:mm", {
-            //     placeholder: "HH:MM",
-            //     insertMode: false,
-            //     showMaskOnHover: false
-            // });
-            i++;
+            var startTimeString = $('#start-shift').val();
+            var finishTimeString = $('#finish-shift').val();
+            var interval = parseInt($('#interval').val());
+            var startTime = moment(startTimeString, 'HH:mm');
+
+            if((startTimeString !== '') && (finishTimeString !== '')){
+                for(var ct=0; ct<100; ct++){
+                    var newFinishTime = moment(startTime).add(interval, 'm').toString();
+                    let finishTime = moment(newFinishTime);
+
+                    $('#sch'+i).html(
+                        "<td>" +
+                        "<input id='start"+ i +"' class='form-control time-inputmask' name='start_times[]' placeholder='HH:MM' required value='"+ startTime.format("HH:mm") +"'/>" +
+                        "</td>" +
+
+                        "<td>" +
+                        "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM' required value='"+ finishTime.format("HH:mm") +"'/>" +
+                        "</td>"
+                    );
+                    $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+
+                    $(".time-inputmask").inputmask("hh:mm", {
+                        placeholder: "HH:MM",
+                        insertMode: false,
+                        showMaskOnHover: false
+                    });
+                    i++;
+
+                    if(finishTime.format("HH:mm") === finishTimeString){
+                        break;
+                    }
+                    startTime = finishTime;
+                }
+            }
         });
 
         $("#delete_row").click(function(){

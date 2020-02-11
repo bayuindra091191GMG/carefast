@@ -25,6 +25,7 @@ use App\Transformer\ProjectTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -52,8 +53,12 @@ class ActivityController extends Controller
             ->make(true);
     }
 
-    public function show(int $id)
+    public function show(Request $request, int $id)
     {
+        $place = 0;
+        if(!empty($request->place)){
+            $place = $request->place;
+        }
         $project = Project::find($id);
 
         if(empty($project)){
@@ -61,11 +66,29 @@ class ActivityController extends Controller
         }
 
         $activities = ProjectActivitiesHeader::where('project_id', $id)->get();
+        $places = DB::table('project_activities_headers')
+            ->select('place_id')
+            ->distinct()
+            ->get();
+        $placeArrs = collect();
+        foreach ($places as $place){
+            $placeArr = ([
+               'id' => (int)$place->place_id,
+               'name' => Place::select('name')->where('id', (int)$place->place_id)->first(),
+            ]);
+            $placeArrs->push($placeArr);
+        }
+        if($place >= 0){
+            $activities = ProjectActivitiesHeader::where('project_id', $id)
+                ->where('place_id', $place)
+                ->get();
+        }
         $data = [
             'activities'   => $activities,
             'project'         => $project,
+            'placeArr'         => $placeArrs,
         ];
-//        dd($data, $activities->count());
+        dd($data);
         return view('admin.project.activity.show')->with($data);
     }
 
@@ -127,10 +150,21 @@ class ActivityController extends Controller
                 return back()->withErrors("Terdapat JAM BERAKHIR yang belum terisi!")->withInput($request->all());
             }
             $timeModel = collect();
+            $projectDB = Project::find($projectId);
+            $realDate = collect();
+
+            $diffDate = $projectDB->start_date->diffInDays($projectDB->finish_date);
+            for($i=0;$i<($diffDate + 1);$i++){
+                $newDate = $projectDB->start_date->addDays($i);
+                $newDateCarbon = Carbon::parse($newDate)->format("d M Y");
+                $realDate->push($newDateCarbon);
+            }
+
+//            dd($diffDate);
             $ct = 0;
             foreach ($start_times as $start_time){
                 $dayModel = collect();
-                for($i=0;$i<365;$i++){
+                for($i=0;$i<($diffDate + 1);$i++){
                     $day = collect([
                         "day"       => $i,
 				        "action"    => '',
@@ -152,11 +186,12 @@ class ActivityController extends Controller
                 $ct++;
             }
             $data = [
-                'project'           => Project::find($projectId),
+                'project'           => $projectDB,
                 'place'             => Place::find($request->input('places')),
-                'object'             => $objectString,
+                'object'            => $objectString,
                 'shift'             => $shiftType,
                 'times'             => $timeModel,
+                'realDate'          => $realDate,
             ];
 //            dd($data);
 //dd(json_encode($timeModel));
@@ -188,52 +223,49 @@ class ActivityController extends Controller
     public function store(Request $request)
     {
         try{
-//            Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
+            Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
             $items = $request->input('times');
             $user = Auth::guard('admin')->user();
 
+            //save to database
+            $projectActivityHeader = ProjectActivitiesHeader::create([
+                'project_id'            => $request->input('project_id'),
+                'plotting_name'         => $request->input('object'),
+                'place_id'              => $request->input('place_id'),
+                'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'created_by'            => $user->id,
+                'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_by'            => $user->id,
+            ]);
+
             foreach ($items as $item){
-
-                //save to database
-                $projectActivityHeader = ProjectActivitiesHeader::create([
-                    'project_id'            => $request->input('project_id'),
-                    'plotting_name'         => $request->input('object'),
-                    'place_id'              => $request->input('place_id'),
-                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'created_by'            => $user->id,
-                    'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'updated_by'            => $user->id,
-                ]);
-
                 //save to database for daily plot
                 if(!empty($item["daily_datas"])){
                     foreach ($item["daily_datas"] as $dailyData){
-//                        $objectString = "";
-//                        foreach ($dailyData["Object"] as $object){
-//                            $objectString = $objectString."".$object.",";
-//                        }
                         $actionArr = explode("-",$dailyData["Action"]);
                         $action = $actionArr[0]."#";
 
-                        $timeArr = explode("#",$dailyData["TimeValue"]);
-                        $start = Carbon::parse('00-00-00 '.$timeArr[0])->format('Y-m-d H:i:s');
-                        $finish = Carbon::parse('00-00-00 '.$timeArr[1])->format('Y-m-d H:i:s');
+                        foreach ($dailyData["TimeValue"] as $singleDailyData) {
+                            $timeArr = explode("#", $singleDailyData);
+                            $start = Carbon::parse('00-00-00 ' . $timeArr[0])->format('Y-m-d H:i:s');
+                            $finish = Carbon::parse('00-00-00 ' . $timeArr[1])->format('Y-m-d H:i:s');
 
-                        //save to database
-                        $projectActivityDetail = ProjectActivitiesDetail::create([
-                            'activities_header_id'  => $projectActivityHeader->id,
-                            'action_id'             => $action,
-                            'shift_type'            => $request->input('shift_type'),
-                            'weeks'                 => "1#2#3#4#",
-                            'days'                  => "1#2#3#4#5#6#",
-                            'start'                 => $start,
-                            'finish'                => $finish,
-                            'period_type'           => "Daily",
-                            'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                            'created_by'            => $user->id,
-                            'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                            'updated_by'            => $user->id,
-                        ]);
+                            //save to database
+                            $projectActivityDetail = ProjectActivitiesDetail::create([
+                                'activities_header_id' => $projectActivityHeader->id,
+                                'action_id' => $action,
+                                'shift_type' => $request->input('shift_type'),
+                                'weeks' => "1#2#3#4#5#",
+                                'days' => "1#2#3#4#5#6#7#",
+                                'start' => $start,
+                                'finish' => $finish,
+                                'period_type' => "Daily",
+                                'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'created_by' => $user->id,
+                                'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'updated_by' => $user->id,
+                            ]);
+                        }
                     }
                 }
 
@@ -241,33 +273,30 @@ class ActivityController extends Controller
                 if(!empty($item["weekly_datas"])){
                     $i = 1;
                     foreach ($item["weekly_datas"] as $weeklyData){
-
-//                        $objectStringWeekly = "";
-//                        foreach ($weeklyData["Object"] as $objectWeekly){
-//                            $objectStringWeekly = $objectStringWeekly."".$objectWeekly.",";
-//                        }
                         $actionArr = explode("-",$weeklyData["Action"]);
                         $actionWeekly = $actionArr[0]."#";
 
-                        $timeWeekArr = explode("#",$weeklyData["TimeValue"]);
-                        $startWeek = Carbon::parse('00-00-00 '.$timeWeekArr[0])->format('Y-m-d H:i:s');
-                        $finishWeek = Carbon::parse('00-00-00 '.$timeWeekArr[1])->format('Y-m-d H:i:s');
+                        foreach ($weeklyData["TimeValue"] as $singleWeeklyData) {
+                            $timeWeekArr = explode("#", $singleWeeklyData);
+                            $startWeek = Carbon::parse('00-00-00 ' . $timeWeekArr[0])->format('Y-m-d H:i:s');
+                            $finishWeek = Carbon::parse('00-00-00 ' . $timeWeekArr[1])->format('Y-m-d H:i:s');
 
-                        //save to database
-                        $projectActivityDetail = ProjectActivitiesDetail::create([
-                            'activities_header_id'  => $projectActivityHeader->id,
-                            'action_id'             => $actionWeekly,
-                            'shift_type'            => $request->input('shift_type'),
-                            'weeks'                 => "1#2#3#4#",
-                            'days'                  => $weeklyData['Day'],
-                            'start'                 => $startWeek,
-                            'finish'                => $finishWeek,
-                            'period_type'           => "Weekly",
-                            'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                            'created_by'            => $user->id,
-                            'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                            'updated_by'            => $user->id,
-                        ]);
+                            //save to database
+                            $projectActivityDetail = ProjectActivitiesDetail::create([
+                                'activities_header_id' => $projectActivityHeader->id,
+                                'action_id' => $actionWeekly,
+                                'shift_type' => $request->input('shift_type'),
+                                'weeks' => "1#2#3#4#5#",
+                                'days' => $weeklyData['Day'],
+                                'start' => $startWeek,
+                                'finish' => $finishWeek,
+                                'period_type' => "Weekly",
+                                'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'created_by' => $user->id,
+                                'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'updated_by' => $user->id,
+                            ]);
+                        }
                     }
                 }
 
@@ -282,24 +311,26 @@ class ActivityController extends Controller
                         $actionArr = explode("-", $monthlyData["Action"]);
                         $actionMonthly = $actionArr[0]."#";
 
-                        $timeMonthArr = explode("#",$monthlyData["TimeValue"]);
-                        $startMonth = Carbon::parse('00-00-00 '.$timeMonthArr[0])->format('Y-m-d H:i:s');
-                        $finishMonth = Carbon::parse('00-00-00 '.$timeMonthArr[1])->format('Y-m-d H:i:s');
-                        //save to database
-                        $projectActivityDetail = ProjectActivitiesDetail::create([
-                            'activities_header_id'  => $projectActivityHeader->id,
-                            'action_id'             => $actionMonthly,
-                            'shift_type'            => $request->input('shift_type'),
-                            'weeks'                 => $monthlyData['Week'],
-                            'days'                  => $monthlyData['Day'],
-                            'start'                 => $startMonth,
-                            'finish'                => $finishMonth,
-                            'period_type'           => "Monthly",
-                            'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                            'created_by'            => $user->id,
-                            'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                            'updated_by'            => $user->id,
-                        ]);
+                        foreach ($monthlyData["TimeValue"] as $singleMonthlyData){
+                            $timeMonthArr = explode("#",$singleMonthlyData);
+                            $startMonth = Carbon::parse('00-00-00 '.$timeMonthArr[0])->format('Y-m-d H:i:s');
+                            $finishMonth = Carbon::parse('00-00-00 '.$timeMonthArr[1])->format('Y-m-d H:i:s');
+                            //save to database
+                            $projectActivityDetail = ProjectActivitiesDetail::create([
+                                'activities_header_id'  => $projectActivityHeader->id,
+                                'action_id'             => $actionMonthly,
+                                'shift_type'            => $request->input('shift_type'),
+                                'weeks'                 => $monthlyData['Week'],
+                                'days'                  => $monthlyData['Day'],
+                                'start'                 => $startMonth,
+                                'finish'                => $finishMonth,
+                                'period_type'           => "Monthly",
+                                'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'created_by'            => $user->id,
+                                'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'updated_by'            => $user->id,
+                            ]);
+                        }
                     }
                 }
             }

@@ -42,15 +42,15 @@
                                         <div class="accordion" id="accordionExample">
                                             <div class="card m-b-0">
                                                 <div class="mb-4">
-                                                    <table class="scrollmenu">
+                                                    <table class="scrollmenu" border="1" >
                                                         <tr>
-                                                            <td>Time</td>
-                                                            @for($ct=1;$ct<=365;$ct++)
-                                                                <td>Day <br/>{{$ct}}</td>
+                                                            <td style="padding: 0 5px 0 5px">Time</td>
+                                                            @for($ct=0;$ct<$realDate->count();$ct++)
+                                                                <td style="padding: 0 5px 0 5px">{{$realDate[$ct]}}</td>
                                                             @endfor
                                                         </tr>
                                                         <tr v-for="time in times">
-                                                            <td>@{{ time.time_string }}</td>
+                                                            <td style="padding: 0 5px 0 5px">@{{ time.time_string }}</td>
                                                             <td v-for="(day, index) in time.days" class="tr-class">
                                                                 <button type="button" class="btn btn-lg"
                                                                         v-if="day.action == '' "
@@ -69,6 +69,36 @@
                                                             </td>
                                                         </tr>
                                                     </table>
+                                                </div>
+                                                <hr/>
+
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="form-group form-float form-group-lg">
+                                                            <table class="table table-bordered" >
+                                                                <thead>
+                                                                <tr>
+                                                                    <th style="width: 35%">Waktu</th>
+                                                                    <th style="width: 35%">Object</th>
+                                                                    <th style="width: 10%">Action</th>
+                                                                    <th style="width: 10%">Period</th>
+                                                                    <th style="width: 10%">Tindakan</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <tr v-for="plotList in plotLists">
+                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.TimeValue }}</td>
+                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.Object }}</td>
+                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.Action }}</td>
+                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.Period }}</td>
+                                                                    <td style="padding: 0 5px 0 5px">
+                                                                        <a class="btn btn-danger btn-md">Delete</a>
+                                                                    </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <hr/>
 
@@ -149,8 +179,12 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
-                                                                    <label class="form-label" >Pilih Jam*</label>
-                                                                    <select name='shift_type' class='form-control' v-model="selected_time">
+                                                                    <label class="form-label" >
+                                                                        Pilih Jam*
+                                                                        <br>
+                                                                        Tahan tombol Ctrl (windows) / Command (Mac) untuk memilih lebih dari 1 pilihan.
+                                                                    </label>
+                                                                    <select name='shift_type' class='form-control' v-model="selected_time"  multiple="multiple" style="height: 250px;">
                                                                         <option disabled value="-1">-- Pilih Jam --</option>
                                                                         <option v-for="time in times" :value="time.time_value" >@{{ time.time_string }}</option>
                                                                     </select>
@@ -428,6 +462,7 @@
             actions: null,
             selected_action: null,
             object: '{{$object}}',
+            plotLists: [],
 
             project_id : '{{$project->id}}',
             place_id : '{{$place->id}}',
@@ -453,6 +488,7 @@
             },
             changePlotting(){
                 var period = this.period;
+                var period_string = "";
                 var selected_time = this.selected_time;
                 var project_objects = this.object;
                 var selected_day = this.selectedDay;
@@ -463,110 +499,151 @@
                 var dayStringMonthlyDay = "";
                 var dayStringMonthlyWeek = "";
 
+
                 //get index of time
-                let index=0;
-                for(let j=0; j<this.times.length; j++){
-                    if(this.times[j].time_value === selected_time){
-                        index = j;
-                    }
-                }
+                for(let timeCt=0; timeCt<selected_time.length; timeCt++){
+                    let index=0;
+                    for(let ct=0; ct<this.times.length; ct++){
+                        if(this.times[ct].time_value === selected_time[timeCt]){
+                            index = ct;
 
-                //for daily period
-                if(period === "1"){
-                    // this.times[index].action_daily =  project_objects + "/" + selected_action;
+                            //for daily period
+                            if(period === "1"){
+                                this.period_string = "Harian";
+                                // this.times[index].action_daily =  project_objects + "/" + selected_action;
 
-                    this.times[index].action_daily =  actions;
-                    this.times[index].object_daily =  project_objects;
+                                this.times[index].action_daily =  actions;
+                                this.times[index].object_daily =  project_objects;
 
-                    this.times[index].daily_datas.push({
-                        TimeValue : selected_time,
-                        Day : '1#2#3#4#5#6#7#',
-                        Object : project_objects,
-                        Action :  actions,
-                    });
-                    for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
+                                this.times[index].daily_datas.push({
+                                    TimeValue : selected_time,
+                                    Day : '1#2#3#4#5#6#7#',
+                                    Object : project_objects,
+                                    Action :  actions,
+                                });
+                                for(let i=0; i<this.times[index].days.length; i++){
 
-                        this.times[index].days[i].action = this.selected_plot;
-                        this.times[index].days[i].color = '#00ccff';
-                        this.times[index].days[i].type = 1;
-                        // if(this.times[index].days[i].action === ""){
-                        // }
-                    }
-                }
-                //for weekly period
-                else if(period === "2"){
-                    //add to time array data
-                    this.times[index].weekly_datas = [];
-                    for(let j=0; j<selected_day.length; j++){
-                        dayStringWeekly = dayStringWeekly + "" + selected_day[j] + "#";
-                    }
-                    this.times[index].weekly_datas.push({
-                        TimeValue : selected_time,
-                        Day : dayStringWeekly,
-                        Object : project_objects,
-                        Action :  actions,
-                        // Action : project_objects + "/" + selected_action,
-                    });
-                    for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
-                        let tempI = i+1;
-                        let tempIString = tempI.toString();
-                        for(let j=0; j<selected_day.length; j++){
-                            if(tempIString === selected_day[j]){
-                                this.times[index].days[i].action = this.selected_plot;
-                                this.times[index].days[i].color = '#00cc66';
-                                this.times[index].days[i].type = 2;
+                                    if(this.times[index].days[i].type === ""){
+                                        this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
 
-                                let valueInt = parseInt(selected_day[j]);
-                                selected_day[j] = (valueInt + 6).toString();
+                                        this.times[index].days[i].action = this.selected_plot;
+                                        this.times[index].days[i].color = '#00ccff';
+                                        this.times[index].days[i].type = 1;
+                                    }
+                                    // if(this.times[index].days[i].action === ""){
+                                    // }
+                                }
+                            }
+                            //for weekly period
+                            else if(period === "2"){
+                                this.period_string = "Periodik (Minggu)";
+                                //add to time array data
+                                this.times[ct].weekly_datas = [];
+
+                                if(timeCt === 0){
+                                    for(let j=0; j<selected_day.length; j++){
+                                        dayStringWeekly = dayStringWeekly + "" + selected_day[j] + "#";
+                                    }
+                                    this.times[ct].weekly_datas.push({
+                                        TimeValue : selected_time,
+                                        Day : dayStringWeekly,
+                                        Object : project_objects,
+                                        Action :  actions,
+                                        // Action : project_objects + "/" + selected_action,
+                                    });
+                                }
+
+                                //change UI
+                                for(let i=0; i<this.times[ct].days.length; i++){
+                                    this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
+                                    let tempI = i+1;
+                                    let tempIString = tempI.toString();
+                                    for(let j=0; j<selected_day.length; j++){
+                                        if(tempIString === selected_day[j]){
+                                            this.times[ct].days[i].action = this.selected_plot;
+                                            this.times[ct].days[i].color = '#00cc66';
+                                            this.times[ct].days[i].type = 2;
+
+                                            let valueInt = parseInt(selected_day[j]);
+                                            selected_day[j] = (valueInt + 7).toString();
+                                        }
+                                    }
+                                }
+
+                                var splitVar = dayStringWeekly.split('#');
+                                for(let j=0; j<splitVar.length; j++){
+                                    selected_day[j]  = splitVar[j];
+                                }
+                                // debugger;
+                            }
+                            //for monthly period
+                            else if(period === "3"){
+                                this.period_string = "Periodik (Bulan)";
+                                let initialData = [];
+
+                                for(let j=0; j<selected_weeks.length; j++){
+                                    for(let i=0; i<selected_day.length; i++){
+                                        let valueData = parseInt( selected_day[i]) + (7* (parseInt(selected_weeks[j])-1));
+                                        initialData.push(valueData.toString());
+                                    }
+                                }
+
+                                if(timeCt === 0){
+                                    for(let j=0; j<selected_weeks.length; j++){
+                                        dayStringMonthlyWeek = dayStringMonthlyWeek + "" + selected_weeks[j] + "#";
+                                    }
+                                    for(let i=0; i<selected_day.length; i++){
+                                        dayStringMonthlyDay = dayStringMonthlyDay + "" + selected_day[i] + "#";
+                                    }
+                                    //add to time array data
+                                    this.times[ct].monthly_datas.push({
+                                        TimeValue : selected_time,
+                                        Week : dayStringMonthlyWeek,
+                                        Day : dayStringMonthlyDay,
+                                        Object : project_objects,
+                                        Action :  actions,
+                                        // Action : project_objects + "/" + selected_action,
+                                    });
+                                }
+
+                                //change UI
+                                for(let i=0; i<this.times[ct].days.length; i++){
+                                    this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
+                                    let tempI = i+1;
+                                    let tempIString = tempI.toString();
+                                    for(let k=0; k<initialData.length; k++){
+                                        if(tempIString === initialData[k]){
+                                            this.times[ct].days[i].action = this.selected_plot;
+                                            this.times[ct].days[i].color = '#ff9933';
+                                            this.times[ct].days[i].type = 3;
+
+                                            let valueInt = parseInt(initialData[k]);
+                                            initialData[k] = (valueInt + (7*4)).toString();
+                                            // debugger;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                    this.selectedDay = [];
                 }
-                //for monthly period
-                else if(period === "3"){
-                    let initialData = [];
-                    for(let j=0; j<selected_weeks.length; j++){
-                        for(let i=0; i<selected_day.length; i++){
-                            let valueData = parseInt( selected_day[i]) + (6* (parseInt(selected_weeks[j])-1));
-                            initialData.push(valueData.toString());
-                        }
-                    }
-                    for(let j=0; j<selected_weeks.length; j++){
-                        dayStringMonthlyWeek = dayStringMonthlyWeek + "" + selected_weeks[j] + "#";
-                    }
-                    for(let i=0; i<selected_day.length; i++){
-                        dayStringMonthlyDay = dayStringMonthlyDay + "" + selected_day[i] + "#";
-                    }
-                    //add to time array data
-                    this.times[index].monthly_datas.push({
-                        TimeValue : selected_time,
-                        Week : dayStringMonthlyWeek,
-                        Day : dayStringMonthlyDay,
-                        Object : project_objects,
-                        Action :  actions,
-                        // Action : project_objects + "/" + selected_action,
-                    });
 
-                    for(let i=0; i<this.times[index].days.length; i++){
-                        this.selected_plot = "object = " + project_objects + " Action = " + selected_action;
-                        let tempI = i+1;
-                        let tempIString = tempI.toString();
-                        for(let k=0; k<initialData.length; k++){
-                            if(tempIString === initialData[k]){
-                                this.times[index].days[i].action = this.selected_plot;
-                                this.times[index].days[i].color = '#ff9933';
-                                this.times[index].days[i].type = 3;
+                this.setPlotlist(selected_time.toString(), project_objects, actions, this.period_string);
+            },
+            setPlotlist(time, object, action, period){
+                let changeTime = time.replace("[", "");
+                changeTime = changeTime.replace("]", "");
+                changeTime = changeTime.replace(/#/g, "-");
+                changeTime = changeTime.replace(/,/g, ", ");
 
-                                let valueInt = parseInt(initialData[k]);
-                                initialData[k] = (valueInt + (6*4)).toString();
-                            // debugger;
-                            }
-                        }
-                    }
-                }
+                var splitVar = action.split('-');
+
+                this.plotLists.push({
+                    TimeValue : changeTime,
+                    Object : object,
+                    Action :  splitVar[1],
+                    Period :  period,
+                });
             },
             receiveSelectedAction(val){
                 var splitVar = this.actions.split('-');

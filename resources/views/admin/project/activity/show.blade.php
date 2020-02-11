@@ -35,7 +35,7 @@
                                 <a class="nav-link active" id="schedule-tab" href="#" role="tab" aria-controls="profile" aria-selected="false">PLOTTING</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="attendance-tab" href="{{ route('admin.project.attendance.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">ATTENDANCE</a>
+                                <a class="nav-link" id="attendance-tab" href="{{ route('admin.project.attendance.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">ABSENSI</a>
                             </li>
                         </ul>
 
@@ -69,6 +69,19 @@
                                                         @if($activities->count() == 0)
                                                             <h4 class="text-center">BELUM ADA PLOTTING</h4>
                                                         @else
+                                                            <div class="col-md-6">
+                                                                <div class="form-group form-float form-group-lg">
+                                                                    <div class="form-line">
+                                                                        <label class="form-label">Period*</label>
+                                                                        <select name='period' class='form-control'>
+                                                                            <option value='0' selected>Semua Place</option>
+                                                                            @foreach($placeArr as $place)
+                                                                                <option value='{{$place->id}}'>{{$place->name}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                             <table id="general_table" class="table table-striped table-bordered" style="width: 100%;">
                                                                 <thead>
                                                                 <tr>
