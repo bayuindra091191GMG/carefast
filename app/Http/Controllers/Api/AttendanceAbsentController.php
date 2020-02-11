@@ -248,15 +248,15 @@ class AttendanceAbsentController extends Controller
                 return Response::json("Tidak ada Attendance!", 482);
             }
             else{
-                $place = Place::find($attendance->place_id);
-                Log::info('checkinChecking place id = '.$attendance->place_id);
-                if(empty($place)){
-                    return Response::json("Place Tidak ditemukan!", 482);
-                }
+//                $place = Place::find($attendance->place_id);
+//                Log::info('checkinChecking place id = '.$attendance->place_id);
+//                if(empty($place)){
+//                    return Response::json("Place Tidak ditemukan!", 482);
+//                }
 
                 $placeModel = collect([
-                    'id'                => $place->id,
-                    'place_name'        => $place->name,
+                    'id'                => $projectEmployee->project_id,
+                    'place_name'        => $projectEmployee->project->name,
                     'project_name'      => $projectEmployee->project->name,
                 ]);
                 return Response::json($placeModel, 200);

@@ -64,24 +64,36 @@
                                                 <a href="{{ route('admin.project.activity.create', ['id' => $project->id]) }}" class="btn btn-success">TAMBAH PLOTTING</a>
                                             </div>
                                             <div class="body">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label">Filter Tempat*</label>
+                                                                    <select id='filter' class='form-control'>
+                                                                        <option value='0' @if(0 == $placeId) selected @endif>Semua Place</option>
+                                                                        @foreach($places as $place)
+                                                                            <option value='{{ $place->id }}' @if($place->id == $placeId) selected @endif >{{ $place->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <br>
+                                                                    <a onclick="filterSubmit()" class="btn btn-facebook" style="color: white;">Ganti Filter</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-12 p-t-20">
                                                     <div class="table-responsive-sm">
                                                         @if($activities->count() == 0)
                                                             <h4 class="text-center">BELUM ADA PLOTTING</h4>
                                                         @else
-                                                            <div class="col-md-6">
-                                                                <div class="form-group form-float form-group-lg">
-                                                                    <div class="form-line">
-                                                                        <label class="form-label">Period*</label>
-                                                                        <select name='period' class='form-control'>
-                                                                            <option value='0' selected>Semua Place</option>
-                                                                            @foreach($placeArr as $place)
-                                                                                <option value='{{$place->id}}'>{{$place->name}}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                             <table id="general_table" class="table table-striped table-bordered" style="width: 100%;">
                                                                 <thead>
                                                                 <tr>
@@ -127,6 +139,10 @@
     <script src="{{ asset('js/datatables.js') }}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script>
+        function filterSubmit(){
+            var filter = $('#filter').val();
+            window.location.replace('{{ route('admin.project.activity.show', ['id' => $project->id]) }}?place=' + filter);
+        }
         $('#general_table').DataTable({
             processing: true,
             serverSide: true,
@@ -135,7 +151,8 @@
             ajax: {
                 url: '{!! route('datatables.project-activity') !!}',
                 data: {
-                    'id': '{{ $project->id }}'
+                    'id': '{{ $project->id }}',
+                    'place_id': '{{ $placeId }}'
                 }
             },
             order: [ [0, 'asc'] ],

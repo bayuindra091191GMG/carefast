@@ -15,6 +15,7 @@ use App\Models\ProjectActivitiesDetail;
 use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
+use App\Models\ProjectObject;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use App\Transformer\CustomerTransformer;
@@ -38,9 +39,18 @@ class ActivityController extends Controller
 
     public function getIndexActivities(Request $request){
         $id = $request->input('id');
+        $place_id = $request->input('place_id');
 //        $project = Project::find($id);
 //        $employeeSchedule = $project->project_employees->sortByDesc('employee_roles_id');
-        $projectActivities = ProjectActivitiesHeader::where('project_id', $id)->orderby('place_id', 'desc')->get();
+        if($place_id > 0){
+            $projectActivities = ProjectActivitiesHeader::where('project_id', $id)
+                ->where('place_id', $place_id)
+                ->orderby('place_id', 'desc')
+                ->get();
+        }
+        else{
+            $projectActivities = ProjectActivitiesHeader::where('project_id', $id)->orderby('place_id', 'desc')->get();
+        }
         $idArr = collect();
         foreach ($projectActivities as $projectActivity){
             $idArr->push($projectActivity->id);
@@ -55,9 +65,9 @@ class ActivityController extends Controller
 
     public function show(Request $request, int $id)
     {
-        $place = 0;
+        $placeId = 0;
         if(!empty($request->place)){
-            $place = $request->place;
+            $placeId = $request->place;
         }
         $project = Project::find($id);
 
@@ -66,29 +76,23 @@ class ActivityController extends Controller
         }
 
         $activities = ProjectActivitiesHeader::where('project_id', $id)->get();
-        $places = DB::table('project_activities_headers')
-            ->select('place_id')
-            ->distinct()
-            ->get();
-        $placeArrs = collect();
-        foreach ($places as $place){
-            $placeArr = ([
-               'id' => (int)$place->place_id,
-               'name' => Place::select('name')->where('id', (int)$place->place_id)->first(),
-            ]);
-            $placeArrs->push($placeArr);
-        }
-        if($place >= 0){
+        $placeIds = ProjectObject::select('place_id')->where('project_id', $id)->get();
+
+
+        $places = Place::whereIn('id', $placeIds)->get();
+
+        if($placeId > 0){
             $activities = ProjectActivitiesHeader::where('project_id', $id)
-                ->where('place_id', $place)
+                ->where('place_id', $placeId)
                 ->get();
         }
         $data = [
             'activities'   => $activities,
             'project'         => $project,
-            'placeArr'         => $placeArrs,
+            'places'         => $places,
+            'placeId'         => $placeId,
         ];
-        dd($data);
+//        dd($data);
         return view('admin.project.activity.show')->with($data);
     }
 
