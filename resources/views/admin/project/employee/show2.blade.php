@@ -70,7 +70,8 @@
                                                                 <div class="form-group form-float form-group-lg">
                                                                     <div class="form-line">
                                                                         <label class="form-label" for="manpower">Manpower</label>
-                                                                        <input type="text" id="manpower_string" class="form-control" value="{{ 'Sisa '. $manpowerLeft. ' dari '. $project->total_manpower }}" readonly/>
+{{--                                                                        <input type="text" id="manpower_string" class="form-control" value="{{ 'Sisa '. $manpowerLeft. ' dari '. $project->total_manpower }}" readonly/>--}}
+                                                                        <input type="text" id="manpower_string" class="form-control" value="{{ $project->total_manpower }}" readonly/>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -88,19 +89,90 @@
                                                         <tbody>
                                                         @php($count=0)
                                                         @foreach($employeeRoles as $employeeRole)
-                                                            <tr id="upper_employee_row_{{$count}}">
-                                                                <td class="text-center">
-                                                                    <span id="upper_employee_role_">{{$employeeRole->name}}</span>
-                                                                </td>
-                                                                <td class="text-center">
-                                                                    <input name="employee_total[]" class="form-control" value="{{ $employeeRoleAssigned[$count] }}" readonly>
-                                                                    <input type="hidden" name="employee_role_id[]" value="{{$employeeRole->id}}">
-                                                                </td>
-                                                            </tr>
+                                                            @if($employeeRoleAssigned[$count] > 0)
+                                                                <tr id="upper_employee_row_{{$count}}">
+                                                                    <td class="text-center">
+                                                                        <span id="upper_employee_role_">{{$employeeRole->name}}</span>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <input name="employee_total[]" class="form-control" value="{{ $employeeRoleAssigned[$count] }}" readonly>
+                                                                        <input type="hidden" name="employee_role_id[]" value="{{$employeeRole->id}}">
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
                                                             @php($count++)
                                                         @endforeach
                                                         </tbody>
                                                     </table>
+
+
+                                                    <hr/>
+
+                                                    <div class="col-12 mb-3">
+                                                        <h3>UPPER MANAGEMENT</h3>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        @if($upperEmployees->count() > 0)
+                                                            <table id="upper_employee_table" class="table table-striped table-bordered nowrap">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="text-center" style="width: 25%">ID</th>
+                                                                    <th class="text-center" style="width: 45%">NAMA</th>
+                                                                    <th class="text-center" style="width: 30%">ROLE/POSISI</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                @foreach($upperEmployees as $upperEmployee)
+                                                                    <tr>
+                                                                        <td>
+                                                                            <a href="{{ route('admin.employee.show', ['id' => $upperEmployee->employee_id]) }}">{{ $upperEmployee->employee->code }}</a>
+                                                                        </td>
+                                                                        <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
+                                                                        <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
+                                                                    </tr>
+                                                                @endforeach
+
+                                                                </tbody>
+                                                            </table>
+                                                        @else
+                                                            <h4>BELUM ADA PENUGASAN EMPLOYEE</h4>
+                                                        @endif
+                                                    </div>
+
+                                                    <hr/>
+
+                                                    <div class="col-12 mb-3">
+                                                        <h3>CLEANERS</h3>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        @if($cleanerEmployees->count() > 0)
+                                                            <table id="cleaner_employee_table" class="table table-striped table-bordered nowrap">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="text-center" style="width: 25%">ID</th>
+                                                                    <th class="text-center" style="width: 75%">NAMA</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                @foreach($cleanerEmployees as $cleanerEmployee)
+                                                                    <tr>
+                                                                        <td>
+                                                                            <a href="{{ route('admin.employee.show', ['id' => $cleanerEmployee->employee_id]) }}">{{ $cleanerEmployee->employee->code }}</a>
+                                                                        </td>
+                                                                        <td>{{ $cleanerEmployee->employee->first_name. ' '. $cleanerEmployee->employee->last_name }}</td>
+                                                                    </tr>
+                                                                @endforeach
+
+                                                                </tbody>
+                                                            </table>
+                                                        @else
+                                                            <h4>BELUM ADA PENUGASAN EMPLOYEE</h4>
+                                                        @endif
+                                                    </div>
 
                                                 </div>
                                             </div>
@@ -118,9 +190,12 @@
 
 
 @section('styles')
+    <link href="{{ asset('css/datatables.css') }}" rel="stylesheet">
 @endsection
 
 @section('scripts')
+    <script src="{{ asset('js/datatables.js') }}"></script>
     <script type="text/javascript">
+        $('#cleaner_employee_table').DataTable();
     </script>
 @endsection
