@@ -327,7 +327,7 @@ class ProjectObjectController extends Controller
                 }
 
                 //check if any new sub 2 unit, then create new sub 2 unit, else use selected sub 2 unit
-                if(empty($placeNews[$i])){
+                if(empty($sub_2_unit_news[$i])){
                     $selectedSubUnit2 = $sub_2_units[$i];
                     $placeDB = Sub2Unit::find($sub_2_units[$i]);
                     $selectedSubUnit2Name = $placeDB->name;

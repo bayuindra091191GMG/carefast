@@ -109,9 +109,21 @@ class UserController extends Controller
 
             //mengambil data project_id
             $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
-                ->where('employee_roles_id', '>', 1)
+                ->where('employee_roles_id', '>', 0)
                 ->where('status_id', 1)
                 ->first();
+            $employeeDBs = ProjectEmployee::where('employee_id', $employee->id)
+                ->where('employee_roles_id', '>', 0)
+                ->where('status_id', 1)
+                ->get();
+            $projectModels = collect();
+            foreach ($employeeDBs as $employee){
+                $projectModel = [
+                    'id'    => $employee->project_id,
+                    'name'    => $employee->project->name,
+                ];
+                $projectModels->push($projectModel);
+            }
 
             $employeeImage = empty($employee->image_path) ? "" : asset('storage/employees/'. $employee->image_path);
             $userModel = collect([
@@ -121,6 +133,7 @@ class UserController extends Controller
                 'role_id'           => $employee->employee_role_id,
                 'role_name'         => $employee->employee_role->name,
                 'project_id'        => empty($employeeDB) ? 0 : $employeeDB->project_id,
+                'project_name'      => empty($employeeDB) ? "" : $employeeDB->project->name,
                 'image_path'        => $employeeImage,
                 'telephone'         => $employee->telephone ?? '',
                 'phone'             => $employee->phone ?? '',
@@ -128,7 +141,8 @@ class UserController extends Controller
                 'nik'               => $employee->nik ?? '',
                 'address'           => $employee->address ?? '',
                 'accessible_menus'  => $accessible_menus,
-                'employee_id'       => $employee->id
+                'employee_id'       => $employee->id,
+                'projects'          => $projectModels
             ]);
 
             return Response::json($userModel, 200);

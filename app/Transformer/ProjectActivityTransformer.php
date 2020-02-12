@@ -32,7 +32,8 @@ class ProjectActivityTransformer extends TransformerAbstract
                     }
                 }
             }
-            $action = "<a href='".$routeEditUrl."' class='btn btn-primary'>UBAH</a>";
+//            $action = "<a href='".$routeEditUrl."' class='btn btn-primary'>UBAH</a>";
+            $action = "<a href='#' class='btn btn-primary'>UBAH</a>";
             $activityHeader = ProjectActivitiesHeader::find($project->activities_header_id);
 
             return[

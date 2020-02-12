@@ -89,6 +89,41 @@
                                                         </div>
                                                     </div>
                                                 </div>
+{{--                                                <div class="col-md-12">--}}
+{{--                                                    <div class="row">--}}
+{{--                                                        <div class="col-md-4">--}}
+{{--                                                            <div class="form-group form-float form-group-lg">--}}
+{{--                                                                <div class="form-line">--}}
+{{--                                                                    <select id='plotting1' class='form-control'>--}}
+{{--                                                                        @foreach($places as $place)--}}
+{{--                                                                            <option value='{{ $place->id }}' @if($place->id == $placeId) selected @endif >{{ $place->name }}</option>--}}
+{{--                                                                        @endforeach--}}
+{{--                                                                    </select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                        <div class="col-md-4">--}}
+{{--                                                            <div class="form-group form-float form-group-lg">--}}
+{{--                                                                <div class="form-line">--}}
+{{--                                                                    <label class="form-label">Tempat Plotting Tujuan*</label>--}}
+{{--                                                                    <select id='plotting2' class='form-control'>--}}
+{{--                                                                        @foreach($places as $place)--}}
+{{--                                                                            <option value='{{ $place->id }}' @if($place->id == $placeId) selected @endif >{{ $place->name }}</option>--}}
+{{--                                                                        @endforeach--}}
+{{--                                                                    </select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                        <div class="col-md-6">--}}
+{{--                                                            <div class="form-group form-float form-group-lg">--}}
+{{--                                                                <div class="form-line">--}}
+{{--                                                                    <br>--}}
+{{--                                                                    <a onclick="copyPlotting()" class="btn btn-facebook" style="color: white;">Copy Plotting</a>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
                                                 <div class="col-md-12 p-t-20">
                                                     <div class="table-responsive-sm">
                                                         @if($activities->count() == 0)
@@ -102,7 +137,7 @@
                                                                     <th class="text-center" width="15%">Waktu</th>
                                                                     <th class="text-center" width="15%">Aktifitas</th>
                                                                     <th class="text-center" width="10%">Period</th>
-                                                                    <th class="text-center" width="10%">Tindakan</th>
+{{--                                                                    <th class="text-center" width="10%">Tindakan</th>--}}
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -143,6 +178,11 @@
             var filter = $('#filter').val();
             window.location.replace('{{ route('admin.project.activity.show', ['id' => $project->id]) }}?place=' + filter);
         }
+        function copyPlotting(){
+            var old_place = $('#plotting1').val();
+            var new_place = $('#plotting2').val();
+            window.location.replace('{{ route('admin.project.activity.show', ['id' => $project->id]) }}?old_place=' + old_place + '&new_place=' + new_place);
+        }
         $('#general_table').DataTable({
             processing: true,
             serverSide: true,
@@ -162,7 +202,7 @@
                 { data: 'time', name: 'time', class: 'text-center' },
                 { data: 'action_name', name: 'action_name', class: 'text-center' },
                 { data: 'period_type', name: 'period_type', class: 'text-center' },
-                { data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
+                // { data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
             ],
         });
 

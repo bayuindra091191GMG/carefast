@@ -96,6 +96,39 @@ class ActivityController extends Controller
         return view('admin.project.activity.show')->with($data);
     }
 
+    public function copy(Request $request, int $id)
+    {
+        $placeId = 0;
+        if(!empty($request->place)){
+            $placeId = $request->place;
+        }
+        $project = Project::find($id);
+
+        if(empty($project)){
+            return redirect()->back();
+        }
+
+        $activities = ProjectActivitiesHeader::where('project_id', $id)->get();
+        $placeIds = ProjectObject::select('place_id')->where('project_id', $id)->get();
+
+
+        $places = Place::whereIn('id', $placeIds)->get();
+
+        if($placeId > 0){
+            $activities = ProjectActivitiesHeader::where('project_id', $id)
+                ->where('place_id', $placeId)
+                ->get();
+        }
+        $data = [
+            'activities'   => $activities,
+            'project'         => $project,
+            'places'         => $places,
+            'placeId'         => $placeId,
+        ];
+//        dd($data);
+        return view('admin.project.activity.show')->with($data);
+    }
+
     public function createStepOne(Request $request, int $id){
         try{
 
@@ -249,8 +282,8 @@ class ActivityController extends Controller
                         $actionArr = explode("-",$dailyData["Action"]);
                         $action = $actionArr[0]."#";
 
-                        foreach ($dailyData["TimeValue"] as $singleDailyData) {
-                            $timeArr = explode("#", $singleDailyData);
+//                        foreach ($dailyData["TimeValue"] as $singleDailyData) {
+                            $timeArr = explode("#", $item["time_value"]);
                             $start = Carbon::parse('00-00-00 ' . $timeArr[0])->format('Y-m-d H:i:s');
                             $finish = Carbon::parse('00-00-00 ' . $timeArr[1])->format('Y-m-d H:i:s');
 
@@ -269,7 +302,7 @@ class ActivityController extends Controller
                                 'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                 'updated_by' => $user->id,
                             ]);
-                        }
+//                        }
                     }
                 }
 
@@ -280,8 +313,8 @@ class ActivityController extends Controller
                         $actionArr = explode("-",$weeklyData["Action"]);
                         $actionWeekly = $actionArr[0]."#";
 
-                        foreach ($weeklyData["TimeValue"] as $singleWeeklyData) {
-                            $timeWeekArr = explode("#", $singleWeeklyData);
+//                        foreach ($weeklyData["TimeValue"] as $singleWeeklyData) {
+                            $timeWeekArr = explode("#", $item["time_value"]);
                             $startWeek = Carbon::parse('00-00-00 ' . $timeWeekArr[0])->format('Y-m-d H:i:s');
                             $finishWeek = Carbon::parse('00-00-00 ' . $timeWeekArr[1])->format('Y-m-d H:i:s');
 
@@ -300,7 +333,7 @@ class ActivityController extends Controller
                                 'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                 'updated_by' => $user->id,
                             ]);
-                        }
+//                        }
                     }
                 }
 
@@ -315,8 +348,8 @@ class ActivityController extends Controller
                         $actionArr = explode("-", $monthlyData["Action"]);
                         $actionMonthly = $actionArr[0]."#";
 
-                        foreach ($monthlyData["TimeValue"] as $singleMonthlyData){
-                            $timeMonthArr = explode("#",$singleMonthlyData);
+//                        foreach ($monthlyData["TimeValue"] as $singleMonthlyData){
+                            $timeMonthArr = explode("#",$item["time_value"]);
                             $startMonth = Carbon::parse('00-00-00 '.$timeMonthArr[0])->format('Y-m-d H:i:s');
                             $finishMonth = Carbon::parse('00-00-00 '.$timeMonthArr[1])->format('Y-m-d H:i:s');
                             //save to database
@@ -334,7 +367,7 @@ class ActivityController extends Controller
                                 'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                 'updated_by'            => $user->id,
                             ]);
-                        }
+//                        }
                     }
                 }
             }
@@ -457,7 +490,7 @@ class ActivityController extends Controller
 
     public function edit(int $id)
     {
-        $projectActivity = ProjectActivity::find($id);
+        $projectActivity = ProjectActivitiesHeader::find($id);
         $project = Project::find($projectActivity->project_id);
         if(empty($projectActivity)){
             return redirect()->back();
