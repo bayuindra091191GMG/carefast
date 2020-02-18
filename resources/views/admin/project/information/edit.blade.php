@@ -205,12 +205,12 @@
                                                         <div class="form-group form-float form-group-lg">
                                                             <div class="form-line">
                                                                 <label for="customer">Customer *</label>
-                                                                <select id="customer" name="customer[]" class="form-control" multiple>
+                                                                <select id="customer" class="form-control">
                                                                 </select>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <input type="hidden" id="customer-selected" name="customer" value="{{$project->customer_id}}">
+                                                    <input type="hidden" id="customer-selected" value="{{$project->customer_id}}">
 
                                                     <div class="col-md-2">
                                                         <div class="form-group form-float form-group-lg">
@@ -363,16 +363,21 @@
         function addCustomer(){
             let customerID = $('#customer').val();
             let selectedCustomer = $('#customer-selected').val();
+            let selectedCustomerTemp = "#" + selectedCustomer;
+            // alert(customerID);
+            // alert(selectedCustomer);
 
-            if(!(selectedCustomer.includes(customerID))){
+            if(!(selectedCustomerTemp.includes("#" + customerID + "#"))){
                 let newSelectedCustomer = selectedCustomer + customerID + "#" ;
                 $('#customer-selected').val(newSelectedCustomer);
 
                 $('#sch'+i).html(
-                    "<td><span>" + $('#select2-customer-container').text() + "</span></td>" +
+                    "<input type='hidden' name='customer[]' value='" + $('#customer').val() + "'>" +
+                    "<td><span>" + $('#customer').select2('data')[0]['text'] + "</span></td>" +
                     "<td><a class='form-control btn btn-danger' onclick='deleteCustomer(" + i + ")'>Delete</a></td>"
                 );
-                $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');
+
+                $('#tab_logic').append('<tr id="sch'+(parseInt(i) + 1)+'"></tr>');
                 i++;
             }
         }

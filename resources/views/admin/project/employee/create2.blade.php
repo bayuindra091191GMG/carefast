@@ -72,29 +72,46 @@
                                         </div>
                                     </div>
 
+
+                                    <div class="col-12 mb-3">
+                                        <div class="row">
+                                            <div class="col-8">
+                                                <h3>UPPER MANAGEMENT</h3>
+                                            </div>
+                                            <div class="col-4 text-right">
+                                                <a class="btn btn-primary text-white" style="cursor: pointer;" onclick="addRow();">TAMBAH</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-12">
-{{--                                        <table id="upper_employee_table" class="table table-striped table-bordered nowrap">--}}
-{{--                                            <thead>--}}
-{{--                                            <tr>--}}
-{{--                                                <th class="text-center" style="width: 45%">EMPLOYEE</th>--}}
-{{--                                                <th class="text-center" style="width: 30%">ROLE/POSISI</th>--}}
-{{--                                                <th class="text-center" style="width: 25%">TINDAKAN</th>--}}
-{{--                                            </tr>--}}
-{{--                                            </thead>--}}
-{{--                                            <tbody>--}}
-{{--                                            <tr id="upper_employee_row_0">--}}
-{{--                                                <td>--}}
-{{--                                                    <select id="upper_employee_id_0" name="upper_employee_ids[]" class="form-control"></select>--}}
-{{--                                                </td>--}}
-{{--                                                <td class="text-center">--}}
-{{--                                                    <span id="upper_employee_role_0"></span>--}}
-{{--                                                </td>--}}
-{{--                                                <td class="text-center">--}}
-{{--                                                    <a class="btn btn-danger text-white" style="cursor: pointer;" onclick="deleteRow(0, 'upper');">HAPUS</a>--}}
-{{--                                                </td>--}}
-{{--                                            </tr>--}}
-{{--                                            </tbody>--}}
-{{--                                        </table>--}}
+                                        <table id="upper_employee_table" class="table table-striped table-bordered nowrap">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 45%">EMPLOYEE</th>
+                                                <th class="text-center" style="width: 30%">ROLE/POSISI</th>
+                                                <th class="text-center" style="width: 25%">TINDAKAN</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr id="upper_employee_row_0">
+                                                <td>
+                                                    <select id="upper_employee_id_0" name="upper_employee_ids[]" class="form-control"></select>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span id="upper_employee_role_0"></span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <a class="btn btn-danger text-white" style="cursor: pointer;" onclick="deleteRow(0, 'upper');">HAPUS</a>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <hr/>
+
+                                    <div class="col-12">
                                         <table id="upper_employee_table" class="table table-striped table-bordered nowrap">
                                             <thead>
                                             <tr>

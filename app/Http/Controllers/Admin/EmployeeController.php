@@ -352,6 +352,38 @@ class EmployeeController extends Controller
         return \Response::json($formatted_tags);
     }
 
+    public function getUpperManagementEmployees(Request $request){
+        $term = trim($request->q);
+
+        $employees = Employee::whereIn('employee_role_id', [5,6,7]);
+
+        if($request->ids !== null){
+            foreach ($request->ids as $id){
+                error_log($id);
+            }
+
+            $employees = $employees->whereNotIn('id', $request->ids);
+        }
+
+        $employees = $employees->where(function ($q) use ($term) {
+                $q->where('code', 'LIKE', '%' . $term . '%')
+                    ->orWhere('first_name', 'LIKE', '%' . $term . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $term . '%');
+            })
+            ->get();
+
+        $formatted_tags = [];
+
+        foreach ($employees as $employee) {
+            $formatted_tags[] = [
+                'id' => $employee->id. '#'. strtoupper($employee->employee_role->name),
+                'text' => $employee->code. ' - '. strtoupper($employee->employee_role->name). ' - '. $employee->first_name. ' '. $employee->last_name
+            ];
+        }
+
+        return \Response::json($formatted_tags);
+    }
+
     public function getCleanerEmployees(Request $request){
         $term = trim($request->q);
 
