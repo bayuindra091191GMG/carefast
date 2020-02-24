@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Imports\CustomerImport;
+use App\Imports\DacImport;
 use App\Imports\InitialDataImport;
 use App\Imports\ProjectEmployeeImport;
 use App\Mail\EmailVerification;
@@ -135,7 +136,7 @@ class HomeController extends Controller
             $excel = request()->file('excel');
 //            Excel::import(new InitialDataImport(), $excel);
 //            Excel::import(new CustomerImport(), $excel);
-            Excel::import(new ProjectEmployeeImport(), $excel);
+            Excel::import(new DacImport(), $excel);
 //            Excel::import(new ProjectUserImport(), $excel);
 
             Session::flash('success', 'Berhasil Import Data!');

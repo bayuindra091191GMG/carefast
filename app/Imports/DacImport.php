@@ -88,130 +88,140 @@ class DacImport  implements ToCollection, WithStartRow
                             'updated_by'            => 1,
                         ]);
                         $headerId = $projectActivityHeader->id;
-                    }
-
-                    //action checking
-                    $actionId = 1;
-                    $unitName = "";
-                    if($actionRow == "ISTIRAHAT"){
-                        $actionId = 17;
-                        $unitName = "SEMUA AREA";
+//                        $headerId = 119;
                     }
                     else{
-                        $actionDb = Action::where('name', $actionRow)->first();
-                        if(empty($actionDb)){
-                            //save to database
-                            $newAction = Action::create([
-                                'name'            => $actionRow,
-                                'description'         => $actionRow,
-                                'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                                'created_by'            => 1,
-                                'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                                'updated_by'            => 1,
-                            ]);
-                            $actionId = $newAction->id;
+                        //action checking
+                        $actionId = 1;
+                        $unitName = "";
+                        if($actionRow == "ISTIRAHAT" || $actionRow == "Istirahat"){
+                            $actionId = 17;
+                            $unitName = "SEMUA AREA";
                         }
                         else{
-                            $actionId = $actionDb->id;
-                        }
-
-                        //object checking
-                        if(!empty($objectRow)){
-                            $unitDb = Unit::where('name', $objectRow)->first();
-                            if(empty($unitDb)){
+                            $actionDb = Action::where('name', $actionRow)->first();
+                            if(empty($actionDb)){
                                 //save to database
-                                $newUnit = Unit::create([
-                                    'name'            => $objectRow,
-                                    'description'         => $objectRow,
+                                $newAction = Action::create([
+                                    'name'            => $actionRow,
+                                    'description'         => $actionRow,
                                     'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                     'created_by'            => 1,
                                     'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                     'updated_by'            => 1,
                                 ]);
+                                $actionId = $newAction->id;
                             }
-                            $unitName = $objectRow;
+                            else{
+                                $actionId = $actionDb->id;
+                            }
+
+                            //object checking
+                            if(!empty($objectRow)){
+                                $unitDb = Unit::where('name', $objectRow)->first();
+                                if(empty($unitDb)){
+                                    //save to database
+                                    $newUnit = Unit::create([
+                                        'name'            => $objectRow,
+                                        'description'         => $objectRow,
+                                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                        'created_by'            => 1,
+                                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                        'updated_by'            => 1,
+                                    ]);
+                                }
+                                $unitName = $objectRow;
+                            }
+                            else{
+                                $unitName = $placeRow;
+                            }
+
+                            //object 1 checking
+                            if(!empty($subObjectOneRow)){
+                                $unit1Db = Sub1Unit::where('name', $subObjectOneRow)->first();
+                                if(empty($unit1Db)){
+                                    //save to database
+                                    $newUnit1 = Sub1Unit::create([
+                                        'name'            => $subObjectOneRow,
+                                        'description'         => $subObjectOneRow,
+                                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                        'created_by'            => 1,
+                                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                        'updated_by'            => 1,
+                                    ]);
+                                }
+                                $unitName = $unitName."--".$objectRow;
+                            }
+
+                            //object 2 checking
+                            if(!empty($subObjectTwoRow)){
+                                $unit2Db = Sub2Unit::where('name', $subObjectTwoRow)->first();
+                                if(empty($unit2Db)){
+                                    //save to database
+                                    $newUnit2 = Sub2Unit::create([
+                                        'name'            => $subObjectTwoRow,
+                                        'description'         => $subObjectTwoRow,
+                                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                        'created_by'            => 1,
+                                        'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                        'updated_by'            => 1,
+                                    ]);
+                                }
+                                $unitName = $unitName."--".$objectRow;
+                            }
+                        }
+
+                        //setting time
+                        if(strpos($startTimeRow, '\'') !== false){
+                            $startTimeRow = str_replace('\'', '', $startTimeRow);
+                        }
+                        if(strpos($finishTimeRow, '\'') !== false){
+                            $finishTimeRow = str_replace('\'', '', $finishTimeRow);
+                        }
+                        $start = Carbon::parse('00-00-00 ' . $startTimeRow)->format('Y-m-d H:i:s');
+                        $finish = Carbon::parse('00-00-00 ' . $finishTimeRow)->format('Y-m-d H:i:s');
+
+                        //checking period
+                        if($periodRow == 'DAILY'){
+                            $periodType = "Daily";
+                            $weeks = "1#2#3#4#5#";
+                            $days = "1#2#3#4#5#6#7#";
+                        }
+                        else if($periodRow == 'PERIODIK'){
+                            $periodType = "Weekly";
+                            $weeks = "1#2#3#4#5#";
+                            $days = "1#2#3#4#5#6#7#";
                         }
                         else{
-                            $unitName = $placeRow;
+                            $periodType = "Daily";
+                            $weeks = "1#2#3#4#5#";
+                            $days = "1#2#3#4#5#6#7#";
                         }
 
-                        //object 1 checking
-                        if(!empty($subObjectOneRow)){
-                            $unit1Db = Sub1Unit::where('name', $subObjectOneRow)->first();
-                            if(empty($unit1Db)){
-                                //save to database
-                                $newUnit1 = Sub1Unit::create([
-                                    'name'            => $subObjectOneRow,
-                                    'description'         => $subObjectOneRow,
-                                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                                    'created_by'            => 1,
-                                    'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                                    'updated_by'            => 1,
-                                ]);
-                            }
-                            $unitName = $unitName."--".$objectRow;
-                        }
 
-                        //object 2 checking
-                        if(!empty($subObjectTwoRow)){
-                            $unit2Db = Sub2Unit::where('name', $subObjectTwoRow)->first();
-                            if(empty($unit2Db)){
-                                //save to database
-                                $newUnit2 = Sub2Unit::create([
-                                    'name'            => $subObjectTwoRow,
-                                    'description'         => $subObjectTwoRow,
-                                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                                    'created_by'            => 1,
-                                    'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                                    'updated_by'            => 1,
-                                ]);
-                            }
-                            $unitName = $unitName."--".$objectRow;
-                        }
+//                    dd($headerId, $actionId, (int)$shiftRow, $weeks, $days, $start, $finish, $periodType, $unitName, $descriptionRow, $placeRow);
+                        //save to database
+                        $projectActivityDetail = ProjectActivitiesDetail::create([
+                            'activities_header_id' => $headerId,
+                            'action_id' => $actionId."#",
+                            'shift_type' => (int)$shiftRow,
+                            'weeks' => $weeks,
+                            'days' => $days,
+                            'start' => $start,
+                            'finish' => $finish,
+                            'period_type' => $periodType,
+                            'object_name' => $unitName,
+                            'description' => $descriptionRow,
+                            'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'created_by' => 1,
+                            'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'updated_by' => 1,
+                        ]);
                     }
-
-                    //setting time
-                    $start = Carbon::parse('00-00-00 ' . $startTimeRow)->format('Y-m-d H:i:s');
-                    $finish = Carbon::parse('00-00-00 ' . $finishTimeRow)->format('Y-m-d H:i:s');
-
-                    //checking period
-                    if($periodRow == 'DAILY'){
-                        $periodType = "Daily";
-                        $weeks = "1#2#3#4#5#";
-                        $days = "1#2#3#4#5#6#7#";
-                    }
-                    else if($periodRow == 'PERIODIK'){
-                        $periodType = "Weekly";
-                        $weeks = "1#2#3#4#5#";
-                        $days = "1#2#3#4#5#6#7#";
-                    }
-                    else{
-                        $periodType = "Daily";
-                        $weeks = "1#2#3#4#5#";
-                        $days = "1#2#3#4#5#6#7#";
-                    }
-
-
-                    //save to database
-                    $projectActivityDetail = ProjectActivitiesDetail::create([
-                        'activities_header_id' => $headerId,
-                        'action_id' => $actionId."#",
-                        'shift_type' => $shiftRow,
-                        'weeks' => $weeks,
-                        'days' => $days,
-                        'start' => $start,
-                        'finish' => $finish,
-                        'period_type' => $periodType,
-                        'object_name' => $unitName,
-                        'description' => $descriptionRow,
-                        'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'created_by' => 1,
-                        'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'updated_by' => 1,
-                    ]);
                 }
 
             }
+            return 'success';
 //            dd($customerPhone, $customerName, $projectName);
         }
         catch (\Exception $ex){
@@ -224,7 +234,7 @@ class DacImport  implements ToCollection, WithStartRow
      */
     public function startRow(): int
     {
-        return 2;
+        return 3;
     }
 
 }
