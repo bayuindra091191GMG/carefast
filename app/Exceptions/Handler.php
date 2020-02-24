@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Auth\AuthenticationException;
 
@@ -15,6 +16,7 @@ class Handler extends ExceptionHandler
      */
     protected $dontReport = [
         //
+        SuspiciousOperationException::class,
     ];
 
     /**
@@ -64,4 +66,13 @@ class Handler extends ExceptionHandler
         }
         return redirect()->guest(route($login));
     }
+    protected function prepareException(Exception $e)
+    {
+        if ($e instanceof SuspiciousOperationException) {
+            $e = new NotFoundHttpException(null, $e);
+        }
+
+        return parent::prepareException($e);
+    }
+
 }

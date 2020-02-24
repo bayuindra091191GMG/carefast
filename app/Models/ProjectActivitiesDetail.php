@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class ProjectActivitiesDetail
- * 
+ *
  * @property int $id
  * @property int $activities_header_id
  * @property string $action_id
@@ -22,11 +22,12 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $start
  * @property \Carbon\Carbon $finish
  * @property string $description
+ * @property string $object_name
  * @property int $updated_by
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $created_at
- * 
+ *
  * @property \App\Models\ProjectActivitiesHeader $project_activities_header
  *
  * @package App\Models
@@ -54,6 +55,7 @@ class ProjectActivitiesDetail extends Eloquent
 		'period_type',
 		'start',
 		'finish',
+		'object_name',
 		'description',
 		'updated_by',
 		'created_by'

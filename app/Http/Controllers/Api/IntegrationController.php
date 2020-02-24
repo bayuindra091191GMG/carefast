@@ -76,6 +76,7 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
+            Log::error('API/IntegrationController - employees error EX: '. $ex);
             return Response::json([
                 'error' => $ex
             ], 500);
@@ -129,6 +130,7 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
+            Log::error('API/IntegrationController - projects error EX: '. $ex);
             return Response::json([
                 'error' => $ex
             ], 500);
@@ -169,6 +171,7 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
+            Log::error('API/IntegrationController - jobAssignments error EX: '. $ex);
             return Response::json([
                 'error' => $ex
             ], 500);
@@ -215,6 +218,7 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
+            Log::error('API/IntegrationController - getAttendances error EX: '. $ex);
             return Response::json([
                 'error' => $ex
             ], 500);
