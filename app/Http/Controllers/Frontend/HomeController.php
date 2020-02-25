@@ -6,6 +6,7 @@ use App\Imports\CustomerImport;
 use App\Imports\DacImport;
 use App\Imports\InitialDataImport;
 use App\Imports\ProjectEmployeeImport;
+use App\libs\Utilities;
 use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
 use App\Models\Action;
@@ -21,6 +22,7 @@ use App\Models\ProjectActivitiesDetail;
 use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
+use App\Models\ProjectObject;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Notifications\FCMNotification;
@@ -327,6 +329,17 @@ class HomeController extends Controller
     }
     public function generalFunction(){
         try{
+            $places = Place::all();
+
+            foreach($places as $place){
+                if(empty($place->qr_code)){
+                    $number = Utilities::generateBarcodeNumber();
+                    $place->qr_code = $number;
+                    $place->save();
+                }
+            }
+            return "yes";
+
 //            $ids = [6033, 6034, 6035];
 //            $ids = [6013, 6017, 6022, 6024, 6025,
 //                6028, 6030, 6031, 6033, 6034, 6035];

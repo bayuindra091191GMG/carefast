@@ -61,16 +61,19 @@
                                                                 <th class="text-center" style="width: 4%">
                                                                     No
                                                                 </th>
-                                                                <th class="text-center" style="width: 24%">
+                                                                <th class="text-center" style="width: 20%">
                                                                     Place
                                                                 </th>
-                                                                <th class="text-center" style="width: 24%">
+                                                                <th class="text-center" style="width: 16%">
+                                                                    Place QR Code
+                                                                </th>
+                                                                <th class="text-center" style="width: 20%">
                                                                     Object (Jika ada)
                                                                 </th>
-                                                                <th class="text-center" style="width: 24%">
+                                                                <th class="text-center" style="width: 20%">
                                                                     Sub Object 1 (Jika ada)
                                                                 </th>
-                                                                <th class="text-center" style="width: 24%">
+                                                                <th class="text-center" style="width: 20%">
                                                                     Sub Object 2 (Jika ada)
                                                                 </th>
                                                             </tr>
@@ -85,6 +88,11 @@
                                                                         </td>
                                                                         <td>
                                                                             <input type='text'class='form-control' value="{{$projectObject->place_name}}" disabled>
+                                                                        </td>
+                                                                        <td>
+                                                                            <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject->place->qr_code}}&size=100x100" alt="" title="" />
+
+                                                                            <input type='text'class='form-control' value="{{$projectObject->place->qr_code}}" disabled>
                                                                         </td>
                                                                         <td>
                                                                             <input type='text'class='form-control' value="{{$projectObject->unit_name}}" disabled>

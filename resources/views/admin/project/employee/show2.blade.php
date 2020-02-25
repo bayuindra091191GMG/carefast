@@ -112,6 +112,13 @@
                                                         <h3>UPPER MANAGEMENT</h3>
                                                     </div>
 
+                                                    <div class="col-12 text-right">
+                                                        @if($isCreate)
+                                                            <a href="{{ route('admin.project.employee.create', ['project_id' => $project->id]) }}" class="btn btn-success">TAMBAH EMPLOYEE</a>
+                                                        @else
+                                                            <a href="{{ route('admin.project.employee.edit-employee', ['project_id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
+                                                        @endif
+                                                    </div>
                                                     <div class="col-12">
                                                         @if($upperEmployees->count() > 0)
                                                             <table id="upper_employee_table" class="table table-striped table-bordered nowrap">

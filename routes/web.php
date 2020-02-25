@@ -271,8 +271,10 @@ Route::prefix('admin')->group(function(){
 
     // Project Employee
     Route::get('/project/employee/show/{project_id}', 'Admin\project\ProjectEmployeeController@show')->name('admin.project.employee.show');
+    Route::get('/project/employee/show/{project_id}', 'Admin\project\ProjectEmployeeController@show')->name('admin.project.employee.show');
     Route::get('/project/employee/create/{project_id}', 'Admin\project\ProjectEmployeeController@create')->name('admin.project.employee.create');
     Route::get('/project/employee/edit/{project_id}', 'Admin\project\ProjectEmployeeController@edit')->name('admin.project.employee.edit');
+    Route::get('/project/employee/edit-employee/{project_id}', 'Admin\project\ProjectEmployeeController@editEmployee')->name('admin.project.employee.edit-employee');
     Route::get('/project/employee/set/{project_id}', 'Admin\project\ProjectEmployeeController@edit')->name('admin.project.employee.set');
     Route::post('/project/employee/store/{project_id}', 'Admin\project\ProjectEmployeeController@store')->name('admin.project.employee.store');
     Route::post('/project/employee/update/{project_id}', 'Admin\project\ProjectEmployeeController@update')->name('admin.project.employee.update');

@@ -47,7 +47,7 @@ class Utilities
     }
 
     public static function generateBarcodeNumber() {
-        $number = mt_rand(1000000000, 9999999999); // better than rand()
+        $number = mt_rand(1000000000, mt_getrandmax()); // better than rand()
 
         // call the same function if the barcode exists already
         if (Utilities::barcodeNumberExists($number)) {

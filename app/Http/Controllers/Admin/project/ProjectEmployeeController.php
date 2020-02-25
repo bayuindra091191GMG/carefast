@@ -344,91 +344,91 @@ class ProjectEmployeeController extends Controller
 //            return "Something went wrong! Please contact administrator!";
 //        }
 //    }
-//
-//    public function edit(int $project_id)
-//    {
-//        try{
-//            $project = Project::find($project_id);
-//            if(empty($project)){
-//                return redirect()->back();
-//            }
-//
-//            $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
-//
-//            $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
-//                ->where('project_id', $project_id)
-//                ->whereIn('employee_roles_id', [2,3,4])
-//                ->get();
-//
-//            if($upperEmployees->count() === 0){
-//                $manpowerLeft--;
-//            }
-//
-//            $includeIds = [];
-//            $collectUpperEmployees = collect();
-//            foreach ($upperEmployees as $upperEmployee){
-//                array_push($includeIds, $upperEmployee->employee_id);
-//                // Schedule check here
-//
-//                $collectUpperEmployee = collect([
-//                    'id'                    => $upperEmployee->id,
-//                    'employee_id'           => $upperEmployee->employee_id,
-//                    'employee_code'         => $upperEmployee->employee->code,
-//                    'employee_name'         => $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name,
-//                    'employee_role_id'      => $upperEmployee->employee_roles_id,
-//                    'employee_role_name'    => $upperEmployee->employee_role->name,
-//                    'is_created_schedule'   => false
-//                ]);
-//
-//                $collectUpperEmployees->push($collectUpperEmployee);
-//            }
-//
-//            $cleanerEmployees = ProjectEmployee::with('employee')
-//                ->where('project_id', $project_id)
-//                ->where('employee_roles_id', 1)
-//                ->get();
-//
-//            if($cleanerEmployees->count() === 0){
-//                $manpowerLeft--;
-//            }
-//
-//            $collectCleanerEmployees = collect();
-//            foreach ($cleanerEmployees as $cleanerEmployee){
-//                array_push($includeIds, $cleanerEmployee->employee_id);
-//                // Schedule check here
-//
-//                $collectCleanerEmployee = collect([
-//                    'id'                    => $cleanerEmployee->id,
-//                    'employee_id'           => $cleanerEmployee->employee_id,
-//                    'employee_code'         => $cleanerEmployee->employee->code,
-//                    'employee_name'         => $cleanerEmployee->employee->first_name. ' '. $cleanerEmployee->employee->last_name,
-//                    'employee_role_id'      => $cleanerEmployee->employee_roles_id,
-//                    'employee_role_name'    => $cleanerEmployee->employee_role->name,
-//                    'is_created_schedule'   => false
-//                ]);
-//
-//                $collectCleanerEmployees->push($collectCleanerEmployee);
-//            }
-//
-//            //dd($includeIds);
-//
-//            $data = [
-//                'project'                   => $project,
-//                'manpowerLeft'              => $manpowerLeft,
-//                'upperEmployees'            => $upperEmployees,
-//                'collectUpperEmployees'     => $collectUpperEmployees,
-//                'cleanerEmployees'          => $cleanerEmployees,
-//                'collectCleanerEmployees'   => $collectCleanerEmployees,
-//                'includeIds'                => json_encode($includeIds)
-//            ];
-//
-//            return view('admin.project.employee.edit')->with($data);
-//        }
-//        catch (\Exception $ex){
-//            Log::error('Admin/information/ProjectEmployeeController - edit error EX: '. $ex);
-//            return "Something went wrong! Please contact administrator!";
-//        }
-//    }
+
+    public function editEmployee(int $project_id)
+    {
+        try{
+            $project = Project::find($project_id);
+            if(empty($project)){
+                return redirect()->back();
+            }
+
+            $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
+
+            $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
+                ->where('project_id', $project_id)
+                ->whereIn('employee_roles_id', [2,3,4])
+                ->get();
+
+            if($upperEmployees->count() === 0){
+                $manpowerLeft--;
+            }
+
+            $includeIds = [];
+            $collectUpperEmployees = collect();
+            foreach ($upperEmployees as $upperEmployee){
+                array_push($includeIds, $upperEmployee->employee_id);
+                // Schedule check here
+
+                $collectUpperEmployee = collect([
+                    'id'                    => $upperEmployee->id,
+                    'employee_id'           => $upperEmployee->employee_id,
+                    'employee_code'         => $upperEmployee->employee->code,
+                    'employee_name'         => $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name,
+                    'employee_role_id'      => $upperEmployee->employee_roles_id,
+                    'employee_role_name'    => $upperEmployee->employee_role->name,
+                    'is_created_schedule'   => false
+                ]);
+
+                $collectUpperEmployees->push($collectUpperEmployee);
+            }
+
+            $cleanerEmployees = ProjectEmployee::with('employee')
+                ->where('project_id', $project_id)
+                ->where('employee_roles_id', 1)
+                ->get();
+
+            if($cleanerEmployees->count() === 0){
+                $manpowerLeft--;
+            }
+
+            $collectCleanerEmployees = collect();
+            foreach ($cleanerEmployees as $cleanerEmployee){
+                array_push($includeIds, $cleanerEmployee->employee_id);
+                // Schedule check here
+
+                $collectCleanerEmployee = collect([
+                    'id'                    => $cleanerEmployee->id,
+                    'employee_id'           => $cleanerEmployee->employee_id,
+                    'employee_code'         => $cleanerEmployee->employee->code,
+                    'employee_name'         => $cleanerEmployee->employee->first_name. ' '. $cleanerEmployee->employee->last_name,
+                    'employee_role_id'      => $cleanerEmployee->employee_roles_id,
+                    'employee_role_name'    => $cleanerEmployee->employee_role->name,
+                    'is_created_schedule'   => false
+                ]);
+
+                $collectCleanerEmployees->push($collectCleanerEmployee);
+            }
+
+            //dd($includeIds);
+
+            $data = [
+                'project'                   => $project,
+                'manpowerLeft'              => $manpowerLeft,
+                'upperEmployees'            => $upperEmployees,
+                'collectUpperEmployees'     => $collectUpperEmployees,
+                'cleanerEmployees'          => $cleanerEmployees,
+                'collectCleanerEmployees'   => $collectCleanerEmployees,
+                'includeIds'                => json_encode($includeIds)
+            ];
+
+            return view('admin.project.employee.edit')->with($data);
+        }
+        catch (\Exception $ex){
+            Log::error('Admin/information/ProjectEmployeeController - edit error EX: '. $ex);
+            return "Something went wrong! Please contact administrator!";
+        }
+    }
 
     public function update(Request $request, int $project_id){
         try{

@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class ProjectObject
- * 
+ *
  * @property int $id
  * @property int $project_id
  * @property int $place_id
@@ -28,8 +28,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
- * 
+ *
  * @property \App\Models\Project $project
+ * @property \App\Models\Place $place
  * @property \App\Models\Status $status
  *
  * @package App\Models
@@ -71,5 +72,10 @@ class ProjectObject extends Eloquent
 	public function status()
 	{
 		return $this->belongsTo(\App\Models\Status::class);
+	}
+
+	public function place()
+	{
+		return $this->belongsTo(\App\Models\Place::class);
 	}
 }
