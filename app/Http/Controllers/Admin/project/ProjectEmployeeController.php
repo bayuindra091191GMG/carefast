@@ -45,7 +45,6 @@ class ProjectEmployeeController extends Controller
                 ->count();
             $employeeRoleAssigned->push($assignedEmployees);
         }
-
         $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
             ->where('project_id', $project_id)
             ->where('employee_roles_id', '>', 2)

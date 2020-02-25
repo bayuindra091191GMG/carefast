@@ -142,6 +142,7 @@
                                                                         </tr>
                                                                     @endif
                                                                 @endforeach
+
                                                                 @foreach($upperEmployees as $upperEmployee)
                                                                     @if($upperEmployee->employee_roles_id == 11)
                                                                         <tr>
