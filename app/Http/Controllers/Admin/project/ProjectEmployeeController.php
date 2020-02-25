@@ -48,7 +48,8 @@ class ProjectEmployeeController extends Controller
 
         $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
             ->where('project_id', $project_id)
-            ->whereIn('employee_roles_id', [2,3,4])
+            ->where('employee_roles_id', '>', 2)
+            ->orderByDesc('employee_roles_id')
             ->get();
 
         $cleanerEmployees = ProjectEmployee::with('employee')
@@ -357,7 +358,8 @@ class ProjectEmployeeController extends Controller
 
             $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
                 ->where('project_id', $project_id)
-                ->whereIn('employee_roles_id', [2,3,4])
+                ->where('employee_roles_id','>', 2)
+                ->orderByDesc('employee_roles_id')
                 ->get();
 
             if($upperEmployees->count() === 0){

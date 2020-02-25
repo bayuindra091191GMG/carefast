@@ -323,7 +323,7 @@ class EmployeeController extends Controller
     public function getUpperEmployees(Request $request){
         $term = trim($request->q);
 
-        $employees = Employee::whereIn('employee_role_id', [2,3,4]);
+        $employees = Employee::where('employee_role_id', '>', 2);
 
         if($request->ids !== null){
             foreach ($request->ids as $id){

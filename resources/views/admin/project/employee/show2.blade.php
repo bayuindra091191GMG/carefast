@@ -132,13 +132,26 @@
                                                                 <tbody>
 
                                                                 @foreach($upperEmployees as $upperEmployee)
-                                                                    <tr>
-                                                                        <td>
-                                                                            <a href="{{ route('admin.employee.show', ['id' => $upperEmployee->employee_id]) }}">{{ $upperEmployee->employee->code }}</a>
-                                                                        </td>
-                                                                        <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
-                                                                        <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
-                                                                    </tr>
+                                                                    @if($upperEmployee->employee_roles_id != 11)
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a href="{{ route('admin.employee.show', ['id' => $upperEmployee->employee_id]) }}">{{ $upperEmployee->employee->code }}</a>
+                                                                            </td>
+                                                                            <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
+                                                                            <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
+                                                                        </tr>
+                                                                    @endif
+                                                                @endforeach
+                                                                @foreach($upperEmployees as $upperEmployee)
+                                                                    @if($upperEmployee->employee_roles_id == 11)
+                                                                        <tr>
+                                                                            <td>
+                                                                                <a href="{{ route('admin.employee.show', ['id' => $upperEmployee->employee_id]) }}">{{ $upperEmployee->employee->code }}</a>
+                                                                            </td>
+                                                                            <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
+                                                                            <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
+                                                                        </tr>
+                                                                    @endif
                                                                 @endforeach
 
                                                                 </tbody>
