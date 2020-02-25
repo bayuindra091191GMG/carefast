@@ -125,6 +125,51 @@ class EmployeeController extends Controller
     }
 
     /**
+     * Function to listing of the employee CSO.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getEmployeeCSOByProject(Request $request)
+    {
+        $userLogin = auth('api')->user();
+        $user = User::where('phone', $userLogin->phone)->first();
+        $employee = $user->employee;
+        $id = $employee->id;
+        try{
+            $projectId = $request->input('project_id');
+//            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+
+            $projectCSOs = ProjectEmployee::where('project_id', $projectId)
+                ->where('employee_roles_id', 1)
+                ->get();
+            $projectCSOModels = collect();
+            //check if cleaner null
+            if($projectCSOs->count() == 0){
+                return Response::json($projectCSOModels, 482);
+            }
+
+            foreach($projectCSOs as $projectCSO){
+                $employee = Employee::find($projectCSO->employee_id);
+                $employeeImage = empty($employee->image_path) ? null : asset('storage/employees/'. $employee->image_path);
+                $projectCSOModel = ([
+                    'id'       => $projectCSO->employee_id,
+                    'name'     => $employee->first_name." ".$employee->last_name,
+                    'avatar'   => $employeeImage,
+                    'role'   => $projectCSO->employee_role->name,
+                ]);
+                $projectCSOModels->push($projectCSOModel);
+            }
+
+            return Response::json($projectCSOModels, 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeController - getEmployeeCSOByProject error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    /**
      * Function to listing of the plotting.
      *
      * @param $id

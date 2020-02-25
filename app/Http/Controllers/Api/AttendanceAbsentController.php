@@ -15,6 +15,7 @@ use App\Models\ProjectObject;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use App\Models\User;
+use App\Notifications\FCMNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -98,6 +99,28 @@ class AttendanceAbsentController extends Controller
 
                     $newAttendance->image_path = $todayStr.'/'.$filename;
                     $newAttendance->save();
+                }
+
+                //Send notification to
+                //Customer
+                $title = "ICare";
+                $body = "Manager sedang meninjau project";
+                $data = array(
+                    "type_id" => 501,
+                );
+                //Push Notification to customer App.
+                if(!empty($project->customer_id)){
+                    if(strpos($project->customer_id, '#') !== false){
+                        $cusArr = explode($project->customer_id, '#');
+                        foreach ($cusArr as $custId){
+                            if(!empty($custId)){
+                                FCMNotification::SendNotification($custId, 'customer', $title, $body, $data);
+                            }
+                        }
+                    }
+                    else{
+                        FCMNotification::SendNotification($project->customer_id, 'customer', $title, $body, $data);
+                    }
                 }
 
                 return Response::json("Berhasil Proses Absensi", 200);

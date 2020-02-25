@@ -11,6 +11,7 @@ use App\Models\Project;
 use App\Models\ProjectActivitiesDetail;
 use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectEmployee;
+use App\Models\ProjectObject;
 use App\Models\Sub1Unit;
 use App\Models\Sub2Unit;
 use App\Models\Unit;
@@ -29,6 +30,8 @@ class DacImport  implements ToCollection, WithStartRow
     */
     public function collection(Collection $rows)
     {
+        $count = 1;
+        $stringError = "";
         try{
 
             $dateTimeNow = Carbon::now('Asia/Jakarta')->toDateTimeString();
@@ -38,20 +41,28 @@ class DacImport  implements ToCollection, WithStartRow
             $projectNameTemp = "";
 
             $headerId = 1;
+            $placeId = 1;
+            $unitId =1;
+            $unitName =1;
+            $subUnit1Id = -1;
+            $subUnit1Name = "-";
+            $subUnit2Id = -1;
+            $subUnit2name = "-";
+
             foreach($rows as $row){
 //                if($count == 6) break;
-                $projectNameRow = $row[0] ?? null;
+                $projectNameRow = strtoupper($row[0]) ?? null;
                 $projectCodeRow = $row[1] ?? null;
                 $shiftRow = $row[2] ?? null;
                 $startTimeRow = $row[3] ?? null;
                 $finishTimeRow = $row[4] ?? null;
-                $placeRow = $row[5] ?? null;
-                $objectRow = $row[6] ?? null;
-                $subObjectOneRow = $row[7] ?? null;
-                $subObjectTwoRow = $row[8] ?? null;
-                $actionRow = $row[9] ?? null;
+                $placeRow = strtoupper($row[5]) ?? null;
+                $objectRow = strtoupper($row[6]) ?? null;
+                $subObjectOneRow = strtoupper($row[7]) ?? null;
+                $subObjectTwoRow = strtoupper($row[8]) ?? null;
+                $actionRow = strtoupper($row[9]) ?? null;
                 $periodRow = $row[10] ?? null;
-                $descriptionRow = $row[11] ?? null;
+                $descriptionRow = strtoupper($row[11]) ?? null;
 
                 if(!empty($projectNameRow)){
                     $projectNameTemp = $projectNameRow;
@@ -60,7 +71,6 @@ class DacImport  implements ToCollection, WithStartRow
 
                 if(!empty($projectDB)){
                     if(empty($projectNameRow) && empty($projectCodeRow) && empty($shiftRow) && empty($startTimeRow) && empty($finishTimeRow)){
-                        $placeId = 1;
                         $placeDb = Place::where('name', $placeRow)->first();
                         if(empty($placeDb)){
                             //save to database
@@ -94,7 +104,7 @@ class DacImport  implements ToCollection, WithStartRow
                         //action checking
                         $actionId = 1;
                         $unitName = "";
-                        if($actionRow == "ISTIRAHAT" || $actionRow == "Istirahat"){
+                        if($actionRow == "ISTIRAHAT"){
                             $actionId = 17;
                             $unitName = "SEMUA AREA";
                         }
@@ -129,6 +139,8 @@ class DacImport  implements ToCollection, WithStartRow
                                         'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                         'updated_by'            => 1,
                                     ]);
+                                    $unitId = $newUnit->id;
+                                    $unitName = $objectRow;
                                 }
                                 $unitName = $objectRow;
                             }
@@ -149,6 +161,8 @@ class DacImport  implements ToCollection, WithStartRow
                                         'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                         'updated_by'            => 1,
                                     ]);
+                                    $subUnit1Id = $newUnit1->id;
+                                    $subUnit1Name = $subObjectOneRow;
                                 }
                                 $unitName = $unitName."--".$objectRow;
                             }
@@ -166,20 +180,55 @@ class DacImport  implements ToCollection, WithStartRow
                                         'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                         'updated_by'            => 1,
                                     ]);
+                                    $subUnit2Id = $newUnit2->id;
+                                    $subUnit2name = $subObjectTwoRow;
                                 }
                                 $unitName = $unitName."--".$objectRow;
+
                             }
                         }
+                        $stringError = $unitName;
 
                         //setting time
+//                        dd($startTimeRow, $finishTimeRow);
                         if(strpos($startTimeRow, '\'') !== false){
                             $startTimeRow = str_replace('\'', '', $startTimeRow);
                         }
+                        else if(is_float($startTimeRow)){
+                            $start = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($startTimeRow))->toDateTimeString();
+//                        dd($start, gettype($start));
+//                            $start = $startTimeRow->toDateTimeString();
+//                            $start = Carbon::parse($startTimeRow)->format('Y-m-d H:i:s');
+
+                        }
+                        else{
+//                            $timArr = explode(':', $startTimeRow);
+//                            if(count($timArr) > 1){
+//                                $startTimeRow = str_replace(":00", '', $startTimeRow);
+//                            }
+//                            $start = Carbon::parse('00-00-00 ' . $startTimeRow)->toDateTimeString();
+//                            dd($start);
+
+                            $start = Carbon::parse('00-00-00 ' . $startTimeRow)->format('Y-m-d H:i:s');
+                        }
+
                         if(strpos($finishTimeRow, '\'') !== false){
                             $finishTimeRow = str_replace('\'', '', $finishTimeRow);
                         }
-                        $start = Carbon::parse('00-00-00 ' . $startTimeRow)->format('Y-m-d H:i:s');
-                        $finish = Carbon::parse('00-00-00 ' . $finishTimeRow)->format('Y-m-d H:i:s');
+                        else if(is_float($finishTimeRow)){
+                            $finish = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($finishTimeRow))->toDateTimeString();
+                        }
+                        else{
+//                            $timArr = explode(':', $finishTimeRow);
+//                            if(count($timArr) > 1){
+//                                $finishTimeRow = str_replace(":00", '', $finishTimeRow);
+//
+//                            }
+//                            $finish = Carbon::parse('00-00-00 ' . $finishTimeRow)->toDateTimeString();
+
+                            $finish = Carbon::parse('00-00-00 ' . $finishTimeRow)->format('Y-m-d H:i:s');
+                        }
+//                        dd($start, $finish);
 
                         //checking period
                         if($periodRow == 'DAILY'){
@@ -218,14 +267,36 @@ class DacImport  implements ToCollection, WithStartRow
                             'updated_by' => 1,
                         ]);
                     }
-                }
 
+                    //set project_object
+                    $existProjectObject = ProjectObject::where('project_id', $projectDB->id)
+                        ->where('place_id', $placeId)
+                        ->where('unit_id', $unitId)
+                        ->where('sub1_unit_id', $subUnit1Id)
+                        ->first();
+                    if(empty($existProjectObject)){
+                        $newProjectObject= ProjectObject::create([
+                            'project_id'        => $projectDB->id,
+                            'place_id'          => $placeId,
+                            'unit_id'           => $unitId,
+                            'sub1_unit_id'      => $subUnit1Id,
+                            'sub2_unit_id'      => $subUnit2Id,
+                            'place_name'        => $placeRow,
+                            'unit_name'         => $unitName,
+                            'sub1_unit_name'    => $subUnit1Name,
+                            'sub2_unit_name'    => $subUnit2name,
+                        ]);
+                    }
+                }
+                $count++;
             }
             return 'success';
 //            dd($customerPhone, $customerName, $projectName);
         }
         catch (\Exception $ex){
+//            dd("count = ".$count, "string = ".$stringError, "error = ".$ex);
             dd($ex);
+            return 'failed';
         }
     }
 
