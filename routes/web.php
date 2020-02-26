@@ -268,6 +268,7 @@ Route::prefix('admin')->group(function(){
     Route::get('/project/object/edit/{id}', 'Admin\project\ProjectObjectController@edit')->name('admin.project.object.edit');
     Route::post('/project/object/store', 'Admin\project\ProjectObjectController@store')->name('admin.project.object.store');
     Route::post('/project/object/update/{id}', 'Admin\project\ProjectObjectController@update')->name('admin.project.object.update');
+    Route::get('/project/object/qr_code/{id}', 'Admin\project\ProjectObjectController@qrcode')->name('admin.project.object.qrcode');
 
     // Project Employee
     Route::get('/project/employee/show/{project_id}', 'Admin\project\ProjectEmployeeController@show')->name('admin.project.employee.show');

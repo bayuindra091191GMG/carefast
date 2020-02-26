@@ -24,6 +24,7 @@ use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
 use App\Models\ProjectObject;
 use App\Models\Schedule;
+use App\Models\ScheduleDetail;
 use App\Models\User;
 use App\Notifications\FCMNotification;
 use Carbon\Carbon;
@@ -329,16 +330,65 @@ class HomeController extends Controller
     }
     public function generalFunction(){
         try{
-            $places = Place::all();
+//            $places = Place::all();
+//
+//            foreach($places as $place){
+//                if(empty($place->qr_code)){
+//                    $number = Utilities::generateBarcodeNumber();
+//                    $place->qr_code = $number;
+//                    $place->save();
+//                }
+//            }
+//            return "yes";
 
-            foreach($places as $place){
-                if(empty($place->qr_code)){
-                    $number = Utilities::generateBarcodeNumber();
-                    $place->qr_code = $number;
-                    $place->save();
+            $plottings = ProjectActivitiesHeader::whereIn('project_id', [119, 80, 45, 275, 299, 14, 313, 65, 10])->get();
+            foreach ($plottings as $plotting){
+                $projectActivity = ProjectActivitiesHeader::find($plotting);
+
+                $projectEmployees = ProjectEmployee::where('project_id', $plotting->id)
+                ->where('employee_roles_id', 1)
+                ->get();
+
+
+                foreach ($projectActivity->project_activities_details as $projectDetail){
+                    $existSchedule = Schedule::where('project_activity_id', $projectActivity->id)
+                        ->where('project_id', $projectActivity->project_id)
+                        ->where('place_id', $projectActivity->place_id)
+                        ->first();
+                        if(empty($existSchedule)){
+                            $schedule = Schedule::create([
+                                'project_id'            => $projectActivity->project_id,
+                                'employee_id'           => $employeeId,
+                                'project_activity_id'   => $projectActivity->id,
+                                'project_employee_id'   => $projectEmployeeCso->id,
+                                'shift_type'            => $projectDetail->shift_type,
+                                'place_id'              => $projectActivity->place_id,
+                                'weeks'                 => $projectDetail->weeks,
+                                'days'                  => $projectDetail->days,
+    //                                'start'                 => $projectDetail->start,
+    //                                'finish'                => $projectDetail->finish,
+                                'status_id'             => 1,
+                                'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'created_by'            => 1,
+                                'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'updated_by'            => 1,
+                            ]);
+                        $projectActivityDetails = ProjectActivitiesDetail::where("activities_header_id", $plotting)->get();
+                        foreach ($projectActivityDetails as $projectActivityDetail){
+                            $scheduleDetail = ScheduleDetail::create([
+                                'schedule_id'           => $schedule->id,
+                                'action_id'             => $projectActivityDetail->action_id,
+                                'start'                 => $projectActivityDetail->start,
+                                'finish'                => $projectActivityDetail->finish,
+                                'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'created_by'            => 1,
+                                'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                'updated_by'            => 1,
+                            ]);
+                        }
+                    }
                 }
             }
-            return "yes";
 
 //            $ids = [6033, 6034, 6035];
 //            $ids = [6013, 6017, 6022, 6024, 6025,

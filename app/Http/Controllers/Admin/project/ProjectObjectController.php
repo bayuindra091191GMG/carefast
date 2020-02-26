@@ -235,6 +235,32 @@ class ProjectObjectController extends Controller
         return view('admin.project.object.edit')->with($data);
     }
 
+    public function qrcode(int $id)
+    {
+        $project = Project::find($id);
+        if(empty($project)){
+            return redirect()->back();
+        }
+        $projectObject = $project->project_objects->sortBy('place_id');
+        $placeArr = collect();
+        foreach ($projectObject as $Object){
+            $placeModel = [
+                'id'       => $Object->place->id,
+                'name'     => $Object->place->name,
+                'qr_code'   => $Object->place->qr_code,
+            ];
+            $placeArr->push($placeModel);
+        }
+        $data = [
+            'project'           => $project,
+            'projectObjects'     => $projectObject,
+            'projectObjectCount'     => $projectObject->count(),
+            'placeArr'     => $placeArr,
+        ];
+//        dd($data);
+        return view('admin.project.object.qrcode')->with($data);
+    }
+
     public function update(Request $request, int $id){
         try{
             $projectObjectIds = $request->input('id');

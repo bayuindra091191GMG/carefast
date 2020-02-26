@@ -111,7 +111,7 @@ class AttendanceAbsentController extends Controller
                 //Push Notification to customer App.
                 if(!empty($project->customer_id)){
                     if(strpos($project->customer_id, '#') !== false){
-                        $cusArr = explode($project->customer_id, '#');
+                        $cusArr = explode('#', $project->customer_id);
                         foreach ($cusArr as $custId){
                             if(!empty($custId)){
                                 FCMNotification::SendNotification($custId, 'customer', $title, $body, $data);
