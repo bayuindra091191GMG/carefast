@@ -34,6 +34,29 @@ class IntegrationController extends Controller
         try {
             $employees = $request->json()->all();
 
+            $rules = array(
+                'code'          => 'required',
+                'first_name'    => 'required',
+                'last_name'     => 'required',
+                'phone'         => 'required',
+                'dob'           => 'required',
+                'nik'           => 'required',
+                'address'       => 'required',
+                'role'          => 'required'
+            );
+
+            $data = $request->json()->all();
+            $validator = Validator::make($data, $rules);
+
+            if ($validator->fails()) {
+                return Response::json([
+                    'errors'=> $validator->messages(),
+                    'meta'  => [
+                        'http_status' => 400
+                    ]
+                ], 400);
+            }
+
             foreach ($employees as $employee) {
                 if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
                     $nEmployee = Employee::create([
@@ -92,6 +115,28 @@ class IntegrationController extends Controller
     public function projects(Request $request){
         try {
             $projects = $request->json()->all();
+
+            $rules = array(
+                'code'          => 'required',
+                'name'          => 'required',
+                'description'   => 'required',
+                'phone'         => 'required',
+                'start_date'    => 'required',
+                'finish_date'   => 'required',
+                'address'       => 'required'
+            );
+
+            $data = $request->json()->all();
+            $validator = Validator::make($data, $rules);
+
+            if ($validator->fails()) {
+                return Response::json([
+                    'errors'=> $validator->messages(),
+                    'meta'  => [
+                        'http_status' => 400
+                    ]
+                ], 400);
+            }
 
             foreach ($projects as $project) {
                 if (!DB::table('projects')->where('code', $project['code'])->exists()) {
