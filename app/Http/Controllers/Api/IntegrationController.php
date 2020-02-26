@@ -3,16 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
-use App\Models\Address;
 use App\Models\AttendanceAbsent;
-use App\Models\Configuration;
 use App\Models\Employee;
 use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\User;
-use App\Notifications\FCMNotification;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +15,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use Intervention\Image\Facades\Image;
 
 class IntegrationController extends Controller
 {
@@ -34,30 +28,29 @@ class IntegrationController extends Controller
         try {
             $employees = $request->json()->all();
 
-            $rules = array(
-                'code'          => 'required',
-                'first_name'    => 'required',
-                'last_name'     => 'required',
-                'phone'         => 'required',
-                'dob'           => 'required',
-                'nik'           => 'required',
-                'address'       => 'required',
-                'role'          => 'required'
-            );
-
-            $data = $request->json()->all();
-            $validator = Validator::make($data, $rules);
-
-            if ($validator->fails()) {
-                return Response::json([
-                    'errors'=> $validator->messages(),
-                    'meta'  => [
-                        'http_status' => 400
-                    ]
-                ], 400);
-            }
-
             foreach ($employees as $employee) {
+                $rules = array(
+                    'code'          => 'required',
+                    'first_name'    => 'required',
+                    'last_name'     => 'required',
+                    'phone'         => 'required',
+                    'dob'           => 'required',
+                    'nik'           => 'required',
+                    'address'       => 'required',
+                    'role'          => 'required'
+                );
+
+                $validator = Validator::make($employee, $rules);
+
+                if ($validator->fails()) {
+                    return Response::json([
+                        'errors'=> $validator->messages(),
+                        'meta'  => [
+                            'http_status' => 400
+                        ]
+                    ], 400);
+                }
+
                 if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
                     $nEmployee = Employee::create([
                         'code' => $employee['code'],
@@ -99,7 +92,7 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
-            Log::error('API/IntegrationController - employees error EX: '. $ex);
+            Log::channel('in_sys')->error($ex);
             return Response::json([
                 'error' => $ex
             ], 500);
@@ -116,29 +109,28 @@ class IntegrationController extends Controller
         try {
             $projects = $request->json()->all();
 
-            $rules = array(
-                'code'          => 'required',
-                'name'          => 'required',
-                'description'   => 'required',
-                'phone'         => 'required',
-                'start_date'    => 'required',
-                'finish_date'   => 'required',
-                'address'       => 'required'
-            );
-
-            $data = $request->json()->all();
-            $validator = Validator::make($data, $rules);
-
-            if ($validator->fails()) {
-                return Response::json([
-                    'errors'=> $validator->messages(),
-                    'meta'  => [
-                        'http_status' => 400
-                    ]
-                ], 400);
-            }
-
             foreach ($projects as $project) {
+                $rules = array(
+                    'code'          => 'required',
+                    'name'          => 'required',
+                    'description'   => 'required',
+                    'phone'         => 'required',
+                    'start_date'    => 'required',
+                    'finish_date'   => 'required',
+                    'address'       => 'required'
+                );
+
+                $validator = Validator::make($project, $rules);
+
+                if ($validator->fails()) {
+                    return Response::json([
+                        'errors'=> $validator->messages(),
+                        'meta'  => [
+                            'http_status' => 400
+                        ]
+                    ], 400);
+                }
+
                 if (!DB::table('projects')->where('code', $project['code'])->exists()) {
                     Project::create([
                         'code' => $project['code'],
@@ -175,7 +167,7 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
-            Log::error('API/IntegrationController - projects error EX: '. $ex);
+            Log::channel('in_sys')->error($ex);
             return Response::json([
                 'error' => $ex
             ], 500);
@@ -193,6 +185,22 @@ class IntegrationController extends Controller
             $projects = $request->json()->all();
 
             foreach ($projects as $project){
+                $rules = array(
+                    'project_code'  => 'required',
+                    'employee_code' => 'required|array|min:1'
+                );
+
+                $validator = Validator::make($project, $rules);
+
+                if ($validator->fails()) {
+                    return Response::json([
+                        'errors'=> $validator->messages(),
+                        'meta'  => [
+                            'http_status' => 400
+                        ]
+                    ], 400);
+                }
+
                 if(DB::table('projects')->where('code', $project['project_code'])->exists()){
                     $nProject = Project::where('code', $project['project_code'])->first();
 

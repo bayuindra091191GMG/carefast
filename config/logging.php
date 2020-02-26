@@ -107,6 +107,13 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+
+        'in_sys' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/insys/insys.log'),
+            'level' => 'debug',
+            'days' => 31,
+        ],
     ],
 
 ];
