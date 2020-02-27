@@ -50,7 +50,7 @@
                                                 @else
                                                     <a href="{{ route('admin.project.object.edit', ['id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
                                                 @endif
-                                                <a href="{{ route('admin.project.object.qrcode', ['id' => $project->id]) }}" class="btn btn-primary">PRINT QR CODE</a>
+                                                <a href="{{ route('admin.project.object.qrcode', ['id' => $project->id]) }}" class="btn btn-primary">SHOW QR CODE</a>
                                             </div>
                                             <div class="body">
 

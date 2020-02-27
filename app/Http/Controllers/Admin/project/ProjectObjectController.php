@@ -235,21 +235,40 @@ class ProjectObjectController extends Controller
         return view('admin.project.object.edit')->with($data);
     }
 
-    public function qrcode(int $id)
+    public function qrcode(Request $request, int $id)
     {
+        $type = "show";
+        if(!empty($request->type)){
+            $type = $request->type;
+        }
+
         $project = Project::find($id);
         if(empty($project)){
             return redirect()->back();
         }
         $projectObject = $project->project_objects->sortBy('place_id');
         $placeArr = collect();
+        $placeIdArr = [];
+
+        $projectModel = [
+            'id'       => 0,
+            'name'     => $project->name,
+            'qr_code'   => $project->code,
+        ];
+        array_push($placeIdArr, 0);
+        $placeArr->push($projectModel);
+
         foreach ($projectObject as $Object){
             $placeModel = [
                 'id'       => $Object->place->id,
                 'name'     => $Object->place->name,
                 'qr_code'   => $Object->place->qr_code,
             ];
-            $placeArr->push($placeModel);
+            if (!(in_array($Object->place->id, $placeIdArr)))
+            {
+                $placeArr->push($placeModel);
+                array_push($placeIdArr, $Object->place->id);
+            }
         }
         $data = [
             'project'           => $project,
@@ -258,7 +277,12 @@ class ProjectObjectController extends Controller
             'placeArr'     => $placeArr,
         ];
 //        dd($data);
-        return view('admin.project.object.qrcode')->with($data);
+        if($type == "show"){
+            return view('admin.project.object.qrcode')->with($data);
+        }
+        else{
+            return view('admin.project.object.qrcode-print')->with($data);
+        }
     }
 
     public function update(Request $request, int $id){
