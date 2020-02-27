@@ -192,7 +192,7 @@ class ComplainController extends Controller
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
-                ->where('employee_roles_id', $employeeDB->employee_roles_id)
+                ->where('employee_roles_id', '>', 1)
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
@@ -299,7 +299,7 @@ class ComplainController extends Controller
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
                 ->where('employee_roles_id', '!=', 1)
-                ->where('employee_roles_id', '<=', $complaint->employee_handler_role_id)
+                ->where('employee_roles_id', '>', 1)
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
@@ -453,7 +453,7 @@ class ComplainController extends Controller
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
-                ->where('employee_roles_id', $employeeDB->employee_roles_id)
+                ->where('employee_roles_id', '>', 1)
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
@@ -551,8 +551,15 @@ class ComplainController extends Controller
                 FCMNotification::SendNotification($complaint->customer_id, 'customer', $title, $body, $data);
             }
             //Push Notification to employee App.
-            if(!empty($complaint->customer_id)){
-                FCMNotification::SendNotification($complaint->employee_id, 'user', $title, $body, $data);
+            $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
+                ->where('employee_roles_id', '>', 1)
+                ->where('employee_id', '!=', $complaint->employee_id)
+                ->get();
+            if($ProjectEmployees->count() >= 0){
+                foreach ($ProjectEmployees as $ProjectEmployee){
+                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                }
             }
 
             return Response::json($employeeComplaintDetailModel, 200);

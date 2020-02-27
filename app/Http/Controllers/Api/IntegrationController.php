@@ -32,11 +32,11 @@ class IntegrationController extends Controller
                 $rules = array(
                     'code'          => 'required',
                     'first_name'    => 'required',
-                    'last_name'     => 'required',
+//                    'last_name'     => 'required',
                     'phone'         => 'required',
                     'dob'           => 'required',
                     'nik'           => 'required',
-                    'address'       => 'required',
+//                    'address'       => 'required',
                     'role'          => 'required'
                 );
 
@@ -56,7 +56,7 @@ class IntegrationController extends Controller
                         'code' => $employee['code'],
                         'first_name' => $employee['first_name'],
                         'last_name' => $employee['last_name'],
-                        'phone' => $employee['phone'],
+                        'phone' => $employee['phone'] ?? "12345",
                         'dob' => $employee['dob'],
                         'nik' => $employee['nik'],
                         'address' => $employee['address'],
@@ -66,23 +66,23 @@ class IntegrationController extends Controller
 
                     User::create([
                         'employee_id' => $nEmployee->id,
-                        'name' => $employee['first_name'] . ' ' . $employee['last_name'],
+                        'name' => $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'],
                         'phone' => $employee['phone'],
                         'password' => Hash::make('carefastid')
                     ]);
                 } else {
                     $oEmployee = Employee::where('code', $employee['code'])->first();
                     $oEmployee->first_name = $employee['first_name'];
-                    $oEmployee->last_name = $employee['last_name'];
-                    $oEmployee->phone = $employee['phone'];
+                    $oEmployee->last_name = $employee['last_name'] ?? "";
+                    $oEmployee->phone = $employee['phone'] ?? "12345";
                     $oEmployee->dob = $employee['dob'];
                     $oEmployee->nik = $employee['nik'];
-                    $oEmployee->address = $employee['address'];
+                    $oEmployee->address = $employee['address'] ?? "";
                     $oEmployee->save();
 
                     $oUser = User::where('employee_id', $oEmployee->id)->first();
                     $oUser->phone = $employee['phone'];
-                    $oUser->name = $employee['first_name'] . ' ' . $employee['last_name'];
+                    $oUser->name = $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'];
                     $oUser->save();
                 }
             }
@@ -113,11 +113,11 @@ class IntegrationController extends Controller
                 $rules = array(
                     'code'          => 'required',
                     'name'          => 'required',
-                    'description'   => 'required',
-                    'phone'         => 'required',
+//                    'description'   => 'required',
+//                    'phone'         => 'required',
                     'start_date'    => 'required',
                     'finish_date'   => 'required',
-                    'address'       => 'required'
+//                    'address'       => 'required'
                 );
 
                 $validator = Validator::make($project, $rules);
@@ -135,9 +135,9 @@ class IntegrationController extends Controller
                     Project::create([
                         'code' => $project['code'],
                         'name' => $project['name'],
-                        'phone' => $project['phone'],
-                        'address' => $project['address'],
-                        'description' => $project['description'],
+                        'phone' => $project['phone'] ?? "12345",
+                        'address' => $project['address'] ?? " ",
+                        'description' => $project['description'] ?? " ",
                         'start_date' => $project['start_date'],
                         'finish_date' => $project['finish_date'],
                         'status_id' => 1,

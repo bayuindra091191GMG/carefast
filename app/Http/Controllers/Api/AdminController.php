@@ -59,7 +59,7 @@ class AdminController extends Controller
                 'transaction_no' => $header->transaction_no,
                 'name' => $userName
             );
-            $isSuccess = FCMNotification::SendNotification($header->created_by_admin, 'app', $title, $body, $data);
+//            $isSuccess = FCMNotification::SendNotification($header->created_by_admin, 'app', $title, $body, $data);
 
             return Response::json("Transaction Confirmed!", 200);
         }
@@ -106,7 +106,7 @@ class AdminController extends Controller
             );
 
 //            FCMNotification::SendNotification($header->created_by_admin, 'browser', $title, $body, $data);
-            FCMNotification::SendNotification($user->id, 'app', $title, $body, $data);
+//            FCMNotification::SendNotification($user->id, 'app', $title, $body, $data);
 
             return Response::json([
                 'message' => "Success assign " . $user->email . " to " . $header->transaction_no . "!",
