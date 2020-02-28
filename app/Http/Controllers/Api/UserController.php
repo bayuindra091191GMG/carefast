@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\Address;
 use App\Models\Configuration;
+use App\Models\FcmTokenUser;
 use App\Models\ProjectEmployee;
 use App\Models\User;
 use App\Notifications\FCMNotification;
@@ -151,6 +152,44 @@ class UserController extends Controller
             Log::error('Api/UserController - show error EX: '. $ex);
             return Response::json([
                 'error'   => $ex,
+            ], 500);
+        }
+    }
+
+
+    public function logout(Request $request){
+        try{
+
+            Log::info($request->getContent());
+
+            //$token = $request->input('fmc_token');
+            $json = json_decode($request->getContent());
+
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $token = $json->fcm_token;
+
+            if(empty($user)){
+                return Response::json('INVALID', 400);
+            }
+
+            $fcmToken = FcmTokenUser::where('user_id', $user->id)
+                ->where('token', $token)
+                ->first();
+
+            if(!empty($fcmToken)){
+                $fcmToken->delete();
+            }
+            else{
+                Log::info('TOKEN NOT FOUND: '. $token);
+            }
+
+            return Response::json('SUCCESS', 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/UserController - logout error EX: '. $ex);
+            return Response::json([
+                'error'       => $ex,
             ], 500);
         }
     }

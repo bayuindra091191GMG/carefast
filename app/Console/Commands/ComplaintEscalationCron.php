@@ -66,17 +66,32 @@ class ComplaintEscalationCron extends Command
 
                     //send notif to employee escalation
                     $messageImage = empty($complaintDB->image) ? null : asset('storage/complaints/'. $complaintDB->image);
-                    $customerComplaintDetailModel = ([
-                        'customer_id'       => $complaintDB->customer_id,
-                        'customer_name'     => $complaintDB->customer->name,
-                        'customer_avatar'    => asset('storage/customers/'. $complaintDB->customer->image_path),
-                        'employee_id'       => null,
-                        'employee_name'     => "",
-                        'employee_avatar'    => "",
-                        'message'           => $complaintDB->message,
-                        'image'             => $messageImage,
-                        'date'              => Carbon::parse($complaintDB->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                    ]);
+                    if(!empty($complaintDB->customer_id)){
+                        $customerComplaintDetailModel = ([
+                            'customer_id'       => $complaintDB->customer_id,
+                            'customer_name'     => $complaintDB->customer->name,
+                            'customer_avatar'    => asset('storage/customers/'. $complaintDB->customer->image_path),
+                            'employee_id'       => null,
+                            'employee_name'     => "",
+                            'employee_avatar'    => "",
+                            'message'           => $complaintDB->message,
+                            'image'             => $messageImage,
+                            'date'              => Carbon::parse($complaintDB->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                        ]);
+                    }
+                    else{
+                        $customerComplaintDetailModel = ([
+                            'customer_id'       => null,
+                            'customer_name'     => "",
+                            'customer_avatar'    => "",
+                            'employee_id'       => $complaintDB->employee_id,
+                            'employee_name'     => $complaintDB->employee->first_name." ".$complaintDB->employee->last_name,
+                            'employee_avatar'    => asset('storage/employees/'. $complaintDB->employee->image_path),
+                            'message'           => $complaintDB->message,
+                            'image'             => $messageImage,
+                            'date'              => Carbon::parse($complaintDB->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                        ]);
+                    }
                     $title = "ICare";
                     $body = "Customer complaint terjadi eskalasi";
                     $data = array(

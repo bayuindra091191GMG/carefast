@@ -7,6 +7,8 @@ use App\Models\AttendanceAbsent;
 use App\Models\Employee;
 use App\Models\Project;
 use App\Models\ProjectEmployee;
+use App\Models\TempInsysEmploye;
+use App\Models\TempInsysProject;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,6 +52,17 @@ class IntegrationController extends Controller
                         ]
                     ], 400);
                 }
+
+                TempInsysEmploye::create([
+                    'code' => $employee['code'],
+                    'first_name' => $employee['first_name'],
+                    'last_name' => $employee['last_name'],
+                    'phone' => $employee['phone'] ?? "12345",
+                    'dob' => $employee['dob'],
+                    'nik' => $employee['nik'],
+                    'address' => $employee['address'],
+                    'employee_role' => $employee['role'],
+                ]);
 
                 if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
                     $nEmployee = Employee::create([
@@ -130,6 +143,17 @@ class IntegrationController extends Controller
                         ]
                     ], 400);
                 }
+                //add to temp table
+
+                TempInsysProject::create([
+                    'code' => $project['code'],
+                    'name' => $project['name'],
+                    'phone' => $project['phone'],
+                    'address' => $project['address'],
+                    'description' => $project['description'],
+                    'start_date' => $project['start_date'],
+                    'finish_date' => $project['finish_date'],
+                ]);
 
                 if (!DB::table('projects')->where('code', $project['code'])->exists()) {
                     Project::create([

@@ -42,7 +42,10 @@ Route::get('/complaint-categories', 'Api\ComplainController@complaintCategories'
 //User Management
 //Route::group(['namespace' => 'Api', 'middleware' => 'api', 'prefix' => 'user'], function () {
 Route::middleware('auth:api')->prefix('user')->group(function(){
-    //New Route Start
+    Route::get('/get-user-data', 'Api\UserController@show');
+    Route::post('/save-user-device', 'Api\UserController@saveUserToken');
+    Route::post('/logout', 'Api\UserController@logout');
+
     //Place
     Route::post('/places/get/place-by-qr', 'Api\PlaceController@getPlaceByQr');
 
@@ -69,9 +72,6 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::get('/employee/get-direct-cso/', 'Api\EmployeeController@getEmployeeCSO');
     Route::post('/employee/get-cso-by-project/', 'Api\EmployeeController@getEmployeeCSOByProject');
     Route::get('/employee/get-assessment-history/', 'Api\EmployeeController@employeeAssessments');
-
-    Route::get('/get-user-data', 'Api\UserController@show');
-    Route::post('/save-user-device', 'Api\UserController@saveUserToken');
 
     // Complaint
     Route::post('/get-complaints', 'Api\ComplainController@getComplaintEmployee');

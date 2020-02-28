@@ -551,16 +551,18 @@ class ComplainController extends Controller
                 FCMNotification::SendNotification($complaint->customer_id, 'customer', $title, $body, $data);
             }
             //Push Notification to employee App.
-            $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
+            $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
                 ->where('employee_roles_id', '>', 1)
-                ->where('employee_id', '!=', $complaint->employee_id)
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
-                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
-                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                    if($ProjectEmployee->employee_id != $employee->id){
+                        $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                        FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                    }
                 }
             }
+            Log::error('Api/ComplainController - replyComplaintEmployee log asal');
 
             return Response::json($employeeComplaintDetailModel, 200);
         }
