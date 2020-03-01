@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\project;
 
 
 use App\Http\Controllers\Controller;
+use App\libs\Utilities;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\EmployeeRole;
@@ -109,17 +110,24 @@ class ProjectObjectController extends Controller
                     $selectedPlaceName = $placeDB->name;
                 }
                 else{
-                    $placeDBNew = Place::create([
-                        'name'              => strtoupper($placeNews[$i]),
-                        'description'       => strtoupper($placeNews[$i]),
-                        'status_id'         => 1,
-                        'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'created_by'        => $user->id,
-                        'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                        'updated_by'        => $user->id,
-                    ]);
-                    $selectedPlace = $placeDBNew->id;
-                    $selectedPlaceName = $placeDBNew->name;
+                    $placeSearchDB = Place::where('name', strtoupper($placeNews[$i]))->first();
+                    if(empty($placeSearchDB)){
+                        $placeDBNew = Place::create([
+                            'name'              => strtoupper($placeNews[$i]),
+                            'description'       => strtoupper($placeNews[$i]),
+                            'status_id'         => 1,
+                            'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'created_by'        => $user->id,
+                            'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                            'updated_by'        => $user->id,
+                        ]);
+                        $selectedPlace = $placeDBNew->id;
+                        $selectedPlaceName = $placeDBNew->name;
+                    }
+                    else{
+                        $selectedPlace = $placeSearchDB->id;
+                        $selectedPlaceName = $placeSearchDB->name;
+                    }
                 }
 
                 //check if any new unit, then create new unit, else use selected unit
@@ -326,6 +334,7 @@ class ProjectObjectController extends Controller
                         'name'              => strtoupper($placeNews[$i]),
                         'description'       => strtoupper($placeNews[$i]),
                         'status_id'         => 1,
+                        'qr_code'           => Utilities::generateBarcodeNumber(),
                         'created_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                         'created_by'        => $user->id,
                         'updated_at'        => Carbon::now('Asia/Jakarta')->toDateTimeString(),

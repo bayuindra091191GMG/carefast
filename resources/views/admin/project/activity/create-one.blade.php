@@ -44,7 +44,7 @@
 
                                                 <div class="col-md-12">
                                                     <div class="row">
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label">Shift*</label>
@@ -56,7 +56,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label" for="place0">Place*</label>
@@ -64,15 +64,15 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group form-float form-group-lg">
-                                                                <div class="form-line">
-                                                                    <label class="form-label" for="project_object0">Object / Sub Object*</label>
-                                                                        <select id="project_object0" name="project_objects0[]"
-                                                                                class='form-control' multiple="multiple"></select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+{{--                                                        <div class="col-md-4">--}}
+{{--                                                            <div class="form-group form-float form-group-lg">--}}
+{{--                                                                <div class="form-line">--}}
+{{--                                                                    <label class="form-label" for="project_object0">Object / Sub Object*</label>--}}
+{{--                                                                        <select id="project_object0" name="project_objects0[]"--}}
+{{--                                                                                class='form-control' multiple="multiple"></select>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
                                                     </div>
                                                 </div>
 
@@ -271,6 +271,11 @@
             var finishTimeString = $('#finish-shift').val();
             var interval = parseInt($('#interval').val());
             var startTime = moment(startTimeString, 'HH:mm');
+
+
+            for(let a=0; a<i; a++){
+                $("#sch"+(a)).remove();
+            }
 
             if((startTimeString !== '') && (finishTimeString !== '')){
                 for(var ct=0; ct<100; ct++){

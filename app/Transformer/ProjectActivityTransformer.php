@@ -21,26 +21,27 @@ class ProjectActivityTransformer extends TransformerAbstract
     public function transform(ProjectActivitiesDetail $project){
 
         try{
-            $routeEditUrl = route('admin.project.activity.edit', ['id' => $project->activities_header_id]);
+            $routeEditUrl = route('admin.project.activity.edit', ['id' => $project->id]);
             $actionName = "";
             if(!empty($project->action_id)){
                 $actionList = explode('#', $project->action_id);
                 foreach ($actionList as $action){
                     if(!empty($action)){
                         $action = Action::find($action);
-                        $actionName .= $action->name. " - ";
+                        $actionName .= $action->name. " ";
                     }
                 }
             }
-//            $action = "<a href='".$routeEditUrl."' class='btn btn-primary'>UBAH</a>";
-            $action = "<a href='#' class='btn btn-primary'>UBAH</a>";
+            $action = "<a href='".$routeEditUrl."' class='btn btn-primary'>UBAH</a>";
+//            $action = "<a href='#' class='btn btn-primary'>UBAH</a>";
             $activityHeader = ProjectActivitiesHeader::find($project->activities_header_id);
 
             return[
                 'time'              => Carbon::parse($project->start)->format('H:i')." - ".Carbon::parse($project->finish)->format('H:i'),
                 'shift'             => $project->shift_type,
                 'period_type'       => $project->period_type,
-                'place_object_name'        => $activityHeader->place->name." - ".$activityHeader->plotting_name,
+                'place'             => $activityHeader->place->name,
+                'object_name'        => $project->object_name,
                 'action_name'       => $actionName,
                 'action'            => $action
             ];

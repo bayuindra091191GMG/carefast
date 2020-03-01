@@ -74,7 +74,7 @@
         <div class="col-sm-12">
             <div class="row">
                 <div class="col-sm-12">
-                    <a href="{{ route('admin.project.attendance.show', ['id' => $project->id]) }}" class="btn btn-outline-primary float-left mr-3">
+                    <a href="{{ route('admin.project.object.qrcode', ['id' => $project->id]) }}" class="btn btn-outline-primary float-left mr-3">
                         Back
                     </a>
                     <h3>PROJECT {{ $project->name }}</h3>

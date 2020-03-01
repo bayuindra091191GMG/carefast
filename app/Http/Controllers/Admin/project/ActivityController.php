@@ -261,6 +261,12 @@ class ActivityController extends Controller
     {
         try{
             Log::info('Admin/activity/ActivityController - store request data : '. json_encode($request->input('times')));
+
+//            return response()->json([
+//                'request' => $request,
+//                'url' => route('admin.project.activity.show', ['id' => (int)$request->input('project_id')])
+//            ]);
+
             $items = $request->input('times');
             $user = Auth::guard('admin')->user();
 
@@ -279,6 +285,10 @@ class ActivityController extends Controller
                 //save to database for daily plot
                 if(!empty($item["daily_datas"])){
                     foreach ($item["daily_datas"] as $dailyData){
+                        $objectStringDaily = "";
+                        foreach ($dailyData["Object"] as $objectDaily){
+                            $objectStringDaily = $objectStringDaily."".$objectDaily.",";
+                        }
                         $actionArr = explode("-",$dailyData["Action"]);
                         $action = $actionArr[0]."#";
 
@@ -296,6 +306,7 @@ class ActivityController extends Controller
                                 'days' => "1#2#3#4#5#6#7#",
                                 'start' => $start,
                                 'finish' => $finish,
+                                'object_name' => $objectStringDaily,
                                 'period_type' => "Daily",
                                 'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                 'created_by' => $user->id,
@@ -310,6 +321,10 @@ class ActivityController extends Controller
                 if(!empty($item["weekly_datas"])){
                     $i = 1;
                     foreach ($item["weekly_datas"] as $weeklyData){
+                        $objectStringWeekly = "";
+                        foreach ($weeklyData["Object"] as $objectWeekly){
+                            $objectStringWeekly = $objectStringWeekly."".$objectWeekly.",";
+                        }
                         $actionArr = explode("-",$weeklyData["Action"]);
                         $actionWeekly = $actionArr[0]."#";
 
@@ -327,6 +342,7 @@ class ActivityController extends Controller
                                 'days' => $weeklyData['Day'],
                                 'start' => $startWeek,
                                 'finish' => $finishWeek,
+                                'object_name' => $objectStringWeekly,
                                 'period_type' => "Weekly",
                                 'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                 'created_by' => $user->id,
@@ -341,10 +357,10 @@ class ActivityController extends Controller
                 if(!empty($item["monthly_datas"])){
                     $i = 1;
                     foreach ($item["monthly_datas"] as $monthlyData){
-//                        $objectStringMonthly = "";
-//                        foreach ($monthlyData["Object"] as $objectWeekly){
-//                            $objectStringMonthly = $objectStringMonthly."".$objectWeekly.",";
-//                        }
+                        $objectStringMonthly = "";
+                        foreach ($monthlyData["Object"] as $objectMonthly){
+                            $objectStringMonthly = $objectStringMonthly."".$objectMonthly.",";
+                        }
                         $actionArr = explode("-", $monthlyData["Action"]);
                         $actionMonthly = $actionArr[0]."#";
 
@@ -361,6 +377,7 @@ class ActivityController extends Controller
                                 'days'                  => $monthlyData['Day'],
                                 'start'                 => $startMonth,
                                 'finish'                => $finishMonth,
+                                'object_name'           => $objectStringMonthly,
                                 'period_type'           => "Monthly",
                                 'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                                 'created_by'            => $user->id,
@@ -490,14 +507,26 @@ class ActivityController extends Controller
 
     public function edit(int $id)
     {
-        $projectActivity = ProjectActivitiesHeader::find($id);
-        $project = Project::find($projectActivity->project_id);
+        $projectActivity = ProjectActivitiesDetail::find($id);
+        $projectActivityHeader = ProjectActivitiesHeader::find($projectActivity->activities_header_id);
+        $project = Project::find($projectActivityHeader->project_id);
         if(empty($projectActivity)){
             return redirect()->back();
         }
-
+        $actionName = "";
+        if(!empty($projectActivity->action_id)){
+            $actionList = explode('#', $projectActivity->action_id);
+            foreach ($actionList as $action){
+                if(!empty($action)){
+                    $action = Action::find($action);
+                    $actionName .= $action->name. " ";
+                }
+            }
+        }
         $data = [
             'projectActivity'           => $projectActivity,
+            'projectActivityHeader'           => $projectActivityHeader,
+            'actionName'           => $actionName,
             'project'           => $project,
         ];
 //        dd($data);
@@ -506,6 +535,48 @@ class ActivityController extends Controller
 
     public function update(Request $request, int $id){
         try{
+
+//            dd($request);
+            $activityDetailId = $request->input('project_activity_detail');
+            $actions0 = $request->input('actions0');
+            $actionNew = $request->input('actionNew');
+            $projectObjects = $request->input('project_objects0');
+
+            $objectString = "";
+            for($i=0;$i<count($projectObjects);$i++){
+                if($i == count($projectObjects)-1){
+                    $objectString = $objectString.$projectObjects[$i];
+                }
+                else{
+                    $objectString = $objectString.$projectObjects[$i].", ";
+                }
+            }
+
+            $projectDetailDB = ProjectActivitiesDetail::find($activityDetailId);
+            $projectDetailDB->object_name = $objectString;
+
+            if(!empty($actions0) && empty($actionNew)){
+                $actionArr = explode("-", $actions0);
+                $action = $actionArr[0]."#";
+                $projectDetailDB->action_id = $action;
+            }
+            if(!empty($actionNew)){
+                $user = Auth::guard('admin')->user();
+                $dateNow = Carbon::now('Asia/Jakarta')->toDateTimeString();
+
+                $actionNewDb = Action::create([
+                    'name'          => strtoupper($actionNew),
+                    'description'   => strtoupper($actionNew),
+                    'status_id'     => 1,
+                    'created_at'    => $dateNow,
+                    'created_by'    => $user->id,
+                    'updated_at'    => $dateNow,
+                    'updated_by'    => $user->id
+                ]);
+                $action = $actionNewDb."#";
+                $projectDetailDB->action_id = $action;
+            }
+            $projectDetailDB->save();
 
             Session::flash('success', 'Sukses mengubah data plotting!');
             return redirect()->route('admin.project.activity.show',['id' => $id]);

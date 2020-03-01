@@ -92,7 +92,8 @@
                                                                     <td style="padding: 0 5px 0 5px">@{{ plotList.Action }}</td>
                                                                     <td style="padding: 0 5px 0 5px">@{{ plotList.Period }}</td>
                                                                     <td style="padding: 0 5px 0 5px">
-                                                                        <a class="btn btn-danger btn-md">Delete</a>
+{{--                                                                        <a class="btn btn-danger btn-md">Delete</a>--}}
+                                                                        <a class="btn btn-danger btn-md" style="cursor: pointer" v-on:click="removePlotlist(plotList)">Delete</a>
                                                                     </td>
                                                                 </tr>
                                                                 </tbody>
@@ -176,7 +177,7 @@
 
                                                 <div class="col-md-12">
                                                     <div class="row">
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-4">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label" >
@@ -191,7 +192,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6">
+                                                        <div class="col-md-4">
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label">Action*</label>
@@ -202,25 +203,37 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <div class="form-line">
+                                                                    <label class="form-label">Object / Sub Object*</label>
+                                                                    {{--                                                                    <select id="project_object0" name="project_objects0[]" v-model="project_objects"--}}
+                                                                    {{--                                                                            class='form-control' multiple="multiple"></select>--}}
+
+                                                                    <select2 name="project_objects0[]" v-model="project_objects" url="{{route('select.projectObjectActivities', ['project_id'=>$project->id, 'place_id'=>$place->id]) }}" placeholder=" -- Pilih Object -- " multiple="multiple">
+                                                                    </select2>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-12">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group form-float form-group-lg">
-                                                                <div class="form-line">
+{{--                                                <div class="col-md-12">--}}
+{{--                                                    <div class="row">--}}
+{{--                                                        <div class="col-md-6">--}}
+{{--                                                            <div class="form-group form-float form-group-lg">--}}
+{{--                                                                <div class="form-line">--}}
 {{--                                                                    <label class="form-label">Object / Sub Object*</label>--}}
 {{--                                                                    <select id="project_object0" name="project_objects0[]" v-model="project_objects"--}}
 {{--                                                                            class='form-control' multiple="multiple"></select>--}}
 
 {{--                                                                    <select2 name="project_objects0[]" v-model="project_objects" url="{{route('select.projectObjectActivities', ['project_id'=>$project->id, 'place_id'=>$place->id]) }}" placeholder=" -- Pilih Object -- " multiple="multiple">--}}
 {{--                                                                    </select2>--}}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+{{--                                                                </div>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
 
                                                 <div class="col-md-12 p-t-20">
                                                     <a class="btn btn-success" style="color: #fff;" v-on:click="changePlotting">Ganti</a>
@@ -490,7 +503,8 @@
                 var period = this.period;
                 var period_string = "";
                 var selected_time = this.selected_time;
-                var project_objects = this.object;
+                // var project_objects = this.object;
+                var project_objects = this.project_objects;
                 var selected_day = this.selectedDay;
                 var selected_weeks = this.selectedWeeks;
                 var actions = this.actions;
@@ -644,6 +658,15 @@
                     Action :  splitVar[1],
                     Period :  period,
                 });
+            },
+            removePlotlist : function(plotList){
+                for(var idx = 0; idx < this.plotLists.length; idx++){
+                    var plotListArrObj = this.plotLists[idx];
+                    if (plotList === plotListArrObj){
+                        this.plotLists = this.plotLists.filter(function(x) {return x !== plotList;});
+                        break;
+                    }
+                }
             },
             receiveSelectedAction(val){
                 var splitVar = this.actions.split('-');

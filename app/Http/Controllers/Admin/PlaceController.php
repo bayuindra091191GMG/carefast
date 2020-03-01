@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 
 
 use App\Http\Controllers\Controller;
+use App\libs\Utilities;
 use App\Models\Place;
 use App\Models\ProjectObject;
 use App\Transformer\PlaceTransformer;
@@ -61,6 +62,7 @@ class PlaceController extends Controller
                 'name'          => $name,
                 'description'   => $request->input('description') ?? null,
                 'status_id'     => $request->input('status'),
+                'qr_code'       => Utilities::generateBarcodeNumber(),
                 'created_at'    => $dateNow,
                 'created_by'    => $user->id,
                 'updated_at'    => $dateNow,

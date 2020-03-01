@@ -286,7 +286,7 @@ Route::prefix('admin')->group(function(){
 
     // Project Plotting
     Route::get('/project/activity/show/{id}', 'Admin\project\ActivityController@show')->name('admin.project.activity.show');
-    Route::get('/project/activity/copy/{id}', 'Admin\project\ActivityController@show')->name('admin.project.activity.show');
+    Route::get('/project/activity/copy/{id}', 'Admin\project\ActivityController@show')->name('admin.project.activity.copy');
 
     Route::get('/project/activity/create-step-1/{id}', 'Admin\project\ActivityController@createStepOne')->name('admin.project.activity.create');
     Route::post('/project/activity/create/', 'Admin\project\ActivityController@submitCreateOne')->name('admin.project.activity.store-one');

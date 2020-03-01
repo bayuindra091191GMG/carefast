@@ -133,11 +133,12 @@
                                                                 <thead>
                                                                 <tr>
                                                                     <th class="text-center" width="5%">Shift</th>
-                                                                    <th class="text-center" width="45%">Tempat - Objek</th>
+                                                                    <th class="text-center" width="20%">Tempat</th>
+                                                                    <th class="text-center" width="20%">Objek</th>
                                                                     <th class="text-center" width="15%">Waktu</th>
-                                                                    <th class="text-center" width="15%">Aktifitas</th>
+                                                                    <th class="text-center" width="10%">Aktifitas</th>
                                                                     <th class="text-center" width="10%">Period</th>
-{{--                                                                    <th class="text-center" width="10%">Tindakan</th>--}}
+                                                                    <th class="text-center" width="10%">Tindakan</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -198,11 +199,12 @@
             order: [ [0, 'asc'] ],
             columns: [
                 { data: 'shift', name: 'shift', class: 'text-center' },
-                { data: 'place_object_name', name: 'place_object_name', class: 'text-left' },
+                { data: 'place', name: 'place', class: 'text-left' },
+                { data: 'object_name', name: 'object_name', class: 'text-left' },
                 { data: 'time', name: 'time', class: 'text-center' },
                 { data: 'action_name', name: 'action_name', class: 'text-center' },
                 { data: 'period_type', name: 'period_type', class: 'text-center' },
-                // { data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
+                { data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
             ],
         });
 

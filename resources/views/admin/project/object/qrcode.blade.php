@@ -50,19 +50,19 @@
                                             </div>
 
                                             <div id="print-section"  class="body">
-                                                <div class="col-md-12">
-                                                    <h2>Project Qr-Code</h2>
-                                                    <div class="col-md-6 p-t-20 text-center">
-                                                        <h3 style="font-weight: bold">{{$project->name}}</h3>
+{{--                                                <div class="col-md-12">--}}
+{{--                                                    <h2>Project Qr-Code</h2>--}}
+{{--                                                    <div class="col-md-6 p-t-20 text-center">--}}
+{{--                                                        <h3 style="font-weight: bold">{{$project->name}}</h3>--}}
 
 {{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$project->code}}&size=200x200" alt="" title="" />--}}
-                                                        <img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl={{$project->code}}&choe=UTF-8" alt="" title="" />
+{{--                                                        <img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl={{$project->code}}&choe=UTF-8" alt="" title="" />--}}
 
-                                                        <br>
-                                                        <br>
-                                                    </div>
-                                                    <hr>
-                                                </div>
+{{--                                                        <br>--}}
+{{--                                                        <br>--}}
+{{--                                                    </div>--}}
+{{--                                                    <hr>--}}
+{{--                                                </div>--}}
                                                 <div class="col-md-12 p-t-20">
                                                     <h2>Project Place Qr-Code</h2>
                                                     <div class="row">

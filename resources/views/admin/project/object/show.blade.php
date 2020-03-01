@@ -91,7 +91,8 @@
                                                                             <input type='text'class='form-control' value="{{$projectObject->place_name}}" disabled>
                                                                         </td>
                                                                         <td>
-                                                                            <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject->place->qr_code}}&size=100x100" alt="" title="" />
+{{--                                                                            <img src="https://api.qrserver.com/v1/create-qr-code/?data={{}}&size=100x100" alt="" title="" />--}}
+                                                                            <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject->place->qr_code}}&choe=UTF-8" alt="" title="" />
 
                                                                             <input type='text'class='form-control' value="{{$projectObject->place->qr_code}}" disabled>
                                                                         </td>
