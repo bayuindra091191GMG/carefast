@@ -86,14 +86,13 @@
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                <tr v-for="plotList in plotLists">
+                                                                <tr v-for="(plotList, index) in plotLists">
                                                                     <td style="padding: 0 5px 0 5px">@{{ plotList.TimeValue }}</td>
                                                                     <td style="padding: 0 5px 0 5px">@{{ plotList.Object }}</td>
                                                                     <td style="padding: 0 5px 0 5px">@{{ plotList.Action }}</td>
-                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.Period }}</td>
+                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.PeriodString }}</td>
                                                                     <td style="padding: 0 5px 0 5px">
-{{--                                                                        <a class="btn btn-danger btn-md">Delete</a>--}}
-                                                                        <a class="btn btn-danger btn-md" style="cursor: pointer" v-on:click="removePlotlist(plotList)">Delete</a>
+                                                                        <a class="btn btn-danger btn-md" style="cursor: pointer" v-on:click="removePlotlist(plotList, index)">Delete</a>
                                                                     </td>
                                                                 </tr>
                                                                 </tbody>
@@ -642,9 +641,9 @@
                     }
                 }
 
-                this.setPlotlist(selected_time.toString(), project_objects, actions, this.period_string);
+                this.setPlotlist(selected_time.toString(), project_objects, actions, period, this.period_string);
             },
-            setPlotlist(time, object, action, period){
+            setPlotlist(time, object, action, period, period_string){
                 let changeTime = time.replace("[", "");
                 changeTime = changeTime.replace("]", "");
                 changeTime = changeTime.replace(/#/g, "-");
@@ -657,9 +656,11 @@
                     Object : object,
                     Action :  splitVar[1],
                     Period :  period,
+                    PeriodString :  period_string,
                 });
             },
-            removePlotlist : function(plotList){
+            removePlotlist : function(plotList, index){
+                //delete view
                 for(var idx = 0; idx < this.plotLists.length; idx++){
                     var plotListArrObj = this.plotLists[idx];
                     if (plotList === plotListArrObj){
@@ -667,6 +668,50 @@
                         break;
                     }
                 }
+
+                //delete vue model
+                var timeValue = plotList.TimeValue.replace(/-/g, "#");
+                for(let ct=0; ct<this.times.length; ct++){
+                    if(this.times[ct].time_value === timeValue){
+
+                        if(plotList.Period === "1"){
+
+                            for(let ct2=0; ct2 < this.times[ct].daily_datas.length; ct2++){
+                                let isAction = this.times[ct].daily_datas[ct2].Action.includes(plotList.Action);
+                                let isObject = this.times[ct].daily_datas[ct2].Object === plotList.Object;
+                                let isTimeValue = this.times[ct].daily_datas[ct2].TimeValue[0] === timeValue;
+                                debugger;
+
+                                if(isTimeValue && isObject && isAction){
+                                    debugger;
+                                    this.times[ct].daily_datas.splice(ct2, 1);
+                                }
+                                debugger;
+                            }
+                        }
+                        else if(plotList.Period === "2"){
+                            debugger;
+                            for(let ct2=0; ct2<this.times[ct].weekly_datas.length; ct2++){
+                                if(this.times[ct].weekly_datas[ct2].TimeValue === timeValue
+                                    && this.times[ct].weekly_datas[ct2].Object === plotList.Object
+                                    && this.times[ct].weekly_datas[ct2].Action === plotList.Action){
+                                    this.times[ct].weekly_datas.splice(ct2, 1);
+                                }
+                            }
+                        }
+                        else if(plotList.Period === "3"){
+                            debugger;
+                            for(let ct2=0; ct2<this.times[ct].monthly_datas.length; ct2++){
+                                if(this.times[ct].monthly_datas[ct2].TimeValue === timeValue
+                                    && this.times[ct].monthly_datas[ct2].Object === plotList.Object
+                                    && this.times[ct].monthly_datas[ct2].Action.includes(plotList.Action)){
+                                    this.times[ct].monthly_datas.splice(ct2, 1);
+                                }
+                            }
+                        }
+                    }
+                }
+                debugger;
             },
             receiveSelectedAction(val){
                 var splitVar = this.actions.split('-');
