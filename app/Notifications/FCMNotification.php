@@ -22,7 +22,7 @@ class FCMNotification
 {
     public static function SaveToken($userId, $token, $type){
         try{
-            Log::info("FCMNotification - SaveToken data = ".$userId.", type = ".$type.", token = ".$token);
+//            Log::info("FCMNotification - SaveToken data = ".$userId.", type = ".$type.", token = ".$token);
             if($type == 'user'){
                 $isExistToken = FcmTokenUser::where('user_id', $userId)->first();
                 if(!empty($isExistToken)){
@@ -62,7 +62,7 @@ class FCMNotification
                     ]);
                 }
             }
-            Log::info("FCMNotification - SaveToken success, user = ".$userId.", type = ".$type.", token = ".$token);
+//            Log::info("FCMNotification - SaveToken success, user = ".$userId.", type = ".$type.", token = ".$token);
         }
         catch (\Exception $exception){
 //            dd($exception);

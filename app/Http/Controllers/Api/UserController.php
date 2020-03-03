@@ -142,7 +142,8 @@ class UserController extends Controller
                 'nik'               => $employee->nik ?? '',
                 'address'           => $employee->address ?? '',
                 'accessible_menus'  => $accessible_menus,
-                'employee_id'       => $employee->id,
+//                'employee_id'       => $employee->id,
+                'employee_id'       => $user->employee_id,
                 'projects'          => $projectModels
             ]);
 

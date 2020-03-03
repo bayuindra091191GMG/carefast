@@ -53,15 +53,20 @@ class IntegrationController extends Controller
                     ], 400);
                 }
 
+                $phone = "12345";
+                if(!empty($employee['phone'])){
+                    $phone = $employee['phone'];
+                }
+
                 TempInsysEmploye::create([
                     'code' => $employee['code'],
                     'first_name' => $employee['first_name'],
                     'last_name' => $employee['last_name'],
-                    'phone' => $employee['phone'] ?? "12345",
+                    'phone' => $phone,
                     'dob' => $employee['dob'],
                     'nik' => $employee['nik'],
                     'address' => $employee['address'],
-                    'employee_role' => $employee['role'],
+                    'role' => $employee['role'],
                 ]);
 
                 if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
@@ -69,7 +74,7 @@ class IntegrationController extends Controller
                         'code' => $employee['code'],
                         'first_name' => $employee['first_name'],
                         'last_name' => $employee['last_name'],
-                        'phone' => $employee['phone'] ?? "12345",
+                        'phone' => $phone,
                         'dob' => $employee['dob'],
                         'nik' => $employee['nik'],
                         'address' => $employee['address'],
@@ -80,21 +85,21 @@ class IntegrationController extends Controller
                     User::create([
                         'employee_id' => $nEmployee->id,
                         'name' => $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'],
-                        'phone' => $employee['phone'],
+                        'phone' => $phone,
                         'password' => Hash::make('carefastid')
                     ]);
                 } else {
                     $oEmployee = Employee::where('code', $employee['code'])->first();
                     $oEmployee->first_name = $employee['first_name'];
                     $oEmployee->last_name = $employee['last_name'] ?? "";
-                    $oEmployee->phone = $employee['phone'] ?? "12345";
+                    $oEmployee->phone = $phone;
                     $oEmployee->dob = $employee['dob'];
                     $oEmployee->nik = $employee['nik'];
                     $oEmployee->address = $employee['address'] ?? "";
                     $oEmployee->save();
 
                     $oUser = User::where('employee_id', $oEmployee->id)->first();
-                    $oUser->phone = $employee['phone'];
+                    $oUser->phone = $phone;
                     $oUser->name = $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'];
                     $oUser->save();
                 }
@@ -105,7 +110,8 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
-            Log::channel('in_sys')->error($ex);
+            Log::channel('in_sys')->error('API/IntegrationController - employees error EX: '. $ex);
+//            Log::error('API/IntegrationController - employees error EX: '. $ex);
             return Response::json([
                 'error' => $ex
             ], 500);
@@ -191,7 +197,8 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
-            Log::channel('in_sys')->error($ex);
+            Log::channel('in_sys')->error('API/IntegrationController - projects error EX: '. $ex);
+//            Log::error('API/IntegrationController - projects error EX: '. $ex);
             return Response::json([
                 'error' => $ex
             ], 500);
@@ -231,12 +238,21 @@ class IntegrationController extends Controller
                     foreach ($project['employee_codes'] as $employee){
                         if(DB::table('employees')->where('code', $employee)->exists()){
                             $nEmployee = Employee::where('code', $employee)->first();
-                            ProjectEmployee::create([
-                                'project_id'        => $nProject->id,
-                                'employee_id'       => $nEmployee->id,
-                                'employee_roles_id' => $nEmployee->employee_role_id,
-                                'status_id'         => 1
-                            ]);
+
+                            $projectEmployeeDB = ProjectEmployee::where('employee_id', $nEmployee->id)
+                                ->where('project_id', $nProject->id)->first();
+                            if(empty($projectEmployeeDB)){
+                                ProjectEmployee::create([
+                                    'project_id'        => $nProject->id,
+                                    'employee_id'       => $nEmployee->id,
+                                    'employee_roles_id' => $nEmployee->employee_role_id,
+                                    'status_id'         => 1
+                                ]);
+                            }
+                            else{
+                                $projectEmployeeDB->employee_roles_id = $nEmployee->employee_role_id;
+                                $projectEmployeeDB->save();
+                            }
                         }
                     }
                 }
@@ -248,7 +264,8 @@ class IntegrationController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
-            Log::error('API/IntegrationController - jobAssignments error EX: '. $ex);
+            Log::channel('in_sys')->error('API/IntegrationController - jobAssignments error EX: '. $ex);
+//            Log::error('API/IntegrationController - jobAssignments error EX: '. $ex);
             return Response::json([
                 'error' => $ex
             ], 500);
