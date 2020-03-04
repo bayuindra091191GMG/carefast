@@ -235,6 +235,7 @@ class ProjectController extends Controller
 
                 $img->save(public_path('storage/projects/'. $filename), 75);
                 $project->image_path = $filename;
+                $project->save();
             }
 
             Session::flash('success', 'Sukses mengubah data information!');

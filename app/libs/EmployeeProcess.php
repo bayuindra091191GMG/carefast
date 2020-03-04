@@ -123,7 +123,7 @@ class EmployeeProcess
                     }
 
                     $assessmentStatus = 0;
-                    $assessmentScore = 0;
+                    $assessmentScore = -1;
                     $attendanceAssessment = Attendance::where('schedule_id', $schedule->id)
                         ->where('schedule_detail_id', $detailId)
                         ->where('status_id', 7)

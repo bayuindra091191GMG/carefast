@@ -67,6 +67,18 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group form-float form-group-lg">
                                                         <div class="form-line">
+                                                            <label class="form-label" for="image_main">Foto *</label>
+                                                            <br>
+                                                            @if(!empty($project->image_path))
+                                                                <img src="{{ asset('storage/projects/'.$project->image_path) }}" width="500">
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group form-float form-group-lg">
+                                                        <div class="form-line">
                                                             <label class="form-label" for="name">Nama Project*</label>
                                                             <input id="name" type="text" class="form-control"
                                                                    name="name" value="{{ $project->name }}" readonly>

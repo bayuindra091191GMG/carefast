@@ -11,7 +11,7 @@
                     </div>
                 </div>
 
-                {{ Form::open(['route'=>['admin.project.information.update', $project->id],'method' => 'post','id' => 'general-form']) }}
+                {{ Form::open(['route'=>['admin.project.information.update', $project->id],'method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
 
                 <div class="row">
                     <div class="col-md-12">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\Address;
 use App\Models\Configuration;
+use App\Models\Employee;
 use App\Models\FcmTokenUser;
 use App\Models\ProjectEmployee;
 use App\Models\User;
@@ -79,7 +80,7 @@ class UserController extends Controller
         try{
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
-            $employee = $user->employee;
+            $employee = Employee::find($user->employee_id);
 
             // Get dob
             $dob = '';
@@ -97,8 +98,8 @@ class UserController extends Controller
             //    7. create MR
             //    11. Plotting oleh leader
             $accessible_menus = "";
-            if($user->employee->employee_role_id == 9){
-                $accessible_menus = "1,2,3,4,5,6,7";
+            if($user->employee->employee_role_id > 4){
+                $accessible_menus = "1,2,3,4,5,6";
             }
             else if($user->employee->employee_role_id == 1){
                 $accessible_menus = "1,2,3";
@@ -118,15 +119,15 @@ class UserController extends Controller
                 ->where('status_id', 1)
                 ->get();
             $projectModels = collect();
-            foreach ($employeeDBs as $employee){
+            foreach ($employeeDBs as $employeedb){
                 $projectModel = [
-                    'id'    => $employee->project_id,
-                    'name'    => $employee->project->name,
+                    'id'    => $employeedb->project_id,
+                    'name'    => $employeedb->project->name,
                 ];
                 $projectModels->push($projectModel);
             }
 
-            $employeeImage = empty($employee->image_path) ? "" : asset('storage/employees/'. $employee->image_path);
+            $employeeImage = empty($employee->image_path) ? asset('storage/employees/1_photo_20190822050856.png') : asset('storage/employees/'. $employee->image_path);
             $userModel = collect([
                 'id'                => $user->id,
                 'name'              => $user->name,

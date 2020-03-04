@@ -339,7 +339,7 @@ class ComplainController extends Controller
 
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
-            $employee = $user->employee;
+            $employee = Employee::find($user->employee_id);
 
             $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $project = Project::find($data->project_id);
@@ -457,8 +457,10 @@ class ComplainController extends Controller
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
-                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
-                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $notifData);
+                    if($ProjectEmployee->employee_id != $employee->id){
+                        $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                        FCMNotification::SendNotification($user->id, 'user', $title, $body, $notifData);
+                    }
                 }
             }
 
@@ -485,7 +487,7 @@ class ComplainController extends Controller
 
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
-            $employee = $user->employee;
+            $employee = Employee::find($user->employee_id);
 
             $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
 
@@ -562,7 +564,7 @@ class ComplainController extends Controller
                     }
                 }
             }
-            Log::error('Api/ComplainController - replyComplaintEmployee log asal');
+//            Log::error('Api/ComplainController - replyComplaintEmployee log asal');
 
             return Response::json($employeeComplaintDetailModel, 200);
         }
@@ -720,7 +722,7 @@ class ComplainController extends Controller
                 $projectDetailModel = collect([
                     'id'            => $project->id,
                     'name'          => $project->name,
-                    'image'          => $project->image_path == null ? asset('storage/projects/default.jpg') : $project->image_path,
+                    'image'          => $project->image_path == null ? asset('storage/projects/default.jpg') : asset('storage/projects/'.$project->image_path),
                     'lat'          => $project->latitude,
                     'lng'          => $project->longitude,
                     'address'          => $project->address,
@@ -751,7 +753,7 @@ class ComplainController extends Controller
                 $projectDetailModel = collect([
                     'id'            => $project->id,
                     'name'          => $project->name,
-                    'image'          => $project->image_path == null ? asset('storage/projects/default.jpg') : $project->image_path,
+                    'image'          => $project->image_path == null ? asset('storage/projects/default.jpg') : asset('storage/projects/'.$project->image_path),
                     'lat'          => $project->latitude,
                     'lng'          => $project->longitude,
                     'address'          => $project->address,

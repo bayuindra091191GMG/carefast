@@ -45,7 +45,7 @@ class EmployeeTransformer extends TransformerAbstract
                 'code'              => $code,
                 'first_name'        => $employee->first_name,
                 'last_name'         => $employee->last_name,
-                'role'              => $employee->employee_role->name,
+                'role'              => empty($employee->employee_role_id) ? "" : $employee->employee_role->name,
                 'nik'               => $employee->nik,
                 'phones'            => $phones,
                 'status'            => $employee->status->description,
