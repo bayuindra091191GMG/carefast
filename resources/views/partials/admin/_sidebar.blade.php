@@ -15,25 +15,25 @@
                     </a>
                 </li>
 
-                @foreach($menuHeader as $header)
-                <li class="sidebar-item">
-                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                        aria-expanded="false">
-                        <i class="{{ $header->icon }}"></i>
-                        <span class="hide-menu">{!! $header->name !!} </span>
-                    </a>
-                    <ul aria-expanded="false" class="collapse first-level">
-                        @foreach($header->menu_header->menus as $menu)
-                        <li class="sidebar-item">
-                            <a href="{{ route($menu->route) }}" class="sidebar-link">
-                                <i class="{{ $menu->icon }}"></i>
-                                <span class="hide-menu"> {{ $menu->name }} </span>
-                            </a>
-                        </li>
-                        @endforeach
-                    </ul>
-                </li>
-                @endforeach
+{{--                @foreach($menuHeader as $header)--}}
+{{--                <li class="sidebar-item">--}}
+{{--                    <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"--}}
+{{--                        aria-expanded="false">--}}
+{{--                        <i class="{{ $header->icon }}"></i>--}}
+{{--                        <span class="hide-menu">{!! $header->name !!} </span>--}}
+{{--                    </a>--}}
+{{--                    <ul aria-expanded="false" class="collapse first-level">--}}
+{{--                        @foreach($header->menu_header->menus as $menu)--}}
+{{--                        <li class="sidebar-item">--}}
+{{--                            <a href="{{ route($menu->route) }}" class="sidebar-link">--}}
+{{--                                <i class="{{ $menu->icon }}"></i>--}}
+{{--                                <span class="hide-menu"> {{ $menu->name }} </span>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                        @endforeach--}}
+{{--                    </ul>--}}
+{{--                </li>--}}
+{{--                @endforeach--}}
 
 
 

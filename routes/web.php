@@ -30,7 +30,7 @@ Route::post('/import/form/submit', 'Frontend\HomeController@importExcel')->name(
 // ====================================================================================================================
 
 Route::post('/keluar', 'Admin\AdminController@logout')->name('admin.keluar');
-Route::get('/testqr', 'Frontend\HomeController@generalFunction');
+Route::get('/test-general', 'Frontend\HomeController@generalFunction');
 
 Route::prefix('admin')->group(function(){
     Route::get('/testing', 'Admin\AdminController@test')->name('admin.test');

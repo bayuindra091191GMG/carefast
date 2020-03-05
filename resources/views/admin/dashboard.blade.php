@@ -8,7 +8,7 @@
         <!-- ============================================================== -->
         <div class="row">
             <div class="col-12 mb-3">
-                <h3>Selamat Datang Admin Carefast.</h3>
+                <h3>Selamat Datang {{$userAdmin->first_name}} {{$userAdmin->last_name}}.</h3>
             </div>
             <!-- Column -->
             <div class="col-md-6 col-lg-2 col-xlg-3">

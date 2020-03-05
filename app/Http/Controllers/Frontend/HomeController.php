@@ -341,6 +341,34 @@ class HomeController extends Controller
 //            }
 //            return "yes";
 
+            $projectEmployeeOthers = ProjectEmployee::where('employee_roles_id', null)
+                ->get();
+//            dd($projectEmployeeOthers);
+            foreach ($projectEmployeeOthers as $projectEmployeeOther){
+                dd($projectEmployeeOther, $projectEmployeeOther->employee->employee_role_id);
+                $projectEmployeeOther->employee_roles_id = $projectEmployeeOther->employee->employee_role_id;
+                $projectEmployeeOther->save();
+            }
+            return "yesy";
+
+            $projectEmployeeDBs = ProjectEmployee::all();
+            foreach ($projectEmployeeDBs as $projectEmployeeDB){
+                $projectEmployeeOthers = ProjectEmployee::where('project_id', $projectEmployeeDB->project_id)
+                    ->where('employee_id', $projectEmployeeDB->employee_id)
+                    ->where('employee_roles_id', $projectEmployeeDB->employee_roles_id)
+                    ->where('id', "!=" , $projectEmployeeDB->id)
+                    ->get();
+                if(count($projectEmployeeOthers) > 0){
+//                    dd($projectEmployeeDB, $projectEmployeeOthers);
+                    foreach ($projectEmployeeOthers as $projectEmployeeOther){
+                        $projectEmployeeOther->delete();
+                    }
+                }
+            }
+            return "yes";
+
+
+
             $plottings = ProjectActivitiesHeader::whereIn('project_id', [119, 80, 45, 275, 299, 14, 313, 65, 10])->get();
             foreach ($plottings as $plotting){
                 $projectActivity = ProjectActivitiesHeader::find($plotting);
