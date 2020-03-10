@@ -53,55 +53,73 @@ class IntegrationController extends Controller
                     ], 400);
                 }
 
-                $phone = "12345";
-                if(!empty($employee['phone'])){
-                    $phone = $employee['phone'];
-                }
-
-                TempInsysEmploye::create([
-                    'code' => $employee['code'],
-                    'first_name' => $employee['first_name'],
-                    'last_name' => $employee['last_name'],
-                    'phone' => $phone,
-                    'dob' => $employee['dob'],
-                    'nik' => $employee['nik'],
-                    'address' => $employee['address'],
-                    'role' => $employee['role'],
-                ]);
-
-                if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
-                    $nEmployee = Employee::create([
+                try{
+                    $tempEmployee = TempInsysEmploye::create([
                         'code' => $employee['code'],
                         'first_name' => $employee['first_name'],
                         'last_name' => $employee['last_name'],
-                        'phone' => $phone,
+                        'phone' => $employee['phone'],
                         'dob' => $employee['dob'],
                         'nik' => $employee['nik'],
                         'address' => $employee['address'],
-                        'employee_role' => $employee['role'],
-                        'status_id' => 1
+                        'role' => $employee['role'],
                     ]);
 
-                    User::create([
-                        'employee_id' => $nEmployee->id,
-                        'name' => $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'],
-                        'phone' => $phone,
-                        'password' => Hash::make('carefastid')
-                    ]);
-                } else {
-                    $oEmployee = Employee::where('code', $employee['code'])->first();
-                    $oEmployee->first_name = $employee['first_name'];
-                    $oEmployee->last_name = $employee['last_name'] ?? "";
-                    $oEmployee->phone = $phone;
-                    $oEmployee->dob = $employee['dob'];
-                    $oEmployee->nik = $employee['nik'];
-                    $oEmployee->address = $employee['address'] ?? "";
-                    $oEmployee->save();
+                    $phone = "12345";
+                    if(!empty($employee['phone'])){
+                        if($employee['phone'] == "-" || $employee['phone'] == "--" ||
+                            $employee['phone'] == " " || $employee['phone'] == "" ||
+                            $employee['phone'] == "XXX" || $employee['phone'] == "12345"){
+                            $phone = "12345".$tempEmployee->id;
+                        }
+                        else{
+                            $phone = $employee['phone'];
+                        }
+                    }
+                    $employeeChecking = Employee::where('code', $employee['code'])->first();
+//                    if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
+                    if (empty($employeeChecking)) {
+                        $nEmployee = Employee::create([
+                            'code' => $employee['code'],
+                            'first_name' => $employee['first_name'],
+                            'last_name' => $employee['last_name'],
+                            'phone' => $phone,
+                            'dob' => $employee['dob'],
+                            'nik' => $employee['nik'],
+                            'address' => $employee['address'],
+                            'employee_role' => $employee['role'],
+                            'status_id' => 1
+                        ]);
 
-                    $oUser = User::where('employee_id', $oEmployee->id)->first();
-                    $oUser->phone = $phone;
-                    $oUser->name = $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'];
-                    $oUser->save();
+                        User::create([
+                            'employee_id' => $nEmployee->id,
+                            'name' => $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'],
+                            'phone' => $phone,
+                            'password' => Hash::make('carefastid')
+                        ]);
+                    } else {
+                        $employeeChecking = Employee::where('code', $employee['code'])->first();
+                        $employeeChecking->first_name = $employee['first_name'];
+                        $employeeChecking->last_name = $employee['last_name'] ?? "";
+                        $employeeChecking->phone = $phone;
+                        $employeeChecking->dob = $employee['dob'];
+                        $employeeChecking->nik = $employee['nik'];
+                        $employeeChecking->address = $employee['address'] ?? "";
+                        $employeeChecking->save();
+
+                        $oUser = User::where('employee_id', $employeeChecking->id)->first();
+                        $oUser->phone = $phone;
+                        $oUser->name = $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'];
+                        $oUser->save();
+                    }
+                }
+                catch (\Exception $ex){
+                    Log::channel('in_sys')
+                        ->error('API/IntegrationController - inside employees error data: '.json_encode($employee));
+                    Log::channel('in_sys')->error('API/IntegrationController - inside employees error EX: '. $ex);
+                    return Response::json([
+                        'error' => $ex
+                    ], 500);
                 }
             }
 

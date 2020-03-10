@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class TempInsysEmploye
- * 
+ *
  * @property int $id
  * @property string $code
  * @property string $first_name
@@ -29,6 +29,7 @@ class TempInsysEmploye extends Eloquent
 	public $timestamps = false;
 
 	protected $fillable = [
+		'id',
 		'code',
 		'first_name',
 		'last_name',
