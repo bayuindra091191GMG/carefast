@@ -108,9 +108,19 @@ class IntegrationController extends Controller
                         $employeeChecking->save();
 
                         $oUser = User::where('employee_id', $employeeChecking->id)->first();
-                        $oUser->phone = $phone;
-                        $oUser->name = $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'];
-                        $oUser->save();
+                        if(empty($oUser)){
+                            User::create([
+                                'employee_id' => $employeeChecking->id,
+                                'name' => $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'],
+                                'phone' => $phone,
+                                'password' => Hash::make('carefastid')
+                            ]);
+                        }
+                        else{
+                            $oUser->phone = $phone;
+                            $oUser->name = $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'];
+                            $oUser->save();
+                        }
                     }
                 }
                 catch (\Exception $ex){
