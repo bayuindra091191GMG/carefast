@@ -93,7 +93,7 @@ class IntegrationController extends Controller
 
                         User::create([
                             'employee_id' => $nEmployee->id,
-                            'name' => $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'],
+                            'name' => $employee['first_name'] . ' ' . $employee['last_name'],
                             'phone' => $phone,
                             'password' => Hash::make('carefastid')
                         ]);
@@ -111,14 +111,14 @@ class IntegrationController extends Controller
                         if(empty($oUser)){
                             User::create([
                                 'employee_id' => $employeeChecking->id,
-                                'name' => $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'],
+                                'name' => $employee['first_name'] . ' ' . $employee['last_name'],
                                 'phone' => $phone,
                                 'password' => Hash::make('carefastid')
                             ]);
                         }
                         else{
                             $oUser->phone = $phone;
-                            $oUser->name = $employee['first_name'] . ' ' . $employee['last_name']=="?" ? "" : $employee['last_name'];
+                            $oUser->name = $employee['first_name'] . ' ' . $employee['last_name'];
                             $oUser->save();
                         }
                     }
@@ -128,7 +128,7 @@ class IntegrationController extends Controller
                         ->error('API/IntegrationController - inside employees error data: '.json_encode($employee));
                     Log::channel('in_sys')->error('API/IntegrationController - inside employees error EX: '. $ex);
                     return Response::json([
-                        'error' => $ex
+                        'message' => $ex
                     ], 500);
                 }
             }
@@ -141,7 +141,7 @@ class IntegrationController extends Controller
             Log::channel('in_sys')->error('API/IntegrationController - employees error EX: '. $ex);
 //            Log::error('API/IntegrationController - employees error EX: '. $ex);
             return Response::json([
-                'error' => $ex
+                'message' => $ex
             ], 500);
         }
     }
@@ -263,6 +263,13 @@ class IntegrationController extends Controller
                 if(DB::table('projects')->where('code', $project['project_code'])->exists()){
                     $nProject = Project::where('code', $project['project_code'])->first();
 
+                    $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)->get();
+                    foreach($projectEmployees as $projectEmployee){
+                        $projectEmployee->status_id = 0;
+                        $projectEmployee->save();
+                    }
+                    Log::channel('in_sys')->info('API/IntegrationController - jobAssignments checkpoint 1 change status employee, project='.$nProject->code);
+
                     foreach ($project['employee_codes'] as $employee){
                         if(DB::table('employees')->where('code', $employee)->exists()){
                             $nEmployee = Employee::where('code', $employee)->first();
@@ -279,10 +286,12 @@ class IntegrationController extends Controller
                             }
                             else{
                                 $projectEmployeeDB->employee_roles_id = $nEmployee->employee_role_id;
+                                $projectEmployeeDB->status_id = 1;
                                 $projectEmployeeDB->save();
                             }
                         }
                     }
+                    Log::channel('in_sys')->info('API/IntegrationController - jobAssignments checkpoint 2 create/edit employee, project='.$nProject->code);
                 }
 
             }

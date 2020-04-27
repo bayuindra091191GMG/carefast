@@ -42,18 +42,21 @@ class ProjectEmployeeController extends Controller
         foreach($employeeRoles as $employeeRole){
             $assignedEmployees = ProjectEmployee::where('project_id', $project_id)
                 ->where('employee_roles_id', $employeeRole->id)
+                ->where('status_id', 1)
                 ->count();
             $employeeRoleAssigned->push($assignedEmployees);
         }
         $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
             ->where('project_id', $project_id)
             ->where('employee_roles_id', '>', 2)
+            ->where('status_id', 1)
             ->orderByDesc('employee_roles_id')
             ->get();
 
         $cleanerEmployees = ProjectEmployee::with('employee')
             ->where('project_id', $project_id)
             ->where('employee_roles_id', 1)
+            ->where('status_id', 1)
             ->get();
 
         $isCreate = false;
@@ -176,6 +179,7 @@ class ProjectEmployeeController extends Controller
             foreach($employeeRoles as $employeeRole){
                 $assignedEmployees = ProjectEmployee::where('project_id', $project_id)
                     ->where('employee_roles_id', $employeeRole->id)
+                    ->where('status_id', 1)
                     ->count();
                 $employeeRoleAssigned->push($assignedEmployees);
             }
@@ -358,6 +362,7 @@ class ProjectEmployeeController extends Controller
             $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
                 ->where('project_id', $project_id)
                 ->where('employee_roles_id','>', 2)
+                ->where('status_id', 1)
                 ->orderByDesc('employee_roles_id')
                 ->get();
 
@@ -387,6 +392,7 @@ class ProjectEmployeeController extends Controller
             $cleanerEmployees = ProjectEmployee::with('employee')
                 ->where('project_id', $project_id)
                 ->where('employee_roles_id', 1)
+                ->where('status_id', 1)
                 ->get();
 
             if($cleanerEmployees->count() === 0){
@@ -462,6 +468,7 @@ class ProjectEmployeeController extends Controller
             $now = Carbon::now('Asia/Jakarta');
 
             $projectEmployees = ProjectEmployee::where('project_id', $project_id)
+                ->where('status_id', 1)
                 ->get();
 
             // Unassign employee from project

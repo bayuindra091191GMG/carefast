@@ -58,7 +58,7 @@
 
                                                     <div class="col-md-12">
                                                         <div class="row">
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-12">
                                                                 <div class="form-group form-float form-group-lg">
                                                                     <div class="form-line">
                                                                         <label class="form-label" for="code">Nama Project</label>
@@ -66,15 +66,15 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group form-float form-group-lg">
-                                                                    <div class="form-line">
-                                                                        <label class="form-label" for="manpower">Manpower</label>
+{{--                                                            <div class="col-md-6">--}}
+{{--                                                                <div class="form-group form-float form-group-lg">--}}
+{{--                                                                    <div class="form-line">--}}
+{{--                                                                        <label class="form-label" for="manpower">Manpower</label>--}}
 {{--                                                                        <input type="text" id="manpower_string" class="form-control" value="{{ 'Sisa '. $manpowerLeft. ' dari '. $project->total_manpower }}" readonly/>--}}
-                                                                        <input type="text" id="manpower_string" class="form-control" value="{{ $project->total_manpower }}" readonly/>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+{{--                                                                        <input type="text" id="manpower_string" class="form-control" value="{{ $project->total_manpower }}" readonly/>--}}
+{{--                                                                    </div>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div>--}}
                                                         </div>
                                                     </div>
 
