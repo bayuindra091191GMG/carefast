@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 */
 
 // External API (For InSys)
-Route::middleware('auth:external')->prefix('integration')->group(function() {
+Route::middleware('auth:external', 'throttle:5000,1')->prefix('integration')->group(function() {
     Route::post('/employees', 'Api\IntegrationController@employees');
     Route::post('/projects', 'Api\IntegrationController@projects');
     Route::post('/job_assignments', 'Api\IntegrationController@jobAssignments');

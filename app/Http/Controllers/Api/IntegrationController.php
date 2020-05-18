@@ -29,6 +29,8 @@ class IntegrationController extends Controller
     public function employees(Request $request){
         try {
             $employees = $request->json()->all();
+            Log::channel('in_sys')
+                ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
 
             foreach ($employees as $employee) {
                 $rules = array(
@@ -87,7 +89,7 @@ class IntegrationController extends Controller
                             'dob' => $employee['dob'],
                             'nik' => $employee['nik'],
                             'address' => $employee['address'],
-                            'employee_role' => $employee['role'],
+                            'employee_role_id' => $employee['role'],
                             'status_id' => 1
                         ]);
 
@@ -104,6 +106,7 @@ class IntegrationController extends Controller
                         $employeeChecking->phone = $phone;
                         $employeeChecking->dob = $employee['dob'];
                         $employeeChecking->nik = $employee['nik'];
+                        $employeeChecking->employee_role_id = $employee['role'];
                         $employeeChecking->address = $employee['address'] ?? "";
                         $employeeChecking->save();
 
@@ -133,6 +136,8 @@ class IntegrationController extends Controller
                 }
             }
 
+            Log::channel('in_sys')
+                ->info('API/IntegrationController - employees PROCESS DONE');
             return Response::json([
                 'message' => 'Success Updating Employee Data!'
             ], 200);
@@ -155,6 +160,8 @@ class IntegrationController extends Controller
     public function projects(Request $request){
         try {
             $projects = $request->json()->all();
+            Log::channel('in_sys')
+                ->info('API/IntegrationController - projects DATA : '.json_encode($projects));
 
             foreach ($projects as $project) {
                 $rules = array(
@@ -220,6 +227,8 @@ class IntegrationController extends Controller
                 }
             }
 
+            Log::channel('in_sys')
+                ->info('API/IntegrationController - projects PROCESS DONE');
             return Response::json([
                 'message' => 'Success Updating Projects!'
             ], 200);
@@ -242,6 +251,11 @@ class IntegrationController extends Controller
     public function jobAssignments(Request $request){
         try{
             $projects = $request->json()->all();
+            sleep(90);
+            Log::channel('in_sys')
+                ->info('API/IntegrationController - jobAssignments DATA : '.json_encode($projects));
+//            Log::channel('in_sys')
+//                ->info('API/IntegrationController - jobAssignments PROJECT COUNT : '.$projects->count());
 
             foreach ($projects as $project){
                 $rules = array(
@@ -263,12 +277,12 @@ class IntegrationController extends Controller
                 if(DB::table('projects')->where('code', $project['project_code'])->exists()){
                     $nProject = Project::where('code', $project['project_code'])->first();
 
-                    $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)->get();
+                    $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)->where('status_id', 1)->get();
                     foreach($projectEmployees as $projectEmployee){
                         $projectEmployee->status_id = 0;
                         $projectEmployee->save();
                     }
-                    Log::channel('in_sys')->info('API/IntegrationController - jobAssignments checkpoint 1 change status employee, project='.$nProject->code);
+//                    Log::channel('in_sys')->info('API/IntegrationController - jobAssignments checkpoint 1 change status employee, project='.$nProject->code);
 
                     foreach ($project['employee_codes'] as $employee){
                         if(DB::table('employees')->where('code', $employee)->exists()){
@@ -291,11 +305,13 @@ class IntegrationController extends Controller
                             }
                         }
                     }
-                    Log::channel('in_sys')->info('API/IntegrationController - jobAssignments checkpoint 2 create/edit employee, project='.$nProject->code);
+//                    Log::channel('in_sys')->info('API/IntegrationController - jobAssignments checkpoint 2 create/edit employee, project='.$nProject->code);
                 }
 
             }
 
+            Log::channel('in_sys')
+                ->info('API/IntegrationController - jobAssignments PROCESS DONE');
             return Response::json([
                 'message' => 'Success Updating Job Assigment!'
             ], 200);
