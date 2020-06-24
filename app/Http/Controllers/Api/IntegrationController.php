@@ -223,6 +223,9 @@ class IntegrationController extends Controller
                     $oProject->description = $project['description'];
                     $oProject->start_date = $project['start_date'];
                     $oProject->finish_date = $project['finish_date'];
+                    if(strpos($project['description'], "PUTUS KONTRAK") !== false){
+                        $oProject->status_id = 2;
+                    }
                     $oProject->save();
                 }
             }
