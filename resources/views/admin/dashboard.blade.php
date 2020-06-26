@@ -48,7 +48,7 @@
                     <div class="card-body">
                         <div class="d-md-flex align-items-center">
                             <div>
-                                <h4 class="card-title">Analysis</h4>
+                                <h4 class="card-title">Data</h4>
 {{--                                <h5 class="card-subtitle">Overview of Latest Month</h5>--}}
                             </div>
                         </div>
