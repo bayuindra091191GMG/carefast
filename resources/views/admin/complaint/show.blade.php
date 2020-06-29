@@ -7,7 +7,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12 col-12">
-                        <a href="{{ route('admin.complaint.index') }}" class="btn btn-outline-primary float-left mr-3">
+                        <a href="{{ route('admin.complaint.index', ['type' => 'customers']) }}" class="btn btn-outline-primary float-left mr-3">
                             <i class="fas fa-arrow-left"></i>
                         </a>
                         <h3>DETIL DATA KELUHAN {{ $complaint->code }}</h3>

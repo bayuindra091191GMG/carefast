@@ -155,14 +155,15 @@ class ActivityController extends Controller
             $projectObjects = $request->input('project_objects0');
 
             $objectString = "";
-            for($i=0;$i<count($projectObjects);$i++){
-                if($i == count($projectObjects)-1){
-                    $objectString = $objectString."".$projectObjects[$i];
-                }
-                else{
-                    $objectString = $objectString."".$projectObjects[$i].",";
-                }
-            }
+//            for($i=0;$i<count($projectObjects);$i++){
+//                if($i == count($projectObjects)-1){
+//                    $objectString = $objectString."".$projectObjects[$i];
+//                }
+//                else{
+//                    $objectString = $objectString."".$projectObjects[$i].",";
+//                }
+//            }
+
 //            foreach ($projectObjects as $projectObject){
 //                $objectString = $objectString."".$projectObject.",";
 //            }
