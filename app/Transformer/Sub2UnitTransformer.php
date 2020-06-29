@@ -23,8 +23,8 @@ class Sub2UnitTransformer extends TransformerAbstract
             $action .= "<a class='btn btn-xs btn-danger' data-id='". $sub2unit->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
 
             return[
-                'unit'              => $sub2unit->sub1_unit->unit->name,
-                'sub_unit_1'        => $sub2unit->sub1_unit->name,
+                'unit'              => $sub2unit->sub_1_unit_id == null ? "" : $sub2unit->sub1_unit->unit->name,
+                'sub_unit_1'        => $sub2unit->sub_1_unit_id == null ? "" : $sub2unit->sub1_unit->name,
                 'name'              => $sub2unit->name,
                 'description'       => $sub2unit->description,
                 'status'            => $sub2unit->status->description,

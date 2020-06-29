@@ -7,7 +7,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12">
-                    <h3>DETAIL KARYAWAN</h3>
+                    <h3>DETAIL ABSEN KARYAWAN</h3>
                     @include('partials.admin._messages')
                 </div>
             </div>
