@@ -111,7 +111,9 @@ class Sub1UnitController extends Controller
         if(empty($sub1unit)){
             return redirect()->back();
         }
-        $unit = Unit::find($sub1unit->unit_id);
+        if(!empty($sub1unit->unit_id)){
+            $unit = Unit::find($sub1unit->unit_id);
+        }
 
         return view('admin.sub1unit.edit', compact('sub1unit', 'unit'));
     }

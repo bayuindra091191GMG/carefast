@@ -60,9 +60,11 @@
                                     <div class="form-group">
                                         <label for="unit_id">Units *</label>
                                         <select id="unit_id" name="unit_id" class="form-control">
-                                            <option value="{{ $unit->id }}">
-                                                {{ $unit->name . ' - ' . $unit->description }}
-                                            </option>
+                                            @if(!empty($unit))
+                                                <option value="{{ $unit->id }}">
+                                                    {{ $unit->name . ' - ' . $unit->description }}
+                                                </option>
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
