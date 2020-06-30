@@ -247,13 +247,15 @@ class AttendanceAbsentController extends Controller
             $time = $date->format('H:i:s');
             $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
 
-            //pengecekan harus di ganti dengan pengecekan weeks dan days dan finish
-            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
-                ->where('project_employee_id', $projectEmployee->id)
-                ->first();
+            if($projectEmployee->employee_roles_id  == 1){
+                //pengecekan harus di ganti dengan pengecekan weeks dan days dan finish
+                $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+                    ->where('project_employee_id', $projectEmployee->id)
+                    ->first();
 
-            if(empty($schedule)){
-                return Response::json("Tidak ada schedule saat ini!", 482);
+                if(empty($schedule)){
+                    return Response::json("Tidak ada schedule saat ini!", 482);
+                }
             }
 //            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
 //                ->where('project_employee_id', $projectEmployee->id)
@@ -281,7 +283,7 @@ class AttendanceAbsentController extends Controller
                     'id'                => $projectEmployee->project_id,
                     'place_name'        => $projectEmployee->project->name,
                     'project_name'      => $projectEmployee->project->name,
-                    'attendance_time'      => Carbon::parse($attendance->created_at)->format('j-F-Y H:i'),
+                    'attendance_time'      => Carbon::parse($attendance->created_at)->format('d M Y H:i'),
                 ]);
                 return Response::json($placeModel, 200);
             }
