@@ -283,7 +283,7 @@
 
 @section('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
+    <script src="https://maps.googleapis.com/maps/api/js?key={{env('GMAPS_KEY')}}&libraries=places"
             type="text/javascript"></script>
     <script type="text/javascript">
         var Lat = '{{$project->latitude}}';
