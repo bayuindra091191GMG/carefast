@@ -23,7 +23,7 @@ Route::get('/test-notif', 'Frontend\HomeController@testNotif')->name('testNotif'
 Route::get('/test-email', 'Frontend\HomeController@testEmail')->name('testEmail');
 Route::get('/test-notif-send', 'Frontend\HomeController@testNotifSend')->name('testNotifSend');
 Route::get('/android-notif-send', 'Frontend\HomeController@testNotifSendToAndroid')->name('testNotifSend');
-Route::get('/integration', 'Frontend\HomeController@submitIntegrationJobAssigment');
+Route::get('/integration', 'Frontend\HomeController@submitIntegrationEmployee');
 // Import
 Route::get('/import/form', 'Frontend\HomeController@form')->name('import.form');
 Route::post('/import/form/submit', 'Frontend\HomeController@importExcel')->name('import.submit');

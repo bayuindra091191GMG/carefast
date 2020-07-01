@@ -48,7 +48,7 @@ class ProjectEmployeeController extends Controller
         }
         $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
             ->where('project_id', $project_id)
-            ->where('employee_roles_id', '>', 2)
+            ->where('employee_roles_id', '>', 1)
             ->where('status_id', 1)
             ->orderByDesc('employee_roles_id')
             ->get();

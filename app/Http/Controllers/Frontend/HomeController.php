@@ -517,7 +517,7 @@ class HomeController extends Controller
             $employees = json_decode($data, true);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
-
+            dd(count($employees));
             foreach ($employees as $employee) {
 
                 try{
