@@ -63,6 +63,12 @@ class AttendanceAbsentController extends Controller
             if(empty($projectEmployeeExistence)){
                 return Response::json("Bukan pada project yang sesuai", 482);
             }
+            $schedule = Schedule::where('project_id', $project->id)
+                ->where('project_employee_id', $employee->id)
+                ->first();
+            if(empty($schedule)){
+                return Response::json("Tidak pada schedule penempatan", 482);
+            }
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
@@ -74,6 +80,7 @@ class AttendanceAbsentController extends Controller
                 $newAttendance = AttendanceAbsent::create([
                     'employee_id'   => $employee->id,
                     'project_id'    => $project->id,
+                    'shift_type'    => $schedule->shift_type ?? 0,
                     'is_done'       => 0,
                     'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'status_id'     => 6,
@@ -172,6 +179,13 @@ class AttendanceAbsentController extends Controller
                 return Response::json("Bukan pada project yang sesuai", 482);
             }
 
+            $schedule = Schedule::where('project_id', $project->id)
+                ->where('project_employee_id', $employee->id)
+                ->first();
+            if(empty($schedule)){
+                return Response::json("Tidak pada schedule penempatan", 482);
+            }
+
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
@@ -197,6 +211,7 @@ class AttendanceAbsentController extends Controller
             $newAttendance = AttendanceAbsent::create([
                 'employee_id'   => $employee->id,
                 'project_id'    => $project->id,
+                'shift_type'    => $schedule->shift_type ?? 0,
                 'is_done'       => 1,
                 'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'     => 7,

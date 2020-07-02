@@ -15,6 +15,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $id
  * @property int $employee_id
  * @property int $project_id
+ * @property int $shift_type
  * @property \Carbon\Carbon $date
  * @property int $status_id
  * @property int $is_done
@@ -34,6 +35,7 @@ class AttendanceAbsent extends Eloquent
 	protected $casts = [
 		'employee_id' => 'int',
 		'project_id' => 'int',
+		'shift_type' => 'int',
 		'status_id' => 'int',
 		'is_done' => 'int',
 		'created_by' => 'int',
@@ -47,6 +49,7 @@ class AttendanceAbsent extends Eloquent
 	protected $fillable = [
 		'employee_id',
 		'project_id',
+		'shift_type',
 		'date',
 		'is_done',
 		'status_id',

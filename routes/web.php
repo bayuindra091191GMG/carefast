@@ -32,6 +32,7 @@ Route::post('/import/form/submit', 'Frontend\HomeController@importExcel')->name(
 
 Route::post('/keluar', 'Admin\AdminController@logout')->name('admin.keluar');
 Route::get('/test-general', 'Frontend\HomeController@generalFunction');
+Route::get('download-jsonfile', array('as'=> 'file.download', 'uses' => 'Frontend\HomeController@generalFunction'));
 
 Route::prefix('admin')->group(function(){
     Route::get('/testing', 'Admin\AdminController@test')->name('admin.test');
