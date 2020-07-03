@@ -336,14 +336,18 @@ class HomeController extends Controller
     public function generalFunction(){
         try{
 
-            $data = json_encode(['Element 1','Element 2','Element 3','Element 4','Element 5']);
-            $attenDBs = AttendanceAbsent::all();
-            foreach($attenDBs as $attenDB){
+//            $data = json_encode(['Element 1','Element 2','Element 3','Element 4','Element 5']);
+//            $attenDBs = AttendanceAbsent::all();
+//            foreach($attenDBs as $attenDB){
 //                $data =
-            }
-//            $data =
+//            }
+            $data = "a\tini pake slash t\n";
+            $data .= "a&nbsp;&nbsp;&nbsp;&nbsp;ini pake nbsp 4 kali\n";
+            $data .= "a&nbsp;ini pake nbsp sekali\n";
+            $data .= "a&ensp;ini pake ensp\n";
+            $data .= "a&emsp;ini pake emsp\n";
 
-            $file = time() .rand(). '_file.json';
+            $file = time() .rand(). '_file.txt';
             $destinationPath=public_path()."/upload/";
             if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
             File::put($destinationPath.$file, $data);

@@ -17,6 +17,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $project_id
  * @property int $shift_type
  * @property \Carbon\Carbon $date
+ * @property \Carbon\Carbon $date_checkout
  * @property int $status_id
  * @property int $is_done
  * @property string $image_path
@@ -51,6 +52,7 @@ class AttendanceAbsent extends Eloquent
 		'project_id',
 		'shift_type',
 		'date',
+		'date_checkout',
 		'is_done',
 		'status_id',
         'image_path',

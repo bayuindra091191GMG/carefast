@@ -17,8 +17,6 @@
                     </div>
                 </div>
 
-                <form>
-
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -47,6 +45,55 @@
                                             <div class="body">
                                                 <div class="row">
                                                     <div class="col-12">
+
+                                                        {{ Form::open(['route'=>'admin.project.attendance.download','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
+                                                        <input type="hidden" name="project_id" value="{{$project->id}}">
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <div class="form-group form-float form-group-lg">
+                                                                    <div class="form-line">
+                                                                        <label class="form-label">Filter Shift Type*</label>
+                                                                        <select id='filter' class='form-control' name="shift_type">
+                                                                            <option value='1'>Shift 1</option>
+                                                                            <option value='2'>Shift 2</option>
+                                                                            <option value='3'>Shift 3</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group form-float form-group-lg">
+                                                                            <div class="form-line">
+                                                                                <label class="form-label" for="total_manday">Tanggal Dimulai *</label>
+                                                                                <input id="start_date" name="start_date" type="text" class="form-control" autocomplete="off" required>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group form-float form-group-lg">
+                                                                            <div class="form-line">
+                                                                                <label class="form-label" for="total_mp_onduty">Tanggal Selesai *</label>
+                                                                                <input id="finish_date" name="finish_date" type="text" class="form-control" autocomplete="off" required>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <div class="form-group form-float form-group-lg">
+                                                                    <div class="form-line">
+                                                                        <br>
+                                                                        <button type="submit" class="btn btn-facebook" style="color: white;">Download Data</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {{ Form::close() }}
+                                                    </div>
+                                                    <div class="col-12">
                                                         <div class="table-responsive-sm">
                                                             <table id="general_table" class="table table-striped table-bordered nowrap" style="width: 100%;">
                                                                 <thead>
@@ -73,7 +120,6 @@
 
                 </div>
 
-                </form>
             </div>
         </div>
     </div>
@@ -83,6 +129,8 @@
 
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.css" type="text/css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    <link href="{{ asset('kartik-v-bootstrap-fileinput/css/fileinput.min.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/datatables.css') }}" rel="stylesheet">
     <style>
         .fancybox-viewer img{
@@ -94,9 +142,8 @@
 
 @section('scripts')
     <script src="{{ asset('js/datatables.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqhoPugts6VVh4RvBuAvkRqBz7yhdpKnQ&libraries=places"
-            type="text/javascript"></script>
+    <script src="{{ asset('kartik-v-bootstrap-fileinput/js/fileinput.min.js') }}"></script>
+    <script src="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
     <script>
         $('#general_table').DataTable({
             processing: true,
@@ -141,6 +188,18 @@
             });
 
             $('#deleted-id').val($(this).data('id'));
+        });
+    </script>
+    <script type="text/javascript">
+        jQuery('#start_date').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: "dd M yyyy"
+        });
+        jQuery('#finish_date').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: "dd M yyyy"
         });
     </script>
     @include('partials._deletejs', ['routeUrl' => 'admin.project.information.destroy', 'redirectUrl' => 'admin.project.information.index'])

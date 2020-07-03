@@ -284,6 +284,7 @@ Route::prefix('admin')->group(function(){
 
     // Project Attendance
     Route::get('/project/attendance/show/{id}', 'Admin\project\ProjectAttendanceController@show')->name('admin.project.attendance.show');
+    Route::post('/project/attendance/download', 'Admin\project\ProjectAttendanceController@downloadAttendance')->name('admin.project.attendance.download');
 
 
     // Project Plotting
