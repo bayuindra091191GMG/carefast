@@ -102,6 +102,7 @@ class AttendanceAbsentController extends Controller
                     $extension = $image->extension();
                     $filename = $employee->first_name . ' ' . $employee->last_name . '_attendancein_'. $newAttendance->id . '_' .
                         Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                    $filename = str_replace('?', '', $filename);
                     $avatar->save(public_path($publicPath ."/". $filename));
 
                     $newAttendance->image_path = $todayStr.'/'.$filename;
@@ -233,6 +234,7 @@ class AttendanceAbsentController extends Controller
                 $extension = $image->extension();
                 $filename = $employee->first_name . ' ' . $employee->last_name . '_attendanceout_'. $newAttendance->id . '_' .
                     Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                $filename = str_replace('?', '', $filename);
                 $avatar->save(public_path($publicPath ."/". $filename));
 
                 $newAttendance->image_path = $todayStr.'/'.$filename;
