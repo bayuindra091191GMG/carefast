@@ -70,7 +70,7 @@ class IntegrationController extends Controller
                     $phone = "12345";
                     if(!empty($employee['phone'])){
                         if($employee['phone'] == "-" || $employee['phone'] == "--" ||
-                            $employee['phone'] == " " || $employee['phone'] == "" ||
+                            $employee['phone'] == " " || $employee['phone'] == "" || $employee['phone'] == " " ||
                             $employee['phone'] == "XXX" || $employee['phone'] == "12345"){
                             $phone = $employee['code'];
                         }
@@ -78,6 +78,8 @@ class IntegrationController extends Controller
                             $phone = $employee['phone'];
                         }
                     }
+                    $phone = str_replace(' ', '', $phone);
+                    $phone = str_replace('-', '', $phone);
                     $employeeChecking = Employee::where('code', $employee['code'])->first();
 //                    if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
                     if (empty($employeeChecking)) {
