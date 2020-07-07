@@ -86,7 +86,7 @@ class IntegrationController extends Controller
                         $nEmployee = Employee::create([
                             'code' => $employee['code'],
                             'first_name' => $employee['first_name'],
-                            'last_name' => $employee['last_name'],
+                            'last_name' => $employee['last_name'] ?? "",
                             'phone' => $phone,
                             'dob' => $employee['dob'],
                             'nik' => $employee['nik'],
