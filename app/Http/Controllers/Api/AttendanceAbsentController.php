@@ -207,6 +207,8 @@ class AttendanceAbsentController extends Controller
 //                return Response::json("Absensi dilakukan kurang dari 1 jam yang lalu!", 483);
 //            }
             $attendanceData->is_done = 1;
+            $attendanceData->date_checkout = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $attendanceData->shift_type = $schedule->shift_type;
             $attendanceData->save();
 
             $newAttendance = AttendanceAbsent::create([

@@ -52,15 +52,17 @@ class ProjectAttendanceController extends Controller
 //        dd($request);
         $projectId = $request->input('project_id');
         $shiftType = $request->input('shift_type');
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $startDateRequest = $request->input('start_date');
+        $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
+        $endDateRequest = $request->input('end_date');
+        $endDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
 
         $attendanceAbsents = AttendanceAbsent::where('project_id', $projectId)
             ->where('shift_type', $shiftType)
             ->where('status_id', 6)
-            ->whereBetween('created_by', [$startDate, $endDate])
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->get();
-//        dd($attendanceAbsents, $projectId, $shiftType);
+//        dd($attendanceAbsents, $projectId, $startDate, $endDate, $shiftType);
         $data = "";
         $now = Carbon::now('Asia/Jakarta');
 
@@ -80,22 +82,29 @@ class ProjectAttendanceController extends Controller
 //              ]
 //          }
         //format txt = projectCode | employeeCode | transDate | shiftCode | attendanceIn | attendanceOut | attendanceStatus
+        $data .= "Project Code\tEmployee Code\tTransaction Date\tShift\tAttendance In\tAttendance Out\tAttendance Status\n";
         foreach($attendanceAbsents as $attendanceAbsent){
             $data .= $attendanceAbsent->project->code."\t"
                 .$attendanceAbsent->employee->code."\t"
-                .$now->format('d M Y')."\t"
+                .$attendanceAbsent->date->format('Y-m-d')."\t"
                 .$attendanceAbsent->shift_type."\t"
-                .$attendanceAbsent->date->toDateTimeString()."\t"
-                .$attendanceAbsent->date_checkout->toDateTimeString()."\t";
-            if($attendanceAbsent->is_done == 0){
-                $data .= "A\t";
+                .$attendanceAbsent->date->format('Y-m-d H:i:s')."\t";
+            if(empty($attendanceAbsent->date_checkout)){
+                $dataCheckout = "-\t";
             }
             else{
-                $data .= "H\t";
+                $dataCheckout = $attendanceAbsent->date_checkout."\t";
+            }
+            $data .= $dataCheckout;
+            if($attendanceAbsent->is_done == 0){
+                $data .= "A\n";
+            }
+            else{
+                $data .= "H\n";
             }
         }
-
-        $file = time() .rand(). '_file.txt';
+//        dd($attendanceAbsents, $data, $startDate, $endDate);
+        $file = "Attendance Download_".$now->format('Y-m-d')."-".time().'.txt';
         $destinationPath=public_path()."/download_attendance/";
         if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
         File::put($destinationPath.$file, $data);
