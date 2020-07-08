@@ -57,6 +57,29 @@ class UserController extends Controller
             //Save user deviceID
             FCMNotification::SaveToken($user->id, $request->input('device_id'), "user");
 
+            //save user IMEI
+            if($user->id < 30){
+                $isNotValid = false;
+                $userDB = User::where('id', $user->id)->first();
+                if(empty($userDB->first_imei)){
+                    $userDB->first_imei = $request->input('imei_no');
+                    $userDB->save();
+                }
+                else{
+                    if($userDB->first_imei != $request->input('imei_no')){ $isNotValid = true; }
+                }
+                if(empty($userDB->second_imei)){
+                    $userDB->second_imei = $request->input('imei_no');
+                    $userDB->save();
+                }
+                else{
+                    if($userDB->first_imei != $request->input('imei_no')){ $isNotValid = true; }
+                }
+                if($isNotValid){
+                    return Response::json("IMEI tidak terdaftar", 483);
+                }
+            }
+
             return Response::json([
                 'message' => "Success Save User Token!",
             ], 200);
