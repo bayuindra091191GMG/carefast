@@ -80,6 +80,7 @@ class IntegrationController extends Controller
                     }
                     $phone = str_replace(' ', '', $phone);
                     $phone = str_replace('-', '', $phone);
+                    $phone = str_replace('.', '', $phone);
                     $employeeChecking = Employee::where('code', $employee['code'])->first();
 //                    if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
                     if (empty($employeeChecking)) {
