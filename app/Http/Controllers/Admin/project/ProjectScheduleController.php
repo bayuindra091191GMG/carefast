@@ -29,6 +29,10 @@ use Yajra\DataTables\DataTables;
 
 class ProjectScheduleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
 
     public function getScheduleEmployees(Request $request){
         $id = $request->input('id');

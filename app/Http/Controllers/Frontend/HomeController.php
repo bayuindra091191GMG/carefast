@@ -341,6 +341,9 @@ class HomeController extends Controller
 //            foreach($attenDBs as $attenDB){
 //                $data =
 //            }
+            $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            return $now;
+
             $data = "a\tini pake slash t\n";
             $data .= "a&nbsp;&nbsp;&nbsp;&nbsp;ini pake nbsp 4 kali\n";
             $data .= "a&nbsp;ini pake nbsp sekali\n";

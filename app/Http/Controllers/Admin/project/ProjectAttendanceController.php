@@ -27,6 +27,11 @@ use Yajra\DataTables\DataTables;
 
 class ProjectAttendanceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+
     public function show($id){
         try{
             $project = Project::find($id);

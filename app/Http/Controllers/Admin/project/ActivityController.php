@@ -36,6 +36,10 @@ use Yajra\DataTables\DataTables;
 
 class ActivityController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
 
     public function getIndexActivities(Request $request){
         $id = $request->input('id');

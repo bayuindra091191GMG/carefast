@@ -57,27 +57,52 @@ class UserController extends Controller
             //Save user deviceID
             FCMNotification::SaveToken($user->id, $request->input('device_id'), "user");
 
+
             //save user IMEI
             if($user->id < 30){
-                $isNotValid = false;
                 $userDB = User::where('id', $user->id)->first();
-                if(empty($userDB->first_imei)){
-                    $userDB->first_imei = $request->input('imei_no');
+                if(empty($request->input('android_id')) && empty($request->input('imei_no'))){
+                    return Response::json("Handphone tidak terdaftar", 483);
+                }
+
+                if(empty($userDB->android_id)){
+                    $userDB->android_id = $request->input('android_id');
                     $userDB->save();
                 }
                 else{
-                    if($userDB->first_imei != $request->input('imei_no')){ $isNotValid = true; }
+                    if($userDB->android_id != $request->input('android_id')){
+                        return Response::json("Handphone tidak terdaftar", 483);
+                    }
                 }
-                if(empty($userDB->second_imei)){
-                    $userDB->second_imei = $request->input('imei_no');
-                    $userDB->save();
-                }
-                else{
-                    if($userDB->first_imei != $request->input('imei_no')){ $isNotValid = true; }
-                }
-                if($isNotValid){
-                    return Response::json("IMEI tidak terdaftar", 483);
-                }
+
+//                $isNotValid = false;
+//                if(empty($userDB->first_imei)){
+//                    $userDB->first_imei = $request->input('imei_no');
+//                    $userDB->save();
+//                }
+//                else{
+//                    if($userDB->first_imei != $request->input('imei_no')){
+//                        $isNotValid = true;
+//
+//                        if(empty($userDB->second_imei)){
+//                            $userDB->second_imei = $request->input('imei_no');
+//                            $userDB->save();
+//                            $isNotValid = false;
+//                        }
+//                        else{
+//                            if($userDB->second_imei != $request->input('imei_no')){
+//                                $isNotValid = true;
+//                            }
+//                        }
+//                    }
+//                    else{
+//                        $isNotValid = false;
+//                    }
+//                }
+
+//                if($isNotValid){
+//                    return Response::json("IMEI tidak terdaftar", 483);
+//                }
             }
 
             return Response::json([

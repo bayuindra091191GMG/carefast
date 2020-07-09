@@ -24,6 +24,11 @@ use Yajra\DataTables\DataTables;
 
 class ProjectController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+
     public function index(){
         try{
             return view('admin.project.information.index');
