@@ -10,6 +10,7 @@ use App\Models\ProjectEmployee;
 use App\Models\TempInsysEmploye;
 use App\Models\TempInsysProject;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -139,8 +140,9 @@ class IntegrationController extends Controller
                 }
             }
 
+            $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
             Log::channel('in_sys')
-                ->info('API/IntegrationController - employees PROCESS DONE');
+                ->info('API/IntegrationController - employees PROCESS DONE at '.$now);
             return Response::json([
                 'message' => 'Success Updating Employee Data!'
             ], 200);
@@ -237,8 +239,9 @@ class IntegrationController extends Controller
                 }
             }
 
+            $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
             Log::channel('in_sys')
-                ->info('API/IntegrationController - projects PROCESS DONE');
+                ->info('API/IntegrationController - projects PROCESS DONE at '.$now);
             return Response::json([
                 'message' => 'Success Updating Projects!'
             ], 200);
@@ -320,8 +323,9 @@ class IntegrationController extends Controller
 
             }
 
+            $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
             Log::channel('in_sys')
-                ->info('API/IntegrationController - jobAssignments PROCESS DONE');
+                ->info('API/IntegrationController - jobAssignments PROCESS DONE at '.$now);
             return Response::json([
                 'message' => 'Success Updating Job Assigment!'
             ], 200);

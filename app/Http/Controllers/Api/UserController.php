@@ -59,21 +59,20 @@ class UserController extends Controller
 
 
             //save user IMEI
-            if($user->id < 30){
-                $userDB = User::where('id', $user->id)->first();
-                if(empty($request->input('android_id')) && empty($request->input('imei_no'))){
+            $userDB = User::where('id', $user->id)->first();
+            if(empty($request->input('android_id')) && empty($request->input('imei_no'))){
+                return Response::json("Handphone tidak terdaftar", 483);
+            }
+
+            if(empty($userDB->android_id)){
+                $userDB->android_id = $request->input('android_id');
+                $userDB->save();
+            }
+            else{
+                if($userDB->android_id != $request->input('android_id')){
                     return Response::json("Handphone tidak terdaftar", 483);
                 }
-
-                if(empty($userDB->android_id)){
-                    $userDB->android_id = $request->input('android_id');
-                    $userDB->save();
-                }
-                else{
-                    if($userDB->android_id != $request->input('android_id')){
-                        return Response::json("Handphone tidak terdaftar", 483);
-                    }
-                }
+            }
 
 //                $isNotValid = false;
 //                if(empty($userDB->first_imei)){
@@ -103,7 +102,7 @@ class UserController extends Controller
 //                if($isNotValid){
 //                    return Response::json("IMEI tidak terdaftar", 483);
 //                }
-            }
+
 
             return Response::json([
                 'message' => "Success Save User Token!",

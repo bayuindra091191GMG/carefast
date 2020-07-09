@@ -69,6 +69,8 @@ class AttendanceAbsentController extends Controller
 //            if(empty($schedule)){
 //                return Response::json("Tidak pada schedule penempatan", 482);
 //            }
+
+
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
@@ -87,6 +89,14 @@ class AttendanceAbsentController extends Controller
                     'status_id'     => 6,
                     'created_by'     => $employeeLogin->id,
                 ]);
+                //get latitude and longitude
+                if($user->id < 30){
+                    if(!empty($data->location->latitude) && !empty($data->location->longitude)){
+                        $newAttendance->latitude = $data->location->latitude;
+                        $newAttendance->longitude = $data->location->longitude;
+                        $newAttendance->save();
+                    }
+                }
 
                 if($request->hasFile('image')){
                     //Upload Image
@@ -221,6 +231,14 @@ class AttendanceAbsentController extends Controller
                 'status_id'     => 7,
                 'created_by'     => $employeeLogin->id,
             ]);
+            //get latitude and longitude
+            if($user->id < 30){
+                if(!empty($data->location->latitude) && !empty($data->location->longitude)){
+                    $newAttendance->latitude = $data->location->latitude;
+                    $newAttendance->longitude = $data->location->longitude;
+                    $newAttendance->save();
+                }
+            }
 
             if($request->hasFile('image')){
                 //Upload Image
