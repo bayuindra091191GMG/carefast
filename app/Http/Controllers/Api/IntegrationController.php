@@ -10,6 +10,7 @@ use App\Models\ProjectEmployee;
 use App\Models\TempInsysEmploye;
 use App\Models\TempInsysProject;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -218,9 +219,9 @@ class IntegrationController extends Controller
                         'total_manpower'    => 10,
                         'total_manpower_used'=> 0,
                     ]);
-                    if(strpos($project['description'], "PUTUS KONTRAK") !== false){
-                        $nProject->status_id = 2;
-                    }
+//                    if(strpos($project['description'], "PUTUS KONTRAK") !== false){
+//                        $nProject->status_id = 2;
+//                    }
                     $nProject->save();
                 } else {
                     $oProject = Project::where('code', $project['code'])->first();
@@ -230,9 +231,10 @@ class IntegrationController extends Controller
                     $oProject->description = $project['description'];
                     $oProject->start_date = $project['start_date'];
                     $oProject->finish_date = $project['finish_date'];
-                    if(strpos($project['description'], "PUTUS KONTRAK") !== false){
-                        $oProject->status_id = 2;
-                    }
+                    $oProject->status_id = 1;
+//                    if(strpos($project['description'], "PUTUS KONTRAK") !== false){
+//                        $oProject->status_id = 2;
+//                    }
                     $oProject->save();
                 }
             }
@@ -342,37 +344,74 @@ class IntegrationController extends Controller
      */
     public function getAttendances(Request $request){
         try{
-            if(!DB::table('projects')->where('code', $request->project_code)->exists()){
+            if(!DB::table('projects')->where('code', $request->projectCode)->exists()){
                 return Response::json([
                     'error' => 'Project code not found!'
                 ], 400);
             }
 
-            if($request->start_date != null && $request->finish_date != null && $request->status != null){
-                $result = AttendanceAbsent::whereHas('project', function($query) use ($request){
-                    $query->where('code', $request->project_code);
+            if($request->beginDate != null && $request->endDate != null){
+                $attendanceAbsents = AttendanceAbsent::whereHas('project', function($query) use ($request){
+                    $query->where('code', $request->projectCode);
                 })
-                    ->whereBetween('created_at', array($request->start_date.' 00:00:00', $request->finish_date.' 23:59:00'))
-                    ->where('status_id', $request->status)
-                    ->get();
-            }
-            else if($request->start_date != null && $request->finish_date != null){
-                $result = AttendanceAbsent::whereHas('project', function($query) use ($request){
-                    $query->where('code', $request->project_code);
-                })
-                    ->whereBetween('created_at', array($request->start_date.' 00:00:00', $request->finish_date.' 23:59:00'))
+                    ->whereBetween('created_at', array($request->beginDate.' 00:00:00', $request->endDate.' 23:59:00'))
                     ->get();
             }
             else {
-                $result = AttendanceAbsent::whereHas('project', function ($query) use ($request) {
-                    $query->where('code', $request->project_code);
+                $attendanceAbsents = AttendanceAbsent::whereHas('project', function ($query) use ($request) {
+                    $query->where('code', $request->projectCode);
                 })->get();
             }
 
-            return Response::json([
-                'message' => 'Success Getting Attendance Data!',
-                'result'  => $result
-            ], 200);
+            $dataModel = collect();
+            if(count($attendanceAbsents) < 1){
+                return Response::json([
+                    'error' => 'No Attendances found within allocated time range!'
+                ], 400);
+            }
+
+//            timestamp: ...,
+//            projectCode: XXX, //assume project codes are synced
+//            beginDate: ..., //date YYYY-MM-DD
+//            endDate: ..., //date YYYY-MM-DD
+//            data: [
+//              {
+//                  employeeId: ...,
+//                  employeeCode: ...,
+//                  transDate: ..., //date YYYY-MM-DD
+//                  shiftCode: ..., // 1|2|3 or A|B|C or whatever
+//                  attendanceIn: ..., //timestamp YYYY-MM-DD HH:mm:ss
+//                  attendanceOut: ..., //timestamp YYYY-MM-DD HH:mm:ss
+//                  attendanceStatus: ..., // H=Hadir, A=Alpa, U=Unknown
+//                  ]
+//              }
+            foreach ($attendanceAbsents as $attendanceAbsent){
+                $projectCSOModel = ([
+                    'employeeId'        => $attendanceAbsent->employee->id,
+                    'employeeCode'      => $attendanceAbsent->employee->code,
+                    'transDate'         => $attendanceAbsent->created_at->format('Y-m-d'),
+                    'shiftCode'         => $attendanceAbsent->shift_type,
+                    'attendanceIn'      => $attendanceAbsent->date->format('Y-m-d H:i:s'),
+                    'attendanceOut'     => $attendanceAbsent->date_checkout->format('Y-m-d H:i:s'),
+                    'attendanceStatus'   => 'U',
+                ]);
+                if($attendanceAbsent->is_done == 0){
+                    $projectCSOModel->attendanceStatus = "A";
+                }
+                else{
+                    $projectCSOModel->attendanceStatus = "H";
+                }
+                $dataModel->push($projectCSOModel);
+            }
+            $date = Carbon::now('Asia/Jakarta')->timestamp;
+            $returnModel = collect([
+                'timestamp'     => $date,
+                'projectCode'   => $request->projectCode,
+                'beginDate'     => $request->beginDate,
+                'endDate'       => $request->endDate,
+                'data'          => $dataModel,
+            ]);
+            return Response::json($returnModel, 200);
         }
         catch (\Exception $ex){
             Log::error('API/IntegrationController - getAttendances error EX: '. $ex);
