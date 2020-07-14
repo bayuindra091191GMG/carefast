@@ -347,6 +347,11 @@ class IntegrationController extends Controller
      */
     public function getAttendances(Request $request){
         try{
+            $projects = $request->json()->all();
+//            Log::channel('in_sys')
+//                ->info('API/IntegrationController - getAttendances data 1 '.json_encode($request));
+            Log::channel('in_sys')
+                ->info('API/IntegrationController - getAttendances data 2 '.json_encode($projects));
             if(!DB::table('projects')->where('code', $request->projectCode)->exists()){
                 return Response::json([
                     'error' => 'Project code not found!'
@@ -393,7 +398,7 @@ class IntegrationController extends Controller
                     'employeeId'        => $attendanceAbsent->employee->id,
                     'employeeCode'      => $attendanceAbsent->employee->code,
                     'transDate'         => $attendanceAbsent->created_at->format('Y-m-d'),
-                    'shiftCode'         => $attendanceAbsent->shift_type,
+                    'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
                     'attendanceIn'      => $attendanceAbsent->date->format('Y-m-d H:i:s'),
                     'attendanceOut'     => $attendanceAbsent->date_checkout->format('Y-m-d H:i:s'),
                     'attendanceStatus'   => 'U',
@@ -414,10 +419,15 @@ class IntegrationController extends Controller
                 'endDate'       => $request->endDate,
                 'data'          => $dataModel,
             ]);
-            return Response::json($returnModel, 200);
+            Log::channel('in_sys')
+                ->info('API/IntegrationController - getAttendances data 2 '.json_encode($returnModel));
+//            return Response::json($returnModel, 200);
+            return Response::json([
+                'message' => 'Success getAttendances !'
+            ], 200);
         }
         catch (\Exception $ex){
-            Log::error('API/IntegrationController - getAttendances error EX: '. $ex);
+            Log::channel('in_sys')->error('API/IntegrationController - getAttendances error EX: '. $ex);
             return Response::json([
                 'error' => $ex
             ], 500);
