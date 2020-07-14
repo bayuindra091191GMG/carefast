@@ -342,6 +342,8 @@ class HomeController extends Controller
 //                $data =
 //            }
             $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            Log::channel('in_sys')
+                ->info('API/HomeController - datetime now = '.$now);
             return $now;
 
             $data = "a\tini pake slash t\n";
