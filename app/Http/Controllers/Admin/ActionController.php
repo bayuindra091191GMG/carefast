@@ -24,6 +24,7 @@ class ActionController extends Controller
     }
 
     public function index(){
+        $i = 0;
         return view('admin.action.index');
     }
 
