@@ -46,7 +46,8 @@ class AttendanceAbsent extends Eloquent
 	];
 
 	protected $dates = [
-		'date'
+		'date',
+		'date_checkout',
 	];
 
 	protected $fillable = [
