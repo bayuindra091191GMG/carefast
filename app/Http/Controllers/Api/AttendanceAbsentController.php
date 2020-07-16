@@ -287,13 +287,13 @@ class AttendanceAbsentController extends Controller
 
             if($projectEmployee->employee_roles_id  == 1){
                 //pengecekan harus di ganti dengan pengecekan weeks dan days dan finish
-                $schedule = Schedule::where('project_id', $projectEmployee->project_id)
-                    ->where('project_employee_id', $projectEmployee->id)
-                    ->first();
-
-                if(empty($schedule)){
-                    return Response::json("Tidak ada schedule saat ini!", 482);
-                }
+//                $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+//                    ->where('project_employee_id', $projectEmployee->id)
+//                    ->first();
+//
+//                if(empty($schedule)){
+//                    return Response::json("Tidak ada schedule saat ini!", 482);
+//                }
             }
 //            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
 //                ->where('project_employee_id', $projectEmployee->id)
