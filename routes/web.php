@@ -19,20 +19,22 @@ Auth::routes();
 
 
 Route::get('/', 'Admin\DashboardController@dashboard')->name('admin.dashboard');
-Route::get('/test-notif', 'Frontend\HomeController@testNotif')->name('testNotif');
-Route::get('/test-email', 'Frontend\HomeController@testEmail')->name('testEmail');
-Route::get('/test-notif-send', 'Frontend\HomeController@testNotifSend')->name('testNotifSend');
-Route::get('/android-notif-send', 'Frontend\HomeController@testNotifSendToAndroid')->name('testNotifSend');
-Route::get('/integration', 'Frontend\HomeController@submitIntegrationEmployee');
+//Route::get('/test-notif', 'Frontend\HomeController@testNotif')->name('testNotif');
+//Route::get('/test-email', 'Frontend\HomeController@testEmail')->name('testEmail');
+//Route::get('/test-notif-send', 'Frontend\HomeController@testNotifSend')->name('testNotifSend');
+//Route::get('/android-notif-send', 'Frontend\HomeController@testNotifSendToAndroid')->name('testNotifSend');
+//Route::get('/integration', 'Frontend\HomeController@submitIntegrationEmployee');
+//Route::get('/test-general', 'Frontend\HomeController@generalFunction');
+//Route::get('download-jsonfile', array('as'=> 'file.download', 'uses' => 'Frontend\HomeController@generalFunction'));
+
 // Import
-Route::get('/import/form', 'Frontend\HomeController@form')->name('import.form');
-Route::post('/import/form/submit', 'Frontend\HomeController@importExcel')->name('import.submit');
+//Route::get('/import/form', 'Frontend\HomeController@form')->name('import.form');
+//Route::post('/import/form/submit', 'Frontend\HomeController@importExcel')->name('import.submit');
+
 // ADMIN ROUTE
 // ====================================================================================================================
 
 Route::post('/keluar', 'Admin\AdminController@logout')->name('admin.keluar');
-Route::get('/test-general', 'Frontend\HomeController@generalFunction');
-Route::get('download-jsonfile', array('as'=> 'file.download', 'uses' => 'Frontend\HomeController@generalFunction'));
 
 Route::prefix('admin')->group(function(){
     Route::get('/testing', 'Admin\AdminController@test')->name('admin.test');
