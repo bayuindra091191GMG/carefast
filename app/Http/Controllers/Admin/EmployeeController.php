@@ -89,7 +89,7 @@ class EmployeeController extends Controller
 
     public function create(){
         try{
-            $employeeRoles = EmployeeRole::all();
+            $employeeRoles = EmployeeRole::where('id', '>', 3)->where('id', '!=', 9)->where('id', '!=', 10)->get();
 
             return view('admin.employee.create', compact('employeeRoles'));
         }

@@ -72,12 +72,12 @@
                                 <span class="hide-menu"> Daftar Karyawan </span>
                             </a>
                         </li>
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.employee.create') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-account"></i>--}}
-{{--                                <span class="hide-menu"> Buat Karyawan Baru</span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.employee.create') }}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Buat Upper Management</span>
+                            </a>
+                        </li>
                         <li class="sidebar-item">
                             <a href="{{ route('admin.employee_role.index') }}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
