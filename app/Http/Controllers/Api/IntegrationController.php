@@ -292,7 +292,10 @@ class IntegrationController extends Controller
                 if(DB::table('projects')->where('code', $project['project_code'])->exists()){
                     $nProject = Project::where('code', $project['project_code'])->first();
 
-                    $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)->where('status_id', 1)->get();
+                    $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)
+                        ->where('status_id', 1)
+                        ->where('employee_roles_id', '<', 3)
+                        ->get();
                     foreach($projectEmployees as $projectEmployee){
                         $projectEmployee->status_id = 0;
                         $projectEmployee->save();

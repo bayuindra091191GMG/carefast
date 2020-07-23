@@ -171,7 +171,8 @@ class ProjectEmployeeController extends Controller
                 return redirect()->back();
             }
 
-            $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
+//            $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
+            $manpowerLeft = 0;
 
             $employeeRoleAssigned = collect();
 
@@ -182,6 +183,7 @@ class ProjectEmployeeController extends Controller
                     ->where('status_id', 1)
                     ->count();
                 $employeeRoleAssigned->push($assignedEmployees);
+                $manpowerLeft += $assignedEmployees;
             }
 
             //dd($includeIds);
@@ -357,7 +359,8 @@ class ProjectEmployeeController extends Controller
                 return redirect()->back();
             }
 
-            $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
+//            $manpowerLeft = $project->total_manpower - $project->total_manpower_used;
+            $manpowerLeft = 0;
 
             $upperEmployees = ProjectEmployee::with(['employee','employee_role'])
                 ->where('project_id', $project_id)
@@ -366,9 +369,10 @@ class ProjectEmployeeController extends Controller
                 ->orderByDesc('employee_roles_id')
                 ->get();
 
-            if($upperEmployees->count() === 0){
-                $manpowerLeft--;
-            }
+//            if($upperEmployees->count() === 0){
+//                $manpowerLeft--;
+//            }
+            $manpowerLeft += $upperEmployees->count();
 
             $includeIds = [];
             $collectUpperEmployees = collect();
@@ -395,9 +399,10 @@ class ProjectEmployeeController extends Controller
                 ->where('status_id', 1)
                 ->get();
 
-            if($cleanerEmployees->count() === 0){
-                $manpowerLeft--;
-            }
+//            if($cleanerEmployees->count() === 0){
+//                $manpowerLeft--;
+//            }
+            $manpowerLeft += $cleanerEmployees->count();
 
             $collectCleanerEmployees = collect();
             foreach ($cleanerEmployees as $cleanerEmployee){

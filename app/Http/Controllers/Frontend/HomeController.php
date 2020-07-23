@@ -335,7 +335,22 @@ class HomeController extends Controller
     }
     public function generalFunction(){
         try{
-
+            $employees = User::all();
+            $arrTemp = collect();
+            foreach($employees as $employee){
+                $employeePhone = $employee->phone;
+                if (strpos($employeePhone, '-') !== false) {
+                    $phone = str_replace('-', '', $employeePhone);
+                    $arr = [
+                        'before' => $employeePhone,
+                        'after' => $phone,
+                    ];
+                    $employee->phone = $phone;
+                    $employee->save();
+                    $arrTemp->push($arr);
+                }
+            }
+            dd($arrTemp);
 //            $data = json_encode(['Element 1','Element 2','Element 3','Element 4','Element 5']);
 //            $attenDBs = AttendanceAbsent::all();
 //            foreach($attenDBs as $attenDB){
