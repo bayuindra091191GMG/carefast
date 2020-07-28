@@ -75,22 +75,22 @@
                                                 <div class="col-md-12">
                                                     <div class="row">
                                                         <div class="form-group form-float form-group-lg">
-                                                            <table class="table table-bordered" >
+                                                            <table class="table table-bordered" style="table-layout: fixed; width: 950px">
                                                                 <thead>
                                                                 <tr>
-                                                                    <th style="width: 35%">Waktu</th>
-                                                                    <th style="width: 35%">Object</th>
-                                                                    <th style="width: 10%">Action</th>
-                                                                    <th style="width: 10%">Period</th>
-                                                                    <th style="width: 10%">Tindakan</th>
+                                                                    <th style="width: 350px">Waktu</th>
+                                                                    <th style="width: 350px">Object</th>
+                                                                    <th style="width: 100px">Action</th>
+                                                                    <th style="width: 100px">Period</th>
+                                                                    <th style="width: 100px">Tindakan</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                 <tr v-for="(plotList, index) in plotLists">
-                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.TimeValue }}</td>
-                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.Object }}</td>
-                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.Action }}</td>
-                                                                    <td style="padding: 0 5px 0 5px">@{{ plotList.PeriodString }}</td>
+                                                                    <td style="padding: 0 5px 0 5px;word-break:break-all">@{{ plotList.TimeValue }}</td>
+                                                                    <td style="padding: 0 5px 0 5px;word-break:break-all">@{{ plotList.Object }}</td>
+                                                                    <td style="padding: 0 5px 0 5px;word-break: break-all">@{{ plotList.Action }}</td>
+                                                                    <td style="padding: 0 5px 0 5px;word-break: break-all">@{{ plotList.PeriodString }}</td>
                                                                     <td style="padding: 0 5px 0 5px">
                                                                         <a class="btn btn-danger btn-md" style="cursor: pointer" v-on:click="removePlotlist(plotList, index)">Delete</a>
                                                                     </td>
