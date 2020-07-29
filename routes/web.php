@@ -198,6 +198,7 @@ Route::prefix('admin')->group(function(){
     Route::post('/employee/update/{id}', 'Admin\EmployeeController@update')->name('admin.employee.update');
     Route::post('/employee/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
     Route::get('/employee/detail/{id}', 'Admin\EmployeeController@detail')->name('admin.employee.detail-attendance');
+    Route::post('/employee/downloadNucPhone', 'Admin\EmployeeController@downloadNucPhone')->name('admin.employee.download-nucphone');
 
     // Employee Role
     Route::get('/employee_role', 'Admin\EmployeeRoleController@index')->name('admin.employee_role.index');

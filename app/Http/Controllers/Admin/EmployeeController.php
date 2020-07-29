@@ -13,6 +13,7 @@ use App\Transformer\EmployeeTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -433,5 +434,21 @@ class EmployeeController extends Controller
         }
 
         return \Response::json($formatted_tags);
+    }
+
+    public function downloadNucPhone(Request $request){
+        $now = Carbon::now('Asia/Jakarta');
+        $employees = Employee::where('id', '>', 29)->get();
+        $data = "NUC\tEmployee Name\tEmployee Phone\n";
+        foreach($employees as $employee){
+            $data .= $employee->code."\t"
+                .$employee->first_name." ".$employee->last_name."\t"
+                .$employee->phone."\n";
+        }
+        $file = "Employee Download_".$now->format('Y-m-d')."-".time().'.txt';
+        $destinationPath=public_path()."/download_employee/";
+        if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
+        File::put($destinationPath.$file, $data);
+        return response()->download($destinationPath.$file);
     }
 }

@@ -192,6 +192,7 @@ class UserController extends Controller
                 'accessible_menus'  => $accessible_menus,
 //                'employee_id'       => $employee->id,
                 'employee_id'       => $user->employee_id,
+                'employee_code'       => $employee->code,
                 'projects'          => $projectModels
             ]);
 

@@ -20,6 +20,20 @@
 {{--                        </a>--}}
 {{--                    </div>--}}
 {{--                </div>--}}
+
+{{--                <div class="row mb-3">--}}
+
+{{--                    {{ Form::open(['route'=>'admin.employee.download-nucphone','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}--}}
+{{--                    <div class="col-12 text-right">--}}
+{{--                        <button type="submit" class="btn btn-success">--}}
+{{--                            <i class="fas fa-download text-white"></i>--}}
+{{--                            <br/>--}}
+{{--                            <span>DOWNLOAD NUC-PHONE</span>--}}
+{{--                        </button>--}}
+{{--                    </div>--}}
+
+{{--                    {{ Form::close() }}--}}
+{{--                </div>--}}
                 <div class="row">
                     <div class="col-12">
                         <div class="table-responsive-sm">

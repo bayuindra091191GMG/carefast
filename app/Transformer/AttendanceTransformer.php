@@ -22,7 +22,7 @@ class AttendanceTransformer extends TransformerAbstract
 
             if(!empty($attendance->image_path)){
                 $imageURL = asset('storage/attendances/'.$attendance->image_path);
-                $imgPath = "<img src='".$imageURL."' width='50'>";
+                $imgPath = "<img src='".$imageURL."' width='40' loading='lazy'>";
             }
             else{
                 $imgPath = "-";
@@ -32,6 +32,7 @@ class AttendanceTransformer extends TransformerAbstract
 
             return[
                 'employee_name'        => $attendance->employee->first_name." ".$attendance->employee->last_name,
+                'employee_code'        => $attendance->employee->code,
                 'date'               => $date,
                 'status'             => $status->id==6 ? 'ABSEN MASUK' : 'ABSEN KELUAR',
                 'image_path'         => $imgPath,
@@ -41,7 +42,7 @@ class AttendanceTransformer extends TransformerAbstract
         }
         catch (\Exception $exception){
             error_log($exception);
-            Log::error("CheckinTransformerp > transform ".$exception);
+            Log::error("CheckinTransformer > transform ".$exception);
         }
     }
 }
