@@ -42,6 +42,68 @@ class UserController extends Controller
         }
     }
 
+    public function checkUserNUC(Request $request){
+        try{
+            $employeeNUC = Employee::where('code', $request->input('employee_code'))->first();
+
+            if(!empty($employeeNUC)){
+                if(empty($employeeNUC->phone)){
+                    return Response::json("Belum ada nomor handphone", 482);
+                }
+                else{
+                    return Response::json("Sudah ada nomor handphone", 200);
+                }
+            }
+            else{
+                return Response::json("Sudah ada nomor handphone", 200);
+            }
+        }
+        catch(\Exception $ex){
+            Log::error('Api/UserController - checkUserNUC error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
+
+    public function saveUserPhone(Request $request){
+        try{
+            $employee = Employee::where('code', $request->input('employee_code'))->first();
+
+            if(!empty($employee)){
+                if(!empty($employee->phone)){
+                    return Response::json("Sudah ada nomor handphone", 482);
+                }
+                else{
+                    $employee->phone = $request->input('phone');
+                    $employee->save();
+
+                    $user = User::where('employee_id', $employee->id)->first();
+                    $user->phone = $request->input('phone');
+                    $user->save();
+
+                    return Response::json([
+                        'message' => "Success Save User new Phone!",
+                    ], 200);
+                }
+            }
+            else{
+                return Response::json([
+                    'message' => "Sorry Something went Wrong!",
+                ], 500);
+            }
+        }
+        catch(\Exception $ex){
+            Log::error('Api/UserController - saveUserPhone error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
+
+
     /**
      * Function to save user token.
      *

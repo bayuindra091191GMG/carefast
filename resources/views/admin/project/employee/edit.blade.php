@@ -363,18 +363,18 @@
         function addRow(){
             let bufferIdx = idx;
 
-            // Validate manpower
-            let manpower = parseInt($('#manpower').val());
-            if(manpower === 0){
-                alert('MANPOWER SUDAH MENCAPAI KAPASITAS MAKSIMUM!');
-                return false;
-            }
+            // // Validate manpower
+            // let manpower = parseInt($('#manpower').val());
+            // if(manpower === 0){
+            //     alert('MANPOWER SUDAH MENCAPAI KAPASITAS MAKSIMUM!');
+            //     return false;
+            // }
 
-            // Update manpower
-            manpower--;
-            $('#manpower').val(manpower);
-            let manpowerStr = rupiahFormat(manpower);
-            $('#manpower_string').val(manpowerStr);
+            // // Update manpower
+            // manpower++;
+            // $('#manpower').val(manpower);
+            // let manpowerStr = rupiahFormat(manpower);
+            // $('#manpower_string').val(manpowerStr);
 
             let deleteType = 'upper';
             let newRow = '<tr id="upper_employee_row_' + idx + '">' +
@@ -425,18 +425,18 @@
         function addCleanerRow(){
             let bufferIdx = cleanerIdx;
 
-            // Validate manpower
-            let manpower = parseInt($('#manpower').val());
-            if(manpower === 0){
-                alert('MANPOWER SUDAH MENCAPAI KAPASITAS MAKSIMUM!');
-                return false;
-            }
+            // // Validate manpower
+            // let manpower = parseInt($('#manpower').val());
+            // if(manpower === 0){
+            //     alert('MANPOWER SUDAH MENCAPAI KAPASITAS MAKSIMUM!');
+            //     return false;
+            // }
 
-            // Update manpower
-            manpower--;
-            $('#manpower').val(manpower);
-            let manpowerStr = rupiahFormat(manpower);
-            $('#manpower_string').val(manpowerStr);
+            // // Update manpower
+            // manpower++;
+            // $('#manpower').val(manpower);
+            // let manpowerStr = rupiahFormat(manpower);
+            // $('#manpower_string').val(manpowerStr);
 
             let newRow = '<tr id="cleaner_employee_row_' + cleanerIdx + '">' +
                 '<td><select id="cleaner_employee_id_' + cleanerIdx + '" name="cleaner_employee_ids[]" class="form-control"></select></td>' +
@@ -504,13 +504,13 @@
 
             $('#' + type + '_employee_row_' + deletedIdx).remove();
 
-            // Update manpower
-            let manpower = parseInt($('#manpower').val());
-            manpower++;
-
-            $('#manpower').val(manpower);
-            let manpowerStr = rupiahFormat(manpower);
-            $('#manpower_string').val(manpowerStr);
+            // // Update manpower
+            // let manpower = parseInt($('#manpower').val());
+            // manpower--;
+            //
+            // $('#manpower').val(manpower);
+            // let manpowerStr = rupiahFormat(manpower);
+            // $('#manpower_string').val(manpowerStr);
         }
 
         // Auto onfocusout when enter is pressed

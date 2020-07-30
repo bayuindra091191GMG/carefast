@@ -27,10 +27,10 @@
                                 <thead>
                                 <tr>
                                     <th class="text-center">Nama</th>
-                                    <th class="text-center">Nama Customer</th>
+                                    <th class="text-center">Kode Project</th>
                                     <th class="text-center">Nomor Telpon/Ponsel</th>
                                     <th class="text-center">Alamat</th>
-                                    <th class="text-center">Status</th>
+{{--                                    <th class="text-center">Status</th>--}}
                                     <th class="text-center">Tanggal Dibuat</th>
                                     <th class="text-center">Tindakan</th>
                                 </tr>
@@ -63,11 +63,11 @@
             ajax: '{!! route('datatables.projects') !!}',
             order: [ [0, 'asc'] ],
             columns: [
-                { data: 'name', name: 'name', class: 'text-center' },
-                { data: 'customer_name', name: 'customer_name', class: 'text-center' },
-                { data: 'phones', name: 'phones', class: 'text-center'},
-                { data: 'address', name: 'address', class: 'text-center'},
-                { data: 'status', name: 'status', class: 'text-center'},
+                { data: 'name', name: 'name', class: 'text-left' },
+                { data: 'code', name: 'code', class: 'text-center' },
+                { data: 'phones', name: 'phone', class: 'text-center'},
+                { data: 'address', name: 'address', class: 'text-left'},
+                // { data: 'status', name: 'status.description', class: 'text-center'},
                 { data: 'created_at', name: 'created_at', class: 'text-center',
                     render: function ( data, type, row ){
                         if ( type === 'display' || type === 'filter' ){

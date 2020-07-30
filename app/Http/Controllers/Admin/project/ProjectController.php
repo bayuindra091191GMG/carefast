@@ -40,10 +40,17 @@ class ProjectController extends Controller
     }
 
     public function getIndex(Request $request){
-        $customers = Project::all();
-        return DataTables::of($customers)
-            ->setTransformer(new ProjectTransformer())
-            ->make(true);
+        try{
+            $projects = Project::with(['customer', 'status'])->where('id', ">", 0);
+
+            return DataTables::of($projects)
+                ->setTransformer(new ProjectTransformer())
+                ->make(true);
+        }
+        catch (\Exception $ex){
+            error_log($ex);
+            Log::error('Admin/information/ProjectController - getIndex error EX: '. $ex);
+        }
     }
 
     public function show(int $id)

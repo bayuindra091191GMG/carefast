@@ -40,8 +40,8 @@ class EmployeeController extends Controller
     }
 
     public function getIndex(Request $request){
-        $products = Employee::all();
-        return DataTables::of($products)
+        $employees = Employee::with(['employee_role', 'status'])->where('id', ">", 0);
+        return DataTables::of($employees)
             ->setTransformer(new EmployeeTransformer())
             ->make(true);
     }

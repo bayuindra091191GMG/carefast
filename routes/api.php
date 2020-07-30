@@ -40,6 +40,8 @@ Route::post('/places/get/qr-code', 'Api\PlaceController@qrCode');
 Route::get('/complaint-categories', 'Api\ComplainController@complaintCategories');
 
 //User Management
+Route::post('/check-user-nuc', 'Api\UserController@checkUserNUC');
+Route::post('/save-user-phone', 'Api\UserController@saveUserPhone');
 //Route::group(['namespace' => 'Api', 'middleware' => 'api', 'prefix' => 'user'], function () {
 Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::get('/get-user-data', 'Api\UserController@show');

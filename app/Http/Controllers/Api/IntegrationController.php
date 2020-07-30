@@ -69,12 +69,12 @@ class IntegrationController extends Controller
 //                        'role' => $employee['role'],
 //                    ]);
 
-                    $phone = "12345";
+                    $phone = "";
                     if(!empty($employee['phone'])){
                         if($employee['phone'] == "-" || $employee['phone'] == "--" ||
                             $employee['phone'] == " " || $employee['phone'] == "" || $employee['phone'] == " " ||
                             $employee['phone'] == "XXX" || $employee['phone'] == "12345"){
-                            $phone = $employee['code'];
+                            $phone = "";
                         }
                         else{
                             $phone = $employee['phone'];

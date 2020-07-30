@@ -21,19 +21,19 @@
 {{--                    </div>--}}
 {{--                </div>--}}
 
-{{--                <div class="row mb-3">--}}
+                <div class="row mb-3">
 
-{{--                    {{ Form::open(['route'=>'admin.employee.download-nucphone','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}--}}
-{{--                    <div class="col-12 text-right">--}}
-{{--                        <button type="submit" class="btn btn-success">--}}
-{{--                            <i class="fas fa-download text-white"></i>--}}
-{{--                            <br/>--}}
-{{--                            <span>DOWNLOAD NUC-PHONE</span>--}}
-{{--                        </button>--}}
-{{--                    </div>--}}
+                    {{ Form::open(['route'=>'admin.employee.download-nucphone','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
+                    <div class="col-12 text-right">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-download text-white"></i>
+                            <br/>
+                            <span>DOWNLOAD NUC-PHONE</span>
+                        </button>
+                    </div>
 
-{{--                    {{ Form::close() }}--}}
-{{--                </div>--}}
+                    {{ Form::close() }}
+                </div>
                 <div class="row">
                     <div class="col-12">
                         <div class="table-responsive-sm">
@@ -80,12 +80,12 @@
             order: [ [0, 'asc'] ],
             columns: [
                 { data: 'code', name: 'code'},
-                { data: 'role', name: 'role'},
+                { data: 'role', name: 'employee_role.name'},
                 { data: 'first_name', name: 'first_name', class: 'text-center' },
                 { data: 'last_name', name: 'last_name', class: 'text-center' },
                 { data: 'nik', name: 'nik'},
-                { data: 'phones', name: 'phones', class: 'text-center'},
-                { data: 'status', name: 'status', class: 'text-center'},
+                { data: 'phones', name: 'phone', class: 'text-center'},
+                { data: 'status', name: 'status.description', class: 'text-center'},
                 { data: 'created_at', name: 'created_at', class: 'text-center',
                     render: function ( data, type, row ){
                         if ( type === 'display' || type === 'filter' ){
