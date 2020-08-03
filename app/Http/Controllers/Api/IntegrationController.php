@@ -35,18 +35,18 @@ class IntegrationController extends Controller
                 ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
 
             $nonActiveEmp = DB::statement("update employees set status_id = 2 where id > 29 and status_id = 1 and employee_role_id < 4");
-            sleep(120);
+            sleep(60);
 
             $ct = 1;
             foreach ($employees as $employee) {
-                if($ct %1000 == 0){
+                if($ct %2000 == 0){
                     sleep(30);
                 }
                 $rules = array(
                     'code'          => 'required',
                     'first_name'    => 'required',
 //                    'last_name'     => 'required',
-                    'phone'         => 'required',
+//                    'phone'         => 'required',
                     'dob'           => 'required',
                     'nik'           => 'required',
 //                    'address'       => 'required',
