@@ -108,7 +108,7 @@ class IntegrationController extends Controller
 
                         User::create([
                             'employee_id' => $nEmployee->id,
-                            'name' => $employee['first_name'] . ' ' . $employee['last_name'],
+                            'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
                             'phone' => $phone,
                             'status_id' => 1,
                             'password' => Hash::make('carefastid')

@@ -617,7 +617,7 @@ class HomeController extends Controller
 
                         User::create([
                             'employee_id' => $nEmployee->id,
-                            'name' => $employee['first_name'] . ' ' . $employee['last_name'],
+                            'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
                             'phone' => $phone,
                             'password' => Hash::make('carefastid')
                         ]);
