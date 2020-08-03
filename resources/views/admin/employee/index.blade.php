@@ -44,7 +44,7 @@
                                     <th class="text-center">Posisi</th>
                                     <th class="text-center">Nama Depan</th>
                                     <th class="text-center">Nama Belakang</th>
-                                    <th class="text-center">NIK</th>
+                                    <th class="text-center">Nomor KTP</th>
                                     <th class="text-center">Nomor Telpon/Ponsel</th>
                                     <th class="text-center">Status</th>
                                     <th class="text-center">Tanggal Dibuat</th>

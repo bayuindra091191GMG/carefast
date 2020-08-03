@@ -438,7 +438,7 @@ class EmployeeController extends Controller
 
     public function downloadNucPhone(Request $request){
         $now = Carbon::now('Asia/Jakarta');
-        $employees = Employee::where('id', '>', 29)->get();
+        $employees = Employee::where('id', '>', 29)->where('status_id', 1)->get();
         $data = "NUC\tEmployee Name\tEmployee Phone\n";
         foreach($employees as $employee){
             $data .= $employee->code."\t"

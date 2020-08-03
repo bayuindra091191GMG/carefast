@@ -34,7 +34,14 @@ class IntegrationController extends Controller
             Log::channel('in_sys')
                 ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
 
+            $nonActiveEmp = DB::statement("update employees set status_id = 2 where id > 29 and status_id = 1 and employee_role_id < 4");
+            sleep(120);
+
+            $ct = 1;
             foreach ($employees as $employee) {
+                if($ct %1000 == 0){
+                    sleep(30);
+                }
                 $rules = array(
                     'code'          => 'required',
                     'first_name'    => 'required',
@@ -69,6 +76,7 @@ class IntegrationController extends Controller
 //                        'role' => $employee['role'],
 //                    ]);
 
+
                     $phone = "";
                     if(!empty($employee['phone'])){
                         if($employee['phone'] == "-" || $employee['phone'] == "--" ||
@@ -102,6 +110,7 @@ class IntegrationController extends Controller
                             'employee_id' => $nEmployee->id,
                             'name' => $employee['first_name'] . ' ' . $employee['last_name'],
                             'phone' => $phone,
+                            'status_id' => 1,
                             'password' => Hash::make('carefastid')
                         ]);
                     } else {
@@ -113,20 +122,23 @@ class IntegrationController extends Controller
                         $employeeChecking->nik = $employee['nik'];
                         $employeeChecking->employee_role_id = $employee['role'];
                         $employeeChecking->address = $employee['address'] ?? "";
+                        $employeeChecking->status_id = 1;
                         $employeeChecking->save();
 
                         $oUser = User::where('employee_id', $employeeChecking->id)->first();
                         if(empty($oUser)){
                             User::create([
                                 'employee_id' => $employeeChecking->id,
-                                'name' => $employee['first_name'] . ' ' . $employee['last_name'],
+                                'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
                                 'phone' => $phone,
+                                'status_id' => 1,
                                 'password' => Hash::make('carefastid')
                             ]);
                         }
                         else{
                             $oUser->phone = $phone;
-                            $oUser->name = $employee['first_name'] . ' ' . $employee['last_name'];
+                            $oUser->name = $employee['first_name'] . ' ' . $employee['last_name'] ?? "";
+                            $oUser->status_id = 1;
                             $oUser->save();
                         }
                     }
@@ -139,7 +151,10 @@ class IntegrationController extends Controller
                         'message' => $ex
                     ], 500);
                 }
+                $ct++;
             }
+
+//            $nonActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 2");
 
             $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
             Log::channel('in_sys')
@@ -266,7 +281,7 @@ class IntegrationController extends Controller
     public function jobAssignments(Request $request){
         try{
             $projects = $request->json()->all();
-            sleep(90);
+            sleep(600);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - jobAssignments DATA : '.json_encode($projects));
 //            Log::channel('in_sys')
@@ -294,7 +309,7 @@ class IntegrationController extends Controller
 
                     $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)
                         ->where('status_id', 1)
-                        ->where('employee_roles_id', '<', 3)
+                        ->where('employee_roles_id', '<', 4)
                         ->get();
                     foreach($projectEmployees as $projectEmployee){
                         $projectEmployee->status_id = 0;

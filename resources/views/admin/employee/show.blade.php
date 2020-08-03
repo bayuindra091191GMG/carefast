@@ -140,7 +140,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="nik">NIK</label>
+                                                        <label class="form-label" for="nik">KTP</label>
                                                         <input id="nik" type="text" class="form-control"
                                                                name="nik" value="{{ $employee->nik }}" readonly="">
                                                     </div>
