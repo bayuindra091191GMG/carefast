@@ -55,7 +55,7 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/error/error.log'),
             'level' => 'debug',
-            'days' => 31,
+            'days' => 1,
         ],
 
         'info' => [

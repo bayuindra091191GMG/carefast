@@ -189,6 +189,11 @@ class UserController extends Controller
         try{
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
+            if(empty($user->phone) || $user->phone == " " || $user->phone == ""){
+                return Response::json([
+                    'error'   => "",
+                ], 401);
+            }
             $employee = Employee::find($user->employee_id);
 
             // Get dob
