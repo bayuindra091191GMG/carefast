@@ -72,13 +72,16 @@ class UserController extends Controller
             $employee = Employee::where('code', $request->input('employee_code'))->first();
 
             if(!empty($employee)){
-                if(!empty($employee->phone)){
+//                Log::channel('in_sys')
+//                    ->error('API/UserController - saveUserPhone : CODE = '.$request->input('employee_code').", Phone = ".$employee->phone);
+                if($employee->phone != ""){
                     return Response::json("Sudah ada nomor handphone", 482);
                 }
                 else{
                     if(DB::table('employees')->where('phone', $request->input('phone'))->exists()){
                         return Response::json("Sudah ada nomor handphone", 482);
                     }
+
                     $employee->phone = $request->input('phone');
                     $employee->save();
 
@@ -86,9 +89,7 @@ class UserController extends Controller
                     $user->phone = $request->input('phone');
                     $user->save();
 
-                    return Response::json([
-                        'message' => "Success Save User new Phone!",
-                    ], 200);
+                    return Response::json("Success Save User new Phone", 200);
                 }
             }
             else{
@@ -195,7 +196,7 @@ class UserController extends Controller
             if(empty($user->phone) || $user->phone == " " || $user->phone == ""){
                 return Response::json([
                     'error'   => "",
-                ], 401);
+                ], 452);
             }
             $employee = Employee::find($user->employee_id);
 

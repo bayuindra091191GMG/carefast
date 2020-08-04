@@ -98,7 +98,7 @@ class IntegrationController extends Controller
                             'code' => $employee['code'],
                             'first_name' => $employee['first_name'],
                             'last_name' => $employee['last_name'] ?? "",
-                            'phone' => $phone,
+//                            'phone' => $phone,
                             'dob' => $employee['dob'],
                             'nik' => $employee['nik'],
                             'address' => $employee['address'],
@@ -109,7 +109,7 @@ class IntegrationController extends Controller
                         User::create([
                             'employee_id' => $nEmployee->id,
                             'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
-                            'phone' => $phone,
+//                            'phone' => $phone,
                             'status_id' => 1,
                             'password' => Hash::make('carefastid')
                         ]);
@@ -117,7 +117,7 @@ class IntegrationController extends Controller
                         $employeeChecking = Employee::where('code', $employee['code'])->first();
                         $employeeChecking->first_name = $employee['first_name'];
                         $employeeChecking->last_name = $employee['last_name'] ?? "";
-                        $employeeChecking->phone = $phone;
+//                        $employeeChecking->phone = $phone;
                         $employeeChecking->dob = $employee['dob'];
                         $employeeChecking->nik = $employee['nik'];
                         $employeeChecking->employee_role_id = $employee['role'];
@@ -130,13 +130,13 @@ class IntegrationController extends Controller
                             User::create([
                                 'employee_id' => $employeeChecking->id,
                                 'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
-                                'phone' => $phone,
+//                                'phone' => $phone,
                                 'status_id' => 1,
                                 'password' => Hash::make('carefastid')
                             ]);
                         }
                         else{
-                            $oUser->phone = $phone;
+//                            $oUser->phone = $phone;
                             $oUser->name = $employee['first_name'] . ' ' . $employee['last_name'] ?? "";
                             $oUser->status_id = 1;
                             $oUser->save();
@@ -154,7 +154,8 @@ class IntegrationController extends Controller
                 $ct++;
             }
 
-//            $nonActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 2");
+            sleep(30);
+            $nonActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 2");
 
             $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
             Log::channel('in_sys')
@@ -281,7 +282,7 @@ class IntegrationController extends Controller
     public function jobAssignments(Request $request){
         try{
             $projects = $request->json()->all();
-            sleep(600);
+            sleep(420);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - jobAssignments DATA : '.json_encode($projects));
 //            Log::channel('in_sys')
