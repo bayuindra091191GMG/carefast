@@ -76,6 +76,9 @@ class UserController extends Controller
                     return Response::json("Sudah ada nomor handphone", 482);
                 }
                 else{
+                    if(DB::table('employees')->where('phone', $request->input('phone'))->exists()){
+                        return Response::json("Sudah ada nomor handphone", 482);
+                    }
                     $employee->phone = $request->input('phone');
                     $employee->save();
 
