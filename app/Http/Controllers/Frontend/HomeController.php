@@ -43,6 +43,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 use Maatwebsite\Excel\Facades\Excel;
 
 class HomeController extends Controller
@@ -536,23 +537,9 @@ class HomeController extends Controller
             dd($ex);
         }
     }
-    public function getLocation(){
-        dd(\Request::ip());
-        $asdf = geoip($ip = \Request::ip());
-        dd($asdf);
-    }
 
-    public function getProvince(){
-        $uri = 'https://api.rajaongkir.com/starter/province';
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', 'https://api.rajaongkir.com/starter/province',[
-            'query' => ['key' => '49c2d8cab7d32fa5222c6355a07834d4']
-        ]);
-        $response = $response->getBody()->getContents();
-        $currency = (array)json_decode($response);
 
-        return $currency;
-    }
+    //testing api function
 
     public function submitIntegrationEmployee(){
         try {
@@ -756,10 +743,13 @@ class HomeController extends Controller
 
             foreach ($projects as $project){
 
-                if(DB::table('projects')->where('code', $project['project_code'])->exists()){
+                if(DB::table('projects')->where('code', strval($project['project_code']))->exists()){
                     $nProject = Project::where('code', $project['project_code'])->first();
 
-                    $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)->where('status_id', 1)->get();
+                    $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)
+                        ->where('status_id', 1)
+                        ->where('employee_roles_id', '<', 4)
+                        ->get();
                     foreach($projectEmployees as $projectEmployee){
                         $projectEmployee->status_id = 0;
                         $projectEmployee->save();
@@ -767,7 +757,7 @@ class HomeController extends Controller
 //                    Log::channel('in_sys')->info('API/IntegrationController - jobAssignments checkpoint 1 change status employee, project='.$nProject->code);
 
                     foreach ($project['employee_codes'] as $employee){
-                        if(DB::table('employees')->where('code', $employee)->exists()){
+                        if(DB::table('employees')->where('code', strval($employee))->exists()){
                             $nEmployee = Employee::where('code', $employee)->first();
 
                             $projectEmployeeDB = ProjectEmployee::where('employee_id', $nEmployee->id)

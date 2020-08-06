@@ -44,10 +44,11 @@ class UserController extends Controller
 
     public function checkUserNUC(Request $request){
         try{
-            $employeeNUC = Employee::where('code', $request->input('employee_code'))->first();
+//            $employeeNUC = Employee::where('code', $request->input('employee_code'))->first();
+            $employeeNUC = DB::table('Employees')->where('code', $request->input('employee_code'))->first();
 
             if(!empty($employeeNUC)){
-                if(empty($employeeNUC->phone)){
+                if(empty($employeeNUC->phone) || $employeeNUC->phone == ""){
                     return Response::json("Belum ada nomor handphone", 482);
                 }
                 else{
@@ -117,7 +118,6 @@ class UserController extends Controller
     public function saveUserToken(Request $request)
     {
         try{
-            $data = $request->json()->all();
             $user = auth('api')->user();
 
             //Save user deviceID
@@ -202,9 +202,9 @@ class UserController extends Controller
 
             // Get dob
             $dob = '';
-            if(!empty($employee->dob)){
-                $dob = Carbon::parse($employee->dob, 'Asia/Jakarta')->format('d M Y');
-            }
+//            if(!empty($employee->dob)){
+//                $dob = Carbon::parse($employee->dob, 'Asia/Jakarta')->format('d M Y');
+//            }
 
             //    accessible_menus =
             //    1. checkin,
@@ -232,18 +232,34 @@ class UserController extends Controller
                 ->where('employee_roles_id', '>', 0)
                 ->where('status_id', 1)
                 ->first();
-            $employeeDBs = ProjectEmployee::where('employee_id', $employee->id)
-                ->where('employee_roles_id', '>', 0)
-                ->where('status_id', 1)
-                ->get();
             $projectModels = collect();
-            foreach ($employeeDBs as $employeedb){
-                $projectModel = [
-                    'id'    => $employeedb->project_id,
-                    'name'    => $employeedb->project->name,
-                ];
-                $projectModels->push($projectModel);
+            if($user->employee->employee_role_id > 1){
+//                $employeeDBs = ProjectEmployee::where('employee_id', $employee->id)
+//                    ->where('employee_roles_id', '>', 0)
+//                    ->where('status_id', 1)
+//                    ->chunk(100);
+//                foreach ($employeeDBs as $employeedb){
+//                    $projectModel = [
+//                        'id'    => $employeedb->project_id,
+//                        'name'    => $employeedb->project->name,
+//                    ];
+//                    $projectModels->push($projectModel);
+//                }
+
+                ProjectEmployee::where('employee_id', $employee->id)
+                    ->where('employee_roles_id', '>', 0)
+                    ->where('status_id', 1)
+                    ->chunk(100, function ($employeeDBs) use ($projectModels){
+                        foreach ($employeeDBs as $employeedb){
+                            $projectModel = [
+                                'id'    => $employeedb->project_id,
+                                'name'    => $employeedb->project->name,
+                            ];
+                            $projectModels->push($projectModel);
+                        }
+                    });
             }
+
 
             $employeeImage = empty($employee->image_path) ? asset('storage/employees/1_photo_20190822050856.png') : asset('storage/employees/'. $employee->image_path);
             $userModel = collect([

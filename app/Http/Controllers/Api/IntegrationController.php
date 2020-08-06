@@ -305,7 +305,7 @@ class IntegrationController extends Controller
                     ], 400);
                 }
 
-                if(DB::table('projects')->where('code', $project['project_code'])->exists()){
+                if(DB::table('projects')->where('code', strval($project['project_code']))->exists()){
                     $nProject = Project::where('code', $project['project_code'])->first();
 
                     $projectEmployees = ProjectEmployee::where('project_id', $nProject->id)
@@ -319,7 +319,8 @@ class IntegrationController extends Controller
 //                    Log::channel('in_sys')->info('API/IntegrationController - jobAssignments checkpoint 1 change status employee, project='.$nProject->code);
 
                     foreach ($project['employee_codes'] as $employee){
-                        if(DB::table('employees')->where('code', $employee)->exists()){
+//                        if(DB::table('employees')->where('code', $employee)->exists()){
+                        if(DB::table('employees')->where('code', strval($employee))->exists()){
                             $nEmployee = Employee::where('code', $employee)->first();
 
                             $projectEmployeeDB = ProjectEmployee::where('employee_id', $nEmployee->id)

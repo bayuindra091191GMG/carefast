@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -51,7 +52,8 @@ class AttendanceAbsentController extends Controller
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
             $projectCode = $data->qr_code;
-            $project = Project::where('code', $projectCode)->first();
+//            $project = Project::where('code', $projectCode)->first();
+            $project = DB::table('Projects')->where('code', $projectCode)->first();
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 400);
             }
@@ -63,6 +65,10 @@ class AttendanceAbsentController extends Controller
             if(empty($projectEmployeeExistence)){
                 return Response::json("Bukan pada project yang sesuai", 482);
             }
+            if($projectEmployeeExistence->status_id == 0){
+                return Response::json("Bukan pada project yang sesuai", 482);
+            }
+
 //            $schedule = Schedule::where('project_id', $project->id)
 //                ->where('project_employee_id', $employee->id)
 //                ->first();
@@ -71,7 +77,13 @@ class AttendanceAbsentController extends Controller
 //            }
 
 
-            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
+//            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
+//                ->where('project_id', $project->id)
+//                ->where('status_id', 6)
+//                ->where('is_done', 0)
+//                ->first();
+            $attendanceData = DB::table('AttendanceAbsents')
+                ->where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
                 ->where('is_done', 0)
@@ -90,13 +102,13 @@ class AttendanceAbsentController extends Controller
                     'created_by'     => $employeeLogin->id,
                 ]);
                 //get latitude and longitude
-                if($user->id < 30){
-                    if(!empty($data->location->latitude) && !empty($data->location->longitude)){
-                        $newAttendance->latitude = $data->location->latitude;
-                        $newAttendance->longitude = $data->location->longitude;
-                        $newAttendance->save();
-                    }
-                }
+//                if($user->id < 30){
+//                    if(!empty($data->location->latitude) && !empty($data->location->longitude)){
+//                        $newAttendance->latitude = $data->location->latitude;
+//                        $newAttendance->longitude = $data->location->longitude;
+//                        $newAttendance->save();
+//                    }
+//                }
 
                 if($request->hasFile('image')){
                     //Upload Image
@@ -177,7 +189,8 @@ class AttendanceAbsentController extends Controller
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
             $projectCode = $data->qr_code;
-            $project = Project::where('code', $projectCode)->first();
+//            $project = Project::where('code', $projectCode)->first();
+            $project = DB::table('Projects')->where('code', $projectCode)->first();
 //            Log::error('Api/AttendanceAbsentController - project code : '. $projectCode);
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 400);
@@ -190,6 +203,9 @@ class AttendanceAbsentController extends Controller
             if(empty($projectEmployeeExistence)){
                 return Response::json("Bukan pada project yang sesuai", 482);
             }
+            if($projectEmployeeExistence->status_id == 0){
+                return Response::json("Bukan pada project yang sesuai", 482);
+            }
 
 //            $schedule = Schedule::where('project_id', $project->id)
 //                ->where('project_employee_id', $employee->id)
@@ -198,7 +214,13 @@ class AttendanceAbsentController extends Controller
 //                return Response::json("Tidak pada schedule penempatan", 482);
 //            }
 
-            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
+//            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
+//                ->where('project_id', $project->id)
+//                ->where('status_id', 6)
+//                ->where('is_done', 0)
+//                ->first();
+            $attendanceData = DB::table('AttendanceAbsents')
+                ->where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
                 ->where('is_done', 0)
@@ -208,12 +230,12 @@ class AttendanceAbsentController extends Controller
             }
 
             // checkout absent
-            $temp = Carbon::now('Asia/Jakarta');
-            $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
-
-            $trxDate = Carbon::parse(date_format($attendanceData->created_at, 'j-F-Y H:i:s'));
-            $intervalMinute = $now->diffInMinutes($trxDate);
             //for development comment this code
+//            $temp = Carbon::now('Asia/Jakarta');
+//            $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
+
+//            $trxDate = Carbon::parse(date_format($attendanceData->created_at, 'j-F-Y H:i:s'));
+//            $intervalMinute = $now->diffInMinutes($trxDate);
 //            if($intervalMinute < 300){
 //                return Response::json("Absensi dilakukan kurang dari 1 jam yang lalu!", 483);
 //            }
@@ -232,13 +254,13 @@ class AttendanceAbsentController extends Controller
                 'created_by'     => $employeeLogin->id,
             ]);
             //get latitude and longitude
-            if($user->id < 30){
-                if(!empty($data->location->latitude) && !empty($data->location->longitude)){
-                    $newAttendance->latitude = $data->location->latitude;
-                    $newAttendance->longitude = $data->location->longitude;
-                    $newAttendance->save();
-                }
-            }
+//            if($user->id < 30){
+//                if(!empty($data->location->latitude) && !empty($data->location->longitude)){
+//                    $newAttendance->latitude = $data->location->latitude;
+//                    $newAttendance->longitude = $data->location->longitude;
+//                    $newAttendance->save();
+//                }
+//            }
 
             if($request->hasFile('image')){
                 //Upload Image
@@ -281,8 +303,6 @@ class AttendanceAbsentController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            $date = Carbon::now('Asia/Jakarta');
-            $time = $date->format('H:i:s');
             $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
 
             if($projectEmployee->employee_roles_id  == 1){
@@ -295,14 +315,21 @@ class AttendanceAbsentController extends Controller
 //                    return Response::json("Tidak ada schedule saat ini!", 482);
 //                }
             }
+//            $date = Carbon::now('Asia/Jakarta');
+//            $time = $date->format('H:i:s');
 //            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
 //                ->where('project_employee_id', $projectEmployee->id)
 //                ->where('start' >= $time)
 //                ->where('finish' <= $time)->first();
 
             //checking checkin with attendance
-            $attendance = AttendanceAbsent::where('employee_id', $employee->id)
-//                ->where('schedule_id', $schedule->id)
+//            $attendance = AttendanceAbsent::where('employee_id', $employee->id)
+////                ->where('schedule_id', $schedule->id)
+//                ->where('status_id', 6)
+//                ->where('is_done', 0)
+//                ->first();
+            $attendance = DB::table('AttendanceAbsents')
+                ->where('employee_id', $employee->id)
                 ->where('status_id', 6)
                 ->where('is_done', 0)
                 ->first();
