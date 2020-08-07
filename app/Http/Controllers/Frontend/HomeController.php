@@ -336,7 +336,28 @@ class HomeController extends Controller
     }
     public function generalFunction(){
         try{
-            $nonActiveEmp = DB::statement("update employees set notes = 'ini edit' where id = 2");
+            $users = User::where('phone', 'like', '%-%')->get();
+            foreach($users as $user){
+                $phone = $user->phone;
+                $phone = str_replace(' ', '', $phone);
+                $phone = str_replace('-', '', $phone);
+                $phone = str_replace('.', '', $phone);
+                $phone = str_replace('+62 ', '0', $phone);
+                $phone = str_replace('+62', '0', $phone);
+                $user->phone =$phone;
+                $user->save();
+            }
+            $employees = Employee::where('phone', 'like', '%-%')->get();
+            foreach($employees as $employee){
+                $phone = $employee->phone;
+                $phone = str_replace(' ', '', $phone);
+                $phone = str_replace('-', '', $phone);
+                $phone = str_replace('.', '', $phone);
+                $phone = str_replace('+62 ', '0', $phone);
+                $phone = str_replace('+62', '0', $phone);
+                $employee->phone =$phone;
+                $employee->save();
+            }
 
             dd('success');
             $employees = User::all();

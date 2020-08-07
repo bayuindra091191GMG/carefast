@@ -60,7 +60,7 @@
             pageLength: 25,
             responsive: true,
             ajax: '{!! route('datatables.projects') !!}',
-            order: [ [0, 'asc'] ],
+            order: [ [5, 'desc'] ],
             columns: [
                 { data: 'employee_name', name: 'employee_name', class: 'text-center' },
                 { data: 'date', name: 'date', class: 'text-center',
