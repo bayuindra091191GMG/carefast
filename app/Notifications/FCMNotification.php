@@ -110,7 +110,7 @@ class FCMNotification
                 ]);
                 $responseJSON = json_decode($response->getBody());
                 //dd($responseJSON);
-                Log::info("FCMNotification - SendNotification sent success userId = ".$userId. ", body = ". $data_string);
+//                Log::info("FCMNotification - SendNotification sent success userId = ".$userId. ", body = ". $data_string);
 
                 return $responseJSON->results[0]->message_id;
             }

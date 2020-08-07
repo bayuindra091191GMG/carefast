@@ -40,15 +40,14 @@ class AttendanceAbsentController extends Controller
         try{
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
-            $employeeLogin = $user->employee;
+//            $employeeLogin = $user->employee;
+            $employee_id =  $user->employee_id;
 
             $data = json_decode($request->input('attendance_model'));
             if($data->cso_id != "0"){
-                $employee = Employee::find($data->cso_id);
+                $employee_id = Employee::find($data->cso_id);
             }
-            else{
-                $employee =  $employeeLogin;
-            }
+            $employee = DB::table('Employees')->where('id', $employee_id)->first();
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
             $projectCode = $data->qr_code;
@@ -99,7 +98,7 @@ class AttendanceAbsentController extends Controller
                     'is_done'       => 0,
                     'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'status_id'     => 6,
-                    'created_by'     => $employeeLogin->id,
+                    'created_by'     => $employee_id,
                 ]);
                 //get latitude and longitude
 //                if($user->id < 30){
@@ -177,15 +176,14 @@ class AttendanceAbsentController extends Controller
         try{
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
-            $employeeLogin = $user->employee;
+//            $employeeLogin = $user->employee;
+            $employee_id =  $user->employee_id;
 
             $data = json_decode($request->input('attendance_model'));
             if($data->cso_id != "0"){
-                $employee = Employee::find($data->cso_id);
+                $employee_id = Employee::find($data->cso_id);
             }
-            else{
-                $employee =  $employeeLogin;
-            }
+            $employee = DB::table('Employees')->where('id', $employee_id)->first();
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
             $projectCode = $data->qr_code;
@@ -214,13 +212,7 @@ class AttendanceAbsentController extends Controller
 //                return Response::json("Tidak pada schedule penempatan", 482);
 //            }
 
-//            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
-//                ->where('project_id', $project->id)
-//                ->where('status_id', 6)
-//                ->where('is_done', 0)
-//                ->first();
-            $attendanceData = DB::table('AttendanceAbsents')
-                ->where('employee_id', $employee->id)
+            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
                 ->where('is_done', 0)
@@ -251,7 +243,7 @@ class AttendanceAbsentController extends Controller
                 'is_done'       => 1,
                 'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'     => 7,
-                'created_by'     => $employeeLogin->id,
+                'created_by'     => $employee_id,
             ]);
             //get latitude and longitude
 //            if($user->id < 30){
