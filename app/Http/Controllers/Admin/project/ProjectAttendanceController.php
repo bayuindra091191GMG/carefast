@@ -47,7 +47,7 @@ class ProjectAttendanceController extends Controller
         $id = $request->input('id');
 
         $customers = AttendanceAbsent::with(['employee'])->where('project_id', $id);
-//        $customers = AttendanceAbsent::where('project_id', $id)->orderby('created_at', 'desc')->get();
+//        $customers = AttendanceAbsent::where('project_id', $id)->get();
         return DataTables::of($customers)
             ->setTransformer(new AttendanceTransformer())
             ->make(true);

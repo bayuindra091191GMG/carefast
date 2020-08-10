@@ -31,7 +31,8 @@ class AttendanceTransformer extends TransformerAbstract
             $status = Status::find($attendance->status_id);
 
             return[
-                'employee_name'        => $attendance->employee->first_name." ".$attendance->employee->last_name,
+                'first_name'        => $attendance->employee->first_name,
+//                'last_name'        => $attendance->employee->last_name,
                 'employee_code'        => $attendance->employee->code,
                 'date'               => $date,
                 'status'             => $status->id==6 ? 'ABSEN MASUK' : 'ABSEN KELUAR',

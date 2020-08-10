@@ -159,8 +159,8 @@
             },
             order: [ [2, 'desc'] ],
             columns: [
-                { data: 'employee_code', name: 'employee_code', class: 'text-center' },
-                { data: 'employee_name', name: 'employee_name', class: 'text-center' },
+                { data: 'employee_code', name: 'employee.code', class: 'text-center' },
+                { data: 'first_name', name: 'employee.first_name', class: 'text-center' },
                 { data: 'date', name: 'date', class: 'text-center',
                     render: function ( data, type, row ){
                         if ( type === 'display' || type === 'filter' ){
@@ -169,8 +169,8 @@
                         return data;
                     }
                 },
-                { data: 'status', name: 'status', class: 'text-center'},
-                { data: 'image_path', name: 'image_path', class: 'text-center'},
+                { data: 'status', name: 'status', class: 'text-center', orderable: false, searchable: false},
+                { data: 'image_path', name: 'image_path', class: 'text-center', orderable: false, searchable: false},
                 { data: 'created_at', name: 'created_at', class: 'text-center',
                     render: function ( data, type, row ){
                         if ( type === 'display' || type === 'filter' ){
