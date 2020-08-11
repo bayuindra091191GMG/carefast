@@ -47,6 +47,7 @@ class AttendanceAbsentController extends Controller
             if($data->cso_id != "0"){
                 $employee_id = Employee::find($data->cso_id);
             }
+            Log::info('Api/AttendanceAbsentController - attendanceIn $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
             $employee = DB::table('Employees')->where('id', $employee_id)->first();
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
@@ -161,7 +162,7 @@ class AttendanceAbsentController extends Controller
 
         }
         catch (\Exception $ex){
-            Log::error('Api/AttendanceAbsentController - absentProcess error EX: '. $ex);
+            Log::error('Api/AttendanceAbsentController - attendanceIn error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -183,6 +184,7 @@ class AttendanceAbsentController extends Controller
             if($data->cso_id != "0"){
                 $employee_id = Employee::find($data->cso_id);
             }
+            Log::info('Api/AttendanceAbsentController - attendanceOut $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
             $employee = DB::table('Employees')->where('id', $employee_id)->first();
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
@@ -279,7 +281,7 @@ class AttendanceAbsentController extends Controller
             return Response::json("Berhasil Proses Absen Keluar", 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/AttendanceAbsentController - absentProcess error EX: '. $ex);
+            Log::error('Api/AttendanceAbsentController - attendanceOut error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
