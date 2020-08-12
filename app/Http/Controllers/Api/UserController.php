@@ -45,7 +45,7 @@ class UserController extends Controller
     public function checkUserNUC(Request $request){
         try{
 //            $employeeNUC = Employee::where('code', $request->input('employee_code'))->first();
-            $employeeNUC = DB::table('Employees')->where('code', $request->input('employee_code'))->first();
+            $employeeNUC = DB::table('employees')->where('code', $request->input('employee_code'))->first();
 
             if(!empty($employeeNUC)){
                 if(empty($employeeNUC->phone) || $employeeNUC->phone == ""){

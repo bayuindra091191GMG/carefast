@@ -45,15 +45,15 @@ class AttendanceAbsentController extends Controller
 
             $data = json_decode($request->input('attendance_model'));
             if($data->cso_id != "0"){
-                $employee_id = Employee::find($data->cso_id);
+                $employee_id = $data->cso_id;
             }
             Log::info('Api/AttendanceAbsentController - attendanceIn $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
-            $employee = DB::table('Employees')->where('id', $employee_id)->first();
+            $employee = DB::table('employees')->where('id', $employee_id)->first();
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
             $projectCode = $data->qr_code;
 //            $project = Project::where('code', $projectCode)->first();
-            $project = DB::table('Projects')->where('code', $projectCode)->first();
+            $project = DB::table('projects')->where('code', $projectCode)->first();
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 400);
             }
@@ -82,7 +82,7 @@ class AttendanceAbsentController extends Controller
 //                ->where('status_id', 6)
 //                ->where('is_done', 0)
 //                ->first();
-            $attendanceData = DB::table('AttendanceAbsents')
+            $attendanceData = DB::table('attendance_absents')
                 ->where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
@@ -163,7 +163,10 @@ class AttendanceAbsentController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceAbsentController - attendanceIn error EX: '. $ex);
-            return Response::json("Maaf terjadi kesalahan!", 500);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
         }
     }
     /**
@@ -182,15 +185,15 @@ class AttendanceAbsentController extends Controller
 
             $data = json_decode($request->input('attendance_model'));
             if($data->cso_id != "0"){
-                $employee_id = Employee::find($data->cso_id);
+                $employee_id = $data->cso_id;
             }
             Log::info('Api/AttendanceAbsentController - attendanceOut $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
-            $employee = DB::table('Employees')->where('id', $employee_id)->first();
+            $employee = DB::table('employees')->where('id', $employee_id)->first();
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
             $projectCode = $data->qr_code;
 //            $project = Project::where('code', $projectCode)->first();
-            $project = DB::table('Projects')->where('code', $projectCode)->first();
+            $project = DB::table('projects')->where('code', $projectCode)->first();
 //            Log::error('Api/AttendanceAbsentController - project code : '. $projectCode);
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 400);
@@ -282,7 +285,10 @@ class AttendanceAbsentController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceAbsentController - attendanceOut error EX: '. $ex);
-            return Response::json("Maaf terjadi kesalahan!", 500);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
         }
     }
     /**
@@ -322,7 +328,7 @@ class AttendanceAbsentController extends Controller
 //                ->where('status_id', 6)
 //                ->where('is_done', 0)
 //                ->first();
-            $attendance = DB::table('AttendanceAbsents')
+            $attendance = DB::table('attendance_absents')
                 ->where('employee_id', $employee->id)
                 ->where('status_id', 6)
                 ->where('is_done', 0)
@@ -350,7 +356,10 @@ class AttendanceAbsentController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceController - checkinChecking error EX: '. $ex);
-            return Response::json("Maaf terjadi kesalahan!", 500);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
         }
     }
 
