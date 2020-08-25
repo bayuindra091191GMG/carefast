@@ -336,6 +336,12 @@ class HomeController extends Controller
     }
     public function generalFunction(){
         try{
+            $allEmployee = Employee::where('status_id', 1)->get();
+            foreach ($allEmployee as $employee){
+
+            }
+
+
             $users = User::where('phone', 'like', '%-%')->get();
             foreach($users as $user){
                 $phone = $user->phone;
@@ -355,6 +361,38 @@ class HomeController extends Controller
                 $phone = str_replace('.', '', $phone);
                 $phone = str_replace('+62 ', '0', $phone);
                 $phone = str_replace('+62', '0', $phone);
+                $employee->phone =$phone;
+                $employee->save();
+            }
+
+            $users2 = User::where('phone', 'like', '00%')->get();
+            foreach($users2 as $user){
+                $phone = $user->phone;
+                $phone = str_replace('+62 ', '0', $phone);
+                $phone = str_replace('+62', '0', $phone);
+                $user->phone =$phone;
+                $user->save();
+            }
+            $employees2 = Employee::where('phone', 'like', '00%')->get();
+            foreach($employees2 as $employee){
+                $phone = $employee->phone;
+                $phone = str_replace('+62 ', '0', $phone);
+                $phone = str_replace('+62', '0', $phone);
+                $employee->phone =$phone;
+                $employee->save();
+            }
+
+            $users3 = User::where('phone', 'like', '00%')->where('id', '>', 29)->get();
+            foreach($users3 as $user){
+                $phone = $user->phone;
+                $phone = str_replace('00', '0', $phone);
+                $user->phone =$phone;
+                $user->save();
+            }
+            $employees3 = Employee::where('phone', 'like', '00%')->where('id', '>', 29)->get();
+            foreach($employees3 as $employee){
+                $phone = $employee->phone;
+                $phone = str_replace('00', '0', $phone);
                 $employee->phone =$phone;
                 $employee->save();
             }
