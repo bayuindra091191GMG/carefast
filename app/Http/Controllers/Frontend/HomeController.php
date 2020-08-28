@@ -340,50 +340,68 @@ class HomeController extends Controller
             $data = "Employee Code\tEmployee Name\tEmployee Phone\tTotal Checkin dan Checkout\tTotal Checkin saja\n";
             $allEmployee = Employee::where('status_id', 1)->where('id', '>', 29)->get();
             foreach ($allEmployee as $employee){
-                $data .= $employee->code."\t";
-                $data .= $employee->first_name." ".$employee->last_name."\t";
+//                $data .= $employee->code."\t";
+//                $data .= $employee->first_name." ".$employee->last_name."\t";
+//
+//                $user = DB::table('users')
+//                    ->where('employee_id', $employee->id)
+//                    ->first();
+//                $data .= "'".$user->phone."\t";
+//
+//                $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
+//                    ->where('status_id', 1)
+//                    ->first();
+//
+//                if(!empty($projectEmployee)){
+//                    $project = Project::where('id', $projectEmployee->project_id)
+//                        ->first();
+//                    $data .= $project->name."\t";
+//                }
+//                else{
+//                    $data .= "-"."\t";
+//                }
+//
+//                if(DB::table('attendance_absents')
+//                    ->where('employee_id', $employee->id)
+//                    ->exists()){
+//
+//                    $countA = DB::table('attendance_absents')
+//                        ->where('employee_id', $employee->id)
+//                        ->where('status_id', 6)
+//                        ->where('is_done', 1)
+//                        ->count();
+//                    $data .= $countA."\t";
+//                    $countB = DB::table('attendance_absents')
+//                        ->where('employee_id', $employee->id)
+//                        ->where('status_id', 6)
+//                        ->where('is_done', 0)
+//                        ->count();
+//                    $data .= $countB."\n";
+//                }
+//                else{
+//                    $data .= "-\t-\n";
+//                }
 
-                $user = DB::table('users')
-                    ->where('employee_id', $employee->id)
-                    ->first();
-                $data .= "'".$user->phone."\t";
 
-                $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
-                    ->where('status_id', 1)
-                    ->first();
+                $countEmployee = DB::table('employees')
+                    ->Where('address', $employee->address)
+                    ->orWhere('dob', $employee->dob)
+                    ->count();
+                if($countEmployee > 1){
+                    $data .= $employee->code."\t";
+                    $data .= $employee->first_name." ".$employee->last_name."\t";
+                    $data .= $employee->address."\t";
+                    $data .= $employee->dob."\t";
 
-                if(!empty($projectEmployee)){
-                    $project = Project::where('id', $projectEmployee->project_id)
+                    $user = DB::table('users')
+                        ->where('employee_id', $employee->id)
                         ->first();
-                    $data .= $project->name."\t";
-                }
-                else{
-                    $data .= "-"."\t";
-                }
+                    $data .= "'".$user->phone."\n";
 
-                if(DB::table('attendance_absents')
-                    ->where('employee_id', $employee->id)
-                    ->exists()){
 
-                    $countA = DB::table('attendance_absents')
-                        ->where('employee_id', $employee->id)
-                        ->where('status_id', 6)
-                        ->where('is_done', 1)
-                        ->count();
-                    $data .= $countA."\t";
-                    $countB = DB::table('attendance_absents')
-                        ->where('employee_id', $employee->id)
-                        ->where('status_id', 6)
-                        ->where('is_done', 0)
-                        ->count();
-                    $data .= $countB."\n";
                 }
-                else{
-                    $data .= "-\t-\n";
-                }
-
             }
-            $file = "Attendance-Rekap_".$now->format('Y-m-d')."-".time().'.txt';
+            $file = "double-user_".$now->format('Y-m-d')."-".time().'.txt';
             $destinationPath=public_path()."/download_attendance/";
             if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
             File::put($destinationPath.$file, $data);
