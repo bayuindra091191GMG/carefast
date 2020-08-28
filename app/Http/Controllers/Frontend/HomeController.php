@@ -338,8 +338,36 @@ class HomeController extends Controller
         try{
             $now = Carbon::now('Asia/Jakarta');
             $data = "Employee Code\tEmployee Name\tEmployee Phone\tTotal Checkin dan Checkout\tTotal Checkin saja\n";
-            $allEmployee = Employee::where('status_id', 1)->where('id', '>', 29)->get();
-            foreach ($allEmployee as $employee){
+//            $allEmployee = Employee::where('status_id', 1)->where('id', '>', 29)->get();
+
+// SELECT `id`, `code`,`first_name`,`last_name`,`address`,`dob`, count(*) as qty
+// FROM  `employees`
+// GROUP BY `first_name`, `address` HAVING count(*)> 1
+//ORDER BY `employees`.`first_name`  DESC
+            $asdf = DB::table('employees')
+                ->select('id','code','first_name','last_name','dob','address', DB::raw('count(*) as total'))
+                ->groupBy('first_name', DB::raw('`address` HAVING count(*)> 1 '))
+//                ->pluck('total','address')
+                ->get();
+            foreach ($asdf as $employee){
+                $countEmployee = DB::table('employees')
+                    ->Where('first_name', $employee->first_name)
+                    ->Where('address', $employee->address)
+                    ->Where('dob', $employee->dob)
+                    ->get();
+                foreach ($countEmployee as $count){
+                    $data .= $count->code."\t";
+                    $data .= $count->first_name." ".$count->last_name."\t";
+                    $data .= $count->address."\t";
+                    $data .= $count->dob."\t";
+
+                    $user = DB::table('users')
+                        ->where('employee_id', $count->id)
+                        ->first();
+                    $data .= "'".$user->phone."\n";
+                }
+            }
+//            foreach ($allEmployee as $employee){
 //                $data .= $employee->code."\t";
 //                $data .= $employee->first_name." ".$employee->last_name."\t";
 //
@@ -381,26 +409,7 @@ class HomeController extends Controller
 //                else{
 //                    $data .= "-\t-\n";
 //                }
-
-
-                $countEmployee = DB::table('employees')
-                    ->Where('address', $employee->address)
-                    ->orWhere('dob', $employee->dob)
-                    ->count();
-                if($countEmployee > 1){
-                    $data .= $employee->code."\t";
-                    $data .= $employee->first_name." ".$employee->last_name."\t";
-                    $data .= $employee->address."\t";
-                    $data .= $employee->dob."\t";
-
-                    $user = DB::table('users')
-                        ->where('employee_id', $employee->id)
-                        ->first();
-                    $data .= "'".$user->phone."\n";
-
-
-                }
-            }
+//            }
             $file = "double-user_".$now->format('Y-m-d')."-".time().'.txt';
             $destinationPath=public_path()."/download_attendance/";
             if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
