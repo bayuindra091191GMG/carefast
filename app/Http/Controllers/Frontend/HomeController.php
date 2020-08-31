@@ -336,8 +336,19 @@ class HomeController extends Controller
     }
     public function generalFunction(){
         try{
+//            $attendanceAbsents = AttendanceAbsent::where('id', '>', 36155)
+//                ->where('id', '<', 37010)
+//                ->get();
+//            foreach($attendanceAbsents as $attendanceAbsent){
+//                $attendanceAbsent->date = $attendanceAbsent->date->toDateTimeString()->subHours(8);
+//                $attendanceAbsent->create_at = $attendanceAbsent->create_at->toDateTimeString()->subHours(8);
+//                $attendanceAbsent->update_at = $attendanceAbsent->update_at->toDateTimeString()->subHours(8);
+//                $attendanceAbsent->save();
+//            }
+//            return "success";
+
             $now = Carbon::now('Asia/Jakarta');
-            $data = "Employee Code\tEmployee Name\tEmployee Phone\tTotal Checkin dan Checkout\tTotal Checkin saja\n";
+            $data = "Employee Code\tEmployee Name\tEmployee Phone\tProject\tTotal Valid Absensi\tTotal Tidak Valid Absen\n";
             $allEmployee = Employee::where('status_id', 1)->where('id', '>', 29)->get();
             foreach ($allEmployee as $employee){
                 $data .= $employee->code."\t";

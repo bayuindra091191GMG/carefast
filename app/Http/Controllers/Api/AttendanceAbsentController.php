@@ -362,6 +362,60 @@ class AttendanceAbsentController extends Controller
             ], 500);
         }
     }
+    /**
+     * Function to get employee attendance log.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function attendanceLog(Request $request){
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $startDateRequest = $request->input('start_date');
+            $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
+            $endDateRequest = $request->input('finish_date');
+            $finishDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
+
+            $attendances = DB::table('attendance_absents')
+                ->where('employee_id', $employee->id)
+                ->whereBetween('created_at', [$startDate, $finishDate])
+                ->where('status_id', 6)
+                ->get();
+
+            if($attendances->count() == 0){
+                return Response::json("Tidak ada Attendance!", 482);
+            }
+            else{
+                $attendanceModels = collect();
+                foreach ($attendances as $attendance){
+                    $attIn = $attendance->date->format('Y-m-d H:i:s');
+                    if(empty($attendance->date_checkout)){
+                        $attOut = "";
+                    }
+                    else{
+                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
+                    }
+                    $attendanceModel = collect([
+                        'attendance_in_date'    => $attIn,
+                        'attendance_out_date'   => $attOut,
+                    ]);
+                    $attendanceModels->push($attendanceModel);
+                }
+                return Response::json($attendanceModels, 200);
+            }
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceController - attendanceLog error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
 
     /**
      * Function to Submit Attendance Absent Check out.

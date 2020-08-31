@@ -64,6 +64,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/attendance/qrcode', 'Api\AttendanceAbsentController@getProjectCodeEncrypted');
     Route::post('/attendance/in', 'Api\AttendanceAbsentController@attendanceIn');
     Route::post('/attendance/out', 'Api\AttendanceAbsentController@attendanceOut');
+    Route::get('/attendance/log', 'Api\AttendanceAbsentController@attendanceLog');
 //    Route::post('/attendance/absent/checkout', 'Api\AttendanceAbsentController@submitCheckout');
 
     //Employee
