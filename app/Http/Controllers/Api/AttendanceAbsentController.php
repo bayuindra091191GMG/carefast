@@ -349,6 +349,7 @@ class AttendanceAbsentController extends Controller
                     'place_name'        => $projectEmployee->project->name,
                     'project_name'      => $projectEmployee->project->name,
                     'attendance_time'      => Carbon::parse($attendance->created_at)->format('d M Y H:i:s'),
+                    'attendance_out_time'      => "",
                 ]);
                 return Response::json($placeModel, 200);
             }
