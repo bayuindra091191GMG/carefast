@@ -347,6 +347,7 @@ class HomeController extends Controller
 //            }
 //            return "success";
 
+
             $now = Carbon::now('Asia/Jakarta');
             $data = "Employee Code\tEmployee Name\tEmployee Phone\tProject\tTotal Valid Absensi\tTotal Tidak Valid Absen\n";
             $allEmployee = Employee::where('status_id', 1)->where('id', '>', 29)->get();
