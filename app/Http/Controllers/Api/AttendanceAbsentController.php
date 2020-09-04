@@ -349,6 +349,7 @@ class AttendanceAbsentController extends Controller
                     'place_name'        => $projectEmployee->project->name,
                     'project_name'      => $projectEmployee->project->name,
                     'attendance_time'      => Carbon::parse($attendance->created_at)->format('d M Y H:i:s'),
+                    'attendance_out_time'      => "",
                 ]);
                 return Response::json($placeModel, 200);
             }
@@ -374,9 +375,9 @@ class AttendanceAbsentController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            $startDateRequest = $request->input('start_date');
+            $startDateRequest = Carbon::parse($request->input('start_date'));
             $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
-            $endDateRequest = $request->input('finish_date');
+            $endDateRequest = Carbon::parse($request->input('finish_date'));
             $finishDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
 
             $attendances = DB::table('attendance_absents')
