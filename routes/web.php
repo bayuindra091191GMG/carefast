@@ -31,6 +31,9 @@ Route::get('/', 'Admin\DashboardController@dashboard')->name('admin.dashboard');
 // Import
 //Route::get('/import/form', 'Frontend\HomeController@form')->name('import.form');
 //Route::post('/import/form/submit', 'Frontend\HomeController@importExcel')->name('import.submit');
+// Android Id Change
+Route::get('/imei/form', 'Frontend\HomeController@AndroidIdform')->name('imei.form');
+Route::post('/imei/form/submit', 'Frontend\HomeController@AndroidIdProcess')->name('imei.submit');
 
 // ADMIN ROUTE
 // ====================================================================================================================

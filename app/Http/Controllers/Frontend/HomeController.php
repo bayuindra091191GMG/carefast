@@ -160,6 +160,37 @@ class HomeController extends Controller
         }
     }
 
+    public function AndroidIdform()
+    {
+        return view('admin.imei.form');
+    }
+
+    public function AndroidIdProcess(Request $request){
+        try{
+//            dd($request);
+            $employee = Employee::where('code',$request->input('employee_code'))->first();
+            if(empty($employee)){
+                Session::flash('error', 'Employee Tidak ditemukan!');
+                return redirect(route('imei.form'));
+            }
+            $user = User::where('employee_id', $employee->id)->first();
+            $user->android_id = null;
+            $user->first_imei = null;
+            $user->second_imei = null;
+            $user->save();
+
+            Session::flash('success', 'Berhasil Ganti Data '.$user->name);
+            return redirect(route('imei.form'));
+        }
+        catch (\Exception $ex){
+            dd($ex);
+            Log::error('Frontend/HomeController - AndroidIdProcess error EX: '. $ex);
+
+            Session::flash('error', 'Gagal Ganti Data!');
+            return redirect(route('imei.form'));
+        }
+    }
+
     public function testNotif(){
         return view('admin.test-notif');
     }
