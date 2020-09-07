@@ -379,7 +379,7 @@ class HomeController extends Controller
 //            return "success";
 
             $now = Carbon::now('Asia/Jakarta');
-            $data = "Employee Code\tEmployee Name\tEmployee Phone\tTotal Valid Absensi\tTotal Invalid Absensi\n";
+            $data = "Employee Code\tEmployee Name\tEmployee Phone\tProject\tTotal Valid Absensi\tTotal Invalid Absensi\n";
 
             // checking for double user START
 //            $asdf = DB::table('employees')
