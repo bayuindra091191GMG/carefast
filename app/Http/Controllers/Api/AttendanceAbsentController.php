@@ -376,10 +376,10 @@ class AttendanceAbsentController extends Controller
             $employee = $user->employee;
 
 //            $startDateRequest = Carbon::parse($request->input('start_date'));
-            $startDateRequest = Carbon::createFromFormat('D M Y',  $request->input('start_date'));
+            $startDateRequest = Carbon::createFromFormat('D-M-Y',  $request->input('start_date'));
             $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
 //            $endDateRequest = Carbon::parse($request->input('finish_date'));
-            $endDateRequest = Carbon::createFromFormat('D M Y',  $request->input('finish_date'));
+            $endDateRequest = Carbon::createFromFormat('D-M-Y',  $request->input('finish_date'));
             $finishDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
 
             $attendances = DB::table('attendance_absents')
