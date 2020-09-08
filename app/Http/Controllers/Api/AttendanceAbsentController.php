@@ -110,6 +110,13 @@ class AttendanceAbsentController extends Controller
 //                    }
 //                }
 
+                //check if on/off request
+//                if($data->attendance_type == 'off'){
+//                    $attTime = Carbon::parse($data->attendance_time)->format('Y-m-d H:i:s');
+//                    $newAttendance->date = $attTime;
+//                    $newAttendance->save();
+//                }
+
                 if($request->hasFile('image')){
                     //Upload Image
                     //Creating Path Everyday
@@ -140,7 +147,7 @@ class AttendanceAbsentController extends Controller
                     "type_id" => 501,
                 );
                 //Push Notification to customer App.
-                if(!empty($project->customer_id)){
+                if(!empty($project->customer_id) && $employee->employee_role_id > 1){
                     if(strpos($project->customer_id, '#') !== false){
                         $cusArr = explode('#', $project->customer_id);
                         foreach ($cusArr as $custId){
@@ -259,6 +266,13 @@ class AttendanceAbsentController extends Controller
 //                }
 //            }
 
+            //check if on/off request
+//            if($data->attendance_type == 'off'){
+//                $attTime = Carbon::parse($data->attendance_time)->format('Y-m-d H:i:s');
+//                $newAttendance->date = $attTime;
+//                $newAttendance->save();
+//            }
+
             if($request->hasFile('image')){
                 //Upload Image
                 //Creating Path Everyday
@@ -375,12 +389,9 @@ class AttendanceAbsentController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-//            $startDateRequest = Carbon::parse($request->input('start_date'));
-            $startDateRequest = Carbon::createFromFormat('D-M-Y',  $request->input('start_date'));
-            $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
-//            $endDateRequest = Carbon::parse($request->input('finish_date'));
-            $endDateRequest = Carbon::createFromFormat('D-M-Y',  $request->input('finish_date'));
-            $finishDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
+            $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d H:i:s');
+
+            $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d H:i:s');
 
             $attendances = DB::table('attendance_absents')
                 ->where('employee_id', $employee->id)
@@ -394,12 +405,14 @@ class AttendanceAbsentController extends Controller
             else{
                 $attendanceModels = collect();
                 foreach ($attendances as $attendance){
-                    $attIn = $attendance->date->format('Y-m-d H:i:s');
+                    $attIn = Carbon::parse($request->input('finish_date'))->format('Y-m-d H:i:s');
+//                    $attIn = $attendance->date->format('Y-m-d H:i:s');
                     if(empty($attendance->date_checkout)){
                         $attOut = "";
                     }
                     else{
-                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
+                        $attOut = Carbon::parse($attendance->date_checkout)->format('Y-m-d H:i:s');
+//                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
                     }
                     $attendanceModel = collect([
                         'attendance_in_date'    => $attIn,
@@ -415,7 +428,7 @@ class AttendanceAbsentController extends Controller
             Log::error('Api/AttendanceController - attendanceLog error EX: '. $ex);
             return Response::json([
                 'message' => "Sorry Something went Wrong!",
-                'ex' => $ex,
+                'ex' => $ex->getMessage(),
             ], 500);
         }
     }
