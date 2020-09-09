@@ -214,16 +214,17 @@ class UserController extends Controller
             //    5. beri penilaian cso
             //    6. complain management
             //    7. create MR
+            //    8. attendance log
             //    11. Plotting oleh leader
             $accessible_menus = "";
             if($user->employee->employee_role_id > 4){
-                $accessible_menus = "1,2,4,5,6";
+                $accessible_menus = "1,2,4,5,6,8";
             }
             else if($user->employee->employee_role_id == 1){
-                $accessible_menus = "1,2,3";
+                $accessible_menus = "1,2,3,8";
             }
             else{
-                $accessible_menus = "1,4,5,6,11";
+                $accessible_menus = "1,4,5,6,11,8";
             }
             //pengecekan jika employee adalah pembuat MR pada suatu project
 
