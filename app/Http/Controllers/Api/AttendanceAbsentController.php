@@ -405,13 +405,13 @@ class AttendanceAbsentController extends Controller
             else{
                 $attendanceModels = collect();
                 foreach ($attendances as $attendance){
-                    $attIn = Carbon::parse($request->input('finish_date'))->format('Y-m-d H:i:s');
+                    $attIn = Carbon::parse($request->input('finish_date'))->format('d M Y H:i:s');
 //                    $attIn = $attendance->date->format('Y-m-d H:i:s');
                     if(empty($attendance->date_checkout)){
                         $attOut = "";
                     }
                     else{
-                        $attOut = Carbon::parse($attendance->date_checkout)->format('Y-m-d H:i:s');
+                        $attOut = Carbon::parse($attendance->date_checkout)->format('d M Y H:i:s');
 //                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
                     }
                     $attendanceModel = collect([

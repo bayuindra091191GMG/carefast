@@ -25,7 +25,7 @@ Route::get('/', 'Admin\DashboardController@dashboard')->name('admin.dashboard');
 //Route::get('/android-notif-send', 'Frontend\HomeController@testNotifSendToAndroid')->name('testNotifSend');
 //Route::get('/integration', 'Frontend\HomeController@submitIntegrationEmployee');
 //Route::get('/checkin', 'Frontend\HomeController@attendanceIn');
-//Route::get('/test-general', 'Frontend\HomeController@generalFunction');
+Route::get('/test-general', 'Frontend\HomeController@generalFunction');
 //Route::get('download-jsonfile', array('as'=> 'file.download', 'uses' => 'Frontend\HomeController@generalFunction'));
 
 // Import
