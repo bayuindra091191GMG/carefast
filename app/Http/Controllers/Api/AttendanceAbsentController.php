@@ -397,6 +397,7 @@ class AttendanceAbsentController extends Controller
                 ->where('employee_id', $employee->id)
                 ->whereBetween('created_at', [$startDate, $finishDate])
                 ->where('status_id', 6)
+                ->orderByDesc('created_at')
                 ->get();
 
             if($attendances->count() == 0){
@@ -405,7 +406,7 @@ class AttendanceAbsentController extends Controller
             else{
                 $attendanceModels = collect();
                 foreach ($attendances as $attendance){
-                    $attIn = Carbon::parse($request->input('finish_date'))->format('d M Y H:i:s');
+                    $attIn = Carbon::parse($attendance->date)->format('d M Y H:i:s');
 //                    $attIn = $attendance->date->format('Y-m-d H:i:s');
                     if(empty($attendance->date_checkout)){
                         $attOut = "";
