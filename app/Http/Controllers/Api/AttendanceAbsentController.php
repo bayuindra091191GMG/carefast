@@ -389,13 +389,14 @@ class AttendanceAbsentController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d H:i:s');
+            $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d 00:00:00');
 
-            $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d H:i:s');
+            $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d 00:00:00');
+            $finishDate2 = Carbon::parse($finishDate)->addDay();
 
             $attendances = DB::table('attendance_absents')
                 ->where('employee_id', $employee->id)
-                ->whereBetween('created_at', [$startDate, $finishDate])
+                ->whereBetween('created_at', [$startDate, $finishDate2])
                 ->where('status_id', 6)
                 ->orderByDesc('created_at')
                 ->get();
