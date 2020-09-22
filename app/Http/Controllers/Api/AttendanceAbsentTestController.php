@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 
-class AttendanceAbsentController extends Controller
+class AttendanceAbsentTestController extends Controller
 {
     /**
      * Function to Submit Attendance Absent Checkin or checkout.
@@ -47,7 +47,7 @@ class AttendanceAbsentController extends Controller
             if($data->cso_id != "0"){
                 $employee_id = $data->cso_id;
             }
-            Log::info('Api/AttendanceAbsentController - attendanceIn $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
+//            Log::info('Api/AttendanceAbsentController - attendanceIn $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
             $employee = DB::table('employees')->where('id', $employee_id)->first();
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
@@ -65,9 +65,9 @@ class AttendanceAbsentController extends Controller
             if(empty($projectEmployeeExistence)){
                 return Response::json("Bukan pada project yang sesuai", 482);
             }
-            if($projectEmployeeExistence->status_id == 0){
-                return Response::json("Bukan pada project yang sesuai", 482);
-            }
+//            if($projectEmployeeExistence->status_id == 0){
+//                return Response::json("Bukan pada project yang sesuai", 482);
+//            }
 
 //            $schedule = Schedule::where('project_id', $project->id)
 //                ->where('project_employee_id', $employee->id)
@@ -82,62 +82,29 @@ class AttendanceAbsentController extends Controller
 //                ->where('status_id', 6)
 //                ->where('is_done', 0)
 //                ->first();
-            $attendanceData = DB::table('attendance_absents')
-                ->where('employee_id', $employee->id)
+
+            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
                 ->where('is_done', 0)
                 ->first();
 
             //if not exist, checkin absent
-            if(empty($attendanceData)){
-                $newAttendance = AttendanceAbsent::create([
-                    'employee_id'   => $employee->id,
-                    'project_id'    => $project->id,
-//                    'shift_type'    => $schedule->shift_type ?? 0,
-                    'shift_type'    => 1,
-                    'is_done'       => 0,
-                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'status_id'     => 6,
-                    'created_by'     => $employee_id,
-                ]);
-                //get latitude and longitude
-//                if($user->id < 30){
-//                    if(!empty($data->location->latitude) && !empty($data->location->longitude)){
-//                        $newAttendance->latitude = $data->location->latitude;
-//                        $newAttendance->longitude = $data->location->longitude;
-//                        $newAttendance->save();
-//                    }
-//                }
-
-                //check if on/off request
-//                if($data->attendance_type == 'off'){
-//                    $attTime = Carbon::parse($data->attendance_time)->format('Y-m-d H:i:s');
-//                    $newAttendance->date = $attTime;
-//                    $newAttendance->save();
-//                }
-
-                if($request->hasFile('image')){
-                    //Upload Image
-                    //Creating Path Everyday
-                    $today = Carbon::now('Asia/Jakarta');
-                    $todayStr = $today->format('l d-m-y');
-                    $publicPath = 'storage/attendances/'. $todayStr;
-                    if(!File::isDirectory($publicPath)){
-                        File::makeDirectory(public_path($publicPath), 0777, true, true);
+            $result = 500;
+            if(!empty($attendanceData)){
+                if(!empty($data->attendance_type)){
+                    if($data->attendance_type == 'off'){
+                        $result = $this->attendandeOutProcess($attendanceData, $employee, $employee->id, $project->id, $request, $data);
                     }
-
-                    $image = $request->file('image');
-                    $avatar = Image::make($image);
-                    $extension = $image->extension();
-                    $filename = $employee->first_name . ' ' . $employee->last_name . '_attendancein_'. $newAttendance->id . '_' .
-                        Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
-                    $filename = str_replace('?', '', $filename);
-                    $avatar->save(public_path($publicPath ."/". $filename));
-
-                    $newAttendance->image_path = $todayStr.'/'.$filename;
-                    $newAttendance->save();
                 }
+                else{
+                    return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
+                }
+            }
+            else{
+                $result = $this->attendandeInProcess($employee, $employee->id, $project->id, $request, $data);
+            }
+            if($result== 200){
 
                 //Send notification to
                 //Customer
@@ -160,13 +127,14 @@ class AttendanceAbsentController extends Controller
                         FCMNotification::SendNotification($project->customer_id, 'customer', $title, $body, $data);
                     }
                 }
-
-                return Response::json("Berhasil Proses Absensi", 200);
+                return Response::json("Berhasil Proses Absen Keluar", 200);
             }
             else{
-                return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
+                return Response::json([
+                    'message' => "Sorry Something went Wrong!",
+                    'ex' => "Please check log for further information",
+                ], 500);
             }
-
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceAbsentController - attendanceIn error EX: '. $ex);
@@ -199,9 +167,10 @@ class AttendanceAbsentController extends Controller
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
             $projectCode = $data->qr_code;
+
 //            $project = Project::where('code', $projectCode)->first();
             $project = DB::table('projects')->where('code', $projectCode)->first();
-//            Log::error('Api/AttendanceAbsentController - project code : '. $projectCode);
+
             if(empty($project)){
                 return Response::json("Project Tidak ditemukan!", 400);
             }
@@ -213,9 +182,9 @@ class AttendanceAbsentController extends Controller
             if(empty($projectEmployeeExistence)){
                 return Response::json("Bukan pada project yang sesuai", 482);
             }
-            if($projectEmployeeExistence->status_id == 0){
-                return Response::json("Bukan pada project yang sesuai", 482);
-            }
+//            if($projectEmployeeExistence->status_id == 0){
+//                return Response::json("Bukan pada project yang sesuai", 482);
+//            }
 
 //            $schedule = Schedule::where('project_id', $project->id)
 //                ->where('project_employee_id', $employee->id)
@@ -229,73 +198,31 @@ class AttendanceAbsentController extends Controller
                 ->where('status_id', 6)
                 ->where('is_done', 0)
                 ->first();
+            $result = 500;
             if(empty($attendanceData)){
-                return Response::json("Anda Belum Absen Masuk", 483);
-            }
-
-            // checkout absent
-            //for development comment this code
-//            $temp = Carbon::now('Asia/Jakarta');
-//            $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
-
-//            $trxDate = Carbon::parse(date_format($attendanceData->created_at, 'j-F-Y H:i:s'));
-//            $intervalMinute = $now->diffInMinutes($trxDate);
-//            if($intervalMinute < 300){
-//                return Response::json("Absensi dilakukan kurang dari 1 jam yang lalu!", 483);
-//            }
-            $attendanceData->is_done = 1;
-            $attendanceData->date_checkout = Carbon::now('Asia/Jakarta')->toDateTimeString();
-            $attendanceData->save();
-
-            $newAttendance = AttendanceAbsent::create([
-                'employee_id'   => $employee->id,
-                'project_id'    => $project->id,
-//                    'shift_type'    => $schedule->shift_type ?? 0,
-                'shift_type'    => 1,
-                'is_done'       => 1,
-                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'status_id'     => 7,
-                'created_by'     => $employee_id,
-            ]);
-            //get latitude and longitude
-//            if($user->id < 30){
-//                if(!empty($data->location->latitude) && !empty($data->location->longitude)){
-//                    $newAttendance->latitude = $data->location->latitude;
-//                    $newAttendance->longitude = $data->location->longitude;
-//                    $newAttendance->save();
-//                }
-//            }
-
-            //check if on/off request
-//            if($data->attendance_type == 'off'){
-//                $attTime = Carbon::parse($data->attendance_time)->format('Y-m-d H:i:s');
-//                $newAttendance->date = $attTime;
-//                $newAttendance->save();
-//            }
-
-            if($request->hasFile('image')){
-                //Upload Image
-                //Creating Path Everyday
-                $today = Carbon::now('Asia/Jakarta');
-                $todayStr = $today->format('l d-m-y');
-                $publicPath = 'storage/attendances/'. $todayStr;
-                if(!File::isDirectory($publicPath)){
-                    File::makeDirectory(public_path($publicPath), 0777, true, true);
+                if(!empty($data->attendance_type)){
+                    if($data->attendance_type == 'off'){
+                        $result = $this->attendandeInProcess($employee, $employee->id, $project->id, $request, $data);
+                    }
                 }
-
-                $image = $request->file('image');
-                $avatar = Image::make($image);
-                $extension = $image->extension();
-                $filename = $employee->first_name . ' ' . $employee->last_name . '_attendanceout_'. $newAttendance->id . '_' .
-                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
-                $filename = str_replace('?', '', $filename);
-                $avatar->save(public_path($publicPath ."/". $filename));
-
-                $newAttendance->image_path = $todayStr.'/'.$filename;
-                $newAttendance->save();
+                else{
+                    return Response::json("Anda Belum Absen Masuk", 483);
+                }
+            }
+            else{
+                $result = $this->attendandeOutProcess($attendanceData, $employee, $employee->id, $project->id, $request, $data);
             }
 
-            return Response::json("Berhasil Proses Absen Keluar", 200);
+            if($result== 200){
+                return Response::json("Berhasil Proses Absen Keluar", 200);
+            }
+            else{
+                return Response::json([
+                    'message' => "Sorry Something went Wrong!",
+                    'ex' => "Please check log for further information",
+                ], 500);
+            }
+
         }
         catch (\Exception $ex){
             Log::error('Api/AttendanceAbsentController - attendanceOut error EX: '. $ex);
@@ -484,4 +411,148 @@ class AttendanceAbsentController extends Controller
         }
     }
 
+    public function attendandeInProcess($employee, $employeeId, $projectId, $request, $data){
+        try{
+            $newAttendance = AttendanceAbsent::create([
+                'employee_id'   => $employeeId,
+                'project_id'    => $projectId,
+//                    'shift_type'    => $schedule->shift_type ?? 0,
+                'shift_type'    => 1,
+                'is_done'       => 0,
+                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'status_id'     => 6,
+                'created_by'     => $employeeId,
+            ]);
+            //get latitude and longitude
+//                if($user->id < 30){
+//                    if(!empty($data->location->latitude) && !empty($data->location->longitude)){
+//                        $newAttendance->latitude = $data->location->latitude;
+//                        $newAttendance->longitude = $data->location->longitude;
+//                        $newAttendance->save();
+//                    }
+//                }
+
+            //check if on/off request
+            if(!empty($data->attendance_type)){
+                Log::error("Api/AttendanceAbsentController - attendandeInProcess attType information: attendance type = ".
+                    $data->attendance_type .", not formated local time = ". $data->attendance_time);
+                if($data->attendance_type == 'off'){
+                    $attTime = Carbon::parse($data->attendance_time)->format('Y-m-d H:i:s');
+                    Log::error("Api/AttendanceAbsentController - attendandeInProcess attType information: attendance type = ".
+                        $data->attendance_type .", local time = ". $attTime);
+                    $newAttendance->date = $attTime;
+                    $newAttendance->save();
+                }
+            }
+
+            if($request->hasFile('image')){
+                //Upload Image
+                //Creating Path Everyday
+                $today = Carbon::now('Asia/Jakarta');
+                $todayStr = $today->format('l d-m-y');
+                $publicPath = 'storage/attendances/'. $todayStr;
+                if(!File::isDirectory($publicPath)){
+                    File::makeDirectory(public_path($publicPath), 0777, true, true);
+                }
+
+                $image = $request->file('image');
+                $avatar = Image::make($image);
+                $extension = $image->extension();
+                $filename = $employee->first_name . ' ' . $employee->last_name . '_attendancein_'. $newAttendance->id . '_' .
+                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                $filename = str_replace('?', '', $filename);
+                $avatar->save(public_path($publicPath ."/". $filename));
+
+                $newAttendance->image_path = $todayStr.'/'.$filename;
+                $newAttendance->save();
+            }
+            return 200;
+        }
+        catch (\Exception $exception){
+//            dd($exception);
+            error_log($exception);
+            Log::error("Api/AttendanceAbsentController - attendandeInProcess Error: ". $exception->getMessage());
+            return 500;
+        }
+    }
+
+    public function attendandeOutProcess($attendanceData, $employee, $employeeId, $projectId, $request, $data){
+        try{
+
+            // checkout absent
+            //for development comment this code
+//            $temp = Carbon::now('Asia/Jakarta');
+//            $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
+
+//            $trxDate = Carbon::parse(date_format($attendanceData->created_at, 'j-F-Y H:i:s'));
+//            $intervalMinute = $now->diffInMinutes($trxDate);
+//            if($intervalMinute < 300){
+//                return Response::json("Absensi dilakukan kurang dari 1 jam yang lalu!", 483);
+//            }
+            $attendanceData->is_done = 1;
+            $attendanceData->date_checkout = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $attendanceData->save();
+
+            $newAttendance = AttendanceAbsent::create([
+                'employee_id'   => $employeeId,
+                'project_id'    => $projectId,
+//                    'shift_type'    => $schedule->shift_type ?? 0,
+                'shift_type'    => 1,
+                'is_done'       => 1,
+                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'status_id'     => 7,
+                'created_by'     => $employeeId,
+            ]);
+            //get latitude and longitude
+//            if($user->id < 30){
+//                if(!empty($data->location->latitude) && !empty($data->location->longitude)){
+//                    $newAttendance->latitude = $data->location->latitude;
+//                    $newAttendance->longitude = $data->location->longitude;
+//                    $newAttendance->save();
+//                }
+//            }
+
+            //check if on/off request
+            if(!empty($data->attendance_type)){
+                Log::error("Api/AttendanceAbsentController - attendandeOutProcess attType information: attendance type = ".
+                    $data->attendance_type .", not formated local time = ". $data->attendance_time);
+                if($data->attendance_type == 'off'){
+                    $attTime = Carbon::parse($data->attendance_time)->format('Y-m-d H:i:s');
+                    Log::error("Api/AttendanceAbsentController - attendandeOutProcess attType information: attendance type = ".
+                        $data->attendance_type .", local time = ". $attTime);
+                    $newAttendance->date = $attTime;
+                    $newAttendance->save();
+                }
+            }
+
+            if($request->hasFile('image')){
+                //Upload Image
+                //Creating Path Everyday
+                $today = Carbon::now('Asia/Jakarta');
+                $todayStr = $today->format('l d-m-y');
+                $publicPath = 'storage/attendances/'. $todayStr;
+                if(!File::isDirectory($publicPath)){
+                    File::makeDirectory(public_path($publicPath), 0777, true, true);
+                }
+
+                $image = $request->file('image');
+                $avatar = Image::make($image);
+                $extension = $image->extension();
+                $filename = $employee->first_name . ' ' . $employee->last_name . '_attendanceout_'. $newAttendance->id . '_' .
+                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                $filename = str_replace('?', '', $filename);
+                $avatar->save(public_path($publicPath ."/". $filename));
+
+                $newAttendance->image_path = $todayStr.'/'.$filename;
+                $newAttendance->save();
+            }
+            return 200;
+        }
+        catch (\Exception $exception){
+//            dd($exception);
+            error_log($exception);
+            Log::error("Api/AttendanceAbsentController - attendandeOutProcess Error: ". $exception->getMessage());
+            return 500;
+        }
+    }
 }

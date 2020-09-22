@@ -53,7 +53,6 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
     // Attendance job
     Route::get('/attendance/checkin/checking', 'Api\AttendanceController@checkinChecking');
-    Route::get('/attendance/checking', 'Api\AttendanceAbsentController@attendanceChecking');
     Route::post('/attendance/checkin', 'Api\AttendanceController@submitCheckin');
     Route::post('/attendance/checkout', 'Api\AttendanceController@submitCheckout');
     Route::post('/attendance/leader/checkin', 'Api\AttendanceController@submitCheckinByLeader');
@@ -61,11 +60,20 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/attendance/leader/assessment', 'Api\AttendanceController@leaderSubmit');
 
     // Attendance absent
-    Route::post('/attendance/qrcode', 'Api\AttendanceAbsentController@getProjectCodeEncrypted');
-    Route::post('/attendance/in', 'Api\AttendanceAbsentController@attendanceIn');
-    Route::post('/attendance/out', 'Api\AttendanceAbsentController@attendanceOut');
-    Route::post('/attendance/log', 'Api\AttendanceAbsentController@attendanceLog');
+//    Route::get('/attendance/checking', 'Api\AttendanceAbsentController@attendanceChecking');
+//    Route::post('/attendance/qrcode', 'Api\AttendanceAbsentController@getProjectCodeEncrypted');
+//    Route::post('/attendance/in', 'Api\AttendanceAbsentController@attendanceIn');
+//    Route::post('/attendance/out', 'Api\AttendanceAbsentController@attendanceOut');
+//    Route::post('/attendance/log', 'Api\AttendanceAbsentController@attendanceLog');
+
 //    Route::post('/attendance/absent/checkout', 'Api\AttendanceAbsentController@submitCheckout');
+
+    // Attendance absent Test
+    Route::get('/attendance/checking', 'Api\AttendanceAbsentTestController@attendanceChecking');
+    Route::post('/attendance/qrcode', 'Api\AttendanceAbsentTestController@getProjectCodeEncrypted');
+    Route::post('/attendance/in', 'Api\AttendanceAbsentTestController@attendanceIn');
+    Route::post('/attendance/out', 'Api\AttendanceAbsentTestController@attendanceOut');
+    Route::post('/attendance/log', 'Api\AttendanceAbsentTestController@attendanceLog');
 
     //Employee
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');
