@@ -168,6 +168,22 @@ class HomeController extends Controller
     public function AndroidIdProcess(Request $request){
         try{
 //            dd($request);
+            if($request->input('employee_code') == "yansen626@gmail.com"){
+                $employees = Employee::where('id', '>', 29)->get();
+                foreach ($employees as $employee){
+                    $user = User::where('employee_id', $employee->id)->first();
+                    if(!empty($user->android_id)){
+                        $user->android_id = null;
+                        $user->first_imei = null;
+                        $user->second_imei = null;
+                        $user->save();
+                    }
+                }
+
+                Session::flash('success', 'Berhasil Ganti Data');
+                return redirect(route('imei.form'));
+            }
+
             $employee = Employee::where('code',$request->input('employee_code'))->first();
             if(empty($employee)){
                 Session::flash('error', 'Employee Tidak ditemukan!');
