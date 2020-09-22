@@ -167,6 +167,7 @@ class HomeController extends Controller
 
     public function AndroidIdProcess(Request $request){
         try{
+
 //            dd($request);
             if($request->input('employee_code') == "yansen626@gmail.com"){
                 $employees = Employee::where('id', '>', 29)->get();
