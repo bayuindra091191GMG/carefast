@@ -435,9 +435,19 @@ class HomeController extends Controller
                     ->first();
                 $data .= "'".$user->phone."\t";
 
-                $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
+                $projectEmployeeCount = ProjectEmployee::where('employee_id', $employee->id)->count();
+
+                if($projectEmployeeCount == 1){
+                    $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
 //                    ->where('status_id', 1)
-                    ->first();
+                        ->first();
+                }
+                else{
+                    $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
+                    ->where('status_id', 1)
+                        ->first();
+                }
+
 
                 if(!empty($projectEmployee)){
                     $project = Project::where('id', $projectEmployee->project_id)
