@@ -108,6 +108,42 @@ class UserController extends Controller
         }
     }
 
+    public function ChangePhone(Request $request){
+        try{
+            $employee = Employee::where('code', $request->input('employee_code'))->first();
+
+            if(!empty($employee)){
+//                Log::channel('in_sys')
+//                    ->error('API/UserController - saveUserPhone : CODE = '.$request->input('employee_code').", Phone = ".$employee->phone);
+
+                if(DB::table('employees')->where('phone', $request->input('phone'))->exists()){
+                    return Response::json("Sudah ada nomor handphone", 482);
+                }
+
+                $employee->phone = $request->input('phone');
+                $employee->save();
+
+                $user = User::where('employee_id', $employee->id)->first();
+                $user->phone = $request->input('phone');
+                $user->save();
+
+                return Response::json("Success Save User new Phone", 200);
+            }
+            else{
+                return Response::json([
+                    'message' => "Sorry Something went Wrong!",
+                ], 500);
+            }
+        }
+        catch(\Exception $ex){
+            Log::error('Api/UserController - saveUserPhone error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
+
 
     /**
      * Function to save user token.
