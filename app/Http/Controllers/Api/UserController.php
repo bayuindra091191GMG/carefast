@@ -110,20 +110,33 @@ class UserController extends Controller
 
     public function ChangePhone(Request $request){
         try{
+
             $employee = Employee::where('code', $request->input('employee_code'))->first();
+            $user = User::where('employee_id', $employee->id)->first();
+
+            if(!empty($user->android_id)){
+                if($user->android_id != $request->input('android_id') ){
+                    return Response::json("Handphone tidak terdaftar", 483);
+                }
+            }
+
+            if(!empty($user->first_imei)){
+                if($user->first_imei != $request->input('imei_no')){
+                    return Response::json("Handphone tidak terdaftar", 483);
+                }
+            }
+
+            if(DB::table('employees')->where('phone', $request->input('phone'))->exists()){
+                return Response::json("Sudah ada nomor handphone", 482);
+            }
 
             if(!empty($employee)){
 //                Log::channel('in_sys')
 //                    ->error('API/UserController - saveUserPhone : CODE = '.$request->input('employee_code').", Phone = ".$employee->phone);
 
-                if(DB::table('employees')->where('phone', $request->input('phone'))->exists()){
-                    return Response::json("Sudah ada nomor handphone", 482);
-                }
-
                 $employee->phone = $request->input('phone');
                 $employee->save();
 
-                $user = User::where('employee_id', $employee->id)->first();
                 $user->phone = $request->input('phone');
                 $user->save();
 
