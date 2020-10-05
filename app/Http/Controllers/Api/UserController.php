@@ -112,6 +112,11 @@ class UserController extends Controller
         try{
 
             $employee = Employee::where('code', $request->input('employee_code'))->first();
+            if(empty($employee)){
+                return Response::json([
+                    'message' => "NUC not found!",
+                ], 484);
+            }
             $user = User::where('employee_id', $employee->id)->first();
 
             if(!empty($user->android_id)){
@@ -144,8 +149,8 @@ class UserController extends Controller
             }
             else{
                 return Response::json([
-                    'message' => "Sorry Something went Wrong!",
-                ], 500);
+                    'message' => "NUC not found!",
+                ], 484);
             }
         }
         catch(\Exception $ex){
