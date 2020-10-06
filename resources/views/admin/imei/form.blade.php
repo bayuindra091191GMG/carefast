@@ -33,7 +33,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <h3>CHANGE IMEI FOR DEVELOPER</h3>
+                        <h3>CHANGE IMEI CSO (Masukkan NUC)</h3>
                     </div>
                 </div>
 
