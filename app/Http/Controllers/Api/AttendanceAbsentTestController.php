@@ -325,7 +325,7 @@ class AttendanceAbsentTestController extends Controller
                 ->where('employee_id', $employee->id)
                 ->whereBetween('created_at', [$startDate, $finishDate2])
                 ->where('status_id', 6)
-                ->orderByDesc('created_at')
+                ->orderByDesc('date')
                 ->get();
 
             if($attendances->count() == 0){
