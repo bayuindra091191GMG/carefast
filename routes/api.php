@@ -19,6 +19,7 @@ Route::middleware('auth:external', 'throttle:5000,1')->prefix('integration')->gr
     Route::post('/projects', 'Api\IntegrationController@projects');
     Route::post('/job_assignments', 'Api\IntegrationController@jobAssignments');
     Route::get('/attendance-data', 'Api\IntegrationController@getAttendances');
+//    Route::get('/attendance-data', array('middleware' => 'cors', 'uses' => 'Api\IntegrationController@getAttendances'));
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -84,6 +85,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/employee/get-detail/', 'Api\EmployeeController@getEmployeeDetail');
     Route::get('/employee/get-direct-cso/', 'Api\EmployeeController@getEmployeeCSO');
     Route::post('/employee/get-cso-by-project/', 'Api\EmployeeController@getEmployeeCSOByProject');
+    Route::get('/employee/get-cso-by-project-offline/', 'Api\EmployeeController@getEmployeeCSOOffline');
     Route::get('/employee/get-assessment-history/', 'Api\EmployeeController@employeeAssessments');
 
     // Complaint

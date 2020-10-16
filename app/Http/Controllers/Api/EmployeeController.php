@@ -135,8 +135,7 @@ class EmployeeController extends Controller
         $userLogin = auth('api')->user();
         $user = User::where('phone', $userLogin->phone)->first();
         $employee = $user->employee;
-        $id = $employee->id;
-        try{
+        $id = $employee->id;        try{
             $projectId = $request->input('project_id');
 //            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
 
@@ -165,6 +164,64 @@ class EmployeeController extends Controller
         }
         catch(\Exception $ex){
             Log::error('Api/EmployeeController - getEmployeeCSOByProject error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    /**
+     * Function to listing of the employee CSO for offline feature.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function getEmployeeCSOOffline()
+    {
+        $userLogin = auth('api')->user();
+        $user = User::where('phone', $userLogin->phone)->first();
+        $employee = $user->employee;
+        try{
+
+            $projectModels = collect();
+            $projectLists = DB::table('project_employees')->where('employee_id', $employee->id)->get();
+
+            foreach ($projectLists as $projectList){
+                $project = DB::table('projects')->where('id', $projectList->project_id)->first();
+
+//                $projectCSOs = ProjectEmployee::where('project_id', $project->id)
+//                    ->where('employee_roles_id', 1)
+//                    ->get();
+                $projectCSOs = DB::table('project_employees')->where('project_id', $project->id)
+                    ->where('employee_roles_id', 1)
+                    ->get();
+                $projectCSOModels = collect();
+                //check if cleaner null
+                if($projectCSOs->count() == 0){
+                    return Response::json($projectCSOModels, 482);
+                }
+
+                foreach($projectCSOs as $projectCSO){
+                    $employee = DB::table('employees')->where('id', $projectCSO->employee_id)->first();
+                    $employeeImage = empty($employee->image_path) ? null : asset('storage/employees/'. $employee->image_path);
+                    $projectCSOModel = ([
+                        'id'       => $projectCSO->employee_id,
+                        'name'     => $employee->first_name." ".$employee->last_name,
+                        'avatar'   => $employeeImage,
+                        'role'   => $projectCSO->employee_role->name,
+                    ]);
+                    $projectCSOModels->push($projectCSOModel);
+                }
+                $projectDetailModel = collect([
+                    'project_code' => $project->id,
+                    'project_name' => $project->name,
+                    'cso'          => $projectCSOModels,
+                ]);
+                $projectModels->push($projectDetailModel);
+            }
+
+            return Response::json($projectCSOModels, 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeController - getEmployeeCSOOffline error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
