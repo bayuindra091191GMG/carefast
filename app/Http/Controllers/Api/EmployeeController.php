@@ -209,6 +209,12 @@ class EmployeeController extends Controller
                     $projectCSOModels->push($projectCSOModel);
                 }
                 $projectDetailModel = collect([
+                    'id'            => $project->id,
+                    'name'          => $project->name,
+                    'address'          => $project->address,
+                    'image'          => $project->image_path == null ? asset('storage/projects/default.jpg') : asset('storage/projects/'.$project->image_path),
+                    'lat'          => $project->latitude,
+                    'lng'          => $project->longitude,
                     'project_code' => $project->code,
                     'project_name' => $project->name,
                     'cso'          => $projectCSOModels,
