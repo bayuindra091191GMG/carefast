@@ -187,10 +187,7 @@ class EmployeeController extends Controller
             foreach ($projectLists as $projectList){
                 $project = DB::table('projects')->where('id', $projectList->project_id)->first();
 
-//                $projectCSOs = ProjectEmployee::where('project_id', $project->id)
-//                    ->where('employee_roles_id', 1)
-//                    ->get();
-                $projectCSOs = DB::table('project_employees')->where('project_id', $project->id)
+                $projectCSOs = ProjectEmployee::where('project_id', $project->id)
                     ->where('employee_roles_id', 1)
                     ->get();
                 $projectCSOModels = collect();
@@ -207,18 +204,19 @@ class EmployeeController extends Controller
                         'name'     => $employee->first_name." ".$employee->last_name,
                         'avatar'   => $employeeImage,
                         'role'   => $projectCSO->employee_role->name,
+                        'project_code' => $project->code,
                     ]);
                     $projectCSOModels->push($projectCSOModel);
                 }
                 $projectDetailModel = collect([
-                    'project_code' => $project->id,
+                    'project_code' => $project->code,
                     'project_name' => $project->name,
                     'cso'          => $projectCSOModels,
                 ]);
                 $projectModels->push($projectDetailModel);
             }
 
-            return Response::json($projectCSOModels, 200);
+            return Response::json($projectModels, 200);
         }
         catch(\Exception $ex){
             Log::error('Api/EmployeeController - getEmployeeCSOOffline error EX: '. $ex);
