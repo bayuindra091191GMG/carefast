@@ -58,6 +58,12 @@ class AttendanceAbsentTestController extends Controller
                 return Response::json("Project Tidak ditemukan!", 400);
             }
 
+            //for testing offline queue, project TSC only
+            if($project->id == 1){
+                Log::info('Api/AttendanceAbsentTestController - attendanceIn data : '.
+                    json_encode($request->input('attendance_model')));
+            }
+
             //checking if employee on project
             $projectEmployeeExistence = ProjectEmployee::where('project_id', $project->id)
                 ->where('employee_id', $employee->id)
@@ -92,14 +98,18 @@ class AttendanceAbsentTestController extends Controller
             //if not exist, checkin absent
             $result = 500;
             if(!empty($attendanceData)){
-                if(!empty($data->attendance_type)){
-                    if($data->attendance_type == 'off'){
-                        $result = $this->attendandeOutProcess($attendanceData, $employee, $employee->id, $project->id, $request, $data);
-                    }
-                }
-                else{
-                    return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
-                }
+//                if(!empty($data->attendance_type)){
+//                    if($data->attendance_type == 'off'){
+//                        $result = $this->attendandeOutProcess($attendanceData, $employee, $employee->id, $project->id, $request, $data);
+//                    }
+//                    else{
+//                        return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
+//                    }
+//                }
+//                else{
+//                    return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
+//                }
+                return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
             }
             else{
                 $result = $this->attendandeInProcess($employee, $employee->id, $project->id, $request, $data);
@@ -162,7 +172,7 @@ class AttendanceAbsentTestController extends Controller
             if($data->cso_id != "0"){
                 $employee_id = $data->cso_id;
             }
-            Log::info('Api/AttendanceAbsentController - attendanceOut $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
+            //Log::info('Api/AttendanceAbsentController - attendanceOut $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
             $employee = DB::table('employees')->where('id', $employee_id)->first();
 
 //            $projectCode = Crypt::decryptString($request->input('qr_code'));
@@ -193,6 +203,13 @@ class AttendanceAbsentTestController extends Controller
 //                return Response::json("Tidak pada schedule penempatan", 482);
 //            }
 
+
+            //for testing offline queue, project TSC only
+            if($project->id == 1){
+                Log::info('Api/AttendanceAbsentTestController - attendanceOut data : '.
+                    json_encode($request->input('attendance_model')));
+            }
+
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)
@@ -200,14 +217,18 @@ class AttendanceAbsentTestController extends Controller
                 ->first();
             $result = 500;
             if(empty($attendanceData)){
-                if(!empty($data->attendance_type)){
-                    if($data->attendance_type == 'off'){
-                        $result = $this->attendandeInProcess($employee, $employee->id, $project->id, $request, $data);
-                    }
-                }
-                else{
-                    return Response::json("Anda Belum Absen Masuk", 483);
-                }
+//                if(!empty($data->attendance_type)){
+//                    if($data->attendance_type == 'off'){
+//                        $result = $this->attendandeInProcess($employee, $employee->id, $project->id, $request, $data);
+//                    }
+//                    else{
+//                        return Response::json("Anda Belum Absen Masuk", 483);
+//                    }
+//                }
+//                else{
+//                    return Response::json("Anda Belum Absen Masuk", 483);
+//                }
+                return Response::json("Anda Belum Absen Masuk", 483);
             }
             else{
                 $result = $this->attendandeOutProcess($attendanceData, $employee, $employee->id, $project->id, $request, $data);
@@ -434,12 +455,8 @@ class AttendanceAbsentTestController extends Controller
 
             //check if on/off request
             if(!empty($data->attendance_type)){
-                Log::error("Api/AttendanceAbsentController - attendandeInProcess attType information: attendance type = ".
-                    $data->attendance_type .", not formated local time = ". $data->attendance_time);
                 if($data->attendance_type == 'off'){
                     $attTime = Carbon::parse($data->attendance_time)->format('Y-m-d H:i:s');
-                    Log::error("Api/AttendanceAbsentController - attendandeInProcess attType information: attendance type = ".
-                        $data->attendance_type .", local time = ". $attTime);
                     $newAttendance->date = $attTime;
                     $newAttendance->save();
                 }
@@ -514,14 +531,13 @@ class AttendanceAbsentTestController extends Controller
 
             //check if on/off request
             if(!empty($data->attendance_type)){
-                Log::error("Api/AttendanceAbsentController - attendandeOutProcess attType information: attendance type = ".
-                    $data->attendance_type .", not formated local time = ". $data->attendance_time);
                 if($data->attendance_type == 'off'){
                     $attTime = Carbon::parse($data->attendance_time)->format('Y-m-d H:i:s');
-                    Log::error("Api/AttendanceAbsentController - attendandeOutProcess attType information: attendance type = ".
-                        $data->attendance_type .", local time = ". $attTime);
                     $newAttendance->date = $attTime;
                     $newAttendance->save();
+
+                    $attendanceData->date_checkout = $attTime;
+                    $attendanceData->save();
                 }
             }
 
