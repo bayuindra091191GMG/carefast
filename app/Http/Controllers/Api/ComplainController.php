@@ -581,12 +581,13 @@ class ComplainController extends Controller
             $skip = intval($request->input('skip'));
             $statusId = intval($request->input('complaint_status'));
             $orderingType = $request->input('ordering_type');
+            $categoryId = $request->input('category_id');
 
 //            Log::info('skip: '. $skip);
 //            Log::info('order_status: '. $statusId);
 //            Log::info('ordering_type: '. $orderingType);
 
-            $customerComplaints =  Complaint::where('customer_id', $customer->id);
+            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
             if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
             }
