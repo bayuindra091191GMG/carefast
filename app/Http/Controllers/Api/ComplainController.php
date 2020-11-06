@@ -587,7 +587,13 @@ class ComplainController extends Controller
 //            Log::info('order_status: '. $statusId);
 //            Log::info('ordering_type: '. $orderingType);
 
-            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
+            if($categoryId != 0){
+                $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
+            }
+            else{
+                $customerComplaints =  Complaint::where('customer_id', $customer->id);
+            }
+//            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
             if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
             }
@@ -657,8 +663,16 @@ class ComplainController extends Controller
             $skip = intval($request->input('skip'));
             $statusId = intval($request->input('complaint_status'));
             $orderingType = $request->input('ordering_type');
+            $categoryId = $request->input('category_id');
 
-            $customerComplaints =  Complaint::whereIn('project_id', $ids);
+            if($categoryId != 0){
+                $customerComplaints =  Complaint::where('project_id', $ids)->where('category_id', $categoryId);
+            }
+            else{
+                $customerComplaints =  Complaint::whereIn('project_id', $ids);
+            }
+//            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
+//            $customerComplaints =  Complaint::whereIn('project_id', $ids);
             if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
             }

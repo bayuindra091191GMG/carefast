@@ -63,6 +63,7 @@ return [
                 'NO_ENGINE_SUBSTITUTION'
             ],
             'engine' => null,
+//            'options' => [PDO::ATTR_EMULATE_PREPARES => true],
         ],
 
         'pgsql' => [
