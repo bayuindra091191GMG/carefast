@@ -115,7 +115,8 @@ class IntegrationController extends Controller
                             'status_id' => 1,
                             'password' => Hash::make('carefastid')
                         ]);
-                    } else {
+                    }
+                    else {
                         $employeeChecking = Employee::where('code', $employee['code'])->first();
                         $employeeChecking->first_name = $employee['first_name'];
                         $employeeChecking->last_name = $employee['last_name'] ?? "";
@@ -158,6 +159,7 @@ class IntegrationController extends Controller
 
             sleep(30);
             $nonActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 2");
+            $nonActiveUserPhone = DB::statement("update users as a, employees as b set a.status_id = 2, a.phone = '' where a.employee_id = b.id and b.status_id = 2");
 
             $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
             Log::channel('in_sys')

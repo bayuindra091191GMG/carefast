@@ -758,11 +758,32 @@ class HomeController extends Controller
             sleep(60);
 
             $ct = 1;
-
             foreach ($employees as $employee) {
                 if($ct %2000 == 0){
                     sleep(30);
                 }
+                $rules = array(
+                    'code'          => 'required',
+                    'first_name'    => 'required',
+//                    'last_name'     => 'required',
+//                    'phone'         => 'required',
+                    'dob'           => 'required',
+                    'nik'           => 'required',
+//                    'address'       => 'required',
+                    'role'          => 'required'
+                );
+
+                $validator = Validator::make($employee, $rules);
+
+                if ($validator->fails()) {
+                    return Response::json([
+                        'errors'=> $validator->messages(),
+                        'meta'  => [
+                            'http_status' => 400
+                        ]
+                    ], 400);
+                }
+
                 try{
 //                    $tempEmployee = TempInsysEmploye::create([
 //                        'code' => $employee['code'],
@@ -775,31 +796,31 @@ class HomeController extends Controller
 //                        'role' => $employee['role'],
 //                    ]);
 
+
                     $phone = "";
-//                    $phone = $employee['code'];
                     if(!empty($employee['phone'])){
                         if($employee['phone'] == "-" || $employee['phone'] == "--" ||
-                            $employee['phone'] == " " || $employee['phone'] == "" ||
+                            $employee['phone'] == " " || $employee['phone'] == "" || $employee['phone'] == " " ||
                             $employee['phone'] == "XXX" || $employee['phone'] == "12345"){
                             $phone = "";
-//                            $phone = $employee['code'];
                         }
                         else{
                             $phone = $employee['phone'];
                         }
                     }
-//                    dd($phone, $employee['phone'], empty($employee['phone']));
                     $phone = str_replace(' ', '', $phone);
                     $phone = str_replace('-', '', $phone);
                     $phone = str_replace('.', '', $phone);
+                    $phone = str_replace('+62 ', '0', $phone);
+                    $phone = str_replace('+62', '0', $phone);
                     $employeeChecking = Employee::where('code', $employee['code'])->first();
 //                    if (!DB::table('employees')->where('code', $employee['code'])->exists()) {
                     if (empty($employeeChecking)) {
                         $nEmployee = Employee::create([
                             'code' => $employee['code'],
                             'first_name' => $employee['first_name'],
-                            'last_name' => $employee['last_name'],
-                            'phone' => $phone,
+                            'last_name' => $employee['last_name'] ?? "",
+//                            'phone' => $phone,
                             'dob' => $employee['dob'],
                             'nik' => $employee['nik'],
                             'address' => $employee['address'],
@@ -810,14 +831,16 @@ class HomeController extends Controller
                         User::create([
                             'employee_id' => $nEmployee->id,
                             'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
-                            'phone' => $phone,
+//                            'phone' => $phone,
+                            'status_id' => 1,
                             'password' => Hash::make('carefastid')
                         ]);
-                    } else {
+                    }
+                    else {
                         $employeeChecking = Employee::where('code', $employee['code'])->first();
                         $employeeChecking->first_name = $employee['first_name'];
                         $employeeChecking->last_name = $employee['last_name'] ?? "";
-                        $employeeChecking->phone = $phone;
+//                        $employeeChecking->phone = $phone;
                         $employeeChecking->dob = $employee['dob'];
                         $employeeChecking->nik = $employee['nik'];
                         $employeeChecking->employee_role_id = $employee['role'];
@@ -829,14 +852,16 @@ class HomeController extends Controller
                         if(empty($oUser)){
                             User::create([
                                 'employee_id' => $employeeChecking->id,
-                                'name' => $employee['first_name'] . ' ' . $employee['last_name'],
-                                'phone' => $phone,
+                                'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
+//                                'phone' => $phone,
+                                'status_id' => 1,
                                 'password' => Hash::make('carefastid')
                             ]);
                         }
                         else{
-                            $oUser->phone = $phone;
-                            $oUser->name = $employee['first_name'] . ' ' . $employee['last_name'];
+//                            $oUser->phone = $phone;
+                            $oUser->name = $employee['first_name'] . ' ' . $employee['last_name'] ?? "";
+                            $oUser->status_id = 1;
                             $oUser->save();
                         }
                     }
@@ -852,6 +877,10 @@ class HomeController extends Controller
                 $ct++;
             }
 
+            sleep(30);
+            $nonActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 2");
+            $nonActiveUserPhone = DB::statement("update users as a, employees as b set a.status_id = 2, a.phone = '' where a.employee_id = b.id and b.status_id = 2");
+
             Log::channel('in_sys')
                 ->info('API/IntegrationController - employees PROCESS DONE');
             return Response::json([
@@ -859,6 +888,7 @@ class HomeController extends Controller
             ], 200);
         }
         catch (\Exception $ex){
+            dd($ex);
             Log::channel('in_sys')->error('API/IntegrationController - employees error EX: '. $ex);
 //            Log::error('API/IntegrationController - employees error EX: '. $ex);
             return Response::json([
