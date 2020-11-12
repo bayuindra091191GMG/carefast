@@ -125,7 +125,7 @@ class AttendanceAbsentTestController extends Controller
                         "type_id" => 501,
                         "project_id" => $project->id,
                         "project_name" => $project->name,
-                        "employee_name" => $employee->name,
+                        "employee_name" => $employee->first_name. " " .$employee->last_name,
                     );
                     if(strpos($project->customer_id, '#') !== false){
                         $cusArr = explode('#', $project->customer_id);

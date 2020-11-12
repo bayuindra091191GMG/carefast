@@ -256,8 +256,9 @@ class HomeController extends Controller
             ->where('employee_roles_id', '>', 1)
             ->orderBy('employee_roles_id', 'asc')
             ->first();
-        $type = 1;
+        $type = 3;
 
+        $isSuccess = "false";
         switch ($type){
             case 1:
                 $complaintheaderImage = ComplaintHeaderImage::where('complaint_id', $newComplaint->id)->first();
@@ -320,10 +321,38 @@ class HomeController extends Controller
                     "complaint_id" => $newComplaint->id,
                     "complaint_detail_model" => $employeeComplaintDetailModel,
                 );
-                $isSuccess = "false";
                 //Push Notification to customer App.
                 if(!empty($newComplaint->customer_id)){
                     $isSuccess = FCMNotification::SendNotification($newComplaint->customer_id, 'customer', $title, $body, $data);
+                }
+                return $isSuccess;
+                break;
+
+                //notif for customer (role_id > 1)
+            case 3:
+                $project = Project::where('id', 1)->first();
+                $employee = Employee::where('id', 2)->first();
+                //Send notification to
+                //Customer
+                $title = "ICare";
+                $body = "Manager sedang meninjau project";
+                $data = array(
+                    "type_id" => 501,
+                    "project_id" => $project->id,
+                    "project_name" => $project->name,
+                    "employee_name" => $employee->first_name. " " .$employee->last_name,
+                );
+//                dd($project, $employee, $data);
+                if(strpos($project->customer_id, '#') !== false){
+                    $cusArr = explode('#', $project->customer_id);
+                    foreach ($cusArr as $custId){
+                        if(!empty($custId)){
+                            $isSuccess = FCMNotification::SendNotification($custId, 'customer', $title, $body, $data);
+                        }
+                    }
+                }
+                else{
+                    $isSuccess = FCMNotification::SendNotification($project->customer_id, 'customer', $title, $body, $data);
                 }
                 return $isSuccess;
                 break;
