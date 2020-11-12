@@ -115,16 +115,18 @@ class AttendanceAbsentTestController extends Controller
                 $result = $this->attendandeInProcess($employee, $employee->id, $project->id, $request, $data);
             }
             if($result== 200){
-
-                //Send notification to
-                //Customer
-                $title = "ICare";
-                $body = "Manager sedang meninjau project";
-                $data = array(
-                    "type_id" => 501,
-                );
                 //Push Notification to customer App.
-                if(!empty($project->customer_id) && $employee->employee_role_id > 1){
+                if(!empty($project->customer_id) && $employee->employee_role_id >= 2){
+                    //Send notification to
+                    //Customer
+                    $title = "ICare";
+                    $body = "Manager sedang meninjau project";
+                    $data = array(
+                        "type_id" => 501,
+                        "project_id" => $project->id,
+                        "project_name" => $project->name,
+                        "employee_name" => $employee->name,
+                    );
                     if(strpos($project->customer_id, '#') !== false){
                         $cusArr = explode('#', $project->customer_id);
                         foreach ($cusArr as $custId){
