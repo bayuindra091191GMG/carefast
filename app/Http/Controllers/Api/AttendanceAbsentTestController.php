@@ -116,7 +116,7 @@ class AttendanceAbsentTestController extends Controller
             }
             if($result== 200){
                 //Push Notification to customer App.
-                if(!empty($project->customer_id) && $employee->employee_role_id >= 2){
+                if(!empty($project->customer_id) && $employee->employee_role_id >= 5){
                     //Send notification to
                     //Customer
                     $title = "ICare";
