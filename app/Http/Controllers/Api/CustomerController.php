@@ -7,8 +7,10 @@ use App\Models\Customer;
 use App\Models\Project;
 use App\Models\User;
 use App\Notifications\FCMNotification;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
@@ -99,6 +101,42 @@ class CustomerController extends Controller
             Log::error('Api/CustomerController - show error EX: '. $ex);
             return Response::json([
                 'error'   => $ex,
+            ], 500);
+        }
+    }
+
+    /**
+     * Function to save user token.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function changePassword(Request $request)
+    {
+        try{
+            $customer = auth('customer')->user();
+
+            $customerDB = Customer::find($customer->id);
+
+            if($request->input('password') == $request->input('retype_password')){
+                $customerDB->password = Hash::make($request->input('password'));
+                $customerDB->updated_at = Carbon::now('Asia/Jakarta');
+                $customerDB->save();
+
+                return Response::json([
+                    'message' => "Success Save Customer Token!",
+                ], 200);
+            }
+            return Response::json([
+                'message' => "Password and Retype Password not match!",
+            ], 500);
+
+        }
+        catch(\Exception $ex){
+            Log::error('Api/CustomerController - saveCustomerToken error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
             ], 500);
         }
     }

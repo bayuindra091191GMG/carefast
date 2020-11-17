@@ -109,6 +109,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 //Route::group(['namespace' => 'Api', 'middleware' => 'waste_collector', 'prefix' => 'waste-collector'], function () {
 Route::middleware('auth:customer')->prefix('customer')->group(function(){
     Route::post('/save-customer-device', 'Api\CustomerController@saveCustomerToken');
+    Route::post('/change-password', 'Api\CustomerController@changePassword');
     Route::get('/get-data', 'Api\CustomerController@show');
 
     //customer complain
