@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Yajra\DataTables\DataTables;
 
 class ProjectAttendanceController extends Controller
@@ -72,48 +73,67 @@ class ProjectAttendanceController extends Controller
         $data = "";
         $now = Carbon::now('Asia/Jakarta');
 
-//        timestamp: ...,
-//        projectCode: XXX, //assume project codes are synced
-//        beginDate: ..., //date YYYY-MM-DD
-//        endDate: ..., //date YYYY-MM-DD
-//        data: [
-//          {
-//              employeeId: ...,
-//              employeeCode: ...,
-//              transDate: ..., //date YYYY-MM-DD
-//              shiftCode: ..., // 1|2|3 or A|B|C or whatever
-//              attendanceIn: ..., //timestamp YYYY-MM-DD HH:mm:ss
-//              attendanceOut: ..., //timestamp YYYY-MM-DD HH:mm:ss
-//              attendanceStatus: ..., // H=Hadir, A=Alpa, U=Unknown
-//              ]
-//          }
-        //format txt = projectCode | employeeCode | transDate | shiftCode | attendanceIn | attendanceOut | attendanceStatus
-        $data .= "Project Code\tEmployee Code\tTransaction Date\tShift\tAttendance In\tAttendance Out\tAttendance Status\n";
+        $list = collect();
         foreach($attendanceAbsents as $attendanceAbsent){
-            $data .= $attendanceAbsent->project->code."\t"
-                .$attendanceAbsent->employee->code."\t"
-                .$attendanceAbsent->date->format('Y-m-d')."\t"
-                .$attendanceAbsent->shift_type."\t"
-                .$attendanceAbsent->date->format('Y-m-d H:i:s')."\t";
             if(empty($attendanceAbsent->date_checkout)){
-                $dataCheckout = "-\t";
+                $dataCheckout = "-";
             }
             else{
-                $dataCheckout = $attendanceAbsent->date_checkout."\t";
+                $dataCheckout = $attendanceAbsent->date_checkout->format('Y-m-d H:i:s');
             }
-            $data .= $dataCheckout;
+            $attStatus = "";
             if($attendanceAbsent->is_done == 0){
-                $data .= "A\n";
+                $attStatus = "A";
             }
             else{
-                $data .= "H\n";
+                $attStatus = "H";
             }
+            $singleData = ([
+                'Project Code' => $attendanceAbsent->project->code,
+                'Employee Code' => $attendanceAbsent->employee->code,
+                'Transaction Date' => $attendanceAbsent->date->format('Y-m-d'),
+                'Shift' => $attendanceAbsent->shift_type,
+                'Attendance In' => $attendanceAbsent->date->format('Y-m-d H:i:s'),
+                'Attendance Out' => $dataCheckout,
+                'Attendance Status' => $attStatus,
+            ]);
+            $list->push($singleData);
         }
-//        dd($attendanceAbsents, $data, $startDate, $endDate);
-        $file = "Attendance Download_".$now->format('Y-m-d')."-".time().'.txt';
-        $destinationPath=public_path()."/download_attendance/";
-        if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
-        File::put($destinationPath.$file, $data);
+//        dd($list);
+        $destinationPath = public_path()."/download_attendance/";
+        $file = 'attendance-report_'.$now->format('Y-m-d')."-".time().'.xlsx';
+        dd($destinationPath.$file);
+        (new FastExcel($list))->export($destinationPath.$file);
+
         return response()->download($destinationPath.$file);
+
+        //format txt = projectCode | employeeCode | transDate | shiftCode | attendanceIn | attendanceOut | attendanceStatus
+//        $data .= "Project Code\tEmployee Code\tTransaction Date\tShift\tAttendance In\tAttendance Out\tAttendance Status\n";
+//        foreach($attendanceAbsents as $attendanceAbsent){
+//            $data .= $attendanceAbsent->project->code."\t"
+//                .$attendanceAbsent->employee->code."\t"
+//                .$attendanceAbsent->date->format('Y-m-d')."\t"
+//                .$attendanceAbsent->shift_type."\t"
+//                .$attendanceAbsent->date->format('Y-m-d H:i:s')."\t";
+//            if(empty($attendanceAbsent->date_checkout)){
+//                $dataCheckout = "-\t";
+//            }
+//            else{
+//                $dataCheckout = $attendanceAbsent->date_checkout."\t";
+//            }
+//            $data .= $dataCheckout;
+//            if($attendanceAbsent->is_done == 0){
+//                $data .= "A\n";
+//            }
+//            else{
+//                $data .= "H\n";
+//            }
+//        }
+////        dd($attendanceAbsents, $data, $startDate, $endDate);
+//        $file = "Attendance Download_".$now->format('Y-m-d')."-".time().'.txt';
+//        $destinationPath=public_path()."/download_attendance/";
+//        if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
+//        File::put($destinationPath.$file, $data);
+//        return response()->download($destinationPath.$file);
     }
 }
