@@ -468,7 +468,8 @@ class AttendanceAbsentTestController extends Controller
                 //Upload Image
                 //Creating Path Everyday
                 $today = Carbon::now('Asia/Jakarta');
-                $todayStr = $today->format('l d-m-y');
+//                $todayStr = $today->format('l d-m-y');
+                $todayStr = $today->format('y-m-d l');
                 $publicPath = 'storage/attendances/'. $todayStr;
                 if(!File::isDirectory($publicPath)){
                     File::makeDirectory(public_path($publicPath), 0777, true, true);
@@ -547,7 +548,8 @@ class AttendanceAbsentTestController extends Controller
                 //Upload Image
                 //Creating Path Everyday
                 $today = Carbon::now('Asia/Jakarta');
-                $todayStr = $today->format('l d-m-y');
+//                $todayStr = $today->format('l d-m-y');
+                $todayStr = $today->format('y-m-d l');
                 $publicPath = 'storage/attendances/'. $todayStr;
                 if(!File::isDirectory($publicPath)){
                     File::makeDirectory(public_path($publicPath), 0777, true, true);

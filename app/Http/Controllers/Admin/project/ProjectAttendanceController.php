@@ -58,14 +58,14 @@ class ProjectAttendanceController extends Controller
     {
 //        dd($request);
         $projectId = $request->input('project_id');
-        $shiftType = $request->input('shift_type');
+//        $shiftType = $request->input('shift_type');
         $startDateRequest = $request->input('start_date');
         $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
         $endDateRequest = $request->input('end_date');
         $endDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
 
         $attendanceAbsents = AttendanceAbsent::where('project_id', $projectId)
-            ->where('shift_type', $shiftType)
+//            ->where('shift_type', $shiftType)
             ->where('status_id', 6)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->get();

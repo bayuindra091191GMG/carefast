@@ -49,18 +49,18 @@
                                                         {{ Form::open(['route'=>'admin.project.attendance.download','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
                                                         <input type="hidden" name="project_id" value="{{$project->id}}">
                                                         <div class="row">
-                                                            <div class="col-md-3">
-                                                                <div class="form-group form-float form-group-lg">
-                                                                    <div class="form-line">
-                                                                        <label class="form-label">Filter Shift Type*</label>
-                                                                        <select id='filter' class='form-control' name="shift_type">
-                                                                            <option value='1'>Shift 1</option>
-                                                                            <option value='2'>Shift 2</option>
-                                                                            <option value='3'>Shift 3</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+{{--                                                            <div class="col-md-3">--}}
+{{--                                                                <div class="form-group form-float form-group-lg">--}}
+{{--                                                                    <div class="form-line">--}}
+{{--                                                                        <label class="form-label">Filter Shift Type*</label>--}}
+{{--                                                                        <select id='filter' class='form-control' name="shift_type">--}}
+{{--                                                                            <option value='1'>Shift 1</option>--}}
+{{--                                                                            <option value='2'>Shift 2</option>--}}
+{{--                                                                            <option value='3'>Shift 3</option>--}}
+{{--                                                                        </select>--}}
+{{--                                                                    </div>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div>--}}
                                                             <div class="col-md-6">
                                                                 <div class="row">
                                                                     <div class="col-md-6">

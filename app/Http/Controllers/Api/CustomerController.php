@@ -118,13 +118,13 @@ class CustomerController extends Controller
 
             $customerDB = Customer::find($customer->id);
 
-            if($request->input('password') == $request->input('retype_password')){
-                $customerDB->password = Hash::make($request->input('password'));
+            if($request->input('new_password') == $request->input('retype_password')){
+                $customerDB->password = Hash::make($request->input('new_password'));
                 $customerDB->updated_at = Carbon::now('Asia/Jakarta');
                 $customerDB->save();
 
                 return Response::json([
-                    'message' => "Success Save Customer Token!",
+                    'message' => "Success Change Customer Password!",
                 ], 200);
             }
             return Response::json([
@@ -133,7 +133,7 @@ class CustomerController extends Controller
 
         }
         catch(\Exception $ex){
-            Log::error('Api/CustomerController - saveCustomerToken error EX: '. $ex);
+            Log::error('Api/CustomerController - changePassword error EX: '. $ex);
             return Response::json([
                 'message' => "Sorry Something went Wrong!",
                 'ex' => $ex,

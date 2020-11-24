@@ -375,6 +375,8 @@ class IntegrationController extends Controller
             $projectCode = Input::get('projectCode');
             $startDate = Input::get('beginDate');
             $endDate = Input::get('endDate');
+//            Log::channel('in_sys')
+//                ->info('API/IntegrationController - getAttendances data projectCode = '. $projectCode . " | beginDate = ".$startDate." | endDate = ".$endDate);
             $project = Project::where('code', $projectCode)->first();
 
             if(!DB::table('projects')->where('code', $projectCode)->exists()){
