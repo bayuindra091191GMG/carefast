@@ -390,15 +390,33 @@ class IntegrationController extends Controller
                 ], 400);
             }
 
-            $attendanceAbsents = AttendanceAbsent::where('project_id', $project->id)
-                ->where('status_id', 6)
-                ->whereBetween('created_at', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+            $attendanceAbsents = DB::table('attendance_absents')
+                ->join('employees', 'attendance_absents.employee_id', '=', 'employees.id')
+                ->join('projects', 'attendance_absents.project_id', '=', 'projects.id')
+                ->select('attendance_absents.id as attendance_absent_id',
+                    'attendance_absents.shift_type as shift_type',
+                    'attendance_absents.is_done as is_done',
+                    'attendance_absents.date as date',
+                    'attendance_absents.date_checkout as date_checkout',
+                    'attendance_absents.created_at as created_at',
+                    'employees.id as employee_id',
+                    'employees.code as employee_code',
+                    'projects.name as project_name',
+                    'projects.code as project_code')
+                ->whereBetween('attendance_absents.created_at', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+                ->where('attendance_absents.project_id', $project->id)
+                ->where('attendance_absents.status_id',6)
                 ->get();
+
+//            $attendanceAbsents = AttendanceAbsent::where('project_id', $project->id)
+//                ->where('status_id', 6)
+//                ->whereBetween('created_at', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+//                ->get();
 
             $dataModel = collect();
 //            Log::channel('in_sys')
 //                ->info('API/IntegrationController - getAttendances data 0 '. count($attendanceAbsents));
-            if(count($attendanceAbsents) < 1){
+            if($attendanceAbsents->count() < 1){
                 return Response::json([
                     'error' => 'No Attendances found within allocated time range!'
                 ], 400);
@@ -419,6 +437,7 @@ class IntegrationController extends Controller
 //                  attendanceStatus: ..., // H=Hadir, A=Alpa, U=Unknown
 //                  ]
 //              }
+
             foreach ($attendanceAbsents as $attendanceAbsent){
                 $status = "U";
                 $attendanceOut = "";
@@ -428,18 +447,20 @@ class IntegrationController extends Controller
                 else{
                     if(!empty($attendanceAbsent->date_checkout)){
                         $status = "H";
-                        $attendanceOut = $attendanceAbsent->date_checkout->format('Y-m-d H:i:s');
+//                        $attendanceOut = $attendanceAbsent->date_checkout->format('Y-m-d H:i:s');
+                        $attendanceOut = $attendanceAbsent->date_checkout;
                     }
                     else{
                         $status = "A";
                     }
                 }
+                $createdAt = Carbon::parse($attendanceAbsent->created_at);
                 $projectCSOModel = ([
-                    'employeeId'        => $attendanceAbsent->employee->id,
-                    'employeeCode'      => $attendanceAbsent->employee->code,
-                    'transDate'         => $attendanceAbsent->created_at->format('Y-m-d'),
+                    'employeeId'        => $attendanceAbsent->employee_id,
+                    'employeeCode'      => $attendanceAbsent->employee_code,
+                    'transDate'         => $createdAt->format('Y-m-d'),
                     'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
-                    'attendanceIn'      => $attendanceAbsent->date->format('Y-m-d H:i:s'),
+                    'attendanceIn'      => $attendanceAbsent->date,
                     'attendanceOut'     => $attendanceOut,
                     'attendanceStatus'   => $status,
                 ]);
@@ -455,8 +476,8 @@ class IntegrationController extends Controller
                 'endDate'       => $endDate,
                 'data'          => $dataModel,
             ]);
-            Log::channel('in_sys')
-                ->info('API/IntegrationController - getAttendances data 3 '.json_encode($returnModel));
+//            Log::channel('in_sys')
+//                ->info('API/IntegrationController - getAttendances data 3 '.json_encode($returnModel));
             return Response::json($returnModel, 200);
         }
         catch (\Exception $ex){
