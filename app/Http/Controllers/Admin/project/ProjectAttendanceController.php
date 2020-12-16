@@ -84,12 +84,17 @@ class ProjectAttendanceController extends Controller
             ->whereBetween('attendance_absents.created_at', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
             ->where('attendance_absents.project_id', $projectId)
             ->where('attendance_absents.status_id',6)
+            ->orderBy('attendance_absents.employee_id')
             ->get();
 
         $now = Carbon::now('Asia/Jakarta');
-
         $list = collect();
         foreach($attendanceAbsents as $attendanceAbsent){
+            $userPhone = DB::table('users')
+                ->select('users.phone as user_phone')
+                ->where('users.employee_id', $attendanceAbsent->employee_id)
+                ->first();
+
             $attStatus = "U";
             $dataCheckout = "-";
             if($attendanceAbsent->is_done == 0){
@@ -110,7 +115,7 @@ class ProjectAttendanceController extends Controller
                 'Project Code' => $attendanceAbsent->project_code,
                 'Employee Code' => $attendanceAbsent->employee_code,
                 'Employee Name' => $attendanceAbsent->employee_first_name." ".$attendanceAbsent->employee_last_name,
-                'Employee Phone' => $attendanceAbsent->employee_phone,
+                'Employee Phone' => $userPhone->user_phone ?? "",
                 'Transaction Date' => $createdAt,
                 'Shift' => $attendanceAbsent->shift_type,
                 'Attendance In' => $attendanceAbsent->date,
