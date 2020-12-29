@@ -65,29 +65,33 @@
                                         <div class="bg-dark p-10 text-white text-center">
                                             <i class="fa fa-building m-b-5 font-16"></i>
                                             <h5 class="m-b-0 m-t-5">{{$totalProjects}}</h5>
-                                            <small class="font-light">Total Project</small>
+                                            <small class="font-light">Total Project<br>&nbsp;</small>
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="bg-dark p-10 text-white text-center">
                                             <i class="fa fa-user m-b-5 font-16"></i>
                                             <h5 class="m-b-0 m-t-5">{{$totalEmployees}}</h5>
-                                            <small class="font-light">Total Employee</small>
+                                            <small class="font-light">Total Employee<br>&nbsp;</small>
                                         </div>
                                     </div>
                                     <div class="col-3">
-                                        <div class="bg-dark p-10 text-white text-center">
-                                            <i class="fa fa-table m-b-5 font-16"></i>
-                                            <h5 class="m-b-0 m-t-5">{{$totalComplaintPendings}}</h5>
-                                            <small class="font-light">Pending Komplain</small>
-                                        </div>
+                                        <a href="{{route('admin.complaint.index')}}?type=customers&date_start={{$filterDateStart}}&date_end={{$filterDateEnd}}&project_id=0&category_id=0&status_id=10">
+                                            <div class="bg-dark p-10 text-white text-center">
+                                                <i class="fa fa-table m-b-5 font-16"></i>
+                                                <h5 class="m-b-0 m-t-5">{{$totalComplaintCustomers}}</h5>
+                                                <small class="font-light"> Keluhan Pending Customer <br>({{$filterDateStart}} - {{$filterDateEnd}})</small>
+                                            </div>
+                                        </a>
                                     </div>
                                     <div class="col-3">
-                                        <div class="bg-dark p-10 text-white text-center">
-                                            <i class="fa fa-globe m-b-5 font-16"></i>
-                                            <h5 class="m-b-0 m-t-5">{{$totalComplaintOnprogress}}</h5>
-                                            <small class="font-light">Komplain Proses</small>
-                                        </div>
+                                        <a href="{{route('admin.complaint.index')}}?type=internals&date_start={{$filterDateStart}}&date_end={{$filterDateEnd}}&project_id=0&category_id=0&status_id=10">
+                                            <div class="bg-dark p-10 text-white text-center">
+                                                <i class="fa fa-globe m-b-5 font-16"></i>
+                                                <h5 class="m-b-0 m-t-5">{{$totalComplaintInternals}}</h5>
+                                                <small class="font-light">Keluhan Pending Internal<br>({{$filterDateStart}} - {{$filterDateEnd}})</small>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
