@@ -28,7 +28,7 @@ use Laravel\Passport\HasApiTokens;
  * @property string $first_imei
  * @property string $second_imei
  * @property int $status_id
- * @property string $tax_no
+ * @property string $phone_type
  * @property \Carbon\Carbon $email_verified_at
  * @property string $remember_token
  * @property \Carbon\Carbon $created_at
@@ -75,7 +75,7 @@ class User extends Authenticatable
 		'email_token',
 		'phone',
 		'status_id',
-		'tax_no',
+		'phone_type',
 		'email_verified_at',
 		'remember_token',
 		'device_id',

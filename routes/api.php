@@ -50,6 +50,7 @@ Route::post('/change-phone', 'Api\UserController@ChangePhone');
 Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::get('/get-user-data', 'Api\UserController@show');
     Route::post('/save-user-device', 'Api\UserController@saveUserToken');
+    Route::post('/imei-reset', 'Api\UserController@resetImei');
     Route::post('/logout', 'Api\UserController@logout');
 
     //Place

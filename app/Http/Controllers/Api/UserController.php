@@ -8,6 +8,7 @@ use App\Models\Address;
 use App\Models\Configuration;
 use App\Models\Employee;
 use App\Models\FcmTokenUser;
+use App\Models\ImeiHistory;
 use App\Models\ProjectEmployee;
 use App\Models\User;
 use App\Notifications\FCMNotification;
@@ -181,7 +182,7 @@ class UserController extends Controller
             //save user IMEI
             $userDB = User::where('id', $user->id)->first();
             if(empty($request->input('android_id')) && empty($request->input('imei_no'))){
-                return Response::json("Handphone tidak terdaftar", 483);
+                return Response::json("Imei tidak terdaftar", 484);
             }
             if(empty($userDB->phone) || $userDB->phone == " "){
                 return Response::json("Handphone masih kosong", 483);
@@ -198,7 +199,8 @@ class UserController extends Controller
             }
             else{
                 if($userDB->android_id != $request->input('android_id')){
-                    return Response::json("Handphone tidak terdaftar", 483);
+                    Log::error('Api/UserController - android_id tidak sama database='. $userDB->android_id.' | request='.$request->input('android_id'));
+                    return Response::json("Imei tidak terdaftar", 484);
                 }
             }
 
@@ -238,6 +240,51 @@ class UserController extends Controller
         }
         catch(\Exception $ex){
             Log::error('Api/UserController - saveUserToken error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
+
+    /**
+     * Function to save user token.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function resetImei(Request $request)
+    {
+        try{
+            $user = auth('api')->user();
+            $employee_id =  $user->employee_id;
+
+            //save user IMEI
+            $userDB = User::where('id', $user->id)->first();
+            if(empty($request->input('android_id'))){
+                return Response::json("Imei tidak terdaftar", 483);
+            }
+
+            $newHistory = ImeiHistory::create([
+                'employee_id' => $employee_id,
+                'nuc' => $request->input('employee_code'),
+                'phone_type_old' => $userDB->phone_type,
+                'imei_old'  => $userDB->android_id,
+                'phone_type_new' => $request->input('phone_type'),
+                'imei_new'  => $request->input('android_id'),
+                'created_by' => $employee_id,
+            ]);
+
+            $userDB->android_id = $request->input('android_id');
+            $userDB->phone_type = $request->input('phone_type');
+            $userDB->save();
+
+            return Response::json([
+                'message' => "Success Reset User Imei!",
+            ], 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/UserController - resetImei error EX: '. $ex);
             return Response::json([
                 'message' => "Sorry Something went Wrong!",
                 'ex' => $ex,
