@@ -46,6 +46,9 @@ Route::prefix('admin')->group(function(){
     Route::get('/login', 'Auth\AdminLoginController@showLoginForm')->name('admin.login');
     Route::post('/login', 'Auth\AdminLoginController@login')->name('admin.login.submit');
 
+    // Android Id
+    Route::get('/imei/show', 'Admin\ImeiController@show')->name('admin.imei.show');
+    Route::post('/imei/download', 'Admin\ImeiController@downloadImeiHistory')->name('admin.imei.download');
 
     // Setting
     Route::get('/setting', 'Admin\AdminController@showSetting')->name('admin.setting');
@@ -369,6 +372,7 @@ Route::get('/datatables-complaint-internals', 'Admin\ComplaintController@getInde
 Route::get('/datatables-complaint-others', 'Admin\ComplaintController@getIndexOthers')->name('datatables.complaint-others');
 Route::get('/datatables-project-activity', 'Admin\project\ActivityController@getIndexActivities')->name('datatables.project-activity');
 Route::get('/datatables-project-attendance', 'Admin\project\ProjectAttendanceController@getIndex')->name('datatables.project-attendance');
+Route::get('/datatables-imei-history', 'Admin\ImeiController@getIndex')->name('datatables.imei-history');
 
 // Select2
 Route::get('/select-customers', 'Admin\CustomerController@getCustomers')->name('select.customers');
