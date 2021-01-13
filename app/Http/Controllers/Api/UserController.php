@@ -273,6 +273,7 @@ class UserController extends Controller
                 'imei_old'  => $userDB->android_id,
                 'phone_type_new' => $request->input('phone_type'),
                 'imei_new'  => $request->input('android_id'),
+                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'created_by' => $employee_id,
             ]);
 
