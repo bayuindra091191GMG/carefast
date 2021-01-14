@@ -5,7 +5,10 @@ namespace App\Transformer;
 
 
 use App\Models\Complaint;
+use App\Models\ComplaintDetail;
+use App\Models\Employee;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Fractal\TransformerAbstract;
 
@@ -29,6 +32,16 @@ class ComplaintTransformer extends TransformerAbstract
                 $type = 'INTERNAL';
                 $complainer = $complaint->employee->first_name. ' '. $complaint->employee->last_name;
             }
+            $complaintDetailSorted = DB::table('complaint_details')
+                ->where('complaint_id', $complaint->id)
+                ->where('employee_id', '!=', null)
+                ->orderByDesc('id')
+                ->first();
+            $handleBy = "-";
+            if(!empty($complaintDetailSorted)){
+                $employeeDB = Employee::find($complaintDetailSorted->employee_id);
+                $handleBy = $employeeDB->employee_role->name;
+            }
 
             return [
                 'code'          => $code,
@@ -37,7 +50,7 @@ class ComplaintTransformer extends TransformerAbstract
                 'subject'       => $complaint->subject,
                 'type'          => $type,
                 'complainer'    => $complainer,
-                'handled_by'    => $complaint->employee_role->name,
+                'handled_by'    => $handleBy,
                 'status'        => $complaint->status->description,
                 'action'        => $action
             ];
