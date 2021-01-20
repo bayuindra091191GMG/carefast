@@ -66,12 +66,12 @@
                         <span class="hide-menu">Karyawan </span>
                     </a>
                     <ul aria-expanded="false" class="collapse  first-level">
-{{--                        <li class="sidebar-item">--}}
-{{--                            <a href="{{ route('admin.imei.show') }}" class="sidebar-link">--}}
-{{--                                <i class="mdi mdi-account"></i>--}}
-{{--                                <span class="hide-menu"> Daftar Ganti Imei </span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
+                        <li class="sidebar-item">
+                            <a href="{{ route('admin.imei.show') }}" class="sidebar-link">
+                                <i class="mdi mdi-account"></i>
+                                <span class="hide-menu"> Daftar Ganti Imei </span>
+                            </a>
+                        </li>
                         <li class="sidebar-item">
                             <a href="{{ route('admin.employee.index') }}" class="sidebar-link">
                                 <i class="mdi mdi-account"></i>
