@@ -181,8 +181,10 @@ class UserController extends Controller
 
             //save user IMEI
             $userDB = User::where('id', $user->id)->first();
+
             if(empty($request->input('android_id')) && empty($request->input('imei_no'))){
 //                return Response::json("Imei tidak terdaftar", 484);
+
                 return Response::json("Imei tidak terdaftar", 484);
             }
             if(empty($userDB->phone) || $userDB->phone == " "){

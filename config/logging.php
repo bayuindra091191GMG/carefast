@@ -114,6 +114,13 @@ return [
             'level' => 'debug',
             'days' => 31,
         ],
+
+        'user_activity' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/user_activity/activity.log'),
+            'level' => 'debug',
+            'days' => 31,
+        ],
     ],
 
 ];
