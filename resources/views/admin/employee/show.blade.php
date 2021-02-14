@@ -13,6 +13,7 @@
                         <h3>DETIL DATA KARYAWAN {{ $employee->code }}</h3>
                     </div>
                     <div class="col-md-4 col-12 text-right">
+{{--                        <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $employee->id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
                         <a href="{{ route('admin.employee.edit', ['id' => $employee->id]) }}" class="btn btn-primary">EDIT</a>
                         <button class="btn btn-danger delete-modal" data-toggle="modal" data-target="#deleteModal" data-id="{{$employee->id}}">HAPUS</button>
                     </div>
@@ -27,6 +28,29 @@
                                 <div class="body">
                                     @include('partials.admin._messages')
 
+
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="phone">Project Saat ini </label>
+                                                        <input id="phone" type="text" class="form-control"
+                                                               value="{{ $currentProject->project->name }}" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="phone">Kode Project </label>
+                                                        <input id="phone" type="text" class="form-control"
+                                                               value="{{ $currentProject->project->code }}" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">

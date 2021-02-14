@@ -36,6 +36,28 @@
                                     @endif
 
                                     <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="phone">Project Saat ini </label>
+                                                        <input id="phone" type="text" class="form-control"
+                                                               value="{{ $currentProject->project->name }}" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group form-float form-group-lg">
+                                                    <div class="form-line">
+                                                        <label class="form-label" for="phone">Kode Project </label>
+                                                        <input id="phone" type="text" class="form-control"
+                                                               value="{{ $currentProject->project->code }}" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
                                                 <label class="form-label" for="image_main">Foto</label>

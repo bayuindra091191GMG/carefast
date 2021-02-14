@@ -33,7 +33,6 @@ class EmployeeController extends Controller
      */
     public function getEmployees()
     {
-        error_log("exception");
         try{
 
             $employees = Employee::all();
@@ -61,7 +60,6 @@ class EmployeeController extends Controller
     public function getEmployeeDetail(Request $request)
     {
         $id = $request->input('id');
-        error_log("exception");
         try{
 
             $employee = Employee::find($id)->get();

@@ -90,6 +90,28 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::get('/employee/get-cso-by-project-offline/', 'Api\EmployeeController@getEmployeeCSOOffline');
     Route::get('/employee/get-assessment-history/', 'Api\EmployeeController@employeeAssessments');
 
+    //employee sick leaves module
+    Route::get('/employee/sick_leaves', 'Api\EmployeeLeavesController@sickLeaves');
+    Route::post('/employee/sick_leaves/submit', 'Api\EmployeeLeavesController@sickLeavesSubmit');
+    Route::get('/employee/get-sick_leaves', 'Api\EmployeeLeavesController@getSickLeaves');
+    Route::post('/employee/sick_leaves/approve', 'Api\EmployeeLeavesController@sickLeaveApprove');
+    Route::post('/employee/sick_leaves/reject', 'Api\EmployeeLeavesController@sickLeaveReject');
+
+    //employee permission module
+    Route::get('/employee/permissions', 'Api\EmployeeLeavesController@permissions');
+    Route::post('/employee/permissions/submit', 'Api\EmployeeLeavesController@permissionSubmit');
+    Route::get('/employee/get-permissions', 'Api\EmployeeLeavesController@getPermissions');
+    Route::post('/employee/permissions/approve', 'Api\EmployeeLeavesController@permissionsApprove');
+    Route::post('/employee/permissions/reject', 'Api\EmployeeLeavesController@permissionsReject');
+
+    //employee overtime module
+    Route::get('/employee/overtimes', 'Api\EmployeeLeavesController@overtimes');
+    Route::post('/employee/overtimes/submit', 'Api\EmployeeLeavesController@overtimeSubmit');
+    Route::get('/employee/get-overtimes', 'Api\EmployeeLeavesController@getOvertimes');
+    Route::post('/employee/overtimes/approve', 'Api\EmployeeLeavesController@overtimeApprove');
+    Route::post('/employee/overtimes/reject', 'Api\EmployeeLeavesController@overtimeReject');
+
+
     // Complaint
     Route::post('/get-complaints', 'Api\ComplainController@getComplaintEmployee');
     Route::post('/get-complaint-header', 'Api\ComplainController@getComplaintHeader');

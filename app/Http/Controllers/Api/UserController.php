@@ -74,9 +74,10 @@ class UserController extends Controller
             $employee = Employee::where('code', $request->input('employee_code'))->first();
 
             if(!empty($employee)){
-//                Log::channel('in_sys')
-//                    ->error('API/UserController - saveUserPhone : CODE = '.$request->input('employee_code').", Phone = ".$employee->phone);
-                if($employee->phone != ""){
+//                Log::channel('user_activity')->error('API/UserController - saveUserPhone : '.
+//                    $employee->first_name. '('. $employee->code .') Start Change Phone Number \n'.
+//                    'CODE = '.$request->input('employee_code').', Phone = '.$employee->phone);
+                if($employee->phone != "") {
                     return Response::json("Sudah ada nomor handphone", 482);
                 }
                 else{
@@ -147,7 +148,7 @@ class UserController extends Controller
                 $user->save();
 
                 return Response::json("Success Save User new Phone", 200);
-            }
+        }
             else{
                 return Response::json([
                     'message' => "NUC not found!",
@@ -202,7 +203,7 @@ class UserController extends Controller
             }
             else{
                 if($userDB->android_id != $request->input('android_id')){
-                    Log::error('Api/UserController - android_id tidak sama database='. $userDB->android_id.' | request='.$request->input('android_id'));
+                    Log::error('Api/UserController - android_id ('.$userDB->name.') tidak sama, database='. $userDB->android_id.' | request='.$request->input('android_id'));
                     return Response::json("Imei tidak terdaftar", 484);
                 }
             }

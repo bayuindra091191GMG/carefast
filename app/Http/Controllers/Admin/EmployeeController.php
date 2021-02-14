@@ -7,6 +7,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
+use App\Models\EmployeeSchedule;
+use App\Models\ProjectEmployee;
 use App\Models\Unit;
 use App\Models\User;
 use App\Transformer\EmployeeTransformer;
@@ -58,9 +60,15 @@ class EmployeeController extends Controller
         if(empty($user)){
             return redirect()->back();
         }
+        $currentProject = ProjectEmployee::with('project')
+            ->where('employee_id', $id)
+            ->where('employee_roles_id', 1)
+            ->where('status_id', 1)
+            ->first();
 
         $data = [
             'employee'          => $employee,
+            'currentProject'    => $currentProject,
             'email'             => $user->email
         ];
 
@@ -201,9 +209,15 @@ class EmployeeController extends Controller
         if(empty($user)){
             return redirect()->back();
         }
+        $currentProject = ProjectEmployee::with('project')
+            ->where('employee_id', $id)
+            ->where('employee_roles_id', 1)
+            ->where('status_id', 1)
+            ->first();
 
         $data = [
             'employee'          => $employee,
+            'currentProject'    => $currentProject,
             'email'             => $user->email
         ];
 
@@ -215,8 +229,7 @@ class EmployeeController extends Controller
             $validator = Validator::make($request->all(), [
                 'phone'         => 'required|max:20|unique:employees,phone,'. $id,
                 'code'          => 'required|max:50|unique:employees,code,'. $id,
-                'first_name'    => 'required|max:100',
-                'last_name'     => 'required|max:100'
+                'first_name'    => 'required|max:100'
             ],[
                 'phone.unique'                      => 'Nomor Ponsel Login sudah terdaftar!',
                 'code.unique'                       => 'ID Karyawan sudah terdaftar!',
@@ -450,5 +463,107 @@ class EmployeeController extends Controller
         if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
         File::put($destinationPath.$file, $data);
         return response()->download($destinationPath.$file);
+    }
+
+
+    public function scheduleEdit(int $employee_id){
+        try{
+            $employee = Employee::find($employee_id);
+
+            if(empty($employee)){
+                return redirect()->back();
+            }
+
+            $currentProject = ProjectEmployee::with('project')
+                ->where('employee_id', $employee_id)
+                ->where('employee_roles_id', 1)
+                ->where('status_id', 1)
+                ->first();
+
+            $isEmpty = true;
+            $scheduleModel = collect();
+            $employeeSchedule = EmployeeSchedule::where('employee_id', $employee_id)->first();
+            if(!empty($employeeSchedule)){
+                if(!empty($employeeSchedule->day_status)){
+                    $isEmpty = false;
+                    $days = explode(";",$employeeSchedule->day_status);
+                    foreach ($days as $day){
+                        if(!empty($day)){
+                            $dayStatus = explode(":", $day);
+                            $schedule = [
+                                'day'     => $dayStatus[0],
+                                'status'  => $dayStatus[1],
+                            ];
+                            $scheduleModel->push($schedule);
+                        }
+                    }
+                }
+            }
+            if($isEmpty){
+                for($a=1; $a<=31; $a++){
+                    $schedule = [
+                        'day'     => $a,
+                        'status'    => "M",
+                    ];
+                    $scheduleModel->push($schedule);
+                }
+            }
+            $data = [
+                'currentProject'    => $currentProject,
+                'employee'          => $employee,
+                'scheduleModel'     => $scheduleModel,
+            ];
+//        dd($data);
+            return view('admin.employee.edit-schedule')->with($data);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/EmployeeController - scheduleEdit error EX: '. $ex);
+            return redirect()->back()->withErrors($ex);
+        }
+    }
+
+    public function scheduleStore(Request $request, int $employee_id){
+        try{
+            $employee = Employee::find($employee_id);
+//        dd($request, $employee_id);
+
+            if(empty($employee)){
+                return redirect()->back();
+            }
+
+            $dayStatuses = "";
+            $i = 0;
+            foreach ($request->days as $day){
+                $dayStatuses .= $day.":".$request->statuses[$i].";";
+                $i++;
+            }
+
+            $adminUser = Auth::guard('admin')->user();
+            $now = Carbon::now('Asia/Jakarta');
+
+            $employeeSchedule = EmployeeSchedule::where('employee_id', $employee_id)->first();
+            if(!empty($employeeSchedule)){
+                $employeeSchedule->day_status = $dayStatuses;
+                $employeeSchedule->updated_by = $adminUser->id;
+                $employeeSchedule->updated_at = $now->toDateTimeString();
+                $employeeSchedule->save();
+            }
+            else{
+                $projectActivityHeader = EmployeeSchedule::create([
+                    'employee_id'   => $employee->id,
+                    'employee_code' => $employee->code,
+                    'day_status'    => $dayStatuses,
+                    'created_by'    => $adminUser->id,
+                    'created_at'    => $now->toDateTimeString(),
+                ]);
+            }
+
+            Session::flash('success', 'Sukses mengubah jadwal karyawan!');
+            return redirect()->route('admin.employee.show',['id' => $employee->id]);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/EmployeeController - scheduleStore error EX: '. $ex);
+            return redirect()->back()->withErrors($ex)->withInput($request->all());
+        }
     }
 }

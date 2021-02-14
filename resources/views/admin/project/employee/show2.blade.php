@@ -127,6 +127,7 @@
                                                                     <th class="text-center" style="width: 25%">ID</th>
                                                                     <th class="text-center" style="width: 45%">NAMA</th>
                                                                     <th class="text-center" style="width: 30%">ROLE/POSISI</th>
+{{--                                                                    <th class="text-center" style="width: 25%">TINDAKAN</th>--}}
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -139,6 +140,9 @@
                                                                             </td>
                                                                             <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
                                                                             <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
+{{--                                                                            <td class="text-center">--}}
+{{--                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
+{{--                                                                            </td>--}}
                                                                         </tr>
                                                                     @endif
                                                                 @endforeach
@@ -151,6 +155,9 @@
                                                                             </td>
                                                                             <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
                                                                             <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
+{{--                                                                            <td class="text-center">--}}
+{{--                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
+{{--                                                                            </td>--}}
                                                                         </tr>
                                                                     @endif
                                                                 @endforeach
@@ -175,6 +182,7 @@
                                                                 <tr>
                                                                     <th class="text-center" style="width: 25%">ID</th>
                                                                     <th class="text-center" style="width: 75%">NAMA</th>
+{{--                                                                    <th class="text-center" style="width: 25%">TINDAKAN</th>--}}
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -185,6 +193,9 @@
                                                                             <a href="{{ route('admin.employee.show', ['id' => $cleanerEmployee->employee_id]) }}">{{ $cleanerEmployee->employee->code }}</a>
                                                                         </td>
                                                                         <td>{{ $cleanerEmployee->employee->first_name. ' '. $cleanerEmployee->employee->last_name }}</td>
+{{--                                                                        <td class="text-center">--}}
+{{--                                                                            <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $cleanerEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
+{{--                                                                        </td>--}}
                                                                     </tr>
                                                                 @endforeach
 

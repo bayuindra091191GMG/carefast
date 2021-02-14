@@ -212,6 +212,9 @@ Route::prefix('admin')->group(function(){
     Route::post('/employee/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
     Route::get('/employee/detail/{id}', 'Admin\EmployeeController@detail')->name('admin.employee.detail-attendance');
     Route::post('/employee/downloadNucPhone', 'Admin\EmployeeController@downloadNucPhone')->name('admin.employee.download-nucphone');
+    Route::get('/employee/schedule/set/{employee_id}', 'Admin\EmployeeController@scheduleEdit')->name('admin.employee.set-schedule');
+    Route::post('/employee/schedule/store/{employee_id}', 'Admin\EmployeeController@scheduleStore')->name('admin.employee.store-schedule');
+
 
     // Employee Role
     Route::get('/employee_role', 'Admin\EmployeeRoleController@index')->name('admin.employee_role.index');
@@ -297,6 +300,7 @@ Route::prefix('admin')->group(function(){
     Route::get('/project/employee/set/{project_id}', 'Admin\project\ProjectEmployeeController@edit')->name('admin.project.employee.set');
     Route::post('/project/employee/store/{project_id}', 'Admin\project\ProjectEmployeeController@store')->name('admin.project.employee.store');
     Route::post('/project/employee/update/{project_id}', 'Admin\project\ProjectEmployeeController@update')->name('admin.project.employee.update');
+
 
     // Project Attendance
     Route::get('/project/attendance/show/{id}', 'Admin\project\ProjectAttendanceController@show')->name('admin.project.attendance.show');
