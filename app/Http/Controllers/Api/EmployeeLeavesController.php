@@ -161,7 +161,9 @@ class EmployeeLeavesController extends Controller
 
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
 
-            $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)->orderby('is_approve')->get();
+            $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
+                ->orderby('is_approve')
+                ->get();
 
             return Response::json([
                 'message' => "Success Getting Sick Leaves Data!",
@@ -190,11 +192,24 @@ class EmployeeLeavesController extends Controller
         $employee = $user->employee;
         $id = $request->input('id');
         try{
+            //edit is_approve data
             $sickLeaves = AttendanceOvertime::find('employee_id', $id);
             $sickLeaves->is_approve = 1;
             $sickLeaves->update_by = $user->id;
             $sickLeaves->update_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $sickLeaves->save();
+
+            //Push Notification to employee App.
+            $title = "ICare";
+            $body = "Employee Ijin Sakit Disetujui";
+            $data = array(
+                "type_id" => 302,
+                "sick_leave_model" => $sickLeaves,
+            );
+            if($sickLeaves->employee_id != $employee->id){
+                $user = User::where('employee_id', $sickLeaves->employee_id)->first();
+                FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+            }
 
             return Response::json("success approve", 200);
         }
@@ -217,11 +232,24 @@ class EmployeeLeavesController extends Controller
         $employee = $user->employee;
         $id = $request->input('id');
         try{
+            //edit is_approve data
             $sickLeaves = AttendanceOvertime::find('employee_id', $id);
             $sickLeaves->is_approve = 2;
             $sickLeaves->update_by = $user->id;
             $sickLeaves->update_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $sickLeaves->save();
+
+            //Push Notification to employee App.
+            $title = "ICare";
+            $body = "Employee Ijin Sakit Ditolak";
+            $data = array(
+                "type_id" => 302,
+                "sick_leave_model" => $sickLeaves,
+            );
+            if($sickLeaves->employee_id != $employee->id){
+                $user = User::where('employee_id', $sickLeaves->employee_id)->first();
+                FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+            }
 
             return Response::json("success reject", 200);
         }
@@ -248,7 +276,6 @@ class EmployeeLeavesController extends Controller
             if(empty($employees)){
                 return Response::json("data kosong", 482);
             }
-
 
             return Response::json([
                 'message' => "Success Getting attendance Permission Data!",
@@ -362,7 +389,9 @@ class EmployeeLeavesController extends Controller
 
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
 
-            $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)->orderby('is_approve')->get();
+            $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)
+                ->orderby('is_approve')
+                ->get();
 
             return Response::json([
                 'message' => "Success get attendance permission!",
@@ -391,11 +420,24 @@ class EmployeeLeavesController extends Controller
         $employee = $user->employee;
         $id = $request->input('id');
         try{
+            //edit is_approve data
             $permission = AttendancePermission::find($id);
             $permission->is_approve = 1;
             $permission->update_by = $user->id;
             $permission->update_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $permission->save();
+
+            //Push Notification to employee App.
+            $title = "ICare";
+            $body = "Employee Ijin Disetujui";
+            $data = array(
+                "type_id" => 302,
+                "permission_model" => $permission,
+            );
+            if($permission->employee_id != $employee->id){
+                $user = User::where('employee_id', $permission->employee_id)->first();
+                FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+            }
 
             return Response::json("success approve", 200);
         }
@@ -418,11 +460,24 @@ class EmployeeLeavesController extends Controller
         $employee = $user->employee;
         $id = $request->input('id');
         try{
+            //edit is_approve data
             $permission = AttendancePermission::find($id);
             $permission->is_approve = 2;
             $permission->update_by = $user->id;
             $permission->update_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $permission->save();
+
+            //Push Notification to employee App.
+            $title = "ICare";
+            $body = "Employee Ijin Ditolak";
+            $data = array(
+                "type_id" => 302,
+                "permission_model" => $permission,
+            );
+            if($permission->employee_id != $employee->id){
+                $user = User::where('employee_id', $permission->employee_id)->first();
+                FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+            }
 
             return Response::json("success approve", 200);
         }
@@ -565,7 +620,9 @@ class EmployeeLeavesController extends Controller
 
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
 
-            $overtimes = AttendanceOvertime::where('project_id', $projectEmployee->project_id)->orderby('is_approve')->get();
+            $overtimes = AttendanceOvertime::where('project_id', $projectEmployee->project_id)
+                ->orderby('is_approve')
+                ->get();
 
             return Response::json([
                 'message' => "Success Getting Overtime Data!",
@@ -594,11 +651,24 @@ class EmployeeLeavesController extends Controller
         $employee = $user->employee;
         $id = $request->input('id');
         try{
+            //edit is_approve data
             $overtime = AttendanceOvertime::find($id);
             $overtime->is_approve = 1;
             $overtime->update_by = $user->id;
             $overtime->update_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $overtime->save();
+
+            //Push Notification to employee App.
+            $title = "ICare";
+            $body = "Employee Ijin Lembur Diterima";
+            $data = array(
+                "type_id" => 302,
+                "overtime_model" => $overtime,
+            );
+            if($overtime->employee_id != $employee->id){
+                $user = User::where('employee_id', $overtime->employee_id)->first();
+                FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+            }
 
             return Response::json("success approve", 200);
         }
@@ -621,11 +691,24 @@ class EmployeeLeavesController extends Controller
         $employee = $user->employee;
         $id = $request->input('id');
         try{
+            //edit is_approve data
             $overtime = AttendanceOvertime::find($id);
             $overtime->is_approve = 1;
             $overtime->update_by = $user->id;
             $overtime->update_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $overtime->save();
+
+            //Push Notification to employee App.
+            $title = "ICare";
+            $body = "Employee Ijin Lembur Ditolak";
+            $data = array(
+                "type_id" => 302,
+                "overtime_model" => $overtime,
+            );
+            if($overtime->employee_id != $employee->id){
+                $user = User::where('employee_id', $overtime->employee_id)->first();
+                FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+            }
 
             return Response::json("success approve", 200);
         }
