@@ -79,12 +79,13 @@ class EmployeeLeavesController extends Controller
             $id = $employee->id;
 
             $employee = Employee::find($id)->get();
+            $data = json_decode($request->input('sick_leave_model'));
 
             $newAttendanceSick = AttendanceSickLeafe::create([
-                'employee_id'  => $request->input('employee_id'),
-                'project_id'   => $request->input('project_id'),
-                'date'         => Carbon::parse($request->input('date'))->format('Y-m-d H:i:s'),
-                'description'  => $request->input('description'),
+                'employee_id'  => $data->employee_id,
+                'project_id'   => $data->project_id,
+                'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
+                'description'  => $data->description,
                 'is_approve'   => 0,
                 'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'created_by'   => $user->id,
@@ -278,13 +279,14 @@ class EmployeeLeavesController extends Controller
             $id = $employee->id;
 
             $employee = Employee::find($id)->get();
+            $data = json_decode($request->input('permission_model'));
 
             $newAttendancePermission = AttendancePermission::create([
-                'employee_id'  => $request->input('employee_id'),
-                'project_id'   => $request->input('project_id'),
-                'date_start'         => Carbon::parse($request->input('date_start'))->format('Y-m-d H:i:s'),
-                'date_end'         => Carbon::parse($request->input('date_end'))->format('Y-m-d H:i:s'),
-                'description'  => $request->input('description'),
+                'employee_id'  => $data->employee_id,
+                'project_id'   => $data->project_id,
+                'date'         => Carbon::parse($data->date_start)->format('Y-m-d H:i:s'),
+                'date_end'         => Carbon::parse($data->date_end)->format('Y-m-d H:i:s'),
+                'description'  => $data->description,
                 'is_approve'   => 0,
                 'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'created_by'   => $user->id,
@@ -477,16 +479,17 @@ class EmployeeLeavesController extends Controller
             $id = $employee->id;
 
             $employee = Employee::find($id)->get();
+            $data = json_decode($request->input('permission_model'));
 
             $newAttendanceOvertime = AttendanceOvertime::create([
-                'employee_id'           => $request->input('employee_id'),
-                'project_id'            => $request->input('project_id'),
-                'date'                  => Carbon::parse($request->input('date'))->format('Y-m-d H:i:s'),
-                'attendance_sick_id'    => $request->input('attendance_sick_id'),
-                'type'                  => $request->input('type'),
-                'time_start'            => $request->input('time_start'),
-                'time_end'              => $request->input('time_end'),
-                'description'           => $request->input('description'),
+                'employee_id'  => $data->employee_id,
+                'project_id'   => $data->project_id,
+                'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
+                'attendance_sick_id'  => $data->attendance_sick_id,
+                'type'  => $data->type,
+                'time_start'  => $data->time_start,
+                'time_end'  => $data->time_end,
+                'description'  => $data->description,
                 'is_approve'            => 0,
                 'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'created_by'            => $user->id,
