@@ -62,7 +62,6 @@ class EmployeeController extends Controller
         }
         $currentProject = ProjectEmployee::with('project')
             ->where('employee_id', $id)
-            ->where('employee_roles_id', 1)
             ->where('status_id', 1)
             ->first();
 
@@ -211,7 +210,6 @@ class EmployeeController extends Controller
         }
         $currentProject = ProjectEmployee::with('project')
             ->where('employee_id', $id)
-            ->where('employee_roles_id', 1)
             ->where('status_id', 1)
             ->first();
 
@@ -476,7 +474,6 @@ class EmployeeController extends Controller
 
             $currentProject = ProjectEmployee::with('project')
                 ->where('employee_id', $employee_id)
-                ->where('employee_roles_id', 1)
                 ->where('status_id', 1)
                 ->first();
 

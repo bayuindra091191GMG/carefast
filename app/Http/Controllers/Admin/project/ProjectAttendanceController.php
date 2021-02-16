@@ -6,14 +6,8 @@ namespace App\Http\Controllers\Admin\project;
 
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceAbsent;
-use App\Models\Customer;
-use App\Models\CustomerType;
-use App\Models\EmployeeRole;
 use App\Models\Project;
 use App\Transformer\AttendanceTransformer;
-use App\Transformer\CustomerTransformer;
-use App\Transformer\EmployeeTransformer;
-use App\Transformer\ProjectTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,6 +67,8 @@ class ProjectAttendanceController extends Controller
                 'attendance_absents.is_done as is_done',
                 'attendance_absents.date as date',
                 'attendance_absents.date_checkout as date_checkout',
+                'attendance_absents.type as atttendance_type',
+                'attendance_absents.description as description',
                 'attendance_absents.created_at as created_at',
                 'employees.id as employee_id',
                 'employees.code as employee_code',
@@ -113,6 +109,7 @@ class ProjectAttendanceController extends Controller
             $createdAt = Carbon::parse($attendanceAbsent->created_at);
             $singleData = ([
                 'Project Code' => $attendanceAbsent->project_code,
+                'Project Name' => $attendanceAbsent->project_name,
                 'Employee Code' => $attendanceAbsent->employee_code,
                 'Employee Name' => $attendanceAbsent->employee_first_name." ".$attendanceAbsent->employee_last_name,
                 'Employee Phone' => $userPhone->user_phone ?? "",
@@ -121,6 +118,7 @@ class ProjectAttendanceController extends Controller
                 'Attendance In' => $attendanceAbsent->date,
                 'Attendance Out' => $dataCheckout,
                 'Attendance Status' => $attStatus,
+                'Description' => $attendanceAbsent->description,
             ]);
             $list->push($singleData);
         }
@@ -160,5 +158,100 @@ class ProjectAttendanceController extends Controller
 //        if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
 //        File::put($destinationPath.$file, $data);
 //        return response()->download($destinationPath.$file);
+    }
+
+
+    public function downloadForm(){
+        try{
+            return view('admin.project.attendance.download-attendance-form');
+        }
+        catch (\Exception $ex){
+            Log::error('Admin/information/ProjectAttendanceController - downloadForm error EX: '. $ex);
+            return "Something went wrong! Please contact administrator!";
+        }
+    }
+    public function downloadAllAttendance(Request $request)
+    {
+//        dd($request);
+//        $shiftType = $request->input('shift_type');
+        $startDateRequest = $request->input('start_date');
+        $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
+        $endDateRequest = $request->input('end_date');
+        $endDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
+
+        $attendanceAbsents = DB::table('attendance_absents')
+            ->join('employees', 'attendance_absents.employee_id', '=', 'employees.id')
+            ->join('projects', 'attendance_absents.project_id', '=', 'projects.id')
+            ->select('attendance_absents.id as attendance_absent_id',
+                'attendance_absents.shift_type as shift_type',
+                'attendance_absents.is_done as is_done',
+                'attendance_absents.date as date',
+                'attendance_absents.date_checkout as date_checkout',
+                'attendance_absents.created_at as created_at',
+                'attendance_absents.type as atttendance_type',
+                'attendance_absents.description as description',
+                'employees.id as employee_id',
+                'employees.code as employee_code',
+                'employees.first_name as employee_first_name',
+                'employees.last_name as employee_last_name',
+                'employees.phone as employee_phone',
+                'projects.name as project_name',
+                'projects.code as project_code')
+            ->whereBetween('attendance_absents.created_at', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+            ->where('attendance_absents.status_id',6)
+            ->orderBy('attendance_absents.employee_id')
+            ->get();
+
+        $now = Carbon::now('Asia/Jakarta');
+        $list = collect();
+        $ct = 0;
+        foreach($attendanceAbsents as $attendanceAbsent){
+            if($ct % 1000 == 0){
+                sleep(40);
+            }
+            $userPhone = DB::table('users')
+                ->select('users.phone as user_phone')
+                ->where('users.employee_id', $attendanceAbsent->employee_id)
+                ->first();
+
+            $attStatus = "U";
+            $dataCheckout = "-";
+            if($attendanceAbsent->is_done == 0){
+                $attStatus = "A";
+            }
+            else{
+                if(!empty($attendanceAbsent->date_checkout)){
+                    $attStatus = "H";
+//                        $attendanceOut = $attendanceAbsent->date_checkout->format('Y-m-d H:i:s');
+                    $dataCheckout = $attendanceAbsent->date_checkout;
+                }
+                else{
+                    $attStatus = "A";
+                }
+            }
+            $createdAt = Carbon::parse($attendanceAbsent->created_at);
+            $singleData = ([
+                'Project Code' => $attendanceAbsent->project_code,
+                'Project Name' => $attendanceAbsent->project_name,
+                'Employee Code' => $attendanceAbsent->employee_code,
+                'Employee Name' => $attendanceAbsent->employee_first_name." ".$attendanceAbsent->employee_last_name,
+                'Employee Phone' => $userPhone->user_phone ?? "",
+                'Transaction Date' => $createdAt,
+                'Shift' => $attendanceAbsent->shift_type,
+                'Attendance In' => $attendanceAbsent->date,
+                'Attendance Out' => $dataCheckout,
+                'Attendance Status' => $attStatus,
+                'Description' => $attendanceAbsent->description,
+            ]);
+            $list->push($singleData);
+            $ct++;
+        }
+//        dd($list);
+        $destinationPath = public_path()."/download_attendance/";
+        $file = 'all-attendance-report_'.$now->format('Y-m-d')."-".time().'.xlsx';
+//        dd($destinationPath.$file);
+        (new FastExcel($list))->export($destinationPath.$file);
+
+        return response()->download($destinationPath.$file);
     }
 }

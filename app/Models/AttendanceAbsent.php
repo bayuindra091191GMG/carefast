@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Mon, 18 Nov 2019 16:05:52 +0700.
+ * Date: Tue, 16 Feb 2021 13:05:23 +0700.
  */
 
 namespace App\Models;
@@ -11,23 +11,25 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class AttendanceAbsent
- *
+ * 
  * @property int $id
  * @property int $employee_id
  * @property int $project_id
- * @property int $shift_type
  * @property \Carbon\Carbon $date
  * @property \Carbon\Carbon $date_checkout
+ * @property int $shift_type
  * @property int $status_id
  * @property int $is_done
  * @property string $image_path
- * @property int $latitude
- * @property int $longitude
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
  * @property int $updated_by
- *
+ * @property float $latitude
+ * @property float $longitude
+ * @property string $type
+ * @property string $description
+ * 
  * @property \App\Models\Employee $employee
  * @property \App\Models\Project $project
  *
@@ -42,27 +44,31 @@ class AttendanceAbsent extends Eloquent
 		'status_id' => 'int',
 		'is_done' => 'int',
 		'created_by' => 'int',
-		'updated_by' => 'int'
+		'updated_by' => 'int',
+		'latitude' => 'float',
+		'longitude' => 'float'
 	];
 
 	protected $dates = [
 		'date',
-		'date_checkout',
+		'date_checkout'
 	];
 
 	protected $fillable = [
 		'employee_id',
 		'project_id',
-		'shift_type',
 		'date',
 		'date_checkout',
-		'is_done',
+		'shift_type',
 		'status_id',
-        'image_path',
-        'latitude',
-        'longitude',
+		'is_done',
+		'image_path',
 		'created_by',
-		'updated_by'
+		'updated_by',
+		'latitude',
+		'longitude',
+		'type',
+		'description'
 	];
 
 	public function employee()
