@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\libs\EmployeeProcess;
 use App\Models\Action;
 use App\Models\Attendance;
+use App\Models\AttendanceAbsent;
 use App\Models\AttendanceOvertime;
 use App\Models\AttendancePermission;
 use App\Models\AttendanceSickLeafe;
@@ -198,6 +199,29 @@ class EmployeeLeavesController extends Controller
             $sickLeaves->update_by = $user->id;
             $sickLeaves->update_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $sickLeaves->save();
+
+            //add to attendance record
+            $newAttendance = AttendanceAbsent::create([
+                'employee_id'   => $sickLeaves->employee_id,
+                'project_id'    => $sickLeaves->project_id,
+                'shift_type'    => 1,
+                'is_done'       => 1,
+                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'status_id'     => 6,
+                'image_path'    => $sickLeaves->image_path,
+                'created_by'     => $sickLeaves->employee_id,
+            ]);
+            $newAttendance = AttendanceAbsent::create([
+                'employee_id'   => $sickLeaves->employee_id,
+                'project_id'    => $sickLeaves->project_id,
+                'shift_type'    => 1,
+                'is_done'       => 1,
+                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'status_id'     => 6,
+                'image_path'    => $sickLeaves->image_path,
+                'created_by'     => $sickLeaves->employee_id,
+            ]);
+
 
             //Push Notification to employee App.
             $title = "ICare";
