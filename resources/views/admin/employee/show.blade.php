@@ -13,7 +13,7 @@
                         <h3>DETIL DATA KARYAWAN {{ $employee->code }}</h3>
                     </div>
                     <div class="col-md-4 col-12 text-right">
-{{--                        <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $employee->id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
+                        <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $employee->id]) }}" class="btn btn-primary">ATUR JADWAL</a>
                         <a href="{{ route('admin.employee.edit', ['id' => $employee->id]) }}" class="btn btn-primary">EDIT</a>
                         <button class="btn btn-danger delete-modal" data-toggle="modal" data-target="#deleteModal" data-id="{{$employee->id}}">HAPUS</button>
                     </div>

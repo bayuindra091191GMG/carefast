@@ -132,6 +132,7 @@ class ProjectController extends Controller
                 'total_mp_off'      => $request->input('total_mp_off'),
                 'total_manpower'    => $request->input('total_manpower'),
                 'status_id'         => $request->input('status'),
+                'project_id'         => $request->input('project_id'),
                 'created_at'        => $now->toDateTimeString(),
                 'created_by'        => $user->id,
                 'updated_at'        => $now->toDateTimeString(),
@@ -228,6 +229,7 @@ class ProjectController extends Controller
             $project->total_mp_off = $request->input('total_mp_off');
             $project->total_manpower = $request->input('total_manpower');
             $project->status_id = $request->input('status');
+            $project->project_id = $request->input('project_id');
             $project->updated_by = $adminUser->id;
             $project->updated_at = $now->toDateTimeString();
             $project->save();
@@ -272,6 +274,29 @@ class ProjectController extends Controller
         catch(\Exception $ex){
             Log::error('Admin/CustomerController - destroy error EX: '. $ex);
             return Response::json(array('errors' => 'INVALID'));
+        }
+    }
+    public function getProjects(Request $request){
+        try{
+            $term = trim($request->q);
+            $sub1_units = Project::where(function ($q) use ($term) {
+                $q->where('name', 'LIKE', '%' . $term . '%')
+                ->orWhere('code', 'LIKE', '%' . $term . '%');
+            })
+                ->where('status_id', 1)
+                ->get();
+
+            $formatted_tags = [];
+
+            foreach ($sub1_units as $sub1unit) {
+                $formatted_tags[] = ['id' => $sub1unit->id, 'text' => $sub1unit->code.' - '.$sub1unit->name];
+            }
+
+            return \Response::json($formatted_tags);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ProjectController - getProjects error EX: '. $ex);
+            return \Response::json($formatted_tags);
         }
     }
 }

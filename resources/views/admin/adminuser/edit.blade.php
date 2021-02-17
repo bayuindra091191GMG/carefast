@@ -118,6 +118,15 @@
                                                         </select>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="role">Project (Jika memilih Admin Project)</label>
+                                                        <select id="project_id" name="project_id" class='form-control'>
+                                                            <option value='{{$projectId}}'>{{$projectName}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
                                                 <a href="{{ route('admin.admin-users.index') }}" class="btn btn-danger">Kembali</a>
@@ -156,5 +165,28 @@
 
         $('#role').select2();
         // $('#waste_bank').select2();
+
+        $('#project_id').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Project - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.projects') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
     </script>
 @endsection

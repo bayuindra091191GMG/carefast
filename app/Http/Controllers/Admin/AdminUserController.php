@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AdminUser;
 use App\Models\AdminUserRole;
-use App\Models\Role;
-use App\Models\WasteBank;
+use App\Models\Project;
 use App\Transformer\AdminUserTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -127,6 +126,7 @@ class AdminUserController extends Controller
 //            'waste_bank_id' => $assignedWasteBankId,
             'password'      => Hash::make($request->input('password')),
             'status_id'     => $request->input('status'),
+            'project_id'     => $request->input('project_id'),
             'is_super_admin'=> 0,
             'created_by'    => $user->id,
             'created_at'    => Carbon::now('Asia/Jakarta')
@@ -158,10 +158,21 @@ class AdminUserController extends Controller
         $adminUser = AdminUser::find($id);
 
         $roles = AdminUserRole::orderBy('name')->get();
+        if($adminUser->project_id != 0){
+            $project = Project::find($adminUser->project_id);
+            $projectId = $project->id;
+            $projectName =$project->code.' - '. $project->name;
+        }
+        else{
+            $projectId = 0;
+            $projectName = "Semua";
+        }
 
         $data = [
             'adminUser'     => $adminUser,
-            'roles'         => $roles
+            'roles'         => $roles,
+            'projectId'         => $projectId,
+            'projectName'         => $projectName,
         ];
 
         return view('admin.adminuser.edit')->with($data);
@@ -201,6 +212,7 @@ class AdminUserController extends Controller
         $adminUser->last_name = $request->input('last_name');
         $adminUser->role_id = $request->input('role');
         $adminUser->status_id = $request->input('status');
+        $adminUser->project_id = $request->input('project_id');
         $adminUser->updated_at = Carbon::now('Asia/Jakarta');
         $adminUser->save();
 

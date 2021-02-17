@@ -610,20 +610,30 @@ class EmployeeLeavesController extends Controller
             }
 
             $attImage = empty($employees->image_path) ? null : asset('storage/attendance_overtimes/'. $employees->image_path);
+
             $model = ([
                 'id'                => $employees->id,
                 'approval_status'   => $employees->is_approve,
                 'project_name'      => $employees->project->name,
-                'employee_name'     => $employees->employee->first_name.' '.$employees->employee->last_name,
-                'replacement_employee_name'     => $employees->employeeReplacement->first_name.' '.$employees->employeeReplacement->last_name,
-                'replaced_employee_name'     => $employees->employeeReplaced->first_name.' '.$employees->employeeReplaced->last_name,
+                'employee_name'     => "",
+                'replacement_employee_name'     => "",
+                'replaced_employee_name'     => "",
                 'overtime_type'     => $employees->type,
                 'date'              => Carbon::parse($employees->date)->format('Y-m-d H:i:s'),
                 'description'       => $employees->description,
-                'time_start'        => Carbon::parse($employees->time_start)->format('H:i:s'),
-                'time_end'          => Carbon::parse($employees->time_end)->format('H:i:s'),
+                'time_start'        => "00:00:00",
+                'time_end'          => "00:00:00",
                 'image_path'       => $attImage,
             ]);
+            if($employees->type == "tagih"){
+                $model->time_start = Carbon::parse($employees->time_start)->format('H:i:s');
+                $model->time_end = Carbon::parse($employees->time_end)->format('H:i:s');
+                $model->employee_name = $employees->employee->first_name.' '.$employees->employee->last_name;
+            }
+            else{
+                $model->replacement_employee_name = $employees->employeeReplacement->first_name.' '.$employees->employeeReplacement->last_name;
+                $model->replaced_employee_name = $employees->employeeReplaced->first_name.' '.$employees->employeeReplaced->last_name;
+            }
 
             return Response::json($model, 200);
         }
@@ -654,19 +664,24 @@ class EmployeeLeavesController extends Controller
             $data = json_decode($request->input('overtime_model'));
 
             $newAttendanceOvertime = AttendanceOvertime::create([
-                'employee_id'  => $data->employee_id,
+//                'employee_id'  => $data->employee_id,
                 'project_id'   => $data->project_id,
                 'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
-                'replacement_employee_id'  => $data->replacement_employee_id,
-                'replaced_employee_id'  => $data->replaced_employee_id,
                 'type'  => $data->type,
-                'time_start'  => $data->time_start,
-                'time_end'  => $data->time_end,
                 'description'  => $data->description,
                 'is_approve'            => 1,
                 'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'created_by'            => $user->id,
             ]);
+            if($data->type == "tagih"){
+                $newAttendanceOvertime->time_start = $data->time_start;
+                $newAttendanceOvertime->time_end = $data->time_end;
+                $newAttendanceOvertime->employee_id = $data->employee_id;
+            }
+            else{
+                $newAttendanceOvertime->replacement_employee_id = $data->replacement_employee_id;
+                $newAttendanceOvertime->replaced_employee_id = $data->replaced_employee_id;
+            }
 
             $employeeDB = Employee::where('id', $data->employee_id)->first();
             if($request->hasFile('image')){
@@ -732,16 +747,25 @@ class EmployeeLeavesController extends Controller
                     'id'                => $overtime->id,
                     'approval_status'   => $overtime->is_approve,
                     'project_name'      => $overtime->project->name,
-                    'employee_name'     => $overtime->employee->first_name.' '.$overtime->employee->last_name,
-                    'replacement_employee_name'     => $overtime->employeeReplacement->first_name.' '.$overtime->employeeReplacement->last_name,
-                    'replaced_employee_name'     => $overtime->employeeReplaced->first_name.' '.$overtime->employeeReplaced->last_name,
+                    'employee_name'     => "",
+                    'replacement_employee_name'     => "",
+                    'replaced_employee_name'     => "",
                     'overtime_type'     => $overtime->type,
                     'date'              => Carbon::parse($overtime->date)->format('Y-m-d H:i:s'),
                     'description'       => $overtime->description,
-                    'time_start'        => Carbon::parse($overtime->time_start)->format('H:i:s'),
-                    'time_end'          => Carbon::parse($overtime->time_end)->format('H:i:s'),
+                    'time_start'        => "00:00:00",
+                    'time_end'          => "00:00:00",
                     'image_path'       => $attImage,
                 ]);
+                if($model->type == "tagih"){
+                    $model->time_start = Carbon::parse($overtime->time_start)->format('H:i:s');
+                    $model->time_end = Carbon::parse($overtime->time_end)->format('H:i:s');
+                    $model->employee_name = $overtime->employee->first_name.' '.$overtime->employee->last_name;
+                }
+                else{
+                    $model->replacement_employee_name = $overtime->employeeReplacement->first_name.' '.$overtime->employeeReplacement->last_name;
+                    $model->replaced_employee_name = $overtime->employeeReplaced->first_name.' '.$overtime->employeeReplaced->last_name;
+                }
                 $models->push($model);
             }
 

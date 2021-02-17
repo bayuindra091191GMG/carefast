@@ -140,9 +140,9 @@
                                                                             </td>
                                                                             <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
                                                                             <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
-{{--                                                                            <td class="text-center">--}}
-{{--                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
-{{--                                                                            </td>--}}
+                                                                            <td class="text-center">
+                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>
+                                                                            </td>
                                                                         </tr>
                                                                     @endif
                                                                 @endforeach
@@ -155,9 +155,9 @@
                                                                             </td>
                                                                             <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
                                                                             <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
-{{--                                                                            <td class="text-center">--}}
-{{--                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
-{{--                                                                            </td>--}}
+                                                                            <td class="text-center">
+                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>
+                                                                            </td>
                                                                         </tr>
                                                                     @endif
                                                                 @endforeach
@@ -193,9 +193,9 @@
                                                                             <a href="{{ route('admin.employee.show', ['id' => $cleanerEmployee->employee_id]) }}">{{ $cleanerEmployee->employee->code }}</a>
                                                                         </td>
                                                                         <td>{{ $cleanerEmployee->employee->first_name. ' '. $cleanerEmployee->employee->last_name }}</td>
-{{--                                                                        <td class="text-center">--}}
-{{--                                                                            <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $cleanerEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
-{{--                                                                        </td>--}}
+                                                                        <td class="text-center">
+                                                                            <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $cleanerEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>
+                                                                        </td>
                                                                     </tr>
                                                                 @endforeach
 

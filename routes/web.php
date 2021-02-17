@@ -328,6 +328,8 @@ Route::prefix('admin')->group(function(){
     Route::post('/project/schedule/update/{employee_id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
 
     // Project Schedule New
+    Route::get('/project/schedule/set/{project_id}', 'Admin\ScheduleController@scheduleEdit')->name('admin.project.set-schedule');
+    Route::post('/project/schedule/store/{project_id}', 'Admin\ScheduleController@scheduleStore')->name('admin.project.store-schedule');
     Route::get('/project/schedule/show/{id}', 'Admin\project\ScheduleController@show')->name('admin.project.schedule.show');
     Route::get('/project/schedule/create/{id}', 'Admin\project\ScheduleController@create')->name('admin.project.schedule.create');
     Route::post('/project/schedule/store', 'Admin\project\ScheduleController@store')->name('admin.project.schedule.store');
@@ -401,6 +403,7 @@ Route::get('/select-employees', 'Admin\EmployeeController@getEmployees')->name('
 Route::get('/select-projectObjects', 'Admin\project\ProjectObjectController@getProjectObjects2')->name('select.projectObjects');
 Route::get('/select-projectObjectActivities', 'Admin\project\ProjectObjectController@getProjectObjectActivities')->name('select.projectObjectActivities');
 Route::get('/select-actions', 'Admin\ActionController@getActions')->name('select.actions');
+Route::get('/select-projects', 'Admin\project\ProjectController@getProjects')->name('select.projects');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
 Route::get('/select-user-categories', 'Admin\UserCategoryController@getCategories')->name('select.user-categories');
