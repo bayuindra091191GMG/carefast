@@ -224,72 +224,88 @@ class ScheduleController extends Controller
             if(empty($currentProject)){
                 return redirect()->back();
             }
-
+            $start_date = Carbon::now()->format("d M Y");
+            $end_date = Carbon::now()->format("d M Y");
             $employeeProjects = ProjectEmployee::with('employee')
                 ->where('project_id', $id)
                 ->where('employee_roles_id','<', 4)
                 ->where('status_id', 1)
                 ->get();
 
-            $isEmpty = true;
             $isSelectDate = true;
-            $scheduleModel = collect();
+            $dayArr = collect();
+            $projectScheduleModel = collect();
             if(empty($request->start_date) || empty($request->finish_date)){
                 $isSelectDate = false;
             }
             else{
+                $start_date = Carbon::parse($request->start_date)->format("d M Y");
+                $end_date = Carbon::parse($request->finish_date)->format("d M Y");
+
                 $startDate = Carbon::parse($request->start_date)->day;
                 $startDate2 = Carbon::parse($request->start_date);
                 $lastofStartDate = $startDate2->daysInMonth;
                 $endDate = Carbon::parse($request->finish_date)->day;
 
-                $dayArr = collect();
                 for($i=$startDate;$i<=$lastofStartDate; $i++){
                     $dayArr->push($i);
                 }
                 for($i=1;$i<=$endDate; $i++){
                     $dayArr->push($i);
                 }
-                dd($dayArr);
 
                 foreach($employeeProjects as $employeeProject){
-                    $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
-                    if(!empty($employeeSchedule)){
 
+                    $isEmpty = true;
+                    $scheduleModel = collect();
+                    $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
+
+                    $schedule = collect([
+                        'employee_id'   => $employeeProject->employee_id,
+                        'employee_name' => $employeeProject->employee->first_name. ' '.$employeeProject->employee->last_name,
+                        'employee_code' => $employeeProject->employee->code,
+                        'days'          => '',
+                    ]);
+                    if(!empty($employeeSchedule)){
                         if(!empty($employeeSchedule->day_status)){
                             $isEmpty = false;
-                            $days = explode(";",$employeeSchedule->day_status);
+                            $days = explode(";", $employeeSchedule->day_status);
                             foreach ($days as $day){
                                 if(!empty($day)){
                                     $dayStatus = explode(":", $day);
-                                    $schedule = [
-                                        'day'     => $dayStatus[0],
-                                        'status'  => $dayStatus[1],
-                                    ];
-                                    $scheduleModel->push($schedule);
+                                    $scheduleDetail = ([
+                                        'day'   => $dayStatus[0],
+                                        'status' => $dayStatus[1],
+                                    ]);
+                                    $scheduleModel->push($scheduleDetail);
                                 }
                             }
+                            $schedule['days'] = $scheduleModel;
+                            $projectScheduleModel->push($schedule);
                         }
                     }
                     if($isEmpty){
-                        for($a=1; $a<=31; $a++){
-                            $schedule = [
-                                'employee_id' => $employeeProject->employee_id,
-                                'employee_name' => $employeeProject->employee->name,
-                                'day'     => $a,
-                                'status'    => "M",
-                            ];
-                            $scheduleModel->push($schedule);
+                        foreach($dayArr as $day){
+                            $scheduleDetail = ([
+                                'day'   => $day,
+                                'status' => 1,
+                            ]);
+                            $scheduleModel->push($scheduleDetail);
                         }
+                        $schedule['days'] = $scheduleModel;
+                        $projectScheduleModel->push($schedule);
                     }
                 }
             }
             $data = [
-                'project'    => $currentProject,
-                'scheduleModel'     => $scheduleModel,
-                'isSelectDate'     => $isSelectDate,
+                'project'               => $currentProject,
+                'projectScheduleModel'  => $projectScheduleModel,
+                'days'                  => $dayArr,
+                'isSelectDate'          => $isSelectDate,
+                'start_date'            => $start_date,
+                'end_date'              => $end_date,
             ];
-        dd($data);
+//        dd($data);
             return view('admin.project.schedule.edit-schedule')->with($data);
         }
         catch(\Exception $ex){
@@ -300,44 +316,59 @@ class ScheduleController extends Controller
 
     public function scheduleStore(Request $request, int $id){
         try{
-            $employee = Employee::find($id);
-//        dd($request, $employee_id);
+//            $employee = Employee::find($id);
+//        dd($request, $id);
+//
+//            if(empty($employee)){
+//                return redirect()->back();
+//            }
 
-            if(empty($employee)){
-                return redirect()->back();
-            }
+            $employeeProjects = ProjectEmployee::with('employee')
+                ->where('project_id', $id)
+                ->where('employee_roles_id','<', 4)
+                ->where('status_id', 1)
+                ->get();
 
-            $dayStatuses = "";
-            $i = 0;
-            foreach ($request->days as $day){
-                $dayStatuses .= $day.":".$request->statuses[$i].";";
-                $i++;
-            }
+            $employeeIds = $request->input('employeeId');
+            $days = $request->input('days');
+            $statuses = $request->input('statuses');
 
-            $adminUser = Auth::guard('admin')->user();
-            $now = Carbon::now('Asia/Jakarta');
+            foreach($employeeProjects as $employeeProject){
+                $dayStatuses = "";
+                $i = 0;
+                foreach ($employeeIds as $employee){
+                    if($employeeProject->employee_id == $employee){
+                        $dayStatuses .= $days[$i].":".$statuses[$i].";";
+                    }
+                    $i++;
+                }
 
-            $employeeSchedule = EmployeeSchedule::where('employee_id', $id)->first();
-            if(!empty($employeeSchedule)){
-                $employeeSchedule->day_status = $dayStatuses;
-                $employeeSchedule->updated_by = $adminUser->id;
-                $employeeSchedule->updated_at = $now->toDateTimeString();
-                $employeeSchedule->save();
-            }
-            else{
-                $projectActivityHeader = EmployeeSchedule::create([
-                    'employee_id'   => $employee->id,
-                    'employee_code' => $employee->code,
-                    'day_status'    => $dayStatuses,
-                    'created_by'    => $adminUser->id,
-                    'created_at'    => $now->toDateTimeString(),
-                ]);
+                $adminUser = Auth::guard('admin')->user();
+                $now = Carbon::now('Asia/Jakarta');
+
+                $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
+                if(!empty($employeeSchedule)){
+                    $employeeSchedule->day_status = $dayStatuses;
+                    $employeeSchedule->updated_by = $adminUser->id;
+                    $employeeSchedule->updated_at = $now->toDateTimeString();
+                    $employeeSchedule->save();
+                }
+                else{
+                    $projectActivityHeader = EmployeeSchedule::create([
+                        'employee_id'   => $employeeProject->employee_id,
+                        'employee_code' => $employeeProject->employee->code,
+                        'day_status'    => $dayStatuses,
+                        'created_by'    => $adminUser->id,
+                        'created_at'    => $now->toDateTimeString(),
+                    ]);
+                }
             }
 
             Session::flash('success', 'Sukses mengubah jadwal karyawan!');
-            return redirect()->route('admin.employee.show',['id' => $employee->id]);
+            return redirect()->route('admin.project.set-schedule',['id' => $id]);
         }
         catch(\Exception $ex){
+            dd($ex);
             Log::error('Admin/ScheduleController - scheduleStore error EX: '. $ex);
             return redirect()->back()->withErrors($ex)->withInput($request->all());
         }

@@ -2,7 +2,7 @@
 <!-- footer -->
 <!-- ============================================================== -->
 <footer class="footer text-center">
-    All Rights Reserved by XXX. Designed and Developed by <a href="https://google.com">XXXX</a>.
+    All Rights Reserved by PT. CAREFASTINDO.
 </footer>
 <!-- ============================================================== -->
 <!-- End footer -->

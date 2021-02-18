@@ -89,7 +89,9 @@
                                                                         <div class="form-group form-float form-group-lg">
                                                                             <div class="form-line">
                                                                                 <label class="form-label" for="total_manday">Cut Off Dimulai *</label>
-                                                                                <input id="start_date" name="start_date" type="text" class="form-control" autocomplete="off" required>
+                                                                                <input id="start_date" name="start_date" type="text"
+                                                                                       value="{{$start_date}}"
+                                                                                       class="form-control" autocomplete="off" required>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -97,7 +99,9 @@
                                                                         <div class="form-group form-float form-group-lg">
                                                                             <div class="form-line">
                                                                                 <label class="form-label" for="total_mp_onduty">Cut Off Selesai *</label>
-                                                                                <input id="finish_date" name="finish_date" type="text" class="form-control" autocomplete="off" required>
+                                                                                <input id="finish_date" name="finish_date" type="text"
+                                                                                       value="{{$end_date}}"
+                                                                                       class="form-control" autocomplete="off" required>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -120,41 +124,34 @@
                                                                     <thead>
                                                                     <tr>
                                                                         <th class="text-center">
-                                                                            Tanggal
+                                                                            Nama
                                                                         </th>
-                                                                        @foreach($scheduleModel->where('day', '>=', 16) as $schedule)
+                                                                        @foreach($days as $day)
                                                                             <th class="text-center" style="width:50px;">
-                                                                                Tanggal {{$schedule["day"]}}
-                                                                            </th>
-                                                                        @endforeach
-                                                                        @foreach($scheduleModel->where('day', '<', 16) as $schedule)
-                                                                            <th class="text-center" style="width:50px;">
-                                                                                Tanggal {{$schedule["day"]}}
+                                                                                Tanggal {{$day}}
                                                                             </th>
                                                                         @endforeach
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
-                                                                    <tr>
-                                                                        <td>Status Absensi</td>
+                                                                        @foreach($projectScheduleModel as $schedule)
+                                                                            <tr>
+                                                                                <td>{{$schedule['employee_name']}}</td>
+                                                                                @foreach($schedule["days"] as $scheduleDay)
+                                                                                <td>
+{{--                                                                                    <input type="checkbox" id="status" name="statuses[]"--}}
+{{--                                                                                           @if($scheduleDay["status"] == 1) checked @endif>--}}
+                                                                                    <select name="statuses[]" class='form-control'>
+                                                                                        <option value='1' @if($scheduleDay["status"] == 1) selected @endif>Hadir</option>
+                                                                                        <option value='0' @if($scheduleDay["status"] == 0) selected @endif>Off</option>
+                                                                                    </select>
+                                                                                    <input type="hidden" id="days" name="days[]"  value="{{$scheduleDay['day']}}">
+                                                                                    <input type="hidden" id="employeeId" name="employeeId[]"  value="{{$schedule['employee_id']}}">
 
-                                                                        @foreach($scheduleModel->where('day', '>=', 16) as $schedule)
-                                                                            <td>
-                                                                                <select name="statuses[]" class='form-control'>
-                                                                                    <option value='M' @if($schedule["status"] == 'M') selected @endif>Masuk</option>
-                                                                                    <option value='O' @if($schedule["status"] == 'O') selected @endif>Off</option>
-                                                                                </select>
-                                                                            </td>
+                                                                                </td>
+                                                                                @endforeach
+                                                                            </tr>
                                                                         @endforeach
-                                                                        @foreach($scheduleModel->where('day', '<', 16) as $schedule)
-                                                                            <td>
-                                                                                <select name="statuses[]" class='form-control'>
-                                                                                    <option value='M' @if($schedule["status"] == 'M') selected @endif>Masuk</option>
-                                                                                    <option value='O' @if($schedule["status"] == 'O') selected @endif>Off</option>
-                                                                                </select>
-                                                                            </td>
-                                                                        @endforeach
-                                                                    </tr>
                                                                     </tbody>
                                                                 </table>
                                                             </div>
@@ -247,6 +244,9 @@
         }
         .tr-class{
             padding: 5px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
     </style>
 @endsection
