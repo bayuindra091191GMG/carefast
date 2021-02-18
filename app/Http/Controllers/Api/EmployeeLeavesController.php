@@ -662,25 +662,35 @@ class EmployeeLeavesController extends Controller
             $id = $employee->id;
 
             $data = json_decode($request->input('overtime_model'));
-
-            $newAttendanceOvertime = AttendanceOvertime::create([
-//                'employee_id'  => $data->employee_id,
-                'project_id'   => $data->project_id,
-                'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
-                'type'  => $data->type,
-                'description'  => $data->description,
-                'is_approve'            => 1,
-                'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'created_by'            => $user->id,
-            ]);
             if($data->type == "tagih"){
-                $newAttendanceOvertime->time_start = $data->time_start;
-                $newAttendanceOvertime->time_end = $data->time_end;
-                $newAttendanceOvertime->employee_id = $data->employee_id;
+
+                $newAttendanceOvertime = AttendanceOvertime::create([
+                    'employee_id'  => $data->employee_id,
+                    'project_id'   => $data->project_id,
+                    'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
+                    'type'  => $data->type,
+                    'description'  => $data->description,
+                    'time_start'  => $data->time_start,
+                    'time_end'  => $data->time_end,
+                    'is_approve'            => 1,
+                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_by'            => $user->id,
+                ]);
             }
             else{
-                $newAttendanceOvertime->replacement_employee_id = $data->replacement_employee_id;
-                $newAttendanceOvertime->replaced_employee_id = $data->replaced_employee_id;
+
+                $newAttendanceOvertime = AttendanceOvertime::create([
+                    'employee_id'  => $data->replacement_employee_id,
+                    'project_id'   => $data->project_id,
+                    'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
+                    'type'  => $data->type,
+                    'description'  => $data->description,
+                    'replacement_employee_id'  => $data->replacement_employee_id,
+                    'replaced_employee_id'  => $data->replaced_employee_id,
+                    'is_approve'            => 1,
+                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_by'            => $user->id,
+                ]);
             }
 
             $employeeDB = Employee::where('id', $data->employee_id)->first();

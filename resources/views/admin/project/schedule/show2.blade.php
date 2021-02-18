@@ -32,7 +32,7 @@
                                 <a class="nav-link" id="object-tab" href="{{ route('admin.project.object.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">DAFTAR OBJECT</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" id="schedule-tab" href="#" role="tab" aria-controls="profile" aria-selected="false">JADWAL</a>
+                                <a class="nav-link active" id="plotting-tab" href="#" role="tab" aria-controls="profile" aria-selected="false">JADWAL</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="attendance-tab" href="{{ route('admin.project.attendance.show', ['id' => $project->id]) }}" role="tab" aria-controls="profile" aria-selected="false">ABSENSI</a>

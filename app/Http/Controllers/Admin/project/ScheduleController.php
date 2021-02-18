@@ -217,67 +217,90 @@ class ScheduleController extends Controller
             return "Something went wrong! Please contact administrator!" . $ex;
         }
     }
-    public function scheduleEdit(int $project_id){
+    public function scheduleEdit(Request $request, int $id){
         try{
-            $currentProject = Project::find($project_id);
+            $currentProject = Project::find($id);
 
-            if(empty($employee)){
+            if(empty($currentProject)){
                 return redirect()->back();
             }
 
             $employeeProjects = ProjectEmployee::with('employee')
-                ->where('project_id', $project_id)
+                ->where('project_id', $id)
                 ->where('employee_roles_id','<', 4)
                 ->where('status_id', 1)
-                ->first();
+                ->get();
 
             $isEmpty = true;
+            $isSelectDate = true;
             $scheduleModel = collect();
-            foreach($employeeProjects as $employeeProject){
-                $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
-                if(!empty($employeeSchedule)){
-                    if(!empty($employeeSchedule->day_status)){
-                        $isEmpty = false;
-                        $days = explode(";",$employeeSchedule->day_status);
-                        foreach ($days as $day){
-                            if(!empty($day)){
-                                $dayStatus = explode(":", $day);
-                                $schedule = [
-                                    'day'     => $dayStatus[0],
-                                    'status'  => $dayStatus[1],
-                                ];
-                                $scheduleModel->push($schedule);
+            if(empty($request->start_date) || empty($request->finish_date)){
+                $isSelectDate = false;
+            }
+            else{
+                $startDate = Carbon::parse($request->start_date)->day;
+                $startDate2 = Carbon::parse($request->start_date);
+                $lastofStartDate = $startDate2->daysInMonth;
+                $endDate = Carbon::parse($request->finish_date)->day;
+
+                $dayArr = collect();
+                for($i=$startDate;$i<=$lastofStartDate; $i++){
+                    $dayArr->push($i);
+                }
+                for($i=1;$i<=$endDate; $i++){
+                    $dayArr->push($i);
+                }
+                dd($dayArr);
+
+                foreach($employeeProjects as $employeeProject){
+                    $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
+                    if(!empty($employeeSchedule)){
+
+                        if(!empty($employeeSchedule->day_status)){
+                            $isEmpty = false;
+                            $days = explode(";",$employeeSchedule->day_status);
+                            foreach ($days as $day){
+                                if(!empty($day)){
+                                    $dayStatus = explode(":", $day);
+                                    $schedule = [
+                                        'day'     => $dayStatus[0],
+                                        'status'  => $dayStatus[1],
+                                    ];
+                                    $scheduleModel->push($schedule);
+                                }
                             }
                         }
                     }
-                }
-                if($isEmpty){
-                    for($a=1; $a<=31; $a++){
-                        $schedule = [
-                            'day'     => $a,
-                            'status'    => "M",
-                        ];
-                        $scheduleModel->push($schedule);
+                    if($isEmpty){
+                        for($a=1; $a<=31; $a++){
+                            $schedule = [
+                                'employee_id' => $employeeProject->employee_id,
+                                'employee_name' => $employeeProject->employee->name,
+                                'day'     => $a,
+                                'status'    => "M",
+                            ];
+                            $scheduleModel->push($schedule);
+                        }
                     }
                 }
             }
             $data = [
-                'currentProject'    => $currentProject,
-                'employee'          => $employee,
+                'project'    => $currentProject,
                 'scheduleModel'     => $scheduleModel,
+                'isSelectDate'     => $isSelectDate,
             ];
-//        dd($data);
-            return view('admin.employee.edit-schedule')->with($data);
+        dd($data);
+            return view('admin.project.schedule.edit-schedule')->with($data);
         }
         catch(\Exception $ex){
-            Log::error('Admin/EmployeeController - scheduleEdit error EX: '. $ex);
+            Log::error('Admin/ScheduleController - scheduleEdit error EX: '. $ex);
             return redirect()->back()->withErrors($ex);
         }
     }
 
-    public function scheduleStore(Request $request, int $employee_id){
+    public function scheduleStore(Request $request, int $id){
         try{
-            $employee = Employee::find($employee_id);
+            $employee = Employee::find($id);
 //        dd($request, $employee_id);
 
             if(empty($employee)){
@@ -294,7 +317,7 @@ class ScheduleController extends Controller
             $adminUser = Auth::guard('admin')->user();
             $now = Carbon::now('Asia/Jakarta');
 
-            $employeeSchedule = EmployeeSchedule::where('employee_id', $employee_id)->first();
+            $employeeSchedule = EmployeeSchedule::where('employee_id', $id)->first();
             if(!empty($employeeSchedule)){
                 $employeeSchedule->day_status = $dayStatuses;
                 $employeeSchedule->updated_by = $adminUser->id;
@@ -315,7 +338,7 @@ class ScheduleController extends Controller
             return redirect()->route('admin.employee.show',['id' => $employee->id]);
         }
         catch(\Exception $ex){
-            Log::error('Admin/EmployeeController - scheduleStore error EX: '. $ex);
+            Log::error('Admin/ScheduleController - scheduleStore error EX: '. $ex);
             return redirect()->back()->withErrors($ex)->withInput($request->all());
         }
     }

@@ -328,8 +328,9 @@ Route::prefix('admin')->group(function(){
     Route::post('/project/schedule/update/{employee_id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
 
     // Project Schedule New
-    Route::get('/project/schedule/set/{project_id}', 'Admin\ScheduleController@scheduleEdit')->name('admin.project.set-schedule');
-    Route::post('/project/schedule/store/{project_id}', 'Admin\ScheduleController@scheduleStore')->name('admin.project.store-schedule');
+    Route::get('/project/schedule/set/{id}', 'Admin\project\ScheduleController@scheduleEdit')->name('admin.project.set-schedule');
+    Route::post('/project/schedule/store/{id}', 'Admin\project\ScheduleController@scheduleStore')->name('admin.project.store-schedule');
+
     Route::get('/project/schedule/show/{id}', 'Admin\project\ScheduleController@show')->name('admin.project.schedule.show');
     Route::get('/project/schedule/create/{id}', 'Admin\project\ScheduleController@create')->name('admin.project.schedule.create');
     Route::post('/project/schedule/store', 'Admin\project\ScheduleController@store')->name('admin.project.schedule.store');
