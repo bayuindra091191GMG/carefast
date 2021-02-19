@@ -59,7 +59,54 @@ class EmployeeLeavesController extends Controller
             ], 500);
         }
     }
+    /**
+     * Function to get list sick leaves.
+     *
+     * @return JsonResponse
+     */
+    public function getSickLeaves()
+    {
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+//            Log::error('Api/EmployeeLeavesController - sickLeaves data: '. $user->employee_id);
+            $employee = Employee::where('id', $user->employee_id)->first();
+            $id = $employee->id;
 
+            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+
+            $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
+                ->orderby('is_approve')
+                ->get();
+            $models = collect();
+            if($sickLeaves->count() == 0){
+                return Response::json($models, 482);
+            }
+            foreach($sickLeaves as $sickLeave){
+                $attImage = empty($sickLeave->image_path) ? null : asset('storage/attendance_sick_leaves/'. $sickLeave->image_path);
+                $model = collect([
+                    'id'                => $sickLeave->id,
+                    'approval_status'   => $sickLeave->is_approve,
+                    'project_name'      => $sickLeave->project->name,
+                    'employee_name'     => $sickLeave->employee->first_name.' '.$sickLeave->employee->last_name,
+                    'employee_code'     => $sickLeave->employee->code,
+                    'date'              => Carbon::parse($sickLeave->date)->format('d M Y H:i:s'),
+                    'description'       => $sickLeave->description,
+                    'image_path'        => $attImage,
+                ]);
+                $models->push($model);
+            }
+
+            return Response::json($models, 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeLeavesController - getSickLeaves error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
     /**
      * Function to submit sick leaves.
      *
@@ -77,15 +124,47 @@ class EmployeeLeavesController extends Controller
 
             $data = json_decode($request->input('sick_leave_model'));
 
-            $newAttendanceSick = AttendanceSickLeafe::create([
-                'employee_id'  => $data->employee_id,
-                'project_id'   => $data->project_id,
-                'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
-                'description'  => $data->description,
-                'is_approve'   => 0,
-                'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'created_by'   => $user->id,
-            ]);
+            if($data->sick_leave_id == 0){
+                $newAttendanceSick = AttendanceSickLeafe::create([
+                    'employee_id'  => $data->employee_id,
+                    'project_id'   => $data->project_id,
+                    'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
+                    'description'  => $data->description,
+                    'is_approve'   => 0,
+                    'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_by'   => $user->id,
+                ]);
+
+                //add to attendance record
+                $newAttendance = AttendanceAbsent::create([
+                    'employee_id'   => $newAttendanceSick->employee_id,
+                    'project_id'    => $newAttendanceSick->project_id,
+                    'shift_type'    => 1,
+                    'is_done'       => 1,
+                    'date'          => Carbon::parse($newAttendanceSick->date),
+                    'status_id'     => 6,
+                    'image_path'    => $newAttendanceSick->image_path,
+                    'created_by'     => $newAttendanceSick->employee_id,
+                    'type'          => "S",
+                    'description'   => "Attendance sick ID=".$newAttendanceSick->id
+                ]);
+                $newAttendance = AttendanceAbsent::create([
+                    'employee_id'   => $newAttendanceSick->employee_id,
+                    'project_id'    => $newAttendanceSick->project_id,
+                    'shift_type'    => 1,
+                    'is_done'       => 1,
+                    'date'          => Carbon::parse($newAttendanceSick->date)->toDateTimeString(),
+                    'date_checkout' => Carbon::parse($newAttendanceSick->date)->toDateTimeString(),
+                    'status_id'     => 7,
+                    'image_path'    => $newAttendanceSick->image_path,
+                    'created_by'    => $newAttendanceSick->employee_id,
+                    'type'          => "S",
+                    'description'   => "Attendance sick ID=".$newAttendanceSick->id
+                ]);
+            }
+            else{
+                $newAttendanceSick = AttendanceSickLeafe::where('id', $data->id)->first();
+            }
 
             $employeeDB = Employee::where('id', $data->employee_id)->first();
             if($request->hasFile('image')){
@@ -143,54 +222,6 @@ class EmployeeLeavesController extends Controller
             ], 500);
         }
     }
-    /**
-     * Function to get list sick leaves.
-     *
-     * @return JsonResponse
-     */
-    public function getSickLeaves()
-    {
-        try{
-            $userLogin = auth('api')->user();
-            $user = User::where('phone', $userLogin->phone)->first();
-//            Log::error('Api/EmployeeLeavesController - sickLeaves data: '. $user->employee_id);
-            $employee = Employee::where('id', $user->employee_id)->first();
-            $id = $employee->id;
-
-            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
-
-            $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
-                ->orderby('is_approve')
-                ->get();
-            $models = collect();
-            if($sickLeaves->count() == 0){
-                return Response::json($models, 482);
-            }
-            foreach($sickLeaves as $sickLeave){
-                $attImage = empty($sickLeave->image_path) ? null : asset('storage/attendance_sick_leaves/'. $sickLeave->image_path);
-                $model = collect([
-                    'id'                => $sickLeave->id,
-                    'approval_status'   => $sickLeave->is_approve,
-                    'project_name'      => $sickLeave->project->name,
-                    'employee_name'     => $sickLeave->employee->first_name.' '.$sickLeave->employee->last_name,
-                    'employee_code'     => $sickLeave->employee->code,
-                    'date'              => Carbon::parse($sickLeave->date)->format('d M Y H:i:s'),
-                    'description'       => $sickLeave->description,
-                    'image_path'        => $attImage,
-                ]);
-                $models->push($model);
-            }
-
-            return Response::json($models, 200);
-        }
-        catch(\Exception $ex){
-                Log::error('Api/EmployeeLeavesController - getSickLeaves error EX: '. $ex);
-            return Response::json([
-                'message' => "Sorry Something went Wrong!",
-                'ex' => $ex,
-            ], 500);
-        }
-    }
 
     /**
      * Function to Approve sick leaves by supervisor.
@@ -213,32 +244,14 @@ class EmployeeLeavesController extends Controller
             $sickLeaves->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $sickLeaves->save();
 
-            //add to attendance record
-            $newAttendance = AttendanceAbsent::create([
-                'employee_id'   => $sickLeaves->employee_id,
-                'project_id'    => $sickLeaves->project_id,
-                'shift_type'    => 1,
-                'is_done'       => 1,
-                'date'          => Carbon::parse($sickLeaves->date),
-                'status_id'     => 6,
-                'image_path'    => $sickLeaves->image_path,
-                'created_by'     => $sickLeaves->employee_id,
-                'type'          => "SAKIT",
-                'description'   => $sickLeaves->description
-            ]);
-            $newAttendance = AttendanceAbsent::create([
-                'employee_id'   => $sickLeaves->employee_id,
-                'project_id'    => $sickLeaves->project_id,
-                'shift_type'    => 1,
-                'is_done'       => 1,
-                'date'          => Carbon::parse($sickLeaves->date)->toDateTimeString(),
-                'date_checkout' => Carbon::parse($sickLeaves->date)->toDateTimeString(),
-                'status_id'     => 7,
-                'image_path'    => $sickLeaves->image_path,
-                'created_by'    => $sickLeaves->employee_id,
-                'type'          => "SAKIT",
-                'description'   => $sickLeaves->description
-            ]);
+            $attSicks = AttendanceAbsent::where('employee_id', $sickLeaves->employee_id)
+                ->where('project_id', $sickLeaves->project_id)
+                ->where('description', 'like', '%sick ID='.$id.'%')
+                ->get();
+            foreach($attSicks as $attSick){
+                $attSick->type = "SR";
+                $attSick->save();
+            }
 
             //Push Notification to employee App.
             $title = "ICare";
@@ -342,7 +355,53 @@ class EmployeeLeavesController extends Controller
             ], 500);
         }
     }
+    /**
+     * Function to get list permission.
+     *
+     * @return JsonResponse
+     */
+    public function getPermissions()
+    {
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+//            Log::error('Api/EmployeeLeavesController - sickLeaves data: '. $user->employee_id);
+            $employee = Employee::where('id', $user->employee_id)->first();
+            $id = $employee->id;
 
+            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+
+            $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)
+                ->orderby('is_approve')
+                ->get();
+            $models = collect();
+            if($permissions->count() == 0){
+                return Response::json($models, 482);
+            }
+            foreach($permissions as $permission){
+                $attImage = empty($permission->image_path) ? null : asset('storage/attendance_permission_leaves/'. $permission->image_path);
+                $model = collect([
+                    'id'                => $permission->id,
+                    'approval_status'   => $permission->is_approve,
+                    'project_name'      => $permission->project->name,
+                    'employee_name'     => $permission->employee->first_name.' '.$permission->employee->last_name,
+                    'description'       => $permission->description,
+                    'date_start'        => Carbon::parse($permission->date_start)->format('d M Y H:i:s'),
+                    'date_end'          => Carbon::parse($permission->date_end)->format('d M Y H:i:s'),
+                    'image_path'       => $attImage,
+                ]);
+                $models->push($model);
+            }
+            return Response::json($models, 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeLeavesController - getPermissions error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
     /**
      * Function to submit permission.
      *
@@ -360,16 +419,54 @@ class EmployeeLeavesController extends Controller
 
             $data = json_decode($request->input('permission_model'));
 
-            $newAttendancePermission = AttendancePermission::create([
-                'employee_id'  => $data->employee_id,
-                'project_id'   => $data->project_id,
-                'date'         => Carbon::parse($data->date_start)->format('Y-m-d H:i:s'),
-                'date_end'         => Carbon::parse($data->date_end)->format('Y-m-d H:i:s'),
-                'description'  => $data->description,
-                'is_approve'   => 0,
-                'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'created_by'   => $user->id,
-            ]);
+            if($data->permission_leave_id == 0){
+                $newAttendancePermission = AttendancePermission::create([
+                    'employee_id'  => $data->employee_id,
+                    'project_id'   => $data->project_id,
+                    'date_start'         => Carbon::parse($data->date_start)->format('Y-m-d H:i:s'),
+                    'date_end'         => Carbon::parse($data->date_end)->format('Y-m-d H:i:s'),
+                    'description'  => $data->description,
+                    'is_approve'   => 0,
+                    'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'created_by'   => $user->id,
+                ]);
+
+                for($i=0; $i<10000; $i++){
+                    $currentDate = Carbon::parse($newAttendancePermission->date_start)->addDays($i);
+                    if($currentDate > Carbon::parse($newAttendancePermission->date_end)){
+                        break;
+                    }
+                    //add to attendance record
+                    $newAttendance = AttendanceAbsent::create([
+                        'employee_id'   => $newAttendancePermission->employee_id,
+                        'project_id'    => $newAttendancePermission->project_id,
+                        'shift_type'    => 1,
+                        'is_done'       => 1,
+                        'date'          => $currentDate->toDateTimeString(),
+                        'status_id'     => 6,
+                        'image_path'    => $newAttendancePermission->image_path,
+                        'created_by'     => $newAttendancePermission->employee_id,
+                        'type'          => "I",
+                        'description'   => "Attendance permission ID=".$newAttendancePermission->id
+                    ]);
+                    $newAttendance = AttendanceAbsent::create([
+                        'employee_id'   => $newAttendancePermission->employee_id,
+                        'project_id'    => $newAttendancePermission->project_id,
+                        'shift_type'    => 1,
+                        'is_done'       => 1,
+                        'date'          => $currentDate->toDateTimeString(),
+                        'date_checkout' => $currentDate->toDateTimeString(),
+                        'status_id'     => 7,
+                        'image_path'    => $newAttendancePermission->image_path,
+                        'created_by'    => $newAttendancePermission->employee_id,
+                        'type'          => "I",
+                        'description'   => "Attendance permission ID=".$newAttendancePermission->id
+                    ]);
+                }
+            }
+            else{
+                $newAttendancePermission = AttendancePermission::where('id', $data->id)->first();
+            }
 
             $employeeDB = Employee::where('id', $data->employee_id)->first();
             if($request->hasFile('image')){
@@ -427,53 +524,7 @@ class EmployeeLeavesController extends Controller
             ], 500);
         }
     }
-    /**
-     * Function to get list permission.
-     *
-     * @return JsonResponse
-     */
-    public function getPermissions()
-    {
-        try{
-            $userLogin = auth('api')->user();
-            $user = User::where('phone', $userLogin->phone)->first();
-//            Log::error('Api/EmployeeLeavesController - sickLeaves data: '. $user->employee_id);
-            $employee = Employee::where('id', $user->employee_id)->first();
-            $id = $employee->id;
 
-            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
-
-            $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)
-                ->orderby('is_approve')
-                ->get();
-            $models = collect();
-            if($permissions->count() == 0){
-                return Response::json($models, 482);
-            }
-            foreach($permissions as $permission){
-                $attImage = empty($permission->image_path) ? null : asset('storage/attendance_permission_leaves/'. $permission->image_path);
-                $model = collect([
-                    'id'                => $permission->id,
-                    'approval_status'   => $permission->is_approve,
-                    'project_name'      => $permission->project->name,
-                    'employee_name'     => $permission->employee->first_name.' '.$permission->employee->last_name,
-                    'description'       => $permission->description,
-                    'date_start'        => Carbon::parse($permission->date_start)->format('d M Y H:i:s'),
-                    'date_end'          => Carbon::parse($permission->date_end)->format('d M Y H:i:s'),
-                    'image_path'       => $attImage,
-                ]);
-                $models->push($model);
-            }
-            return Response::json($models, 200);
-        }
-        catch(\Exception $ex){
-            Log::error('Api/EmployeeLeavesController - getPermissions error EX: '. $ex);
-            return Response::json([
-                'message' => "Sorry Something went Wrong!",
-                'ex' => $ex,
-            ], 500);
-        }
-    }
 
     /**
      * Function to Approve permission by supervisor.
@@ -496,38 +547,47 @@ class EmployeeLeavesController extends Controller
             $permission->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $permission->save();
 
-            for($i=0; $i<10000; $i++){
-                $currentDate = Carbon::parse($permission->date_start)->addDays($i);
-                if($currentDate > Carbon::parse($permission->date_end)){
-                    break;
-                }
-                //add to attendance record
-                $newAttendance = AttendanceAbsent::create([
-                    'employee_id'   => $permission->employee_id,
-                    'project_id'    => $permission->project_id,
-                    'shift_type'    => 1,
-                    'is_done'       => 1,
-                    'date'          => $currentDate->toDateTimeString(),
-                    'status_id'     => 6,
-                    'image_path'    => $permission->image_path,
-                    'created_by'     => $permission->employee_id,
-                    'type'          => "IJIN",
-                    'description'   => $permission->description
-                ]);
-                $newAttendance = AttendanceAbsent::create([
-                    'employee_id'   => $permission->employee_id,
-                    'project_id'    => $permission->project_id,
-                    'shift_type'    => 1,
-                    'is_done'       => 1,
-                    'date'          => $currentDate->toDateTimeString(),
-                    'date_checkout' => $currentDate->toDateTimeString(),
-                    'status_id'     => 7,
-                    'image_path'    => $permission->image_path,
-                    'created_by'    => $permission->employee_id,
-                    'type'          => "IJIN",
-                    'description'   => $permission->description
-                ]);
+            $attPermissions = AttendanceAbsent::where('employee_id', $permission->employee_id)
+                ->where('project_id', $permission->project_id)
+                ->where('description', 'like', '%permission ID='.$id.'%')
+                ->get();
+            foreach($attPermissions as $attPermission){
+                $attPermission->type = "IR";
+                $attPermission->save();
             }
+
+//            for($i=0; $i<10000; $i++){
+//                $currentDate = Carbon::parse($permission->date_start)->addDays($i);
+//                if($currentDate > Carbon::parse($permission->date_end)){
+//                    break;
+//                }
+//                //add to attendance record
+//                $newAttendance = AttendanceAbsent::create([
+//                    'employee_id'   => $permission->employee_id,
+//                    'project_id'    => $permission->project_id,
+//                    'shift_type'    => 1,
+//                    'is_done'       => 1,
+//                    'date'          => $currentDate->toDateTimeString(),
+//                    'status_id'     => 6,
+//                    'image_path'    => $permission->image_path,
+//                    'created_by'     => $permission->employee_id,
+//                    'type'          => "I",
+//                    'description'   => $permission->description
+//                ]);
+//                $newAttendance = AttendanceAbsent::create([
+//                    'employee_id'   => $permission->employee_id,
+//                    'project_id'    => $permission->project_id,
+//                    'shift_type'    => 1,
+//                    'is_done'       => 1,
+//                    'date'          => $currentDate->toDateTimeString(),
+//                    'date_checkout' => $currentDate->toDateTimeString(),
+//                    'status_id'     => 7,
+//                    'image_path'    => $permission->image_path,
+//                    'created_by'    => $permission->employee_id,
+//                    'type'          => "I",
+//                    'description'   => $permission->description
+//                ]);
+//            }
 
             //Push Notification to employee App.
             $title = "ICare";
@@ -618,7 +678,7 @@ class EmployeeLeavesController extends Controller
                 'employee_name'     => "",
                 'replacement_employee_name'     => "",
                 'replaced_employee_name'     => "",
-                'overtime_type'     => $employees->type,
+                'type'     => $employees->type,
                 'date'              => Carbon::parse($employees->date)->format('Y-m-d H:i:s'),
                 'description'       => $employees->description,
                 'time_start'        => "00:00:00",
@@ -639,89 +699,6 @@ class EmployeeLeavesController extends Controller
         }
         catch(\Exception $ex){
             Log::error('Api/EmployeeLeavesController - overtimes error EX: '. $ex);
-            return Response::json([
-                'message' => "Sorry Something went Wrong!",
-                'ex' => $ex,
-            ], 500);
-        }
-    }
-
-    /**
-     * Function to submit overtime.
-     *
-     * @param $id
-     * @return JsonResponse
-     */
-    public function overtimeSubmit(Request $request)
-    {
-        try{
-            $userLogin = auth('api')->user();
-            $user = User::where('phone', $userLogin->phone)->first();
-//            Log::error('Api/EmployeeLeavesController - sickLeaves data: '. $user->employee_id);
-            $employee = Employee::where('id', $user->employee_id)->first();
-            $id = $employee->id;
-
-            $data = json_decode($request->input('overtime_model'));
-            if($data->type == "tagih"){
-
-                $newAttendanceOvertime = AttendanceOvertime::create([
-                    'employee_id'  => $data->employee_id,
-                    'project_id'   => $data->project_id,
-                    'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
-                    'type'  => $data->type,
-                    'description'  => $data->description,
-                    'time_start'  => $data->time_start,
-                    'time_end'  => $data->time_end,
-                    'is_approve'            => 1,
-                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'created_by'            => $user->id,
-                ]);
-            }
-            else{
-
-                $newAttendanceOvertime = AttendanceOvertime::create([
-                    'employee_id'  => $data->replacement_employee_id,
-                    'project_id'   => $data->project_id,
-                    'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
-                    'type'  => $data->type,
-                    'description'  => $data->description,
-                    'replacement_employee_id'  => $data->replacement_employee_id,
-                    'replaced_employee_id'  => $data->replaced_employee_id,
-                    'is_approve'            => 1,
-                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'created_by'            => $user->id,
-                ]);
-            }
-
-            $employeeDB = Employee::where('id', $data->employee_id)->first();
-            if($request->hasFile('image')){
-                //Upload Image
-                //Creating Path Everyday
-                $today = Carbon::now('Asia/Jakarta');
-                $todayStr = $today->format('y-m-d l');
-                $publicPath = 'storage/attendance_overtimes/'. $todayStr;
-                if(!File::isDirectory($publicPath)){
-                    File::makeDirectory(public_path($publicPath), 0777, true, true);
-                }
-
-                $image = $request->file('image');
-                $avatar = Image::make($image);
-                $extension = $image->extension();
-                $filename = $employeeDB->first_name . ' ' . $employeeDB->last_name . '_attendance_overtimes_'. $newAttendanceOvertime->id . '_' .
-                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
-                $filename = str_replace('?', '', $filename);
-                $avatar->save(public_path($publicPath ."/". $filename));
-
-                $newAttendanceOvertime->image_path = $todayStr.'/'.$filename;
-                $newAttendanceOvertime->save();
-            }
-
-            return Response::json([
-                'message' => "Success Submit Overtime!",
-            ], 200);
-        }
-        catch(\Exception $ex){
-            Log::error('Api/EmployeeLeavesController - overtimeSubmit error EX: '. $ex);
             return Response::json([
                 'message' => "Sorry Something went Wrong!",
                 'ex' => $ex,
@@ -760,21 +737,25 @@ class EmployeeLeavesController extends Controller
                     'employee_name'     => "",
                     'replacement_employee_name'     => "",
                     'replaced_employee_name'     => "",
-                    'overtime_type'     => $overtime->type,
+                    'type'     => $overtime->type,
                     'date'              => Carbon::parse($overtime->date)->format('Y-m-d H:i:s'),
                     'description'       => $overtime->description,
                     'time_start'        => "00:00:00",
                     'time_end'          => "00:00:00",
                     'image_path'       => $attImage,
                 ]);
-                if($model->type == "tagih"){
+                if($overtime->type == "tagih"){
                     $model->time_start = Carbon::parse($overtime->time_start)->format('H:i:s');
                     $model->time_end = Carbon::parse($overtime->time_end)->format('H:i:s');
-                    $model->employee_name = $overtime->employee->first_name.' '.$overtime->employee->last_name;
+                    $employeeDB = Employee::find($overtime->employee_id);
+                    $model->employee_name = $employeeDB->first_name.' '.$employeeDB->last_name;
                 }
                 else{
-                    $model->replacement_employee_name = $overtime->employeeReplacement->first_name.' '.$overtime->employeeReplacement->last_name;
-                    $model->replaced_employee_name = $overtime->employeeReplaced->first_name.' '.$overtime->employeeReplaced->last_name;
+                    $employeeReplacementDB = Employee::find($overtime->replacement_employee_id);
+                    $model->replacement_employee_name = $employeeReplacementDB->first_name.' '.$employeeReplacementDB->last_name;
+
+                    $employeeReplacedDB = Employee::find($overtime->replaced_employee_id);
+                    $model->replaced_employee_name = $employeeReplacedDB->first_name.' '.$employeeReplacedDB->last_name;
                 }
                 $models->push($model);
             }
@@ -790,6 +771,93 @@ class EmployeeLeavesController extends Controller
         }
     }
 
+
+    /**
+     * Function to submit overtime.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function overtimeSubmit(Request $request)
+    {
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+//            Log::error('Api/EmployeeLeavesController - sickLeaves data: '. $user->employee_id);
+            $employee = Employee::where('id', $user->employee_id)->first();
+            $id = $employee->id;
+
+            $data = json_decode($request->input('overtime_model'));
+
+            if($data->overtime_id == 0){
+                if($data->type == "tagih"){
+                    $newAttendanceOvertime = AttendanceOvertime::create([
+                        'employee_id'  => $data->employee_id,
+                        'project_id'   => $data->project_id,
+                        'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
+                        'type'  => $data->type,
+                        'description'  => $data->description,
+                        'time_start'  => $data->time_start,
+                        'time_end'  => $data->time_end,
+                        'is_approve'            => 1,
+                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'created_by'            => $user->id,
+                    ]);
+                }
+                else{
+                    $newAttendanceOvertime = AttendanceOvertime::create([
+                        'employee_id'  => $data->replacement_employee_id,
+                        'project_id'   => $data->project_id,
+                        'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
+                        'type'  => $data->type,
+                        'description'  => $data->description,
+                        'replacement_employee_id'  => $data->replacement_employee_id,
+                        'replaced_employee_id'  => $data->replaced_employee_id,
+                        'is_approve'            => 1,
+                        'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'created_by'            => $user->id,
+                    ]);
+                }
+            }
+            else{
+                $newAttendanceOvertime = AttendanceOvertime::where('id', $data->id)->first();
+            }
+
+            $employeeDB = Employee::where('id', $data->employee_id)->first();
+            if($request->hasFile('image')){
+                //Upload Image
+                //Creating Path Everyday
+                $today = Carbon::now('Asia/Jakarta');
+                $todayStr = $today->format('y-m-d l');
+                $publicPath = 'storage/attendance_overtimes/'. $todayStr;
+                if(!File::isDirectory($publicPath)){
+                    File::makeDirectory(public_path($publicPath), 0777, true, true);
+                }
+
+                $image = $request->file('image');
+                $avatar = Image::make($image);
+                $extension = $image->extension();
+                $filename = $employeeDB->first_name . ' ' . $employeeDB->last_name . '_attendance_overtimes_'. $newAttendanceOvertime->id . '_' .
+                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                $filename = str_replace('?', '', $filename);
+                $avatar->save(public_path($publicPath ."/". $filename));
+
+                $newAttendanceOvertime->image_path = $todayStr.'/'.$filename;
+                $newAttendanceOvertime->save();
+            }
+
+            return Response::json([
+                'message' => "Success Submit Overtime!",
+            ], 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeLeavesController - overtimeSubmit error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
     /**
      * Function to Approve overtime by supervisor.
      *

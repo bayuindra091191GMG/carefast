@@ -342,7 +342,7 @@ class UserController extends Controller
                 $accessible_menus = "1,2,4,5,6,8,301,302,311,312,321";
             }
             else if($user->employee->employee_role_id == 1){
-                $accessible_menus = "1,2,3,8,302,312";
+                $accessible_menus = "1,2,3,8,301,311";
             }
             else{
                 $accessible_menus = "1,4,5,6,11,8,301,302,311,312,321";

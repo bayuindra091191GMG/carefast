@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+    {{ $projectId = \Illuminate\Support\Facades\Auth::guard('admin')->user()->project_id }}
 
     <div class="row">
         <div class="col-12">
@@ -48,7 +49,9 @@
                                     <div class="card">
                                         <div class="card-body b-b">
                                             <div class="col-md-12 col-12 text-right">
+                                                @if($projectId == 0)
                                                 <a href="{{ route('admin.project.information.edit', ['id' => $project->id]) }}" class="btn btn-primary">EDIT INFORMASI</a>
+                                                @endif
                                             </div>
                                             <div class="body">
                                                 @include('partials.admin._messages')

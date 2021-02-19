@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('content')
+    {{ $projectId = \Illuminate\Support\Facades\Auth::guard('admin')->user()->project_id }}
 
     <div class="row">
         <div class="col-12">
@@ -50,12 +51,14 @@
                                                     @include('partials.admin._messages')
 
                                                     <div class="col-12 text-right">
-                                                        @if($isCreate)
-                                                            <a href="{{ route('admin.project.employee.create', ['project_id' => $project->id]) }}" class="btn btn-success">TAMBAH EMPLOYEE</a>
-                                                        @else
-                                                            <a href="{{ route('admin.project.employee.edit', ['project_id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
-{{--                                                            &nbsp;--}}
-{{--                                                            <a href="{{ route('admin.project.employee.set', ['project_id' => $project->id]) }}" class="btn btn-success">UBAH EMPLOYEE</a>--}}
+                                                        @if($projectId == 0)
+                                                            @if($isCreate)
+                                                                <a href="{{ route('admin.project.employee.create', ['project_id' => $project->id]) }}" class="btn btn-success">TAMBAH EMPLOYEE</a>
+                                                            @else
+                                                                <a href="{{ route('admin.project.employee.edit', ['project_id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
+                                                                {{--                                                            &nbsp;--}}
+                                                                {{--                                                            <a href="{{ route('admin.project.employee.set', ['project_id' => $project->id]) }}" class="btn btn-success">UBAH EMPLOYEE</a>--}}
+                                                            @endif
                                                         @endif
                                                     </div>
 
@@ -116,10 +119,12 @@
                                                     </div>
 
                                                     <div class="col-12 text-right">
-                                                        @if($isCreate)
-                                                            <a href="{{ route('admin.project.employee.create', ['project_id' => $project->id]) }}" class="btn btn-success">TAMBAH EMPLOYEE</a>
-                                                        @else
-                                                            <a href="{{ route('admin.project.employee.edit-employee', ['project_id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
+                                                        @if($projectId == 0)
+                                                            @if($isCreate)
+                                                                <a href="{{ route('admin.project.employee.create', ['project_id' => $project->id]) }}" class="btn btn-success">TAMBAH EMPLOYEE</a>
+                                                            @else
+                                                                <a href="{{ route('admin.project.employee.edit-employee', ['project_id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
+                                                            @endif
                                                         @endif
                                                     </div>
                                                     <div class="col-12">
@@ -143,9 +148,9 @@
                                                                             </td>
                                                                             <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
                                                                             <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
-                                                                            <td class="text-center">
-                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>
-                                                                            </td>
+{{--                                                                            <td class="text-center">--}}
+{{--                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
+{{--                                                                            </td>--}}
                                                                         </tr>
                                                                     @endif
                                                                 @endforeach
@@ -158,9 +163,9 @@
                                                                             </td>
                                                                             <td>{{ $upperEmployee->employee->first_name. ' '. $upperEmployee->employee->last_name }}</td>
                                                                             <td class="text-center">{{ $upperEmployee->employee_role->name }}</td>
-                                                                            <td class="text-center">
-                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>
-                                                                            </td>
+{{--                                                                            <td class="text-center">--}}
+{{--                                                                                <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $upperEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
+{{--                                                                            </td>--}}
                                                                         </tr>
                                                                     @endif
                                                                 @endforeach
@@ -196,9 +201,9 @@
                                                                             <a href="{{ route('admin.employee.show', ['id' => $cleanerEmployee->employee_id]) }}">{{ $cleanerEmployee->employee->code }}</a>
                                                                         </td>
                                                                         <td>{{ $cleanerEmployee->employee->first_name. ' '. $cleanerEmployee->employee->last_name }}</td>
-                                                                        <td class="text-center">
-                                                                            <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $cleanerEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>
-                                                                        </td>
+{{--                                                                        <td class="text-center">--}}
+{{--                                                                            <a href="{{ route('admin.employee.set-schedule', ['employee_id' => $cleanerEmployee->employee_id]) }}" class="btn btn-primary">ATUR JADWAL</a>--}}
+{{--                                                                        </td>--}}
                                                                     </tr>
                                                                 @endforeach
 
