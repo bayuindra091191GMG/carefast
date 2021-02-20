@@ -74,10 +74,17 @@ class EmployeeLeavesController extends Controller
             $id = $employee->id;
 
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
-
-            $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
-                ->orderby('is_approve')
-                ->get();
+            if($employee->employee_role_id == 1){
+                $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
+                    ->where('employee_id', $id)
+                    ->orderby('is_approve')
+                    ->get();
+            }
+            else{
+                $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
+                    ->orderby('is_approve')
+                    ->get();
+            }
             $models = collect();
             if($sickLeaves->count() == 0){
                 return Response::json($models, 482);
@@ -371,9 +378,17 @@ class EmployeeLeavesController extends Controller
 
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
 
-            $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)
-                ->orderby('is_approve')
-                ->get();
+            if($employee->employee_role_id == 1){
+                $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)
+                    ->where('employee_id', $id)
+                    ->orderby('is_approve')
+                    ->get();
+            }
+            else{
+                $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)
+                    ->orderby('is_approve')
+                    ->get();
+            }
             $models = collect();
             if($permissions->count() == 0){
                 return Response::json($models, 482);
@@ -675,8 +690,11 @@ class EmployeeLeavesController extends Controller
                 'id'                => $employees->id,
                 'approval_status'   => $employees->is_approve,
                 'project_name'      => $employees->project->name,
+                'employee_id'     => 0,
                 'employee_name'     => "",
+                'replacement_employee_id'     => 0,
                 'replacement_employee_name'     => "",
+                'replaced_employee_id'     => 0,
                 'replaced_employee_name'     => "",
                 'type'     => $employees->type,
                 'date'              => Carbon::parse($employees->date)->format('Y-m-d H:i:s'),
@@ -688,10 +706,13 @@ class EmployeeLeavesController extends Controller
             if($employees->type == "tagih"){
                 $model->time_start = Carbon::parse($employees->time_start)->format('H:i:s');
                 $model->time_end = Carbon::parse($employees->time_end)->format('H:i:s');
+                $model->employee_id = $employees->employee_id;
                 $model->employee_name = $employees->employee->first_name.' '.$employees->employee->last_name;
             }
             else{
+                $model->replacement_employee_id = $employees->replacement_employee_id;
                 $model->replacement_employee_name = $employees->employeeReplacement->first_name.' '.$employees->employeeReplacement->last_name;
+                $model->replaced_employee_id = $employees->replaced_employee_id;
                 $model->replaced_employee_name = $employees->employeeReplaced->first_name.' '.$employees->employeeReplaced->last_name;
             }
 
@@ -730,35 +751,55 @@ class EmployeeLeavesController extends Controller
             }
             foreach($overtimes as $overtime){
                 $attImage = empty($overtime->image_path) ? null : asset('storage/attendance_overtimes/'. $overtime->image_path);
-                $model = collect([
-                    'id'                => $overtime->id,
-                    'approval_status'   => $overtime->is_approve,
-                    'project_name'      => $overtime->project->name,
-                    'employee_name'     => "",
-                    'replacement_employee_name'     => "",
-                    'replaced_employee_name'     => "",
-                    'type'     => $overtime->type,
-                    'date'              => Carbon::parse($overtime->date)->format('Y-m-d H:i:s'),
-                    'description'       => $overtime->description,
-                    'time_start'        => "00:00:00",
-                    'time_end'          => "00:00:00",
-                    'image_path'       => $attImage,
-                ]);
+                $employee_id = 0;
+                $employee_name = "";
+                $time_start = "00:00:00";
+                $time_end = "00:00:00";
+                $replacement_employee_id = 0;
+                $replacement_employee_name = "";
+                $replaced_employee_id = "00:00:00";
+                $replaced_employee_name = 0;
+
                 if($overtime->type == "tagih"){
-                    $model->time_start = Carbon::parse($overtime->time_start)->format('H:i:s');
-                    $model->time_end = Carbon::parse($overtime->time_end)->format('H:i:s');
+                    $time_start = Carbon::parse($overtime->time_start)->format('H:i:s');
+                    $time_end = Carbon::parse($overtime->time_end)->format('H:i:s');
+
                     $employeeDB = Employee::find($overtime->employee_id);
-                    $model->employee_name = $employeeDB->first_name.' '.$employeeDB->last_name;
+                    $employee_id = $overtime->employee_id;
+                    $employee_name = $employeeDB->first_name.' '.$employeeDB->last_name;
                 }
                 else{
                     $employeeReplacementDB = Employee::find($overtime->replacement_employee_id);
-                    $model->replacement_employee_name = $employeeReplacementDB->first_name.' '.$employeeReplacementDB->last_name;
+                    $replacement_employee_id = $overtime->replacement_employee_id;
+                    $replacement_employee_name = $employeeReplacementDB->first_name.' '.$employeeReplacementDB->last_name;
 
                     $employeeReplacedDB = Employee::find($overtime->replaced_employee_id);
-                    $model->replaced_employee_name = $employeeReplacedDB->first_name.' '.$employeeReplacedDB->last_name;
+                    $replaced_employee_id = $overtime->replaced_employee_id;
+                    $replaced_employee_name = $employeeReplacedDB->first_name.' '.$employeeReplacedDB->last_name;
                 }
+
+                $model = collect([
+                    'id'                => $overtime->id,
+                    'approval_status'   => $overtime->is_approve,
+                    'project_id'      => $overtime->project_id,
+                    'project_name'      => $overtime->project->name,
+                    'employee_id'     => $employee_id,
+                    'employee_name'     => $employee_name,
+                    'replacement_employee_id'     => $replacement_employee_id,
+                    'replacement_employee_name'     => $replacement_employee_name,
+                    'replaced_employee_id'     => $replaced_employee_id,
+                    'replaced_employee_name'     => $replaced_employee_name,
+                    'type'     => $overtime->type,
+                    'date'              => Carbon::parse($overtime->date)->format('Y-m-d H:i:s'),
+                    'description'       => $overtime->description,
+                    'time_start'        => $time_start,
+                    'time_end'          => $time_end,
+                    'image_path'       => $attImage,
+                ]);
+
                 $models->push($model);
             }
+//            Log::info('Api/EmployeeLeavesController - getOvertimes check data check 3: '.json_encode($models));
 
             return Response::json($models, 200);
         }

@@ -35,6 +35,11 @@ class ProjectActivityTransformer extends TransformerAbstract
             $action = "<a href='".$routeEditUrl."' class='btn btn-primary'>UBAH</a>";
 //            $action = "<a href='#' class='btn btn-primary'>UBAH</a>";
             $activityHeader = ProjectActivitiesHeader::find($project->activities_header_id);
+            $assignedCso = Schedule::where('project_activity_id', $project->activities_header_id)->first();
+            $employeeName = "";
+            if(!empty($assignedCso)){
+                $employeeName = $assignedCso->employee->first_name. " " .$assignedCso->employee->last_name;
+            }
 
             return[
                 'time'              => Carbon::parse($project->start)->format('H:i')." - ".Carbon::parse($project->finish)->format('H:i'),
@@ -43,6 +48,7 @@ class ProjectActivityTransformer extends TransformerAbstract
                 'place'             => $activityHeader->place->name,
                 'object_name'        => $project->object_name,
                 'action_name'       => $actionName,
+                'assigned_cso'       => $employeeName,
                 'action'            => $action
             ];
         }

@@ -50,13 +50,20 @@ class UserController extends Controller
 
             if(!empty($employeeNUC)){
                 if(empty($employeeNUC->phone) || $employeeNUC->phone == ""){
+
+                    Log::channel('user_activity')
+                        ->info("\tApi/UserController - checkUserNUC\tPhone number kosong ".$employeeNUC->phone."\tEmployee status = ".$employeeNUC->status_id."\tBelum ada nomor handphone");
                     return Response::json("Belum ada nomor handphone", 482);
                 }
                 else{
+                    Log::channel('user_activity')
+                        ->info("\tApi/UserController - checkUserNUC\tPhone number Sudah terisi ".$employeeNUC->phone."\tEmployee status = ".$employeeNUC->status_id."\tSudah ada nomor handphone");
                     return Response::json("Sudah ada nomor handphone", 200);
                 }
             }
             else{
+                Log::channel('user_activity')
+                    ->info("\tApi/UserController - checkUserNUC\tEmployee Code tidak ditemukan (".$request->input('employee_code').")\tEmployee status = ".$employeeNUC->status_id."\tSudah ada nomor handphone");
                 return Response::json("Sudah ada nomor handphone", 200);
             }
         }
@@ -74,14 +81,16 @@ class UserController extends Controller
             $employee = Employee::where('code', $request->input('employee_code'))->first();
 
             if(!empty($employee)){
-//                Log::channel('user_activity')->error('API/UserController - saveUserPhone : '.
-//                    $employee->first_name. '('. $employee->code .') Start Change Phone Number \n'.
-//                    'CODE = '.$request->input('employee_code').', Phone = '.$employee->phone);
                 if($employee->phone != "") {
+                    Log::channel('user_activity')
+                        ->info("\tApi/UserController - saveUserPhone\tNo Handphone di user ini sudah ada (".$employee->phone.")\tEmployee status = ".$employee->status_id."\tSudah ada nomor handphone");
+
                     return Response::json("Sudah ada nomor handphone", 482);
                 }
                 else{
                     if(DB::table('employees')->where('phone', $request->input('phone'))->exists()){
+                        Log::channel('user_activity')
+                            ->info("\tApi/UserController - saveUserPhone\tNo Handphone sudah digunakan employee lain (".$employee->phone.")\tEmployee status = ".$employee->status_id."\tSudah ada nomor handphone");
                         return Response::json("Sudah ada nomor handphone", 482);
                     }
 
@@ -92,6 +101,8 @@ class UserController extends Controller
                     $user->phone = $request->input('phone');
                     $user->save();
 
+                    Log::channel('user_activity')
+                        ->info("\tApi/UserController - saveUserPhone\tEmployee ".$employee->first_name.''.$employee->last_name."(".$employee->code.") mengganti nomor handphone ke ".$request->input('phone')."\tEmployee status = ".$employee->status_id."\tSuccess Save User new Phone");
                     return Response::json("Success Save User new Phone", 200);
                 }
             }
@@ -123,17 +134,25 @@ class UserController extends Controller
 
             if(!empty($user->android_id)){
                 if($user->android_id != $request->input('android_id') ){
-                    return Response::json("Handphone tidak terdaftar", 483);
+                    Log::channel('user_activity')
+                        ->info("\tApi/UserController - ChangePhone\tAndroid Id tidak sesuai, database = ".$user->android_id.", request = ".$request->input('android_id')."\tEmployee status = ".$employee->status_id."\tAndroid ID Handphone tidak terdaftar");
+
+                    return Response::json("Android ID Handphone tidak terdaftar", 483);
                 }
             }
 
             if(!empty($user->first_imei)){
                 if($user->first_imei != $request->input('imei_no')){
-                    return Response::json("Handphone tidak terdaftar", 483);
+                    Log::channel('user_activity')
+                        ->info("\tApi/UserController - ChangePhone\tImei No tidak sesuai, database = ".$user->first_imei.", request = ".$request->input('imei_no')."\tEmployee status = ".$employee->status_id."\tIMEI Handphone tidak terdaftar");
+                    return Response::json("IMEI Handphone tidak terdaftar", 483);
                 }
             }
 
             if(DB::table('employees')->where('phone', $request->input('phone'))->exists()){
+                Log::channel('user_activity')
+                    ->info("\tApi/UserController - ChangePhone\tNomor Handphone sudah ada pada employee lain, request = ".$request->input('phone')."\tEmployee status = ".$employee->status_id."\tSudah ada nomor handphone");
+
                 return Response::json("Sudah ada nomor handphone", 482);
             }
 
@@ -147,6 +166,8 @@ class UserController extends Controller
                 $user->phone = $request->input('phone');
                 $user->save();
 
+                Log::channel('user_activity')
+                    ->info("\tApi/UserController - ChangePhone\tEmployee ".$user->name."(".$employee->code.") sukses mengganti nomor handphone ke ".$request->input('phone')."\tEmployee status = ".$employee->status_id."\tSuccess Save User new Phone");
                 return Response::json("Success Save User new Phone", 200);
         }
             else{
@@ -182,10 +203,9 @@ class UserController extends Controller
 
             //save user IMEI
             $userDB = User::where('id', $user->id)->first();
+            $employeeDB = Employee::where('id', $userDB->employee_id)->first();
 
             if(empty($request->input('android_id')) && empty($request->input('imei_no'))){
-//                return Response::json("Imei tidak terdaftar", 484);
-
                 return Response::json("Imei tidak terdaftar", 484);
             }
             if(empty($userDB->phone) || $userDB->phone == " "){
@@ -203,7 +223,8 @@ class UserController extends Controller
             }
             else{
                 if($userDB->android_id != $request->input('android_id')){
-                    Log::error('Api/UserController - android_id ('.$userDB->name.') tidak sama, database='. $userDB->android_id.' | request='.$request->input('android_id'));
+                    Log::channel('user_activity')
+                        ->info("\tApi/UserController - saveUserToken\tAndroid ID dari ".$userDB->name."(".$employeeDB->code.") tidak sama, database=". $userDB->android_id." | request=".$request->input('android_id')."\tEmployee status = ".$employeeDB->status_id."\tImei tidak terdaftar");
                     return Response::json("Imei tidak terdaftar", 484);
                 }
             }
@@ -270,20 +291,22 @@ class UserController extends Controller
             }
 
             $newHistory = ImeiHistory::create([
-                'employee_id' => $employee_id,
-                'nuc' => $request->input('employee_code'),
-                'phone_type_old' => $userDB->phone_type,
-                'imei_old'  => $userDB->android_id,
-                'phone_type_new' => $request->input('phone_type'),
-                'imei_new'  => $request->input('android_id'),
+                'employee_id'   => $employee_id,
+                'nuc'           => $request->input('employee_code'),
+                'phone_type_old'=> $userDB->phone_type,
+                'imei_old'      => $userDB->android_id,
+                'phone_type_new'=> $request->input('phone_type'),
+                'imei_new'      => $request->input('android_id'),
                 'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'created_by' => $employee_id,
+                'created_by'    => $employee_id,
             ]);
 
             $userDB->android_id = $request->input('android_id');
             $userDB->phone_type = $request->input('phone_type');
             $userDB->save();
 
+            Log::channel('user_activity')
+                ->info("\tApi/UserController - resetImei\tEmployee ".$userDB->name." mengganti nomor handphone ke ".$request->input('android_id')."\tEmployee status = ".$userDB->status_id."\tSuccess Reset User Imei");
             return Response::json([
                 'message' => "Success Reset User Imei!",
             ], 200);

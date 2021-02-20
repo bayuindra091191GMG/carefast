@@ -773,6 +773,37 @@ class HomeController extends Controller
     }
 
 
+    public function logFunctionTesting(){
+
+        $employeeNUC = Employee::where('code', "0002")->first();
+
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - checkUserNUC\tPhone kosong ".$employeeNUC->phone."\tBelum ada nomor handphone");
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - checkUserNUC\tPhone Sudah ada ".$employeeNUC->phone."\tBelum ada nomor handphone");
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - checkUserNUC\tEmployee Code tidak ditemukan (0002)\tBelum ada nomor handphone");
+
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - saveUserPhone\tNo Handphone sudah ada (".$employeeNUC->phone.")\tSudah ada nomor handphone");
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - saveUserPhone\tNo Handphone sudah ada di employee lain (".$employeeNUC->phone.")\tSudah ada nomor handphone");
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - saveUserPhone\tEmployee ".$employeeNUC->first_name.''.$employeeNUC->last_name."(".$employeeNUC->code.") mengganti nomor handphone ke 00000000 \tSuccess Save User new Phone");
+
+
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - ChangePhone\tAndroid Id tidak sesuai, database = ".$employeeNUC->phone.", request = androidId\tAndroid ID Handphone tidak terdaftar");
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - ChangePhone\tImei No tidak sesuai, database = ".$employeeNUC->first_imei.", request = imeino\tIMEI Handphone tidak terdaftar");
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - ChangePhone\tNomoe Handphone sudah ada, database = ".$employeeNUC->phone.", request = 00000\tSudah ada nomor handphone");
+        Log::channel('user_activity')
+            ->info("\tApi/UserController - saveUserPhone\tEmployee ".$employeeNUC->first_name.''.$employeeNUC->last_name."(".$employeeNUC->code.") mengganti nomor handphone ke 0000\tSuccess Save User new Phone");
+
+        return "done";
+    }
+
     //testing api function
 
     public function submitIntegrationEmployee(){

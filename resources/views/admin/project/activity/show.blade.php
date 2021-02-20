@@ -141,6 +141,7 @@
                                                                     <th class="text-center" width="15%">Waktu</th>
                                                                     <th class="text-center" width="10%">Aktifitas</th>
                                                                     <th class="text-center" width="10%">Period</th>
+                                                                    <th class="text-center" width="10%">CSO Bertugas</th>
                                                                     <th class="text-center" width="10%">Tindakan</th>
                                                                 </tr>
                                                                 </thead>
@@ -207,6 +208,7 @@
                 { data: 'time', name: 'time', class: 'text-center' },
                 { data: 'action_name', name: 'action_name', class: 'text-center' },
                 { data: 'period_type', name: 'period_type', class: 'text-center' },
+                { data: 'assigned_cso', name: 'period_type', orderable: false, searchable: false, class: 'text-center' },
                 { data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
             ],
         });
