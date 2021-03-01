@@ -791,16 +791,6 @@ class HomeController extends Controller
         Log::channel('user_activity')
             ->info("\tApi/UserController - saveUserPhone\tEmployee ".$employeeNUC->first_name.''.$employeeNUC->last_name."(".$employeeNUC->code.") mengganti nomor handphone ke 00000000 \tSuccess Save User new Phone");
 
-
-        Log::channel('user_activity')
-            ->info("\tApi/UserController - ChangePhone\tAndroid Id tidak sesuai, database = ".$employeeNUC->phone.", request = androidId\tAndroid ID Handphone tidak terdaftar");
-        Log::channel('user_activity')
-            ->info("\tApi/UserController - ChangePhone\tImei No tidak sesuai, database = ".$employeeNUC->first_imei.", request = imeino\tIMEI Handphone tidak terdaftar");
-        Log::channel('user_activity')
-            ->info("\tApi/UserController - ChangePhone\tNomoe Handphone sudah ada, database = ".$employeeNUC->phone.", request = 00000\tSudah ada nomor handphone");
-        Log::channel('user_activity')
-            ->info("\tApi/UserController - saveUserPhone\tEmployee ".$employeeNUC->first_name.''.$employeeNUC->last_name."(".$employeeNUC->code.") mengganti nomor handphone ke 0000\tSuccess Save User new Phone");
-
         return "done";
     }
 

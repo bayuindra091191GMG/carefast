@@ -35,8 +35,13 @@
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label class="form-label" for="phone">Project Saat ini </label>
-                                                        <input id="phone" type="text" class="form-control"
-                                                               value="{{ $currentProject->project->name }}" readonly>
+                                                        @if(empty($currentProject))
+                                                            <input id="phone" type="text" class="form-control"
+                                                                   value="-" readonly>
+                                                        @else
+                                                            <input id="phone" type="text" class="form-control"
+                                                                   value="{{ $currentProject->project->name }}" readonly>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -44,10 +49,24 @@
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label class="form-label" for="phone">Kode Project </label>
-                                                        <input id="phone" type="text" class="form-control"
-                                                               value="{{ $currentProject->project->code }}" readonly>
+                                                        @if(empty($currentProject))
+                                                            <input id="phone" type="text" class="form-control"
+                                                                   value="-" readonly>
+                                                        @else
+                                                            <input id="phone" type="text" class="form-control"
+                                                                   value="{{ $currentProject->project->code }}" readonly>
+                                                        @endif
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="status">Status</label>
+                                                <input id="status" type="text" class="form-control"
+                                                       name="status" value="{{ strtoupper($employee->status->description) }}" readonly="">
                                             </div>
                                         </div>
                                     </div>
@@ -179,16 +198,6 @@
                                                 <label class="form-label" for="notes">Keterangan Tambahan</label>
                                                 <textarea id="notes" class="form-control"
                                                           name="notes" rows="3" readonly>{{ $employee->notes ?? '' }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group form-float form-group-lg">
-                                            <div class="form-line">
-                                                <label class="form-label" for="status">Status</label>
-                                                <input id="status" type="text" class="form-control"
-                                                       name="status" value="{{ strtoupper($employee->status->description) }}" readonly="">
                                             </div>
                                         </div>
                                     </div>

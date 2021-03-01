@@ -36,12 +36,12 @@ class IntegrationController extends Controller
                 ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
 
             $nonActiveEmp = DB::statement("update employees set status_id = 2 where id > 29 and status_id = 1 and employee_role_id < 4");
-            sleep(60);
+            sleep(40);
 
             $ct = 1;
             foreach ($employees as $employee) {
                 if($ct %2000 == 0){
-                    sleep(30);
+                    sleep(15);
                 }
                 $rules = array(
                     'code'          => 'required',
@@ -100,18 +100,19 @@ class IntegrationController extends Controller
                         $nEmployee = Employee::create([
                             'code' => $employee['code'],
                             'first_name' => $employee['first_name'],
-                            'last_name' => $employee['last_name'] ?? "",
+                            'last_name' => "",
 //                            'phone' => $phone,
                             'dob' => $employee['dob'],
                             'nik' => $employee['nik'],
                             'address' => $employee['address'],
                             'employee_role_id' => $employee['role'],
-                            'status_id' => 1
+                            'status_id' => 1,
+//                            'notes' => $employee['job_name'] ?? ""
                         ]);
 
                         User::create([
                             'employee_id' => $nEmployee->id,
-                            'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
+                            'name' => $employee['first_name'],
 //                            'phone' => $phone,
                             'status_id' => 1,
                             'password' => Hash::make('carefastid')
@@ -120,29 +121,36 @@ class IntegrationController extends Controller
                     else {
                         $employeeChecking = Employee::where('code', $employee['code'])->first();
                         $employeeChecking->first_name = $employee['first_name'];
-                        $employeeChecking->last_name = $employee['last_name'] ?? "";
-//                        $employeeChecking->phone = $phone;
+                        $employeeChecking->last_name = "";
+//                        $employeeChecking->phone = "";
                         $employeeChecking->dob = $employee['dob'];
                         $employeeChecking->nik = $employee['nik'];
                         $employeeChecking->employee_role_id = $employee['role'];
                         $employeeChecking->address = $employee['address'] ?? "";
                         $employeeChecking->status_id = 1;
+//                        $employeeChecking->notes = $employee['job_name'] ?? "";
+                        if($employeeChecking->phone == '-'){
+                            $employeeChecking->phone = "";
+                        }
                         $employeeChecking->save();
 
                         $oUser = User::where('employee_id', $employeeChecking->id)->first();
                         if(empty($oUser)){
                             User::create([
                                 'employee_id' => $employeeChecking->id,
-                                'name' => $employee['first_name'] . ' ' . $employee['last_name'] ?? "",
-//                                'phone' => $phone,
+                                'name' => $employee['first_name'],
+//                                'phone' => "",
                                 'status_id' => 1,
                                 'password' => Hash::make('carefastid')
                             ]);
                         }
                         else{
 //                            $oUser->phone = $phone;
-                            $oUser->name = $employee['first_name'] . ' ' . $employee['last_name'] ?? "";
+                            $oUser->name = $employee['first_name'];
                             $oUser->status_id = 1;
+                            if($oUser->phone == '-'){
+                                $oUser->phone = "";
+                            }
                             $oUser->save();
                         }
                     }
@@ -158,9 +166,12 @@ class IntegrationController extends Controller
                 $ct++;
             }
 
-            sleep(30);
-            $nonActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 2");
-            $nonActiveUserPhone = DB::statement("update users as a, employees as b set a.status_id = 2, a.phone = '' where a.employee_id = b.id and b.status_id = 2");
+            sleep(15);
+            $nonActiveEmpPhone = DB::statement("update employees set phone = '-' where status_id = 2");
+            $nonActiveUserPhone = DB::statement("update users as a, employees as b set a.status_id = 2, a.phone = '-' where a.employee_id = b.id and b.status_id = 2");
+
+            $ActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 1 and phone = '-'");
+            $ActiveUserPhone = DB::statement("update users set phone = '' where status_id = 1 and phone = '-'");
 
             $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
             Log::channel('in_sys')
@@ -287,7 +298,7 @@ class IntegrationController extends Controller
     public function jobAssignments(Request $request){
         try{
             $projects = $request->json()->all();
-            sleep(420);
+            sleep(240);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - jobAssignments DATA : '.json_encode($projects));
 //            Log::channel('in_sys')

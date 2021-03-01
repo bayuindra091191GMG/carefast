@@ -130,6 +130,7 @@ class EmployeeLeavesController extends Controller
             $employee = Employee::where('id', $user->employee_id)->first();
 
             $data = json_decode($request->input('sick_leave_model'));
+//            Log::error('Api/EmployeeLeavesController - sickLeavesSubmit data: '. $request->input('sick_leave_model'));
 
             if($data->sick_leave_id == 0){
                 $newAttendanceSick = AttendanceSickLeafe::create([
@@ -170,7 +171,7 @@ class EmployeeLeavesController extends Controller
                 ]);
             }
             else{
-                $newAttendanceSick = AttendanceSickLeafe::where('id', $data->id)->first();
+                $newAttendanceSick = AttendanceSickLeafe::where('id', $data->sick_leave_id)->first();
             }
 
             $employeeDB = Employee::where('id', $data->employee_id)->first();
@@ -480,7 +481,7 @@ class EmployeeLeavesController extends Controller
                 }
             }
             else{
-                $newAttendancePermission = AttendancePermission::where('id', $data->id)->first();
+                $newAttendancePermission = AttendancePermission::where('id', $data->permission_leave_id)->first();
             }
 
             $employeeDB = Employee::where('id', $data->employee_id)->first();
@@ -757,8 +758,8 @@ class EmployeeLeavesController extends Controller
                 $time_end = "00:00:00";
                 $replacement_employee_id = 0;
                 $replacement_employee_name = "";
-                $replaced_employee_id = "00:00:00";
-                $replaced_employee_name = 0;
+                $replaced_employee_id = 0;
+                $replaced_employee_name = "";
 
                 if($overtime->type == "tagih"){
                     $time_start = Carbon::parse($overtime->time_start)->format('H:i:s');
@@ -861,10 +862,15 @@ class EmployeeLeavesController extends Controller
                 }
             }
             else{
-                $newAttendanceOvertime = AttendanceOvertime::where('id', $data->id)->first();
+                $newAttendanceOvertime = AttendanceOvertime::where('id', $data->overtime_id)->first();
+            }
+            if($data->type == "tagih"){
+                $employeeDB = Employee::where('id', $data->employee_id)->first();
+            }
+            else{
+                $employeeDB = Employee::where('id', $data->replacement_employee_id)->first();
             }
 
-            $employeeDB = Employee::where('id', $data->employee_id)->first();
             if($request->hasFile('image')){
                 //Upload Image
                 //Creating Path Everyday

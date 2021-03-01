@@ -52,18 +52,18 @@ class UserController extends Controller
                 if(empty($employeeNUC->phone) || $employeeNUC->phone == ""){
 
                     Log::channel('user_activity')
-                        ->info("\tApi/UserController - checkUserNUC\tPhone number kosong ".$employeeNUC->phone."\tEmployee status = ".$employeeNUC->status_id."\tBelum ada nomor handphone");
+                        ->info("\tApi/UserController - checkUserNUC\tPhone number kosong ".$employeeNUC->phone."\tBelum ada nomor handphone");
                     return Response::json("Belum ada nomor handphone", 482);
                 }
                 else{
                     Log::channel('user_activity')
-                        ->info("\tApi/UserController - checkUserNUC\tPhone number Sudah terisi ".$employeeNUC->phone."\tEmployee status = ".$employeeNUC->status_id."\tSudah ada nomor handphone");
+                        ->info("\tApi/UserController - checkUserNUC\tPhone number Sudah terisi ".$employeeNUC->phone."\tSudah ada nomor handphone");
                     return Response::json("Sudah ada nomor handphone", 200);
                 }
             }
             else{
                 Log::channel('user_activity')
-                    ->info("\tApi/UserController - checkUserNUC\tEmployee Code tidak ditemukan (".$request->input('employee_code').")\tEmployee status = ".$employeeNUC->status_id."\tSudah ada nomor handphone");
+                    ->info("\tApi/UserController - checkUserNUC\tEmployee Code tidak ditemukan | request code = ".$request->input('employee_code')."\tSudah ada nomor handphone");
                 return Response::json("Sudah ada nomor handphone", 200);
             }
         }
@@ -90,7 +90,7 @@ class UserController extends Controller
                 else{
                     if(DB::table('employees')->where('phone', $request->input('phone'))->exists()){
                         Log::channel('user_activity')
-                            ->info("\tApi/UserController - saveUserPhone\tNo Handphone sudah digunakan employee lain (".$employee->phone.")\tEmployee status = ".$employee->status_id."\tSudah ada nomor handphone");
+                            ->info("\tApi/UserController - saveUserPhone\tNo Handphone employee ".$request->input('employee_code')." sudah digunakan employee lain (".$employee->phone.")\tEmployee status = ".$employee->status_id."\tSudah ada nomor handphone");
                         return Response::json("Sudah ada nomor handphone", 482);
                     }
 
@@ -424,8 +424,9 @@ class UserController extends Controller
                 'accessible_menus'  => $accessible_menus,
 //                'employee_id'       => $employee->id,
                 'employee_id'       => $user->employee_id,
-                'employee_code'       => $employee->code,
-                'projects'          => $projectModels
+                'employee_code'     => $employee->code,
+                'projects'          => $projectModels,
+                'job_name'          => $employee->notes ?? ''
             ]);
 
             return Response::json($userModel, 200);

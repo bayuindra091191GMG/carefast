@@ -41,8 +41,13 @@
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label class="form-label" for="phone">Project Saat ini </label>
-                                                        <input id="phone" type="text" class="form-control"
-                                                               value="{{ $currentProject->project->name }}" readonly>
+                                                        @if(empty($currentProject))
+                                                            <input id="phone" type="text" class="form-control"
+                                                                   value="-" readonly>
+                                                        @else
+                                                            <input id="phone" type="text" class="form-control"
+                                                                   value="{{ $currentProject->project->name }}" readonly>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -50,8 +55,13 @@
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
                                                         <label class="form-label" for="phone">Kode Project </label>
-                                                        <input id="phone" type="text" class="form-control"
-                                                               value="{{ $currentProject->project->code }}" readonly>
+                                                        @if(empty($currentProject))
+                                                            <input id="phone" type="text" class="form-control"
+                                                                   value="-" readonly>
+                                                        @else
+                                                            <input id="phone" type="text" class="form-control"
+                                                                   value="{{ $currentProject->project->code }}" readonly>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
