@@ -113,7 +113,7 @@ class EmployeeController extends Controller
                 'phone'         => 'required|max:20|unique:employees',
                 'code'          => 'required|max:50|unique:employees',
                 'first_name'    => 'required|max:100',
-                'last_name'     => 'required|max:100',
+//                'last_name'     => 'required|max:100',
                 'password'      => 'required_with:password_confirmation|same:password_confirmation',
                 'password_confirmation' => 'required'
             ],[
@@ -150,7 +150,7 @@ class EmployeeController extends Controller
                 'employee_role_id'  => $request->input('role'),
                 'code'              => strtoupper($request->input('code')),
                 'first_name'        => strtoupper($request->input('first_name')),
-                'last_name'         => strtoupper($request->input('last_name')),
+//                'last_name'         => strtoupper($request->input('last_name')),
                 'address'           => $request->input('address') ?? '',
                 'telephone'         => $request->input('telephone') ?? '',
                 'phone'             => $request->input('phone') ?? '',

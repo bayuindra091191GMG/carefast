@@ -205,6 +205,10 @@ class UserController extends Controller
             $userDB = User::where('id', $user->id)->first();
             $employeeDB = Employee::where('id', $userDB->employee_id)->first();
 
+            if($user->status_id == 2 || $employeeDB->status_id == 2){
+                return Response::json("Imei tidak terdaftar", 484);
+            }
+
             if(empty($request->input('android_id')) && empty($request->input('imei_no'))){
                 return Response::json("Imei tidak terdaftar", 484);
             }
@@ -334,6 +338,11 @@ class UserController extends Controller
                 return Response::json([
                     'error'   => "",
                 ], 452);
+            }
+            if($user->status_id == 2){
+                return Response::json([
+                    'error'   => "",
+                ], 484);
             }
             $employee = Employee::find($user->employee_id);
 

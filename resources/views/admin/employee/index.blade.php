@@ -43,10 +43,9 @@
                                     <th class="text-center">Kode</th>
                                     <th class="text-center">Posisi</th>
                                     <th class="text-center">Nama Depan</th>
-                                    <th class="text-center">Nama Belakang</th>
-                                    <th class="text-center">Nomor KTP</th>
-                                    <th class="text-center">Nomor Telpon/Ponsel</th>
                                     <th class="text-center">Status</th>
+{{--                                    <th class="text-center">Nomor KTP</th>--}}
+                                    <th class="text-center">Nomor Telpon/Ponsel</th>
                                     <th class="text-center">Tanggal Dibuat</th>
                                     <th class="text-center">Tindakan</th>
                                 </tr>
@@ -82,10 +81,9 @@
                 { data: 'code', name: 'code'},
                 { data: 'role', name: 'employee_role.name'},
                 { data: 'first_name', name: 'first_name', class: 'text-center' },
-                { data: 'last_name', name: 'last_name', class: 'text-center' },
-                { data: 'nik', name: 'nik'},
-                { data: 'phones', name: 'phone', class: 'text-center'},
                 { data: 'status', name: 'status.description', class: 'text-center'},
+                // { data: 'nik', name: 'nik'},
+                { data: 'phones', name: 'phone', class: 'text-center'},
                 { data: 'created_at', name: 'created_at', class: 'text-center',
                     render: function ( data, type, row ){
                         if ( type === 'display' || type === 'filter' ){

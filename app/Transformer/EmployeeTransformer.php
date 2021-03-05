@@ -27,7 +27,7 @@ class EmployeeTransformer extends TransformerAbstract
             $action .= "&nbsp;<a class='btn btn-xs btn-success' href='".$routeDetailUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-child'></i></a>";
             $action .= "&nbsp;<a class='btn btn-xs btn-primary' href='".$routeEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a>";
 
-            $phones = '-';
+            $phones = '';
             if(!empty($employee->phone)){
                 $phones = $employee->phone;
             }

@@ -411,6 +411,31 @@ class HomeController extends Controller
             return $ex;
         }
     }
+
+    public function copyPhone(){
+        try{
+            $employeeDB = Employee::where('phone', '')
+                ->where('status_id', 1)
+                ->get();
+//        dd($employeeDB);
+            foreach($employeeDB as $employee){
+                $userDB = User::where('employee_id', $employee->id)
+                    ->where('status_id', 1)
+                    ->where('phone', '!=', '')
+                    ->first();
+                if(!empty($userDB)){
+                    if($employee->phone == ''){
+                        $employee->phone = $userDB->phone;
+                        $employee->save();
+                    }
+                }
+            }
+            return "success";
+        }
+        catch(\Exception $ex){
+            dd($ex);
+        }
+    }
     public function generalFunction(){
         try{
 //            $attendanceAbsents = AttendanceAbsent::where('id', '>', 36155)

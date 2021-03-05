@@ -151,6 +151,10 @@ class IntegrationController extends Controller
                             if($oUser->phone == '-'){
                                 $oUser->phone = "";
                             }
+                            else{
+                                $employeeChecking->phone = $oUser->phone;
+                                $employeeChecking->save();
+                            }
                             $oUser->save();
                         }
                     }
@@ -170,8 +174,8 @@ class IntegrationController extends Controller
             $nonActiveEmpPhone = DB::statement("update employees set phone = '-' where status_id = 2");
             $nonActiveUserPhone = DB::statement("update users as a, employees as b set a.status_id = 2, a.phone = '-' where a.employee_id = b.id and b.status_id = 2");
 
-            $ActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 1 and phone = '-'");
-            $ActiveUserPhone = DB::statement("update users set phone = '' where status_id = 1 and phone = '-'");
+//            $ActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 1 and phone = '-'");
+//            $ActiveUserPhone = DB::statement("update users set phone = '' where status_id = 1 and phone = '-'");
 
             $now = Carbon::now('Asia/Jakarta')->toDateTimeString();
             Log::channel('in_sys')
@@ -198,6 +202,7 @@ class IntegrationController extends Controller
     public function projects(Request $request){
         try {
             $projects = $request->json()->all();
+
             Log::channel('in_sys')
                 ->info('API/IntegrationController - projects DATA : '.json_encode($projects));
 
@@ -298,7 +303,7 @@ class IntegrationController extends Controller
     public function jobAssignments(Request $request){
         try{
             $projects = $request->json()->all();
-            sleep(240);
+            sleep(180);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - jobAssignments DATA : '.json_encode($projects));
 //            Log::channel('in_sys')
@@ -500,6 +505,18 @@ class IntegrationController extends Controller
         }
     }
 
+    public function testing(Request $request){
+        try{
+
+            return Response::json("success access", 200);
+        }
+        catch (\Exception $ex){
+            Log::channel('in_sys')->error('API/IntegrationController - testing error EX: '. $ex);
+            return Response::json([
+                'error' => $ex
+            ], 500);
+        }
+    }
     /**
      * Function to get Attendances with Filters.
      * @param Request $request

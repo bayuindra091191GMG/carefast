@@ -18,6 +18,7 @@ Route::middleware('auth:external', 'throttle:5000,1')->prefix('integration')->gr
     Route::post('/employees', 'Api\IntegrationController@employees');
     Route::post('/projects', 'Api\IntegrationController@projects');
     Route::post('/job_assignments', 'Api\IntegrationController@jobAssignments');
+    Route::post('/connection_check', 'Api\IntegrationController@testing');
 //    Route::get('/attendance-data', 'Api\IntegrationController@getAttendances');
 //    Route::get('/attendance-data', array('middleware' => 'cors', 'uses' => 'Api\IntegrationController@getAttendances'));
 });

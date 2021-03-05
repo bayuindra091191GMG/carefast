@@ -133,9 +133,9 @@
                                             <div class="col-md-6">
                                                 <div class="form-group form-float form-group-lg">
                                                     <div class="form-line">
-                                                        <label class="form-label" for="last_name">Nama Belakang *</label>
+                                                        <label class="form-label" for="last_name">Nama Belakang </label>
                                                         <input id="last_name" type="text" class="form-control" style="text-transform: uppercase;"
-                                                               name="last_name" value="{{ $employee->last_name }}" required>
+                                                               name="last_name" value="{{ $employee->last_name }}">
                                                     </div>
                                                 </div>
                                             </div>
