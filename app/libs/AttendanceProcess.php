@@ -11,12 +11,16 @@ namespace App\libs;
 use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\AutoNumber;
+use App\Models\Employee;
+use App\Models\EmployeeSchedule;
 use App\Models\Place;
+use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\Schedule;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -489,4 +493,344 @@ class AttendanceProcess
 //        }
 //
 //    }
+
+    /**
+     * Function to get attendance Data.
+     *
+     * @param $startDate, $endDate
+     * @return  \Illuminate\Support\Collection
+     */
+    public static function DownloadAttendanceProcess($startDate, $endDate){
+        try{
+
+            $attendanceAbsents = DB::table('attendance_absents')
+                ->join('employees', 'attendance_absents.employee_id', '=', 'employees.id')
+                ->join('projects', 'attendance_absents.project_id', '=', 'projects.id')
+                ->select('attendance_absents.id as attendance_absent_id',
+                    'attendance_absents.shift_type as shift_type',
+                    'attendance_absents.is_done as is_done',
+                    'attendance_absents.date as date',
+                    'attendance_absents.date_checkout as date_checkout',
+                    'attendance_absents.created_at as created_at',
+                    'attendance_absents.type as atttendance_type',
+                    'attendance_absents.description as description',
+                    'employees.id as employee_id',
+                    'employees.code as employee_code',
+                    'employees.first_name as employee_first_name',
+                    'employees.last_name as employee_last_name',
+                    'employees.phone as employee_phone',
+                    'projects.name as project_name',
+                    'projects.code as project_code')
+                ->whereBetween('attendance_absents.created_at', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+                ->where('attendance_absents.status_id',6)
+                ->orderBy('attendance_absents.employee_id')
+                ->get();
+
+            $now = Carbon::now('Asia/Jakarta');
+            $list = collect();
+            $ct = 0;
+            foreach($attendanceAbsents as $attendanceAbsent){
+                if($ct % 1000 == 0){
+                    sleep(40);
+                }
+                $userPhone = DB::table('users')
+                    ->select('users.phone as user_phone')
+                    ->where('users.employee_id', $attendanceAbsent->employee_id)
+                    ->first();
+
+                $attStatus = "U";
+                $dataCheckout = "-";
+                if($attendanceAbsent->is_done == 0){
+                    $attStatus = "A";
+                }
+                else{
+                    if(!empty($attendanceAbsent->date_checkout)){
+                        $attStatus = "H";
+//                        $attendanceOut = $attendanceAbsent->date_checkout->format('Y-m-d H:i:s');
+                        $dataCheckout = $attendanceAbsent->date_checkout;
+                    }
+                    else{
+                        $attStatus = "A";
+                    }
+                }
+                $createdAt = Carbon::parse($attendanceAbsent->created_at);
+                $singleData = ([
+                    'Project Code' => $attendanceAbsent->project_code,
+                    'Project Name' => $attendanceAbsent->project_name,
+                    'Employee Code' => $attendanceAbsent->employee_code,
+                    'Employee Name' => $attendanceAbsent->employee_first_name." ".$attendanceAbsent->employee_last_name,
+                    'Employee Phone' => $userPhone->user_phone ?? "",
+                    'Transaction Date' => $createdAt,
+                    'Shift' => $attendanceAbsent->shift_type,
+                    'Attendance In' => $attendanceAbsent->date,
+                    'Attendance Out' => $dataCheckout,
+                    'Attendance Status' => $attStatus,
+                    'Description' => $attendanceAbsent->description,
+                ]);
+                $list->push($singleData);
+                $ct++;
+            }
+            return $list;
+        }
+        catch (\Exception $ex){
+            Log::error('libs/AttendanceProcess/DownloadAttendanceProcess  error EX: '. $ex);
+
+            $list = collect();
+
+            return $list;
+        }
+
+    }
+
+    /**
+     * Function to get attendance Data Version 2, with sick leaves, leave permission or overtime.
+     *
+     * @param $startDate, $endDate
+     * @return  \Illuminate\Support\Collection
+     */
+    public static function DownloadAttendanceProcessV2($project, $startDate, $startDateMonth, $endDate, $endDateMonth){
+        try{
+            $dataModel = collect();
+            $projectEmployees = ProjectEmployee::where('project_id', $project->id)
+                ->where('status_id', 1)
+                ->where('employee_roles_id', '<', 5)
+                ->orderBy('employee_roles_id')
+                ->get();
+            foreach ($projectEmployees as $projectEmployee){
+                $employeeSchedule = EmployeeSchedule::where('employee_id', $projectEmployee->employee_id)->first();
+                if(!empty($employeeSchedule)){
+                    if(!empty($employeeSchedule->day_status)){
+                        $days = explode(';', $employeeSchedule->day_status);
+                        foreach($days as $day){
+                            if(!empty($day)){
+                                $date = explode(':', $employeeSchedule->day_status);
+
+                                $status = "U";
+                                $attendanceOut = "";
+                                $createdAt = $startDateMonth.'-'.$date[0];
+                                $description = "";
+                                //kalau scehdulenya tipenya O = Off
+                                if($date[1] == 'O'){
+                                    $status = "O";
+                                    $attendanceIn = $createdAt;
+                                }
+                                //kalau scehdulenya tipenya M = masuk
+                                else{
+                                    $attendanceAbsents = DB::table('attendance_absents')
+                                        ->join('employees', 'attendance_absents.employee_id', '=', 'employees.id')
+                                        ->join('projects', 'attendance_absents.project_id', '=', 'projects.id')
+                                        ->select('attendance_absents.id as attendance_absent_id',
+                                            'attendance_absents.shift_type as shift_type',
+                                            'attendance_absents.is_done as is_done',
+                                            'attendance_absents.date as date',
+                                            'attendance_absents.date_checkout as date_checkout',
+                                            'attendance_absents.created_at as created_at',
+                                            'attendance_absents.type as atttendance_type',
+                                            'attendance_absents.description as description',
+                                            'employees.id as employee_id',
+                                            'employees.code as employee_code',
+                                            'projects.name as project_name',
+                                            'projects.code as project_code')
+                                        ->whereBetween('attendance_absents.created_at',
+                                            array($startDateMonth.'-'.$date[0].' 00:00:00', $endDateMonth.'-'.$date[1].' 23:59:00'))
+                                        ->where('attendance_absents.project_id', $project->id)
+                                        ->where('attendance_absents.employee_id', $projectEmployee->employee_id)
+                                        ->where('attendance_absents.status_id',6)
+                                        ->get();
+
+                                    if($attendanceAbsents->atttendance_type == "NORMAL"){
+                                        if($attendanceAbsents->is_done == 0){
+                                            $status = "A";
+                                            $description = "Belum Melakukan checkout";
+                                        }
+                                        else{
+                                            if(!empty($attendanceAbsents->date_checkout)){
+                                                $status = "H";
+                                                $attendanceOut = $attendanceAbsents->date_checkout;
+                                            }
+                                            else{
+                                                $status = "A";
+                                                $description = "Belum Melakukan checkout";
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        $status = $attendanceAbsents->atttendance_type;
+                                    }
+                                    $createdAt = Carbon::parse($attendanceAbsents->created_at);
+                                    $attendanceIn = $attendanceAbsents->date;
+                                    $description = $attendanceAbsents->description;
+                                }
+
+
+                                $projectCSOModel = ([
+                                    'employeeId'        => $employeeSchedule->employee_id,
+                                    'employeeCode'      => $employeeSchedule->employee_code,
+                                    'transDate'         => $createdAt,
+                                    'shiftCode'         => 1,
+                                    'attendanceIn'      => $attendanceIn,
+                                    'attendanceOut'     => $attendanceOut,
+                                    'attendanceStatus'  => $status,
+                                    'description'       => $description,
+                                ]);
+                                $dataModel->push($projectCSOModel);
+                            }
+                        }
+                    }
+                }
+                else{
+
+                    $attendanceAbsents = DB::table('attendance_absents')
+                        ->join('employees', 'attendance_absents.employee_id', '=', 'employees.id')
+                        ->join('projects', 'attendance_absents.project_id', '=', 'projects.id')
+                        ->select('attendance_absents.id as attendance_absent_id',
+                            'attendance_absents.shift_type as shift_type',
+                            'attendance_absents.is_done as is_done',
+                            'attendance_absents.date as date',
+                            'attendance_absents.date_checkout as date_checkout',
+                            'attendance_absents.created_at as created_at',
+                            'attendance_absents.type as atttendance_type',
+                            'attendance_absents.description as description',
+                            'employees.id as employee_id',
+                            'employees.code as employee_code',
+                            'projects.name as project_name',
+                            'projects.code as project_code')
+                        ->whereBetween('attendance_absents.created_at', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+                        ->where('attendance_absents.project_id', $project->id)
+                        ->where('attendance_absents.status_id',6)
+                        ->get();
+
+                    if($attendanceAbsents->count() < 1){
+                        return $dataModel;
+                    }
+
+                    foreach ($attendanceAbsents as $attendanceAbsent){
+                        $status = "U";
+                        $attendanceOut = "";
+                        $description = "";
+                        if($attendanceAbsent->is_done == 0){
+                            $status = "A";
+                            $description = "Belum Melakukan checkout";
+                        }
+                        else{
+                            if(!empty($attendanceAbsent->date_checkout)){
+                                $status = "H";
+                                $attendanceOut = $attendanceAbsent->date_checkout;
+                            }
+                            else{
+                                $status = "A";
+                                $description = "Belum Melakukan checkout";
+                            }
+                        }
+                        $createdAt = Carbon::parse($attendanceAbsent->created_at);
+                        $projectCSOModel = ([
+                            'employeeId'        => $attendanceAbsent->employee_id,
+                            'employeeCode'      => $attendanceAbsent->employee_code,
+                            'transDate'         => $createdAt->format('Y-m-d'),
+                            'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
+                            'attendanceIn'      => $attendanceAbsent->date,
+                            'attendanceOut'     => $attendanceOut,
+                            'attendanceStatus'   => $status,
+                            'description'       => $description,
+                        ]);
+                        $dataModel->push($projectCSOModel);
+                    }
+                }
+            }
+            return $dataModel;
+        }
+        catch (\Exception $ex){
+            Log::error('libs/AttendanceProcess/DownloadAttendanceProcess  error EX: '. $ex);
+
+            $dataModel = collect();
+
+            return $dataModel;
+        }
+
+    }
+
+    /**
+     * Function to get attendance validation Data (counting per cso valid or not valid attendance.
+     *
+     * @param
+     * @return string
+     */
+    public static function DownloadAttendanceValidationProcess(){
+        try{
+
+//            $data = "Employee Code\tEmployee Name\tEmployee Phone\tProject\tTotal Valid Absensi\tTotal Invalid Absensi\n";
+
+            // checking attendance START
+            $allEmployee = Employee::where('status_id', 1)->where('id', '>', 29)->get();
+            $list = collect();
+            foreach ($allEmployee as $employee){
+//                $data .= $employee->code."\t";
+//                $data .= $employee->first_name." ".$employee->last_name."\t";
+
+                $user = DB::table('users')
+                    ->where('employee_id', $employee->id)
+                    ->first();
+//                $data .= "'".$user->phone."\t";
+
+                $projectEmployeeCount = ProjectEmployee::where('employee_id', $employee->id)->count();
+
+                if($projectEmployeeCount == 1){
+                    $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
+//                    ->where('status_id', 1)
+                        ->first();
+                }
+                else{
+                    $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
+                        ->where('status_id', 1)
+                        ->first();
+                }
+
+                $projectName = "-";
+                if(!empty($projectEmployee)){
+                    $project = Project::where('id', $projectEmployee->project_id)
+                        ->first();
+                    $projectName = $project->name;
+                }
+
+                $countA = "-";
+                $countB = "-";
+
+                if(DB::table('attendance_absents')
+                    ->where('employee_id', $employee->id)
+                    ->exists()){
+
+                    $countADB = DB::table('attendance_absents')
+                        ->where('employee_id', $employee->id)
+                        ->where('status_id', 6)
+                        ->where('is_done', 1)
+                        ->count();
+                    $countA = $countADB."\t";
+                    $countBDB = DB::table('attendance_absents')
+                        ->where('employee_id', $employee->id)
+                        ->where('status_id', 6)
+                        ->where('is_done', 0)
+                        ->count();
+                    $countB = $countBDB."\n";
+                }
+
+                $singleData = ([
+                    'Employee_Code' => $employee->code,
+                    'Employee_Name' => $employee->first_name." ".$employee->last_name,
+                    'Employee_Phone' => $user->phone,
+                    'Project_Name' => $projectName,
+                    'Total_Valid_Absensi' => $countA,
+                    'Total_Invalid_Absensi' => $countB,
+                ]);
+                $list->push($singleData);
+            }
+            return $list;
+        }
+        catch (\Exception $ex){
+            Log::error('libs/AttendanceProcess/DownloadAttendanceValidationProcess  error EX: '. $ex);
+            $list = collect();
+
+            return $list;
+        }
+
+    }
 }

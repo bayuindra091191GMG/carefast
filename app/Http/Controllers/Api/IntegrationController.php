@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\libs\AttendanceProcess;
 use App\Models\AttendanceAbsent;
 use App\Models\Employee;
 use App\Models\EmployeeSchedule;
@@ -559,98 +560,8 @@ class IntegrationController extends Controller
             }
             $startDateMonth = Carbon::parse($startDate)->format('YYYY-M');
             $endDateMonth = Carbon::parse($endDate)->format('YYYY-M');
-            $projectEmployees = ProjectEmployee::where('project_id', $project->id)
-                ->where('status_id', 1)
-                ->where('employee_roles_id', '<', 5)
-                ->orderBy('employee_roles_id')
-                ->get();
-            $dataModel = collect();
-            foreach ($projectEmployees as $projectEmployee){
-                $employeeSchedule = EmployeeSchedule::where('employee_id', $projectEmployee->employee_id)->first();
-                if(!empty($employeeSchedule)){
-                    if(!empty($employeeSchedule->day_status)){
-                        for($a=1; $a<=31; $a++){
-                            $attendanceAbsents = DB::table('attendance_absents')
-                                ->join('employees', 'attendance_absents.employee_id', '=', 'employees.id')
-                                ->join('projects', 'attendance_absents.project_id', '=', 'projects.id')
-                                ->select('attendance_absents.id as attendance_absent_id',
-                                    'attendance_absents.shift_type as shift_type',
-                                    'attendance_absents.is_done as is_done',
-                                    'attendance_absents.date as date',
-                                    'attendance_absents.date_checkout as date_checkout',
-                                    'attendance_absents.created_at as created_at',
-                                    'attendance_absents.type as atttendance_type',
-                                    'attendance_absents.description as description',
-                                    'employees.id as employee_id',
-                                    'employees.code as employee_code',
-                                    'projects.name as project_name',
-                                    'projects.code as project_code')
-                                ->whereBetween('attendance_absents.created_at',
-                                    array($startDateMonth.'-'.$a.' 00:00:00', $endDateMonth.'-'.$a.' 23:59:00'))
-                                ->where('attendance_absents.project_id', $project->id)
-                                ->where('attendance_absents.employee_id', $projectEmployee->employee_id)
-                                ->where('attendance_absents.status_id',6)
-                                ->get();
-                        }
-                    }
-                }
-                else{
 
-                    $attendanceAbsents = DB::table('attendance_absents')
-                        ->join('employees', 'attendance_absents.employee_id', '=', 'employees.id')
-                        ->join('projects', 'attendance_absents.project_id', '=', 'projects.id')
-                        ->select('attendance_absents.id as attendance_absent_id',
-                            'attendance_absents.shift_type as shift_type',
-                            'attendance_absents.is_done as is_done',
-                            'attendance_absents.date as date',
-                            'attendance_absents.date_checkout as date_checkout',
-                            'attendance_absents.created_at as created_at',
-                            'attendance_absents.type as atttendance_type',
-                            'attendance_absents.description as description',
-                            'employees.id as employee_id',
-                            'employees.code as employee_code',
-                            'projects.name as project_name',
-                            'projects.code as project_code')
-                        ->whereBetween('attendance_absents.created_at', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
-                        ->where('attendance_absents.project_id', $project->id)
-                        ->where('attendance_absents.status_id',6)
-                        ->get();
-
-                    if($attendanceAbsents->count() < 1){
-                        return Response::json([
-                            'error' => 'No Attendances found within allocated time range!'
-                        ], 400);
-                    }
-
-                    foreach ($attendanceAbsents as $attendanceAbsent){
-                        $status = "U";
-                        $attendanceOut = "";
-                        if($attendanceAbsent->is_done == 0){
-                            $status = "A";
-                        }
-                        else{
-                            if(!empty($attendanceAbsent->date_checkout)){
-                                $status = "H";
-                                $attendanceOut = $attendanceAbsent->date_checkout;
-                            }
-                            else{
-                                $status = "A";
-                            }
-                        }
-                        $createdAt = Carbon::parse($attendanceAbsent->created_at);
-                        $projectCSOModel = ([
-                            'employeeId'        => $attendanceAbsent->employee_id,
-                            'employeeCode'      => $attendanceAbsent->employee_code,
-                            'transDate'         => $createdAt->format('Y-m-d'),
-                            'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
-                            'attendanceIn'      => $attendanceAbsent->date,
-                            'attendanceOut'     => $attendanceOut,
-                            'attendanceStatus'   => $status,
-                        ]);
-                        $dataModel->push($projectCSOModel);
-                    }
-                }
-            }
+            $dataModel = AttendanceProcess::DownloadAttendanceProcessV2($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
 
             $date = Carbon::now('Asia/Jakarta')->timestamp;
             $returnModel = collect([

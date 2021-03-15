@@ -12,51 +12,51 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-{{--                    <div class="col-12">--}}
+                    <div class="col-12">
 
-{{--                        {{ Form::open(['route'=>'admin.project.attendance.download-all','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}--}}
+                        {{ Form::open(['route'=>'admin.project.attendance.download-all','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
 
-{{--                        <div class="row">--}}
-{{--                            <div class="col-md-6">--}}
-{{--                                <div class="row">--}}
-{{--                                    <div class="col-md-6">--}}
-{{--                                        <div class="form-group form-float form-group-lg">--}}
-{{--                                            <div class="form-line">--}}
-{{--                                                <label class="form-label" for="total_manday">Tanggal Dimulai *</label>--}}
-{{--                                                <input id="start_date" name="start_date" type="text" class="form-control" autocomplete="off" required>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                    <div class="col-md-6">--}}
-{{--                                        <div class="form-group form-float form-group-lg">--}}
-{{--                                            <div class="form-line">--}}
-{{--                                                <label class="form-label" for="total_mp_onduty">Tanggal Selesai *</label>--}}
-{{--                                                <input id="finish_date" name="finish_date" type="text" class="form-control" autocomplete="off" required>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                            <div class="col-md-3">--}}
-{{--                                <div class="form-group form-float form-group-lg">--}}
-{{--                                    <div class="form-line">--}}
-{{--                                        <br>--}}
-{{--                                        <a id="btn_submit" class="btn btn-facebook" style="color: white;">Download Data Absensi</a>--}}
-{{--                                        <a id="btn_loading" class="btn btn-success text-white" style="display: none"><i class="fas fa-sync-alt fa-spin"></i>&nbsp;&nbsp;MEMPROSES DATA ABSENSI...</a>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="total_manday">Tanggal Dimulai *</label>
+                                                <input id="start_date" name="start_date" type="text" class="form-control" autocomplete="off" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
+                                                <label class="form-label" for="total_mp_onduty">Tanggal Selesai *</label>
+                                                <input id="finish_date" name="finish_date" type="text" class="form-control" autocomplete="off" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group form-float form-group-lg">
+                                    <div class="form-line">
+                                        <br>
+                                        <a id="btn_submit" class="btn btn-facebook" style="color: white;">Download Data Absensi</a>
+                                        <a id="btn_loading" class="btn btn-success text-white" style="display: none"><i class="fas fa-sync-alt fa-spin"></i>&nbsp;&nbsp;MEMPROSES DATA ABSENSI...</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-{{--                        {{ Form::close() }}--}}
-{{--                    </div>--}}
-{{--                    <div class="col-12 text-right">--}}
-{{--                        <a href="{{ route('admin.project.information.create') }}" class="btn btn-success">--}}
-{{--                            <i class="fas fa-plus text-white"></i>--}}
-{{--                            <br/>--}}
-{{--                            <span>TAMBAH</span>--}}
-{{--                        </a>--}}
-{{--                    </div>--}}
+                        {{ Form::close() }}
+                    </div>
+                    <div class="col-12 text-right">
+                        <a href="{{ route('admin.project.information.create') }}" class="btn btn-success">
+                            <i class="fas fa-plus text-white"></i>
+                            <br/>
+                            <span>TAMBAH</span>
+                        </a>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-12">

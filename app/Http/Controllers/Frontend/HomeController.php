@@ -6,6 +6,7 @@ use App\Imports\CustomerImport;
 use App\Imports\DacImport;
 use App\Imports\InitialDataImport;
 use App\Imports\ProjectEmployeeImport;
+use App\libs\AttendanceProcess;
 use App\libs\Utilities;
 use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
@@ -45,6 +46,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Maatwebsite\Excel\Facades\Excel;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class HomeController extends Controller
 {
@@ -450,98 +452,18 @@ class HomeController extends Controller
 //            return "success";
 
             $now = Carbon::now('Asia/Jakarta');
-            $data = "Employee Code\tEmployee Name\tEmployee Phone\tProject\tTotal Valid Absensi\tTotal Invalid Absensi\n";
+            $data = AttendanceProcess::DownloadAttendanceValidationProcess();
 
-            // checking for double user START
-//            $asdf = DB::table('employees')
-//                ->select('id','code','first_name','last_name','dob','address', DB::raw('count(*) as total'))
-//                ->groupBy('first_name', DB::raw('`address` HAVING count(*)> 1 '))
-//                ->get();
-//            foreach ($asdf as $employee){
-//                $countEmployee = DB::table('employees')
-//                    ->Where('first_name', $employee->first_name)
-//                    ->Where('address', $employee->address)
-//                    ->Where('dob', $employee->dob)
-//                    ->get();
-//                foreach ($countEmployee as $count){
-//                    $data .= $count->code."\t";
-//                    $data .= $count->first_name." ".$count->last_name."\t";
-//                    $data .= $count->address."\t";
-//                    $data .= $count->dob."\t";
-//
-//                    $user = DB::table('users')
-//                        ->where('employee_id', $count->id)
-//                        ->first();
-//                    $data .= "'".$user->phone."\n";
-//                }
-//            }
-//            $file = "double-user_".$now->format('Y-m-d')."-".time().'.txt';
-            // checking for double user END
-
-            // checking attendance START
-            $allEmployee = Employee::where('status_id', 1)->where('id', '>', 29)->get();
-            foreach ($allEmployee as $employee){
-                $data .= $employee->code."\t";
-                $data .= $employee->first_name." ".$employee->last_name."\t";
-
-                $user = DB::table('users')
-                    ->where('employee_id', $employee->id)
-                    ->first();
-                $data .= "'".$user->phone."\t";
-
-                $projectEmployeeCount = ProjectEmployee::where('employee_id', $employee->id)->count();
-
-                if($projectEmployeeCount == 1){
-                    $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
-//                    ->where('status_id', 1)
-                        ->first();
-                }
-                else{
-                    $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
-                    ->where('status_id', 1)
-                        ->first();
-                }
-
-
-                if(!empty($projectEmployee)){
-                    $project = Project::where('id', $projectEmployee->project_id)
-                        ->first();
-                    $data .= $project->name."\t";
-                }
-                else{
-                    $data .= "-"."\t";
-                }
-
-                if(DB::table('attendance_absents')
-                    ->where('employee_id', $employee->id)
-                    ->exists()){
-
-                    $countA = DB::table('attendance_absents')
-                        ->where('employee_id', $employee->id)
-                        ->where('status_id', 6)
-                        ->where('is_done', 1)
-                        ->count();
-                    $data .= $countA."\t";
-                    $countB = DB::table('attendance_absents')
-                        ->where('employee_id', $employee->id)
-                        ->where('status_id', 6)
-                        ->where('is_done', 0)
-                        ->count();
-                    $data .= $countB."\n";
-                }
-                else{
-                    $data .= "-\t-\n";
-                }
-            }
-            $file = "attendance-checking_".$now->format('Y-m-d')."-".time().'.txt';
+            $file = "rekap absensi per ".$now->format('d-F-Y G.i.s').'.xlsx';
             // checking attendance END
 
-            $destinationPath=public_path()."/download_attendance/";
-            if (!is_dir($destinationPath)) {  mkdir($destinationPath,0777,true);  }
-            File::put($destinationPath.$file, $data);
+            $destinationPath = public_path()."/download_attendance/";
+//        dd($destinationPath.$file);
+            (new FastExcel($data))->export($destinationPath.$file);
             return response()->download($destinationPath.$file);
 
 
+            //changing user formated phone
             $users = User::where('phone', 'like', '%-%')->get();
             foreach($users as $user){
                 $phone = $user->phone;
