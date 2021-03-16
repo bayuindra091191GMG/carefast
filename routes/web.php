@@ -307,7 +307,9 @@ Route::prefix('admin')->group(function(){
     // Project Attendance
     Route::get('/project/attendance/show/{id}', 'Admin\project\ProjectAttendanceController@show')->name('admin.project.attendance.show');
     Route::post('/project/attendance/download', 'Admin\project\ProjectAttendanceController@downloadAttendance')->name('admin.project.attendance.download');
+    Route::get('/project/attendance/download-form', 'Admin\project\ProjectAttendanceController@downloadForm')->name('admin.project.attendance.download-form');
     Route::post('/project/attendance/download-all', 'Admin\project\ProjectAttendanceController@downloadAllAttendance')->name('admin.project.attendance.download-all');
+    Route::get('/project/attendance/download-file/{filename}', 'Admin\project\ProjectAttendanceController@downloadAllAttendanceFile')->name('admin.project.attendance.download-file');
 
 
     // Project Plotting

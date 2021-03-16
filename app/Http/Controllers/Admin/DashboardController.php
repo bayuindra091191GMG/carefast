@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\AttendanceAbsent;
 use App\Models\Complaint;
 use App\Models\Employee;
 use App\Models\Project;
@@ -22,6 +23,8 @@ class DashboardController extends Controller
         $userAdmin = Auth::guard('admin')->user();
         $totalProjects = Project::where('status_id', 1)->count();
         $totalEmployees = Employee::where('status_id', 1)->count();
+        $totalAttendances = AttendanceAbsent::where('status_id', 6)->where('is_done', 1)->count();
+
 //        $totalComplaintPendings = Complaint::where('status_id', 10)->count();
 //        $totalComplaintOnprogress = Complaint::where('status_id', 11)->count();
 
@@ -44,6 +47,7 @@ class DashboardController extends Controller
             'filterDateEnd'     => $filterDateEnd,
             'totalComplaintCustomers'       => $totalComplaintCustomers,
             'totalComplaintInternals'     => $totalComplaintInternals,
+            'totalAttendances'     => $totalAttendances,
         ];
         return view('admin.dashboard')->with($data);
     }

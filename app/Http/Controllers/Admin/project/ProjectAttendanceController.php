@@ -163,9 +163,13 @@ class ProjectAttendanceController extends Controller
     }
 
 
-    public function downloadForm(){
+    public function downloadForm(Request $request){
         try{
-            return view('admin.project.attendance.download-attendance-form');
+            $filename = "";
+            if(!empty($request->filename)){
+                $filename = $request->filename;
+            }
+            return view('admin.project.attendance.download_form', compact('filename'));
         }
         catch (\Exception $ex){
             Log::error('Admin/information/ProjectAttendanceController - downloadForm error EX: '. $ex);
@@ -203,6 +207,12 @@ class ProjectAttendanceController extends Controller
         $destinationPath = public_path()."/download_attendance/";
 //        dd($destinationPath.$file);
         (new FastExcel($data))->export($destinationPath.$file);
-        return response()->download($destinationPath.$file);
+        return redirect()->route('admin.project.attendance.download-form', ['filename' => $file]);
+//        return response()->download($destinationPath.$file);
+    }
+
+    public function downloadAllAttendanceFile($filename){
+        $destinationPath = public_path()."/download_attendance/";
+        return response()->download($destinationPath.$filename);
     }
 }

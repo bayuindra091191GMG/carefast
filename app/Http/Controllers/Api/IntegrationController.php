@@ -37,12 +37,12 @@ class IntegrationController extends Controller
                 ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
 
             $nonActiveEmp = DB::statement("update employees set status_id = 2 where id > 29 and status_id = 1 and employee_role_id < 4");
-            sleep(40);
+            sleep(20);
 
             $ct = 1;
             foreach ($employees as $employee) {
-                if($ct %2000 == 0){
-                    sleep(15);
+                if($ct %3000 == 0){
+                    sleep(10);
                 }
                 $rules = array(
                     'code'          => 'required',
@@ -171,7 +171,7 @@ class IntegrationController extends Controller
                 $ct++;
             }
 
-            sleep(15);
+            sleep(10);
             $nonActiveEmpPhone = DB::statement("update employees set phone = '-' where status_id = 2");
             $nonActiveUserPhone = DB::statement("update users as a, employees as b set a.status_id = 2, a.phone = '-' where a.employee_id = b.id and b.status_id = 2");
 
@@ -304,7 +304,7 @@ class IntegrationController extends Controller
     public function jobAssignments(Request $request){
         try{
             $projects = $request->json()->all();
-            sleep(180);
+            sleep(40);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - jobAssignments DATA : '.json_encode($projects));
 //            Log::channel('in_sys')

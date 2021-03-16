@@ -817,6 +817,7 @@ class AttendanceProcess
                     'Employee_Code' => $employee->code,
                     'Employee_Name' => $employee->first_name." ".$employee->last_name,
                     'Employee_Phone' => $user->phone,
+                    'Employee_Status' => $user->status_id == 0 ? "NON AKTIF" : "AKTIF",
                     'Project_Name' => $projectName,
                     'Total_Valid_Absensi' => $countA,
                     'Total_Invalid_Absensi' => $countB,
