@@ -49,8 +49,11 @@
                         </div>
                         @if($filename != "")
                             <div class="row">
-                                File sudah dapat di download. Klik link di bawah ini
-                                <a href="{{route('admin.project.attendance.download-file', ['filename' => $filename])}}">{{$filename}}</a>
+                                <div class="col-md-9 text-center">
+                                    <p>File sudah dapat di download. Silakhkan klik link di bawah ini <br>
+                                        <a href="{{route('admin.project.attendance.download-file', ['filename' => $filename])}}">{{$filename}}</a>
+                                    </p>
+                                </div>
                             </div>
                         @endif
 
