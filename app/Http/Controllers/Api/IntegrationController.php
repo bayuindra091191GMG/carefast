@@ -558,8 +558,8 @@ class IntegrationController extends Controller
                     'error' => 'Please provide Begin Date and End Date!'
                 ], 400);
             }
-            $startDateMonth = Carbon::parse($startDate)->format('YYYY-M');
-            $endDateMonth = Carbon::parse($endDate)->format('YYYY-M');
+            $startDateMonth = Carbon::parse($startDate)->format('Y-m');
+            $endDateMonth = Carbon::parse($endDate)->format('Y-m');
 
             $dataModel = AttendanceProcess::DownloadAttendanceProcessV2($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
 

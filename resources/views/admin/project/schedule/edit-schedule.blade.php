@@ -112,9 +112,21 @@
                                                                     <div class="form-line">
                                                                         <br>
                                                                         <a id="refresh_date" class="btn btn-facebook" style="color: white;">Refresh</a>
+                                                                        <p>*Klik tombol Refresh terlebih dahulu</p>
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <p>
+                                                                    Keterangan = <br>
+                                                                    - H = Hadir <br>
+                                                                    - O = Off <br>
+                                                                    - Angka pada table menunjukan tanggal
+                                                                </p>
                                                         </div>
                                                     </div>
                                                     @if($isSelectDate)
@@ -127,8 +139,8 @@
                                                                             Nama
                                                                         </th>
                                                                         @foreach($days as $day)
-                                                                            <th class="text-center" style="width:50px;">
-                                                                                Tanggal {{$day}}
+                                                                            <th class="text-center" style="min-width:85px;">
+                                                                                {{$day}}
                                                                             </th>
                                                                         @endforeach
                                                                     </tr>
@@ -142,12 +154,11 @@
 {{--                                                                                    <input type="checkbox" id="status" name="statuses[]"--}}
 {{--                                                                                           @if($scheduleDay["status"] == 1) checked @endif>--}}
                                                                                     <select name="statuses[]" class='form-control'>
-                                                                                        <option value='1' @if($scheduleDay["status"] == 1) selected @endif>Hadir</option>
-                                                                                        <option value='0' @if($scheduleDay["status"] == 0) selected @endif>Off</option>
+                                                                                        <option value='1' @if($scheduleDay["status"] == 1) selected @endif>H</option>
+                                                                                        <option value='0' @if($scheduleDay["status"] == 0) selected @endif>O</option>
                                                                                     </select>
                                                                                     <input type="hidden" id="days" name="days[]"  value="{{$scheduleDay['day']}}">
                                                                                     <input type="hidden" id="employeeId" name="employeeId[]"  value="{{$schedule['employee_id']}}">
-
                                                                                 </td>
                                                                                 @endforeach
                                                                             </tr>
@@ -203,9 +214,12 @@
                                                     @endif
 
                                                 </div>
-                                                <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
-                                                    <input type="submit" class="btn btn-success" value="UBAH">
-                                                </div>
+
+                                                @if($isSelectDate)
+                                                    <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
+                                                        <input type="submit" class="btn btn-success" value="UBAH">
+                                                    </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

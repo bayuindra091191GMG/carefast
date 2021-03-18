@@ -1028,4 +1028,46 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
+    public function submitIntegrationGetAttendance(){
+        try{
+            $projectCode = '042590101';
+            $startDate = '2021-01-16';
+            $endDate = "2021-02-16";
+//            Log::channel('in_sys')
+//                ->info('API/IntegrationController - getAttendances data projectCode = '. $projectCode . " | beginDate = ".$startDate." | endDate = ".$endDate);
+            $project = Project::where('code', $projectCode)->first();
+
+            if(!DB::table('projects')->where('code', $projectCode)->exists()){
+                return Response::json([
+                    'error' => 'Project code not found!'
+                ], 400);
+            }
+            if(empty($startDate) || empty($endDate)){
+                return Response::json([
+                    'error' => 'Please provide Begin Date and End Date!'
+                ], 400);
+            }
+            $startDateMonth = Carbon::parse($startDate)->format('Y-m');
+            $endDateMonth = Carbon::parse($endDate)->format('Y-m');
+
+            $dataModel = AttendanceProcess::DownloadAttendanceProcessV2($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
+
+            $date = Carbon::now('Asia/Jakarta')->timestamp;
+            $returnModel = collect([
+                'timestamp'     => $date,
+                'projectCode'   => $projectCode,
+                'beginDate'     => $startDate,
+                'endDate'       => $endDate,
+                'data'          => $dataModel,
+            ]);
+            return Response::json($returnModel, 200);
+        }
+        catch (\Exception $ex){
+            Log::channel('in_sys')->error('API/IntegrationController - getAttendances error EX: '. $ex);
+            return Response::json([
+                'error' => $ex
+            ], 500);
+        }
+    }
 }

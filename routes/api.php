@@ -20,9 +20,10 @@ Route::middleware('auth:external', 'throttle:5000,1')->prefix('integration')->gr
     Route::post('/job_assignments', 'Api\IntegrationController@jobAssignments');
     Route::post('/connection_check', 'Api\IntegrationController@testing');
 //    Route::get('/attendance-data', 'Api\IntegrationController@getAttendances');
+    Route::get('/attendance-data', 'Api\IntegrationController@getAttendancesNew');
 //    Route::get('/attendance-data', array('middleware' => 'cors', 'uses' => 'Api\IntegrationController@getAttendances'));
 });
-Route::get('/attendance-data', array('middleware' => 'cors', 'uses' => 'Api\IntegrationController@getAttendances'));
+//Route::get('/attendance-data', array('middleware' => 'cors', 'uses' => 'Api\IntegrationController@getAttendancesNew'));
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

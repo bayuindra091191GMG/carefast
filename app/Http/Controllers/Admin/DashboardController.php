@@ -20,14 +20,15 @@ class DashboardController extends Controller
     }
 
     public function dashboard(){
+        //general data
         $userAdmin = Auth::guard('admin')->user();
         $totalProjects = Project::where('status_id', 1)->count();
         $totalEmployees = Employee::where('status_id', 1)->count();
-        $totalAttendances = AttendanceAbsent::where('status_id', 6)->where('is_done', 1)->count();
 
 //        $totalComplaintPendings = Complaint::where('status_id', 10)->count();
 //        $totalComplaintOnprogress = Complaint::where('status_id', 11)->count();
 
+        //complain process
         $filterDateStart = Carbon::today()->subMonths(1)->format('d M Y');
         $filterDateEnd = Carbon::today()->format('d M Y');
         $start = Carbon::createFromFormat('d M Y', $filterDateStart, 'Asia/Jakarta');
@@ -37,6 +38,11 @@ class DashboardController extends Controller
         $totalComplaintInternals = Complaint::whereBetween('date', array($start->toDateTimeString(), $end->toDateTimeString()))
             ->where('status_id', 10)->where('employee_id', '!=', null)->count();
 
+        //attendance process
+        $totalAttendances = AttendanceAbsent::where('status_id', 6)->where('is_done', 1)->count();
+        $totalCheckins = AttendanceAbsent::where('status_id', 6)->where('is_done', 1)
+            ->whereBetween('date', array($start->toDateTimeString(), $end->toDateTimeString()))
+            ->count();
         $data = [
             'userAdmin'                     => $userAdmin,
             'totalProjects'                => $totalProjects,
@@ -48,6 +54,7 @@ class DashboardController extends Controller
             'totalComplaintCustomers'       => $totalComplaintCustomers,
             'totalComplaintInternals'     => $totalComplaintInternals,
             'totalAttendances'     => $totalAttendances,
+            'totalCheckins'     => $totalCheckins,
         ];
         return view('admin.dashboard')->with($data);
     }

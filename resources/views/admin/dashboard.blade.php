@@ -54,13 +54,20 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
+                                <a href="#">
+                                    <div class="bg-dark p-10 text-white text-center">
+                                        <i class="fa fa-check-circle m-b-5 font-16"></i>
+                                        <h5 class="m-b-0 m-t-5">{{$totalAttendances}}</h5>
+                                        <small class="font-light">Total Absensi Sampai Saat ini</small>
+                                    </div>
+                                </a>
                             </div>
                             <div class="col-4">
                                 <a href="#">
                                     <div class="bg-dark p-10 text-white text-center">
-                                        <i class="fa fa-globe m-b-5 font-16"></i>
-                                        <h5 class="m-b-0 m-t-5">{{$totalAttendances}}</h5>
-                                        <small class="font-light">Total Absensi Oleh CSO</small>
+                                        <i class="fa fa-check-circle m-b-5 font-16"></i>
+                                        <h5 class="m-b-0 m-t-5">{{$totalCheckins}}</h5>
+                                        <small class="font-light">Total Absensi Periode<br>({{$filterDateStart}} - {{$filterDateEnd}})</small>
                                     </div>
                                 </a>
                             </div>
@@ -78,14 +85,14 @@
                                         <div class="bg-dark p-10 text-white text-center">
                                             <i class="fa fa-building m-b-5 font-16"></i>
                                             <h5 class="m-b-0 m-t-5">{{$totalProjects}}</h5>
-                                            <small class="font-light">Total Project<br>&nbsp;</small>
+                                            <small class="font-light">Total Active Project<br>&nbsp;</small>
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="bg-dark p-10 text-white text-center">
                                             <i class="fa fa-user m-b-5 font-16"></i>
                                             <h5 class="m-b-0 m-t-5">{{$totalEmployees}}</h5>
-                                            <small class="font-light">Total Employee<br>&nbsp;</small>
+                                            <small class="font-light">Total Active Employee<br>&nbsp;</small>
                                         </div>
                                     </div>
                                     <div class="col-3">
