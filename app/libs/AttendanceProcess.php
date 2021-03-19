@@ -670,21 +670,27 @@ class AttendanceProcess
 
 
                                     if($attendanceAbsents->count() < 1){
-//                                        $projectCSOModel = ([
-//                                            'employeeId'        => $projectEmployee->employee->id,
-//                                            'employeeCode'      => $projectEmployee->employee->code,
-//                                            'transDate'         => "",
-//                                            'shiftCode'         => 1,
-//                                            'attendanceIn'      => "",
-//                                            'attendanceOut'     => "",
-//                                            'attendanceStatus'   => "U",
-//                                            'description'       => "Data Not found",
-//                                        ]);
-//                                        $dataModel->push($projectCSOModel);
+                                        $projectCSOModel = ([
+                                            'employeeId'        => $projectEmployee->employee->id,
+                                            'employeeCode'      => $projectEmployee->employee->code,
+                                            'transDate'         => "",
+                                            'shiftCode'         => 1,
+                                            'attendanceIn'      => "",
+                                            'attendanceOut'     => "",
+                                            'attendanceStatus'  => "A",
+                                            'description'       => "Scheduled but attendance not found",
+                                        ]);
+                                        $dataModel->push($projectCSOModel);
                                         continue;
                                     }
                                     else{
+                                        $ct = 0;
                                         foreach ($attendanceAbsents as $attendanceAbsent){
+                                            //if attendance for this day more than 1,
+                                            // check if that overtime or just attendance more than 1 in this day
+                                            if($ct > 1){
+
+                                            }
                                             if($attendanceAbsent->attendance_type == "NORMAL"){
                                                 if($attendanceAbsent->is_done == 0){
                                                     $status = "A";
@@ -711,7 +717,7 @@ class AttendanceProcess
                                             $projectCSOModel = ([
                                                 'employeeId'        => $projectEmployee->employee->id,
                                                 'employeeCode'      => $projectEmployee->employee->code,
-                                                'transDate'         => $createdAt,
+                                                'transDate'         => $createdAt->format('Y-m-d'),
                                                 'shiftCode'         => 1,
                                                 'attendanceIn'      => $attendanceIn,
                                                 'attendanceOut'     => $attendanceOut,
@@ -719,6 +725,7 @@ class AttendanceProcess
                                                 'description'       => $description,
                                             ]);
                                             $dataModel->push($projectCSOModel                                                                                                   );
+                                            $ct++;
                                         }
                                     }
                                 }
@@ -778,7 +785,12 @@ class AttendanceProcess
                             }
                             else{
                                 if(!empty($attendanceAbsent->date_checkout)){
-                                    $status = "H";
+                                    if($attendanceAbsent->attendance_type == 'NORMAL'){
+                                        $status = "H";
+                                    }
+                                    else{
+                                        $status = $attendanceAbsent->attendance_type;
+                                    }
                                     $attendanceOut = $attendanceAbsent->date_checkout;
                                 }
                                 else{

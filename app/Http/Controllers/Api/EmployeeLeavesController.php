@@ -149,7 +149,8 @@ class EmployeeLeavesController extends Controller
                     'project_id'    => $newAttendanceSick->project_id,
                     'shift_type'    => 1,
                     'is_done'       => 1,
-                    'date'          => Carbon::parse($newAttendanceSick->date),
+                    'date'          => Carbon::parse($newAttendanceSick->date)->toDateTimeString(),
+                    'date_checkout' => Carbon::parse($newAttendanceSick->date)->toDateTimeString(),
                     'status_id'     => 6,
                     'image_path'    => $newAttendanceSick->image_path,
                     'created_by'     => $newAttendanceSick->employee_id,
@@ -162,7 +163,6 @@ class EmployeeLeavesController extends Controller
                     'shift_type'    => 1,
                     'is_done'       => 1,
                     'date'          => Carbon::parse($newAttendanceSick->date)->toDateTimeString(),
-                    'date_checkout' => Carbon::parse($newAttendanceSick->date)->toDateTimeString(),
                     'status_id'     => 7,
                     'image_path'    => $newAttendanceSick->image_path,
                     'created_by'    => $newAttendanceSick->employee_id,
@@ -257,6 +257,9 @@ class EmployeeLeavesController extends Controller
                 ->where('description', 'like', '%sick ID='.$id.'%')
                 ->get();
             foreach($attSicks as $attSick){
+                $attSick->date_checkout = Carbon::now('Asia/Jakarta')->toDateTimeString();
+                $attSick->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+                $attSick->updated_by = $user->id;
                 $attSick->type = "SR";
                 $attSick->save();
             }
@@ -459,6 +462,7 @@ class EmployeeLeavesController extends Controller
                         'shift_type'    => 1,
                         'is_done'       => 1,
                         'date'          => $currentDate->toDateTimeString(),
+                        'date_checkout' => $currentDate->toDateTimeString(),
                         'status_id'     => 6,
                         'image_path'    => $newAttendancePermission->image_path,
                         'created_by'     => $newAttendancePermission->employee_id,
@@ -471,7 +475,6 @@ class EmployeeLeavesController extends Controller
                         'shift_type'    => 1,
                         'is_done'       => 1,
                         'date'          => $currentDate->toDateTimeString(),
-                        'date_checkout' => $currentDate->toDateTimeString(),
                         'status_id'     => 7,
                         'image_path'    => $newAttendancePermission->image_path,
                         'created_by'    => $newAttendancePermission->employee_id,
@@ -568,6 +571,9 @@ class EmployeeLeavesController extends Controller
                 ->where('description', 'like', '%permission ID='.$id.'%')
                 ->get();
             foreach($attPermissions as $attPermission){
+                $attPermission->date_checkout = Carbon::now('Asia/Jakarta')->toDateTimeString();
+                $attPermission->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+                $attPermission->updated_by = $user->id;
                 $attPermission->type = "IR";
                 $attPermission->save();
             }
