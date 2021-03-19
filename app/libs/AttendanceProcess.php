@@ -708,11 +708,11 @@ class AttendanceProcess
                                                 }
                                             }
                                             else{
-                                                $status = $attendanceAbsent->attendance_type;
+                                                $status = "A";
+                                                $description = "Ijin Tidak masuk/Sakit, dgn status =".$attendanceAbsent->attendance_type;
                                             }
                                             $createdAt = Carbon::parse($attendanceAbsent->created_at);
                                             $attendanceIn = $attendanceAbsent->date;
-                                            $description = $attendanceAbsent->description;
 
                                             $projectCSOModel = ([
                                                 'employeeId'        => $projectEmployee->employee->id,
@@ -790,6 +790,7 @@ class AttendanceProcess
                                     }
                                     else{
                                         $status = $attendanceAbsent->attendance_type;
+                                        $description = "Tidak hadir, dgn status =".$attendanceAbsent->attendance_type;
                                     }
                                     $attendanceOut = $attendanceAbsent->date_checkout;
                                 }
@@ -936,7 +937,6 @@ class AttendanceProcess
                     'Project_Name' => $projectName,
                     'Total_Valid_Absensi' => $countA,
                     'Total_Invalid_Absensi' => $countB,
-                    'Description' => $description,
                 ]);
                 $list->push($singleData);
                 $ct++;

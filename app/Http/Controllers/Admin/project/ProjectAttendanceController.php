@@ -187,9 +187,7 @@ class ProjectAttendanceController extends Controller
 
 //        $now = Carbon::now('Asia/Jakarta');
 //        $list = AttendanceProcess::DownloadAttendanceProcess($startDate, $endDate);
-//
-//
-////        dd($list);
+
 //        $destinationPath = public_path()."/download_attendance/";
 //        $file = "all-attendance-report_per ".$now->format('DD-MMMM-Y H.mm.ss').'.xlsx';
 ////        dd($destinationPath.$file);
@@ -205,7 +203,6 @@ class ProjectAttendanceController extends Controller
         // checking attendance END
 
         $destinationPath = public_path()."/download_attendance/";
-//        dd($destinationPath.$file);
         (new FastExcel($data))->export($destinationPath.$file);
         return redirect()->route('admin.project.attendance.download-form', ['filename' => $file]);
 //        return response()->download($destinationPath.$file);
