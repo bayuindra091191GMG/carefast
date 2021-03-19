@@ -181,9 +181,9 @@ class ProjectAttendanceController extends Controller
 //        dd($request);
 //        $shiftType = $request->input('shift_type');
         $startDateRequest = $request->input('start_date');
-        $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
+        $startDate = Carbon::parse($startDateRequest)->format('Y-m-d');
         $endDateRequest = $request->input('end_date');
-        $endDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
+        $endDate = Carbon::parse($endDateRequest)->format('Y-m-d');
 
 //        $now = Carbon::now('Asia/Jakarta');
 //        $list = AttendanceProcess::DownloadAttendanceProcess($startDate, $endDate);
@@ -199,7 +199,7 @@ class ProjectAttendanceController extends Controller
 
 
         $now = Carbon::now('Asia/Jakarta');
-        $data = AttendanceProcess::DownloadAttendanceValidationProcess();
+        $data = AttendanceProcess::DownloadAttendanceValidationProcess($startDate, $endDate);
 
         $file = "all-attendance-report_per ".$now->format('d F Y_G.i.s').'.xlsx';
         // checking attendance END

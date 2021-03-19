@@ -833,7 +833,7 @@ class AttendanceProcess
      * @param
      * @return string
      */
-    public static function DownloadAttendanceValidationProcess(){
+    public static function DownloadAttendanceValidationProcess($startDate, $endDate){
         try{
 
 //            $data = "Employee Code\tEmployee Name\tEmployee Phone\tProject\tTotal Valid Absensi\tTotal Invalid Absensi\n";
@@ -842,6 +842,8 @@ class AttendanceProcess
             $allEmployee = Employee::where('status_id', 1)->where('id', '>', 29)->get();
             $list = collect();
             $ct=0;
+
+            //get all employee
             foreach ($allEmployee as $employee){
                 if($ct%1500 == 0){
                     sleep(5);
@@ -850,32 +852,32 @@ class AttendanceProcess
 //                $data .= $employee->first_name." ".$employee->last_name."\t";
 
                 $user = DB::table('users')
+                    ->select('phone', 'status_id')
                     ->where('employee_id', $employee->id)
                     ->first();
 //                $data .= "'".$user->phone."\t";
 
                 $projectEmployeeCount = ProjectEmployee::where('employee_id', $employee->id)->count();
 
+                //pengecekan apakah cso ada di 1 project atau banyak project
                 if($projectEmployeeCount == 1){
                     $projectEmployee = DB::table('project_employees')
+                        ->select('project_id')
                         ->where('employee_id', $employee->id)
                         ->first();
-//                    $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
-//                        ->first();
                 }
                 else{
                     $projectEmployee = DB::table('project_employees')
+                        ->select('project_id')
                         ->where('employee_id', $employee->id)
                         ->where('status_id', 1)
                         ->first();
-//                    $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)
-//                        ->where('status_id', 1)
-//                        ->first();
                 }
 
                 $projectName = "-";
                 if(!empty($projectEmployee)){
                     $project = DB::table('projects')
+                        ->select('name')
                         ->where('id', $projectEmployee->project_id)
                         ->first();
 //                    $project = Project::where('id', $projectEmployee->project_id)
@@ -883,26 +885,48 @@ class AttendanceProcess
                     $projectName = $project->name;
                 }
 
-                $countA = "-";
-                $countB = "-";
+                $countA = "0";
+                $countB = "0";
+//                $description = "Tidak ada absen";
 
-                if(DB::table('attendance_absents')
+//                if(DB::table('attendance_absents')
+//                    ->where('employee_id', $employee->id)
+//                    ->exists()){
+//
+//                    $countADB = DB::table('attendance_absents')
+//                        ->select('id')
+//                        ->where('employee_id', $employee->id)
+//                        ->where('status_id', 6)
+//                        ->where('is_done', 1)
+//                        ->whereBetween('attendance_absents.date', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+//                        ->count();
+//                    $countA = $countADB;
+//                    $countBDB = DB::table('attendance_absents')
+//                        ->select('id')
+//                        ->where('employee_id', $employee->id)
+//                        ->where('status_id', 6)
+//                        ->where('is_done', 0)
+//                        ->whereBetween('attendance_absents.date', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+//                        ->count();
+//                    $countB = $countBDB;
+//                }
+
+                $countADB = DB::table('attendance_absents')
+                    ->select('id')
                     ->where('employee_id', $employee->id)
-                    ->exists()){
-
-                    $countADB = DB::table('attendance_absents')
-                        ->where('employee_id', $employee->id)
-                        ->where('status_id', 6)
-                        ->where('is_done', 1)
-                        ->count();
-                    $countA = $countADB."\t";
-                    $countBDB = DB::table('attendance_absents')
-                        ->where('employee_id', $employee->id)
-                        ->where('status_id', 6)
-                        ->where('is_done', 0)
-                        ->count();
-                    $countB = $countBDB."\n";
-                }
+                    ->where('status_id', 6)
+                    ->where('is_done', 1)
+                    ->whereBetween('attendance_absents.date', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+                    ->count();
+                $countA = $countADB;
+                $countBDB = DB::table('attendance_absents')
+                    ->select('id')
+                    ->where('employee_id', $employee->id)
+                    ->where('status_id', 6)
+                    ->where('is_done', 0)
+                    ->whereBetween('attendance_absents.date', array($startDate.' 00:00:00', $endDate.' 23:59:00'))
+                    ->count();
+                $countB = $countBDB;
 
                 $singleData = ([
                     'Employee_Code' => $employee->code,
@@ -912,6 +936,7 @@ class AttendanceProcess
                     'Project_Name' => $projectName,
                     'Total_Valid_Absensi' => $countA,
                     'Total_Invalid_Absensi' => $countB,
+                    'Description' => $description,
                 ]);
                 $list->push($singleData);
                 $ct++;
@@ -919,6 +944,7 @@ class AttendanceProcess
             return $list;
         }
         catch (\Exception $ex){
+            dd($ex);
             Log::error('libs/AttendanceProcess/DownloadAttendanceValidationProcess  error EX: '. $ex);
             $list = collect();
 

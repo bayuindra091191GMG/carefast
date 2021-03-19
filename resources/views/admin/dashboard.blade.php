@@ -53,12 +53,21 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-4">
+                            <div class="col-2">
                                 <a href="#">
                                     <div class="bg-dark p-10 text-white text-center">
                                         <i class="fa fa-check-circle m-b-5 font-16"></i>
-                                        <h5 class="m-b-0 m-t-5">{{$totalAttendances}}</h5>
-                                        <small class="font-light">Total Absensi Sampai Saat ini</small>
+                                        <h5 class="m-b-0 m-t-5">{{$totalAttendanceTodays}}</h5>
+                                        <small class="font-light">Total Absensi Selesai Hari ini <br>&nbsp;</small>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-2">
+                                <a href="#">
+                                    <div class="bg-dark p-10 text-white text-center">
+                                        <i class="fa fa-check-circle m-b-5 font-16"></i>
+                                        <h5 class="m-b-0 m-t-5">{{$totalAttendanceTodayNotDone}}</h5>
+                                        <small class="font-light">Total Absensi Pending Hari ini <br> (Baru melakukan absen masuk)</small>
                                     </div>
                                 </a>
                             </div>
@@ -66,8 +75,17 @@
                                 <a href="#">
                                     <div class="bg-dark p-10 text-white text-center">
                                         <i class="fa fa-check-circle m-b-5 font-16"></i>
-                                        <h5 class="m-b-0 m-t-5">{{$totalCheckins}}</h5>
+                                        <h5 class="m-b-0 m-t-5">{{$totalAttendanceMonths}}</h5>
                                         <small class="font-light">Total Absensi Periode<br>({{$filterDateStart}} - {{$filterDateEnd}})</small>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <a href="#">
+                                    <div class="bg-dark p-10 text-white text-center">
+                                        <i class="fa fa-check-circle m-b-5 font-16"></i>
+                                        <h5 class="m-b-0 m-t-5">{{$totalAttendances}}</h5>
+                                        <small class="font-light">Total Absensi Sampai Saat ini<br>&nbsp;</small>
                                     </div>
                                 </a>
                             </div>
