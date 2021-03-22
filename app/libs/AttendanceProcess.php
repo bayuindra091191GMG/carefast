@@ -711,10 +711,13 @@ class AttendanceProcess
 
                                             if($status != "A"){
                                                 //validasi tipe H, minimal harus 8 jam (480 menit)
-                                                $trxDateOut = Carbon::parse(date_format($attendanceOut,'j-F-Y H:i:s'));
+//                                              $trxDateOut = Carbon::parse(date_format($attendanceAbsent->date_checkout,'j-F-Y H:i:s'));
+                                                $trxDateOut = Carbon::parse($attendanceAbsent->date_checkout);
 
-                                                $trxDate = Carbon::parse(date_format($attendanceAbsent->date, 'j-F-Y H:i:s'));
-                                                $intervalMinute = $trxDateOut->diffInMinutes($trxDate);
+//                                              $trxDate = Carbon::parse(date_format($attendanceAbsent->date, 'j-F-Y H:i:s'));
+                                                $trxDate = Carbon::parse($attendanceAbsent->date);
+//                                              $intervalMinute = $trxDateOut->diffInMinutes($trxDate);
+                                                $intervalMinute = $trxDate->diffInMinutes($trxDateOut);
 
                                                 if($intervalMinute >= 480){
                                                     $projectCSOModel = ([
@@ -820,10 +823,13 @@ class AttendanceProcess
 
                             if($status != "A"){
                                 //validasi tipe H, minimal harus 8 jam
-                                $trxDateOut = Carbon::parse(date_format($attendanceOut,'j-F-Y H:i:s'));
+//                                $trxDateOut = Carbon::parse(date_format($attendanceAbsent->date_checkout,'j-F-Y H:i:s'));
+                                $trxDateOut = Carbon::parse($attendanceAbsent->date_checkout);
 
-                                $trxDate = Carbon::parse(date_format($attendanceAbsent->date, 'j-F-Y H:i:s'));
-                                $intervalMinute = $trxDateOut->diffInMinutes($trxDate);
+//                                $trxDate = Carbon::parse(date_format($attendanceAbsent->date, 'j-F-Y H:i:s'));
+                                $trxDate = Carbon::parse($attendanceAbsent->date);
+//                                $intervalMinute = $trxDateOut->diffInMinutes($trxDate);
+                                $intervalMinute = $trxDate->diffInMinutes($trxDateOut);
 
                                 if($intervalMinute >= 480){
                                     $createdAt = Carbon::parse($attendanceAbsent->created_at);

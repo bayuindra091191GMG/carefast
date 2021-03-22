@@ -31,6 +31,7 @@ class DashboardController extends Controller
         $totalEmployees = DB::table('employees')
             ->select('id')
             ->where('status_id', 1)
+            ->where('id', '>', 29)
             ->count();
 //        $totalEmployees = Employee::where('status_id', 1)->count();
 
