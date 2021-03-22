@@ -1031,8 +1031,8 @@ class HomeController extends Controller
 
     public function submitIntegrationGetAttendance(){
         try{
-            $projectCode = '042590101';
-            $startDate = '2021-01-16';
+            $projectCode = 'TSC';
+            $startDate = '2020-11-16';
             $endDate = "2021-02-16";
 //            Log::channel('in_sys')
 //                ->info('API/IntegrationController - getAttendances data projectCode = '. $projectCode . " | beginDate = ".$startDate." | endDate = ".$endDate);

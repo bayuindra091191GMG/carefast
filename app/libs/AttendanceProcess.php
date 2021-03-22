@@ -607,9 +607,9 @@ class AttendanceProcess
                         $ctCurrent = 0;
                         foreach($days as $day){
                             if(!empty($day)){
-                                $date = explode(':', $employeeSchedule->day_status);
+                                $date = explode(':', $day);
 
-                                $status = "U";
+                                $status = "A";
                                 $attendanceIn = "";
                                 $attendanceOut = "";
                                 $createdAt = $startDateMonth.'-'.$date[0];
@@ -673,7 +673,7 @@ class AttendanceProcess
                                         $projectCSOModel = ([
                                             'employeeId'        => $projectEmployee->employee->id,
                                             'employeeCode'      => $projectEmployee->employee->code,
-                                            'transDate'         => "",
+                                            'transDate'         => $createdAt,
                                             'shiftCode'         => 1,
                                             'attendanceIn'      => "",
                                             'attendanceOut'     => "",
@@ -686,11 +686,6 @@ class AttendanceProcess
                                     else{
                                         $ct = 0;
                                         foreach ($attendanceAbsents as $attendanceAbsent){
-                                            //if attendance for this day more than 1,
-                                            // check if that overtime or just attendance more than 1 in this day
-                                            if($ct > 1){
-
-                                            }
                                             if($attendanceAbsent->attendance_type == "NORMAL"){
                                                 if($attendanceAbsent->is_done == 0){
                                                     $status = "A";
@@ -709,22 +704,45 @@ class AttendanceProcess
                                             }
                                             else{
                                                 $status = "A";
-                                                $description = "Ijin Tidak masuk/Sakit, dgn status =".$attendanceAbsent->attendance_type;
+                                                $description = "Ijin Tidak masuk/Sakit, dgn status = ".$attendanceAbsent->attendance_type;
                                             }
                                             $createdAt = Carbon::parse($attendanceAbsent->created_at);
                                             $attendanceIn = $attendanceAbsent->date;
 
-                                            $projectCSOModel = ([
-                                                'employeeId'        => $projectEmployee->employee->id,
-                                                'employeeCode'      => $projectEmployee->employee->code,
-                                                'transDate'         => $createdAt->format('Y-m-d'),
-                                                'shiftCode'         => 1,
-                                                'attendanceIn'      => $attendanceIn,
-                                                'attendanceOut'     => $attendanceOut,
-                                                'attendanceStatus'  => $status,
-                                                'description'       => $description,
-                                            ]);
-                                            $dataModel->push($projectCSOModel                                                                                                   );
+                                            if($status != "A"){
+                                                //validasi tipe H, minimal harus 8 jam (480 menit)
+                                                $trxDateOut = Carbon::parse(date_format($attendanceOut,'j-F-Y H:i:s'));
+
+                                                $trxDate = Carbon::parse(date_format($attendanceAbsent->date, 'j-F-Y H:i:s'));
+                                                $intervalMinute = $trxDateOut->diffInMinutes($trxDate);
+
+                                                if($intervalMinute >= 480){
+                                                    $projectCSOModel = ([
+                                                        'employeeId'        => $projectEmployee->employee->id,
+                                                        'employeeCode'      => $projectEmployee->employee->code,
+                                                        'transDate'         => $createdAt->format('Y-m-d'),
+                                                        'shiftCode'         => 1,
+                                                        'attendanceIn'      => $attendanceIn,
+                                                        'attendanceOut'     => $attendanceOut,
+                                                        'attendanceStatus'  => $status,
+                                                        'description'       => $description,
+                                                    ]);
+                                                    $dataModel->push($projectCSOModel);
+                                                }
+                                            }
+                                            else{
+                                                $projectCSOModel = ([
+                                                    'employeeId'        => $projectEmployee->employee->id,
+                                                    'employeeCode'      => $projectEmployee->employee->code,
+                                                    'transDate'         => $createdAt->format('Y-m-d'),
+                                                    'shiftCode'         => 1,
+                                                    'attendanceIn'      => $attendanceIn,
+                                                    'attendanceOut'     => $attendanceOut,
+                                                    'attendanceStatus'  => $status,
+                                                    'description'       => $description,
+                                                ]);
+                                                $dataModel->push($projectCSOModel);
+                                            }
                                             $ct++;
                                         }
                                     }
@@ -776,7 +794,7 @@ class AttendanceProcess
                     }
                     else{
                         foreach ($attendanceAbsents as $attendanceAbsent){
-                            $status = "U";
+                            $status = "A";
                             $attendanceOut = "";
                             $description = "By Attendance data only, no schedule provided";
                             if($attendanceAbsent->is_done == 0){
@@ -787,30 +805,55 @@ class AttendanceProcess
                                 if(!empty($attendanceAbsent->date_checkout)){
                                     if($attendanceAbsent->attendance_type == 'NORMAL'){
                                         $status = "H";
+                                        $attendanceOut = $attendanceAbsent->date_checkout;
                                     }
                                     else{
-                                        $status = $attendanceAbsent->attendance_type;
-                                        $description = "Tidak hadir, dgn status =".$attendanceAbsent->attendance_type;
+                                        $status = "A";
+                                        $description = "Ijin Tidak masuk/Sakit, dgn status = ".$attendanceAbsent->attendance_type;
                                     }
-                                    $attendanceOut = $attendanceAbsent->date_checkout;
                                 }
                                 else{
                                     $status = "A";
                                     $description = "Belum Melakukan checkout";
                                 }
                             }
-                            $createdAt = Carbon::parse($attendanceAbsent->created_at);
-                            $projectCSOModel = ([
-                                'employeeId'        => $attendanceAbsent->employee_id,
-                                'employeeCode'      => $attendanceAbsent->employee_code,
-                                'transDate'         => $createdAt->format('Y-m-d'),
-                                'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
-                                'attendanceIn'      => $attendanceAbsent->date,
-                                'attendanceOut'     => $attendanceOut,
-                                'attendanceStatus'  => $status,
-                                'description'       => $description,
-                            ]);
-                            $dataModel->push($projectCSOModel);
+
+                            if($status != "A"){
+                                //validasi tipe H, minimal harus 8 jam
+                                $trxDateOut = Carbon::parse(date_format($attendanceOut,'j-F-Y H:i:s'));
+
+                                $trxDate = Carbon::parse(date_format($attendanceAbsent->date, 'j-F-Y H:i:s'));
+                                $intervalMinute = $trxDateOut->diffInMinutes($trxDate);
+
+                                if($intervalMinute >= 480){
+                                    $createdAt = Carbon::parse($attendanceAbsent->created_at);
+                                    $projectCSOModel = ([
+                                        'employeeId'        => $attendanceAbsent->employee_id,
+                                        'employeeCode'      => $attendanceAbsent->employee_code,
+                                        'transDate'         => $createdAt->format('Y-m-d'),
+                                        'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
+                                        'attendanceIn'      => $attendanceAbsent->date,
+                                        'attendanceOut'     => $attendanceOut,
+                                        'attendanceStatus'  => $status,
+                                        'description'       => $description,
+                                    ]);
+                                    $dataModel->push($projectCSOModel);
+                                }
+                            }
+                            else{
+                                $createdAt = Carbon::parse($attendanceAbsent->created_at);
+                                $projectCSOModel = ([
+                                    'employeeId'        => $attendanceAbsent->employee_id,
+                                    'employeeCode'      => $attendanceAbsent->employee_code,
+                                    'transDate'         => $createdAt->format('Y-m-d'),
+                                    'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
+                                    'attendanceIn'      => $attendanceAbsent->date,
+                                    'attendanceOut'     => $attendanceOut,
+                                    'attendanceStatus'  => $status,
+                                    'description'       => $description,
+                                ]);
+                                $dataModel->push($projectCSOModel);
+                            }
                         }
                     }
 
