@@ -233,18 +233,18 @@ class AttendanceAbsentTestController extends Controller
                 return Response::json("Anda Belum Absen Masuk", 483);
             }
             else{
-                if(!empty($data->attendance_type)){
-                    if($data->attendance_type != 'off'){
-                        $temp = Carbon::now('Asia/Jakarta');
-                        $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
-
-                        $trxDate = Carbon::parse(date_format($attendanceData->created_at, 'j-F-Y H:i:s'));
-                        $intervalMinute = $now->diffInMinutes($trxDate);
-                        if($intervalMinute < 480){
-                            return Response::json("Absensi dilakukan kurang dari 8 jam yang lalu!", 484);
-                        }
-                    }
-                }
+//                if(!empty($data->attendance_type)){
+//                    if($data->attendance_type != 'off'){
+//                        $temp = Carbon::now('Asia/Jakarta');
+//                        $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
+//
+//                        $trxDate = Carbon::parse(date_format($attendanceData->created_at, 'j-F-Y H:i:s'));
+//                        $intervalMinute = $trxDate->diffInMinutes($now);
+//                        if($intervalMinute < 480){
+//                            return Response::json("Absensi dilakukan kurang dari 8 jam yang lalu!", 484);
+//                        }
+//                    }
+//                }
                 $result = $this->attendandeOutProcess($attendanceData, $employee, $employee->id, $project->id, $request, $data);
             }
 

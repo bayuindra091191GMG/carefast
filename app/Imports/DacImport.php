@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Action;
+use App\Models\AdminUser;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Employee;
@@ -33,42 +34,64 @@ class DacImport  implements ToCollection, WithStartRow
         $count = 1;
         $stringError = "";
         try{
-
-            $dateTimeNow = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $count = 1;
-            $employeeCode = "";
-            $employeePhone = "";
             $employeeChangeCt = 1;
             foreach($rows as $row){
-//                if($count == 6) break;
-                $employeeCode = $row[0] ??  "-";
-                $employeePhone = $row[1] ?? "-";
+                $projectCode = $row[0];
+                $userEmail = $row[3];
+                $userPassword = $row[4];
 
-                if(!empty($employeeCode) && !empty($employeeCode)){
-                    $employeeDB = Employee::where('code', $employeeCode)
-                        ->where('status_id', 1)
-                        ->where('phone', '')
-                        ->first();
-                    if(!empty($employeeDB)){
-                        $employeeDB->phone = $employeePhone;
-                        $employeeDB->save();
+                $projectDb = Project::where('code', $projectCode)->first();
 
-                        $userDB = User::where('employee_id', $employeeDB->id)->first();
-                        if(!empty($userDB)){
-                            $userDB->phone = $employeePhone;
-                            $employeeDB->save();
-                        }
-                    }
-                    $employeeChangeCt++;
+                if(!empty($projectDb)){
+                    $adminUser = AdminUser::create([
+                        'first_name'        => "Admin Project",
+                        'last_name'         => $projectDb->code,
+                        'email'             => $userEmail,
+                        'role_id'           => 3,
+                        'password'          => Hash::make($userPassword),
+                        'status_id'         => 1,
+                        'project_id'        => $projectDb->id,
+                        'is_super_admin'    => 0,
+                        'created_by'        => 1,
+                        'created_at'        => Carbon::now('Asia/Jakarta')
+                    ]);
                 }
-
                 $count++;
+                $employeeChangeCt++;
             }
             return $employeeChangeCt;
-//            dd($customerPhone, $customerName, $projectName);
+
+//            $count = 1;
+//            $employeeChangeCt = 1;
+//            foreach($rows as $row){
+//                $employeeCode = $row[0] ??  "-";
+//                $employeePhone = $row[1] ?? "-";
+//
+//                if(!empty($employeeCode) && !empty($employeeCode)){
+//                    $employeeDB = Employee::where('code', $employeeCode)
+//                        ->where('status_id', 1)
+//                        ->where('phone', '')
+//                        ->first();
+//                    if(!empty($employeeDB)){
+//                        $employeeDB->phone = $employeePhone;
+//                        $employeeDB->save();
+//
+//                        $userDB = User::where('employee_id', $employeeDB->id)->first();
+//                        if(!empty($userDB)){
+//                            $userDB->phone = $employeePhone;
+//                            $employeeDB->save();
+//                        }
+//                    }
+//                    $employeeChangeCt++;
+//                }
+//
+//                $count++;
+//            }
+//            return $employeeChangeCt;
         }
         catch (\Exception $ex){
-//            dd("count = ".$count, "string = ".$stringError, "error = ".$ex);
+            dd("count = ".$count, "error = ".$ex);
             dd($ex);
             return 'failed';
         }
@@ -79,7 +102,7 @@ class DacImport  implements ToCollection, WithStartRow
      */
     public function startRow(): int
     {
-        return 3;
+        return 2;
     }
 
 }

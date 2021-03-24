@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
-class DacImport  implements ToCollection, WithStartRow
+class DacImportOld  implements ToCollection, WithStartRow
 {
     /**
     * @param Collection $collection
