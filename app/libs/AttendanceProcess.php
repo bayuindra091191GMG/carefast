@@ -925,14 +925,16 @@ class AttendanceProcess
                 }
 
                 $projectName = "-";
+                $projectCode = "-";
                 if(!empty($projectEmployee)){
                     $project = DB::table('projects')
-                        ->select('name')
+                        ->select('name', 'code')
                         ->where('id', $projectEmployee->project_id)
                         ->first();
 //                    $project = Project::where('id', $projectEmployee->project_id)
 //                        ->first();
                     $projectName = $project->name;
+                    $projectCode = $project->code;
                 }
 
                 $countA = "0";
@@ -981,8 +983,9 @@ class AttendanceProcess
                 $singleData = ([
                     'Employee_Code' => $employee->code,
                     'Employee_Name' => $employee->first_name." ".$employee->last_name,
-                    'Employee_Phone' => $user->phone,
+                    'Employee_Phone' => $user->phone != "" ? $user->phone : $employee->phone,
                     'Employee_Status' => $user->status_id == 0 ? "NON AKTIF" : "AKTIF",
+                    'Project_Code' => $projectCode,
                     'Project_Name' => $projectName,
                     'Total_Valid_Absensi' => $countA,
                     'Total_Invalid_Absensi' => $countB,

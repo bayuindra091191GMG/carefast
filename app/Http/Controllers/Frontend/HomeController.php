@@ -451,9 +451,12 @@ class HomeController extends Controller
 //            }
 //            return "success";
 
-            $now = Carbon::now('Asia/Jakarta');
-            $data = AttendanceProcess::DownloadAttendanceValidationProcess();
+            $startDate = Carbon::parse('2020-01-01')->format('Y-m-d');
+            $endDate = Carbon::now('Asia/Jakarta')->format('Y-m-d');
+//            dd($startDate, $now);
+            $data = AttendanceProcess::DownloadAttendanceValidationProcess($startDate, $endDate);
 
+            $now = Carbon::now('Asia/Jakarta');
             $file = "rekap absensi per ".$now->format('d-F-Y G.i.s').'.xlsx';
             // checking attendance END
 
