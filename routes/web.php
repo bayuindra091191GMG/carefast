@@ -215,6 +215,7 @@ Route::prefix('admin')->group(function(){
     Route::post('/employee/destroy', 'Admin\EmployeeController@destroy')->name('admin.employee.destroy');
     Route::get('/employee/detail/{id}', 'Admin\EmployeeController@detail')->name('admin.employee.detail-attendance');
     Route::post('/employee/downloadNucPhone', 'Admin\EmployeeController@downloadNucPhone')->name('admin.employee.download-nucphone');
+
     Route::get('/employee/schedule/set/{employee_id}', 'Admin\EmployeeController@scheduleEdit')->name('admin.employee.set-schedule');
     Route::post('/employee/schedule/store/{employee_id}', 'Admin\EmployeeController@scheduleStore')->name('admin.employee.store-schedule');
 
@@ -333,6 +334,7 @@ Route::prefix('admin')->group(function(){
     Route::post('/project/schedule/update/{employee_id}', 'Admin\project\ProjectScheduleController@update')->name('admin.project.schedule.update');
 
     // Project Schedule New
+    //set project employee's schedule
     Route::get('/project/schedule/set/{id}', 'Admin\project\ScheduleController@scheduleEdit')->name('admin.project.set-schedule');
     Route::post('/project/schedule/store/{id}', 'Admin\project\ScheduleController@scheduleStore')->name('admin.project.store-schedule');
 

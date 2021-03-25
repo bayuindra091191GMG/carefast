@@ -138,8 +138,11 @@
                                                                         <th class="text-center">
                                                                             Nama
                                                                         </th>
+                                                                        <th class="text-center">
+                                                                            NUC
+                                                                        </th>
                                                                         @foreach($days as $day)
-                                                                            <th class="text-center" style="min-width:85px;">
+                                                                            <th class="text-center" style="min-width:95px;">
                                                                                 {{$day}}
                                                                             </th>
                                                                         @endforeach
@@ -149,6 +152,7 @@
                                                                         @foreach($projectScheduleModel as $schedule)
                                                                             <tr>
                                                                                 <td>{{$schedule['employee_name']}}</td>
+                                                                                <td>{{($schedule['employee_code'])}} </td>
                                                                                 @foreach($schedule["days"] as $scheduleDay)
                                                                                 <td>
 {{--                                                                                    <input type="checkbox" id="status" name="statuses[]"--}}
@@ -262,6 +266,9 @@
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        select {
+             font-size: 10px;
+         }
     </style>
 @endsection
 
