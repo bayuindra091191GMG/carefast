@@ -177,7 +177,7 @@ class ProjectController extends Controller
             'start_date'          => $start_date,
             'finish_date'          => $finish_date,
         ];
-//        dd($data);
+
         return view('admin.project.information.edit')->with($data);
     }
 
@@ -185,8 +185,8 @@ class ProjectController extends Controller
         try{
             $validator = Validator::make($request->all(), [
                 'name'              => 'required',
-                'address'           => 'required',
-                'phone'             => 'required',
+//                'address'           => 'required',
+//                'phone'             => 'required',
                 'code'             => 'required',
                 'customer'          => 'required',
                 'latitude'          => 'required',
@@ -229,7 +229,7 @@ class ProjectController extends Controller
             $project->total_mp_off = $request->input('total_mp_off');
             $project->total_manpower = $request->input('total_manpower');
             $project->status_id = $request->input('status');
-            $project->project_id = $request->input('project_id');
+//            $project->project_id = $request->input('project_id');
             $project->updated_by = $adminUser->id;
             $project->updated_at = $now->toDateTimeString();
             $project->save();
@@ -257,7 +257,7 @@ class ProjectController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Admin/information/ProjectController - update error EX: '. $ex);
-            return "Something went wrong! Please contact administrator!";
+            return "Something went wrong! Please contact administrator! \nerror EX: '. $ex";
         }
     }
 

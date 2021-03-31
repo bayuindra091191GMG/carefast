@@ -56,7 +56,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
-                                                <label class="form-label" for="phone">Nomor Telepon *</label>
+                                                <label class="form-label" for="phone">Nomor Telepon </label>
                                                 <input id="phone" type="text" class="form-control"
                                                        name="phone" value="{{ $project->phone }}">
                                             </div>
@@ -76,7 +76,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
-                                                <label class="form-label" for="address">Alamat *</label>
+                                                <label class="form-label" for="address">Alamat </label>
                                                 <textarea name="address" id="address" class="form-control" rows="3">{{ $project->address }}</textarea>
                                             </div>
                                         </div>
@@ -191,7 +191,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
-                                                <label class="form-label" for="address">Deksripsi *</label>
+                                                <label class="form-label" for="address">Deksripsi </label>
                                                 <textarea name="description" id="description" class="form-control" rows="3">{{ $project->description }}</textarea>
                                             </div>
                                         </div>
@@ -204,7 +204,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group form-float form-group-lg">
                                                             <div class="form-line">
-                                                                <label for="customer">Customer *</label>
+                                                                <label for="customer">Customer </label>
                                                                 <select id="customer" class="form-control">
                                                                 </select>
                                                             </div>
@@ -365,8 +365,10 @@
             let customerID = $('#customer').val();
             let selectedCustomer = $('#customer-selected').val();
             let selectedCustomerTemp = "#" + selectedCustomer;
-            // alert(customerID);
-            // alert(selectedCustomer);
+
+            alert(customerID);
+            alert(selectedCustomer);
+            alert((selectedCustomerTemp.includes("#" + customerID + "#")));
 
             if(!(selectedCustomerTemp.includes("#" + customerID + "#"))){
                 let newSelectedCustomer = selectedCustomer + customerID + "#" ;
