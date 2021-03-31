@@ -229,6 +229,7 @@ class ProjectController extends Controller
             $project->total_mp_off = $request->input('total_mp_off');
             $project->total_manpower = $request->input('total_manpower');
             $project->status_id = $request->input('status');
+            $project->city = $request->input('city');
 //            $project->project_id = $request->input('project_id');
             $project->updated_by = $adminUser->id;
             $project->updated_at = $now->toDateTimeString();

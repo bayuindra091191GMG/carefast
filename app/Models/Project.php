@@ -29,6 +29,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $total_mp_off
  * @property int $total_manpower
  * @property int $status_id
+ * @property string $City
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -81,6 +82,7 @@ class Project extends Eloquent
 		'total_mp_off',
 		'total_manpower',
 		'status_id',
+		'city',
 		'created_by',
 		'updated_by',
 		'total_manpower_used'

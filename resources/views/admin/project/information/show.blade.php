@@ -126,6 +126,16 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group form-float form-group-lg">
                                                         <div class="form-line">
+                                                            <label class="form-label" for="phone">Kode Cabang *</label>
+                                                            <input id="city" type="text" class="form-control"
+                                                                   name="city" value="{{ $project->city }}" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group form-float form-group-lg">
+                                                        <div class="form-line">
                                                             <label class="form-label" for="searchmap">Lokasi *</label>
                                                         </div>
                                                         <div id="map-canvas" style="height: 200px;"></div>

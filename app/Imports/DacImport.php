@@ -38,30 +38,49 @@ class DacImport  implements ToCollection, WithStartRow
             $employeeChangeCt = 1;
             foreach($rows as $row){
                 $projectCode = $row[0];
-                $userEmail = $row[3];
-                $userPassword = $row[4];
+                $codeCabang = $row[2];
+                $namaCabang = $row[3];
 
                 $projectDb = Project::where('code', $projectCode)->first();
 
                 if(!empty($projectDb)){
-                    $adminUser = AdminUser::create([
-                        'first_name'        => "Admin Project",
-                        'last_name'         => $projectDb->code,
-                        'email'             => $userEmail,
-                        'role_id'           => 3,
-                        'password'          => Hash::make($userPassword),
-                        'status_id'         => 1,
-                        'project_id'        => $projectDb->id,
-                        'is_super_admin'    => 0,
-                        'created_by'        => 1,
-                        'created_at'        => Carbon::now('Asia/Jakarta')
-                    ]);
+                    $projectDb->city = $codeCabang;
+                    $projectDb->save();
                 }
                 $count++;
                 $employeeChangeCt++;
             }
             return $employeeChangeCt;
+            // excel reader to import admin user
+//            $count = 1;
+//            $employeeChangeCt = 1;
+//            foreach($rows as $row){
+//                $projectCode = $row[0];
+//                $userEmail = $row[3];
+//                $userPassword = $row[4];
+//
+//                $projectDb = Project::where('code', $projectCode)->first();
+//
+//                if(!empty($projectDb)){
+//                    $adminUser = AdminUser::create([
+//                        'first_name'        => "Admin Project",
+//                        'last_name'         => $projectDb->code,
+//                        'email'             => $userEmail,
+//                        'role_id'           => 3,
+//                        'password'          => Hash::make($userPassword),
+//                        'status_id'         => 1,
+//                        'project_id'        => $projectDb->id,
+//                        'is_super_admin'    => 0,
+//                        'created_by'        => 1,
+//                        'created_at'        => Carbon::now('Asia/Jakarta')
+//                    ]);
+//                }
+//                $count++;
+//                $employeeChangeCt++;
+//            }
+//            return $employeeChangeCt;
 
+            // excel reader to import dac
 //            $count = 1;
 //            $employeeChangeCt = 1;
 //            foreach($rows as $row){

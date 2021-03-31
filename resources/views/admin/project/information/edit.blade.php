@@ -85,6 +85,16 @@
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">
+                                                <label class="form-label" for="phone">Kode Cabang *</label>
+                                                <input id="city" type="text" class="form-control"
+                                                       name="city" value="{{ $project->city }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group form-float form-group-lg">
+                                            <div class="form-line">
                                                 <label class="form-label" for="searchmap">Lokasi *</label>
                                                 <input type="text" name="location" id="searchmap" class="form-control"/>
                                             </div>
