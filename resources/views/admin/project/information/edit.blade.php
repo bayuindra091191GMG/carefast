@@ -345,8 +345,6 @@
             format: "dd M yyyy"
         });
 
-        $('#city').select2();
-
         $('#customer').select2({
             placeholder: {
                 id: '-1',

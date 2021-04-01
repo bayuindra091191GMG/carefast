@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\project;
 
 
 use App\Http\Controllers\Controller;
+use App\Imports\EmployeeScheduleImport;
 use App\Models\Action;
 use App\Models\Customer;
 use App\Models\CustomerType;
@@ -22,11 +23,14 @@ use App\Transformer\ProjectTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
+use Maatwebsite\Excel\Facades\Excel;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Yajra\DataTables\DataTables;
 
 class ScheduleController extends Controller
@@ -306,11 +310,181 @@ class ScheduleController extends Controller
                 'end_date'              => $end_date,
             ];
 //        dd($data);
-            return view('admin.project.schedule.edit-schedule')->with($data);
+            return view('admin.project.schedule.edit-schedule-v2')->with($data);
         }
         catch(\Exception $ex){
             Log::error('Admin/ScheduleController - scheduleEdit error EX: '. $ex);
             return redirect()->back()->withErrors($ex);
+        }
+    }
+    public function scheduleEditv2(Request $request, int $id){
+        try{
+            $currentProject = Project::find($id);
+
+            if(empty($currentProject)){
+                return redirect()->back();
+            }
+            $start_date = Carbon::now()->format("d M Y");
+            $end_date = Carbon::now()->format("d M Y");
+            $employeeProjects = ProjectEmployee::with('employee')
+                ->where('project_id', $id)
+                ->where('employee_roles_id','<', 4)
+                ->where('status_id', 1)
+                ->get();
+
+            $isSelectDate = true;
+            $dayArr = collect();
+            $projectScheduleModel = collect();
+
+            foreach($employeeProjects as $employeeProject){
+
+                $isEmpty = true;
+                $scheduleModel = collect();
+                $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
+
+                $schedule = collect([
+                    'employee_id'   => $employeeProject->employee_id,
+                    'employee_name' => $employeeProject->employee->first_name. ' '.$employeeProject->employee->last_name,
+                    'employee_code' => $employeeProject->employee->code,
+                    'days'          => '',
+                ]);
+                if(!empty($employeeSchedule)){
+                    if(!empty($employeeSchedule->day_status)){
+                        $isEmpty = false;
+                        $days = explode(";", $employeeSchedule->day_status);
+                        $dayArr = collect();
+                        foreach ($days as $day){
+                            if(!empty($day)){
+                                $dayStatus = explode(":", $day);
+                                $scheduleDetail = ([
+                                    'day'   => $dayStatus[0],
+                                    'status' => $dayStatus[1],
+                                ]);
+                                $scheduleModel->push($scheduleDetail);
+                                $dayArr->push($dayStatus[0]);
+                            }
+                        }
+                        $schedule['days'] = $scheduleModel;
+                        $projectScheduleModel->push($schedule);
+                    }
+                }
+                if($isEmpty){
+                    foreach($dayArr as $day){
+                        $scheduleDetail = ([
+                            'day'   => $day,
+                            'status' => "M",
+                        ]);
+                        $scheduleModel->push($scheduleDetail);
+                    }
+                    $schedule['days'] = $scheduleModel;
+                    $projectScheduleModel->push($schedule);
+                }
+            }
+
+            $data = [
+                'project'               => $currentProject,
+                'projectScheduleModel'  => $projectScheduleModel,
+                'days'                  => $dayArr,
+                'isSelectDate'          => $isSelectDate,
+                'start_date'            => $start_date,
+                'end_date'              => $end_date,
+            ];
+//        dd($data);
+            return view('admin.project.schedule.edit-schedule-v2')->with($data);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ScheduleController - scheduleEdit error EX: '. $ex);
+            return redirect()->back()->withErrors($ex);
+        }
+    }
+
+    public function scheduleDownloadExcel(Request $request, int $id){
+        try{
+            $projectDB = DB::table('projects')
+                ->select('name', 'code')
+                ->where('id', $id)
+                ->first();
+            $employeeProjects = ProjectEmployee::with('employee')
+                ->where('project_id', $id)
+                ->where('employee_roles_id','<', 4)
+                ->where('status_id', 1)
+                ->get();
+
+            $dayArr = collect();
+            $projectScheduleModel = collect();
+            foreach($employeeProjects as $employeeProject){
+
+                $isEmpty = true;
+                $scheduleModel = collect();
+                $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
+
+                $schedule = collect([
+                    'employee_id'   => $employeeProject->employee_id,
+                    'employee_name' => $employeeProject->employee->first_name. ' '.$employeeProject->employee->last_name,
+                    'employee_code' => $employeeProject->employee->code,
+                    'days'          => '',
+                ]);
+                if(!empty($employeeSchedule)){
+                    if(!empty($employeeSchedule->day_status)){
+                        $isEmpty = false;
+                        $days = explode(";", $employeeSchedule->day_status);
+                        $dayArr = collect();
+                        foreach ($days as $day){
+                            if(!empty($day)){
+                                $dayStatus = explode(":", $day);
+                                $scheduleDetail = ([
+                                    'day'   => $dayStatus[0],
+                                    'status' => $dayStatus[1],
+                                ]);
+                                $scheduleModel->push($scheduleDetail);
+                                $dayArr->push($dayStatus[0]);
+                            }
+                        }
+                        $schedule['days'] = $scheduleModel;
+                        $projectScheduleModel->push($schedule);
+                    }
+                }
+                if($isEmpty){
+                    foreach($dayArr as $day){
+                        $scheduleDetail = ([
+                            'day'   => $day,
+                            'status' => "-",
+                        ]);
+                        $scheduleModel->push($scheduleDetail);
+                    }
+                    $schedule['days'] = $scheduleModel;
+                    $projectScheduleModel->push($schedule);
+                }
+            }
+            dd($projectScheduleModel);
+            $now = Carbon::now('Asia/Jakarta');
+            $file = "Jadwal-CSO-".$projectDB->code."(".$projectDB->name.")_".$now->format('d F Y_G.i.s').'.xlsx';
+            // checking attendance END
+
+            $destinationPath = public_path()."/download_attendance/";
+            (new FastExcel($projectScheduleModel))->export($destinationPath.$file);
+            return response()->download($destinationPath.$file);
+        }
+        catch(\Exception $ex){
+            dd($ex);
+            Log::error('Admin/ScheduleController - scheduleDownloadExcel error EX: '. $ex);
+            return redirect()->back()->withErrors($ex)->withInput($request->all());
+        }
+    }
+
+    public function scheduleUploadExcel(Request $request, int $id){
+        try{
+//            dd($request);
+            $excel = request()->file('excel');
+            $exportResult = Excel::import(new EmployeeScheduleImport(), $excel);
+
+            Session::flash('success', 'Sukses mengubah jadwal karyawan!');
+            return redirect()->route('admin.project.set-schedule',['id' => $id]);
+        }
+        catch(\Exception $ex){
+            dd($ex);
+            Log::error('Admin/ScheduleController - scheduleUploadExcel error EX: '. $ex);
+            return redirect()->back()->withErrors($ex)->withInput($request->all());
         }
     }
 
