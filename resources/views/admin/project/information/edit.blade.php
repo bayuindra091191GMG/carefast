@@ -374,9 +374,9 @@
             let selectedCustomer = $('#customer-selected').val();
             let selectedCustomerTemp = "#" + selectedCustomer;
 
-            alert(customerID);
-            alert(selectedCustomer);
-            alert((selectedCustomerTemp.includes("#" + customerID + "#")));
+            // alert(customerID);
+            // alert(selectedCustomer);
+            // alert((selectedCustomerTemp.includes("#" + customerID + "#")));
 
             if(!(selectedCustomerTemp.includes("#" + customerID + "#"))){
                 let newSelectedCustomer = selectedCustomer + customerID + "#" ;

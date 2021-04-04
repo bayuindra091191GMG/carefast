@@ -250,7 +250,7 @@ class IntegrationController extends Controller
                         'start_date' => $project['start_date'],
                         'finish_date' => $project['finish_date'],
                         'status_id' => 1,
-                        'customer_id'       => '2#4#62#63#64#65#66#67#68#69#70#71#72#73',
+                        'customer_id'       => '2#4#62#63#64#65#66#67#68#69#70#71#72#73#',
                         'latitude'          => '-6.1560448',
                         'longitude'         => '106.79019979999998',
                         'total_manday'      => 10,

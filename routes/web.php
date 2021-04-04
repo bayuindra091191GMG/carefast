@@ -32,8 +32,8 @@ Route::get('/icare', 'Admin\DashboardController@dashboard')->name('admin.dashboa
 //Route::get('/integration', 'Frontend\HomeController@submitIntegrationEmployee');
 //Route::get('/integration/get-attendance', 'Frontend\HomeController@submitIntegrationGetAttendance');
 //Route::get('/checkin', 'Frontend\HomeController@attendanceIn');
-Route::get('/test-general', 'Frontend\HomeController@generalFunction');
-Route::get('/copy-phone', 'Frontend\HomeController@copyPhone');
+//Route::get('/test-general', 'Frontend\HomeController@generalFunction');
+Route::get('/test-function', 'Frontend\HomeController@testingFunction');
 //Route::get('/test-logging', 'Frontend\HomeController@logFunctionTesting');
 //Route::get('download-jsonfile', array('as'=> 'file.download', 'uses' => 'Frontend\HomeController@generalFunction'));
 
