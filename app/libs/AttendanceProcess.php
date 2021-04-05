@@ -926,15 +926,17 @@ class AttendanceProcess
 
                 $projectName = "-";
                 $projectCode = "-";
+                $projectCity = "-";
                 if(!empty($projectEmployee)){
                     $project = DB::table('projects')
-                        ->select('name', 'code')
+                        ->select('name', 'code', 'city')
                         ->where('id', $projectEmployee->project_id)
                         ->first();
 //                    $project = Project::where('id', $projectEmployee->project_id)
 //                        ->first();
                     $projectName = $project->name;
                     $projectCode = $project->code;
+                    $projectCity = $project->city ?? "-";
                 }
 
                 $countA = "0";
@@ -981,13 +983,14 @@ class AttendanceProcess
                 $countB = $countBDB;
 
                 $singleData = ([
-                    'Employee_Code' => $employee->code,
-                    'Employee_Name' => $employee->first_name." ".$employee->last_name,
-                    'Employee_Phone' => $user->phone != "" ? $user->phone : $employee->phone,
-                    'Employee_Status' => $user->status_id == 0 ? "NON AKTIF" : "AKTIF",
-                    'Project_Code' => $projectCode,
-                    'Project_Name' => $projectName,
-                    'Total_Valid_Absensi' => $countA,
+                    'Employee_Code'         => $employee->code,
+                    'Employee_Name'         => $employee->first_name." ".$employee->last_name,
+                    'Employee_Phone'        => $user->phone != "" ? $user->phone : $employee->phone,
+                    'Employee_Status'       => $user->status_id == 0 ? "NON AKTIF" : "AKTIF",
+                    'Project_Code'          => $projectCode,
+                    'Project_Name'          => $projectName,
+                    'Project_City'          => $projectCity,
+                    'Total_Valid_Absensi'   => $countA,
                     'Total_Invalid_Absensi' => $countB,
                 ]);
                 $list->push($singleData);
@@ -996,7 +999,7 @@ class AttendanceProcess
             return $list;
         }
         catch (\Exception $ex){
-            dd($ex);
+//            dd($ex);
             Log::error('libs/AttendanceProcess/DownloadAttendanceValidationProcess  error EX: '. $ex);
             $list = collect();
 

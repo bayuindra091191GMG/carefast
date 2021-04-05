@@ -335,6 +335,7 @@ Route::prefix('admin')->group(function(){
 
     // Project Schedule New
     //set project employee's schedule
+//    Route::get('/project/schedule/set/{id}', 'Admin\project\ScheduleController@scheduleEdit')->name('admin.project.set-schedule');
     Route::get('/project/schedule/set/{id}', 'Admin\project\ScheduleController@scheduleEditv2')->name('admin.project.set-schedule');
     Route::post('/project/schedule/upload/{id}', 'Admin\project\ScheduleController@scheduleUploadExcel')->name('admin.project.upload-schedule');
     Route::get('/project/schedule/download/{id}', 'Admin\project\ScheduleController@scheduleDownloadExcel')->name('admin.project.download-schedule');

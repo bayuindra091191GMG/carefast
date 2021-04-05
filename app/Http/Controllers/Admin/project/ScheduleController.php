@@ -20,6 +20,7 @@ use App\Transformer\CustomerTransformer;
 use App\Transformer\EmployeeTransformer;
 use App\Transformer\ProjectScheduleEmployeeTransformer;
 use App\Transformer\ProjectTransformer;
+use Box\Spout\Writer\Style\Color;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,7 @@ use Intervention\Image\Facades\Image;
 use Maatwebsite\Excel\Facades\Excel;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Yajra\DataTables\DataTables;
+use Box\Spout\Writer\Style\StyleBuilder;
 
 class ScheduleController extends Controller
 {
@@ -310,7 +312,7 @@ class ScheduleController extends Controller
                 'end_date'              => $end_date,
             ];
 //        dd($data);
-            return view('admin.project.schedule.edit-schedule-v2')->with($data);
+            return view('admin.project.schedule.edit-schedule')->with($data);
         }
         catch(\Exception $ex){
             Log::error('Admin/ScheduleController - scheduleEdit error EX: '. $ex);
@@ -389,7 +391,7 @@ class ScheduleController extends Controller
                 'start_date'            => $start_date,
                 'end_date'              => $end_date,
             ];
-//        dd($data);
+        dd($data);
             return view('admin.project.schedule.edit-schedule-v2')->with($data);
         }
         catch(\Exception $ex){
@@ -416,14 +418,9 @@ class ScheduleController extends Controller
 
                 $isEmpty = true;
                 $scheduleModel = collect();
+                $schedule = collect();
                 $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
 
-                $schedule = collect([
-                    'employee_id'   => $employeeProject->employee_id,
-                    'employee_name' => $employeeProject->employee->first_name. ' '.$employeeProject->employee->last_name,
-                    'employee_code' => $employeeProject->employee->code,
-                    'days'          => '',
-                ]);
                 if(!empty($employeeSchedule)){
                     if(!empty($employeeSchedule->day_status)){
                         $isEmpty = false;
@@ -440,8 +437,6 @@ class ScheduleController extends Controller
                                 $dayArr->push($dayStatus[0]);
                             }
                         }
-                        $schedule['days'] = $scheduleModel;
-                        $projectScheduleModel->push($schedule);
                     }
                 }
                 if($isEmpty){
@@ -452,17 +447,28 @@ class ScheduleController extends Controller
                         ]);
                         $scheduleModel->push($scheduleDetail);
                     }
-                    $schedule['days'] = $scheduleModel;
-                    $projectScheduleModel->push($schedule);
                 }
+                $schedule = collect([
+                    'project_code'                  => $projectDB->code,
+                    'project_name'                  => $projectDB->name,
+                    'employee_id'                   => $employeeProject->employee_id,
+                    'employee_name'                 => $employeeProject->employee->first_name. ' '.$employeeProject->employee->last_name,
+                    'employee_code'                 => $employeeProject->employee->code,
+                ]);
+                foreach($scheduleModel as $scheduleCso){
+                    $schedule->put('tanggal '.$scheduleCso['day'], $scheduleCso['status']);
+                }
+                $projectScheduleModel->push($schedule);
             }
-            dd($projectScheduleModel);
+
             $now = Carbon::now('Asia/Jakarta');
             $file = "Jadwal-CSO-".$projectDB->code."(".$projectDB->name.")_".$now->format('d F Y_G.i.s').'.xlsx';
             // checking attendance END
 
             $destinationPath = public_path()."/download_attendance/";
-            (new FastExcel($projectScheduleModel))->export($destinationPath.$file);
+
+            (new FastExcel($projectScheduleModel))
+                ->export($destinationPath.$file);
             return response()->download($destinationPath.$file);
         }
         catch(\Exception $ex){
