@@ -581,7 +581,9 @@ class ComplainController extends Controller
             // get complaint, from customer ID with same project
             $projectDB = Project::where('customer_id', 'like', '%#'.$customer->id.'#%')->get();
             $customerString = "";
+            $projectArr = [];
             foreach ($projectDB as $project){
+                array_push($projectArr, $project->id);
                 $customerString .= $project->customer_id;
             }
             $customerArr = explode('#', $customerString);
@@ -603,10 +605,10 @@ class ComplainController extends Controller
 //                $customerComplaints =  Complaint::where('customer_id', $customer->id);
 //            }
             if($categoryId != 0){
-                $customerComplaints =  Complaint::whereIn('customer_id', $customerArr)->where('category_id', $categoryId);
+                $customerComplaints =  Complaint::whereIn('project_id', $projectArr)->where('category_id', $categoryId);
             }
             else{
-                $customerComplaints =  Complaint::whereIn('customer_id', $customerArr);
+                $customerComplaints =  Complaint::whereIn('project_id', $projectArr);
             }
             if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
