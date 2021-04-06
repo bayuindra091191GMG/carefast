@@ -245,32 +245,63 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6">
-                                                    <div class="form-group form-float form-group-lg">
-                                                        <table class="table table-bordered table-hover" id="tab_logic">
-                                                            <thead>
-                                                            <tr>
-                                                                <th class="text-center" style="width: 75%">
-                                                                    Customer*
-                                                                </th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            @php $idx = 1 @endphp
-
-                                                            @if($customerList->count() > 0)
-                                                                @foreach($customerList as $customer)
-                                                                    <tr id='sch{{$idx}}'>
-                                                                        <td><span>{{$customer->name}} - {{$customer->email}}</span></td>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <table class="table table-bordered table-hover" id="tab_logic">
+                                                                    <thead>
+                                                                    <tr>
+                                                                        <th class="text-center" style="width: 75%">
+                                                                            Customer*
+                                                                        </th>
                                                                     </tr>
-                                                                    @php $idx++ @endphp
-                                                                @endforeach
-                                                                <tr id='sch{{$idx}}'></tr>
-                                                            @endif
-                                                            </tbody>
-                                                        </table>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    @php $idx = 1 @endphp
+
+                                                                    @if($customerList->count() > 0)
+                                                                        @foreach($customerList as $customer)
+                                                                            <tr id='sch{{$idx}}'>
+                                                                                <td><span>{{$customer->name}} - {{$customer->email}}</span></td>
+                                                                            </tr>
+                                                                            @php $idx++ @endphp
+                                                                        @endforeach
+                                                                        <tr id='sch{{$idx}}'></tr>
+                                                                    @endif
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group form-float form-group-lg">
+                                                                <table class="table table-bordered table-hover" id="tab_logic">
+                                                                    <thead>
+                                                                    <tr>
+                                                                        <th class="text-center" style="width: 30%">
+                                                                            Keluhan Pending
+                                                                        </th>
+                                                                        <th class="text-center" style="width: 30%">
+                                                                            Keluhan Diprocess
+                                                                        </th>
+                                                                        <th class="text-center" style="width: 30%">
+                                                                            Keluhan Tutup
+                                                                        </th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    <tr>
+                                                                        <td>{{$complaintPendingCt}}</td>
+                                                                        <td>{{$complaintProcessCt}}</td>
+                                                                        <td>{{$complaintCloseCt}}</td>
+                                                                    </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>

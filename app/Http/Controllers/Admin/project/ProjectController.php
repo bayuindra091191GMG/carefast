@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\project;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Complaint;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\EmployeeRole;
@@ -60,6 +61,9 @@ class ProjectController extends Controller
         $finish_date = !empty($project->finish_date) ? Carbon::parse($project->finish_date)->format("d M Y") : "-";
         $customerIds = explode('#', $project->customer_id);
         $customerList = Customer::whereIn('id', $customerIds)->get();
+        $complaintPendingCt = Complaint::where('project_id', $id)->where('status_id', 10)->count();
+        $complaintProcessCt = Complaint::where('project_id', $id)->where('status_id', 11)->count();
+        $complaintCloseCt = Complaint::where('project_id', $id)->where('status_id', 12)->count();
 
         if(empty($project)){
             return redirect()->back();
@@ -70,6 +74,9 @@ class ProjectController extends Controller
             'start_date'          => $start_date,
             'finish_date'          => $finish_date,
             'customerList'          => $customerList,
+            'complaintPendingCt'          => $complaintPendingCt,
+            'complaintProcessCt'          => $complaintProcessCt,
+            'complaintCloseCt'          => $complaintCloseCt,
         ];
         return view('admin.project.information.show')->with($data);
     }

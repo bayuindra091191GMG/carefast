@@ -477,6 +477,18 @@ class ScheduleController extends Controller
         }
     }
 
+    public function scheduleDownloadExcelTemplate(){
+        try{
+            $destinationPath = public_path()."/storage/carefast - contoh upload jadwal.xlsx";
+            return response()->download($destinationPath);
+        }
+        catch(\Exception $ex){
+            dd($ex);
+            Log::error('Admin/ScheduleController - scheduleDownloadExcel error EX: '. $ex);
+            return null;
+        }
+    }
+
     public function scheduleUploadExcel(Request $request, int $id){
         try{
 //            dd($request);

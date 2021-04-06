@@ -187,6 +187,7 @@
                                                                 </div>
                                                                 <p>
                                                                     Keterangan = <br>
+                                                                    - Contoh Template excel dapat di <a href="{{route('admin.project.upload-template-download')}}">download disini</a><br>
                                                                     - Setelah mengupload Excel jadwal yang baru, jadwal yang lama akan di ubah, pastikan data dalam excel sudah benar
                                                                 </p>
                                                             </div>
