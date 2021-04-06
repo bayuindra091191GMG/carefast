@@ -43,7 +43,7 @@ class EmployeeScheduleImport  implements ToCollection, WithStartRow
             $dateArr = [];
             //get all date
             if($count == 1){
-                for($i=$dateCt; $i < count($rows); $i++){
+                for($i=$dateCt; $i < count($rows[0]); $i++){
                     $dates = explode("/", $rows[0][$i]);
                     array_push($dateArr, $dates[0]);
                 }
@@ -63,7 +63,7 @@ class EmployeeScheduleImport  implements ToCollection, WithStartRow
                     $tempSchedule = "";
                     //create day_status
                     // ex : 16:M;17:M;18:M;19:M;20:M;21:M;22:O;23:M;24:M;25:M;26:M;27:M;28:M;29:O;30:O;31:O;1:M;2:M;3:M;4:M;5:M;6:M;7:O;8:M;9:M;10:M;11:M;12:M;13:M;14:O;15:M;
-                    for($i=$dateCt; $i < count($rows); $i++){
+                    for($i=$dateCt; $i < count($row); $i++){
                         $tempSchedule .= $dateArr[$ct].":".$row[$i].";";
                         $ct++;
                     }

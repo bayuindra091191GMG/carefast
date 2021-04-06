@@ -73,98 +73,142 @@ class HomeController extends Controller
 
     public function testingFunction(){
         try{
-            //testing escalation cron job function
+            //add pak charles, akiong dan zul ke semua project
+            // 9094=charles, role= 8 | 9098=akiong, role= 7 | 9097=zul, role= 7
 
-            $complaintDBs = Complaint::where('status_id', 10)->get();
-            $temp = Carbon::now('Asia/Jakarta');
-            $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
-
-            foreach($complaintDBs as $complaintDB){
-                $trxDate = Carbon::parse(date_format($complaintDB->response_limit_date, 'j-F-Y H:i:s'));
-                // mencari perbedaan menit
-                $intervalMinute = $trxDate->diffInMinutes($now);
-                dd($trxDate < $now);
-                if($trxDate < $now){
-                    dd("lebih kecil");
+            $projectDb = DB::table('projects')
+                ->select('id')
+                ->where('status_id', 1)
+                ->get();
+            foreach ($projectDb as $project){
+                $ProjectEmployeeCharles = ProjectEmployee::where('project_id', $project->id)
+                    ->where('employee_id', 9094)
+                    ->first();
+                if(empty($ProjectEmployeeCharles)){
+                    ProjectEmployee::create([
+                        'project_id'        => $project->id,
+                        'employee_id'       => 9094,
+                        'employee_roles_id' => 8,
+                        'status_id'         => 1
+                    ]);
                 }
 
-                dd("complaint Number = ".$complaintDB->code." | now = ".$now." | trxDate = ".$trxDate." | intervalMinute = ".$intervalMinute);
+                $ProjectEmployeeZul = ProjectEmployee::where('project_id', $project->id)
+                    ->where('employee_id', 9097)
+                    ->first();
+                if(empty($ProjectEmployeeZul)){
+                    ProjectEmployee::create([
+                        'project_id'        => $project->id,
+                        'employee_id'       => 9097,
+                        'employee_roles_id' => 7,
+                        'status_id'         => 1
+                    ]);
+                }
 
-                //kalau lebih dari x jam lewat minimal 1 menit
-                if($intervalMinute >= 1){
-                    $employeeDB = ProjectEmployee::where('project_id', $complaintDB->project_id)
-                        ->where('employee_roles_id', '>', $complaintDB->employee_handler_role_id)
-                        ->orderBy('employee_roles_id', 'asc')
-                        ->first();
-                    if(!empty($employeeDB)){
-                        //mencari waktu eskalasi
-                        $minute = 30;
-                        if($employeeDB->employee_roles_id >= 7){
-                            $minute = 60;
-                        }
-                        if($employeeDB->employee_roles_id = 8){
-                            $minute = 300;
-                        }
-
-                        // update setelah pindah role
-                        if(!empty($employeeDB)){
-                            $complaintDB->employee_handler_role_id = $employeeDB->employee_roles_id;
-                        }
-                        $complaintDB->response_limit_date = $temp->addMinutes($minute)->toDateTimeString();
-                        $complaintDB->save();
-
-                        //send notif to employee escalation
-                        $messageImage = empty($complaintDB->image) ? null : asset('storage/complaints/'. $complaintDB->image);
-                        if(!empty($complaintDB->customer_id)){
-                            $customerComplaintDetailModel = ([
-                                'customer_id'       => $complaintDB->customer_id,
-                                'customer_name'     => $complaintDB->customer->name,
-                                'customer_avatar'    => asset('storage/customers/'. $complaintDB->customer->image_path),
-                                'employee_id'       => null,
-                                'employee_name'     => "",
-                                'employee_avatar'    => "",
-                                'message'           => $complaintDB->message,
-                                'image'             => $messageImage,
-                                'date'              => Carbon::parse($complaintDB->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                            ]);
-                        }
-                        else{
-                            $customerComplaintDetailModel = ([
-                                'customer_id'       => null,
-                                'customer_name'     => "",
-                                'customer_avatar'    => "",
-                                'employee_id'       => $complaintDB->employee_id,
-                                'employee_name'     => $complaintDB->employee->first_name." ".$complaintDB->employee->last_name,
-                                'employee_avatar'    => asset('storage/employees/'. $complaintDB->employee->image_path),
-                                'message'           => $complaintDB->message,
-                                'image'             => $messageImage,
-                                'date'              => Carbon::parse($complaintDB->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                            ]);
-                        }
-                        $title = "ICare";
-                        $body = "Customer complain terjadi eskalasi";
-                        $data = array(
-                            "type_id" => 301,
-                            "complaint_id" => $complaintDB->id,
-                            "complaint_subject" => $complaintDB->subject,
-                            "complaint_detail_model" => $customerComplaintDetailModel,
-                        );
-                        //Push Notification to employee App.
-                        $ProjectEmployees = ProjectEmployee::where('project_id', $complaintDB->project_id)
-                            ->where('employee_roles_id', $complaintDB->employee_handler_role_id)
-                            ->get();
-                        if($ProjectEmployees->count() >= 0){
-                            foreach ($ProjectEmployees as $ProjectEmployee){
-                                $user = \App\Models\User::where('employee_id', $ProjectEmployee->employee_id)->first();
-                                FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
-                            }
-                        }
-                    }
+                $ProjectEmployeeAkiong = ProjectEmployee::where('project_id', $project->id)
+                    ->where('employee_id', 9098)
+                    ->first();
+                if(empty($ProjectEmployeeAkiong)){
+                    ProjectEmployee::create([
+                        'project_id'        => $project->id,
+                        'employee_id'       => 9098,
+                        'employee_roles_id' => 7,
+                        'status_id'         => 1
+                    ]);
                 }
             }
 
-
-            Log::channel('cronjob')->info($now." = Sukses");
+            //testing escalation cron job function
+//            $complaintDBs = Complaint::where('status_id', 10)->get();
+//            $temp = Carbon::now('Asia/Jakarta');
+//            $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
+//
+//            foreach($complaintDBs as $complaintDB){
+//                $trxDate = Carbon::parse(date_format($complaintDB->response_limit_date, 'j-F-Y H:i:s'));
+//                // mencari perbedaan menit
+//                $intervalMinute = $trxDate->diffInMinutes($now);
+//                dd($trxDate < $now);
+//                if($trxDate < $now){
+//                    dd("lebih kecil");
+//                }
+//
+//                dd("complaint Number = ".$complaintDB->code." | now = ".$now." | trxDate = ".$trxDate." | intervalMinute = ".$intervalMinute);
+//
+//                //kalau lebih dari x jam lewat minimal 1 menit
+//                if($intervalMinute >= 1){
+//                    $employeeDB = ProjectEmployee::where('project_id', $complaintDB->project_id)
+//                        ->where('employee_roles_id', '>', $complaintDB->employee_handler_role_id)
+//                        ->orderBy('employee_roles_id', 'asc')
+//                        ->first();
+//                    if(!empty($employeeDB)){
+//                        //mencari waktu eskalasi
+//                        $minute = 30;
+//                        if($employeeDB->employee_roles_id >= 7){
+//                            $minute = 60;
+//                        }
+//                        if($employeeDB->employee_roles_id = 8){
+//                            $minute = 300;
+//                        }
+//
+//                        // update setelah pindah role
+//                        if(!empty($employeeDB)){
+//                            $complaintDB->employee_handler_role_id = $employeeDB->employee_roles_id;
+//                        }
+//                        $complaintDB->response_limit_date = $temp->addMinutes($minute)->toDateTimeString();
+//                        $complaintDB->save();
+//
+//                        //send notif to employee escalation
+//                        $messageImage = empty($complaintDB->image) ? null : asset('storage/complaints/'. $complaintDB->image);
+//                        if(!empty($complaintDB->customer_id)){
+//                            $customerComplaintDetailModel = ([
+//                                'customer_id'       => $complaintDB->customer_id,
+//                                'customer_name'     => $complaintDB->customer->name,
+//                                'customer_avatar'    => asset('storage/customers/'. $complaintDB->customer->image_path),
+//                                'employee_id'       => null,
+//                                'employee_name'     => "",
+//                                'employee_avatar'    => "",
+//                                'message'           => $complaintDB->message,
+//                                'image'             => $messageImage,
+//                                'date'              => Carbon::parse($complaintDB->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+//                            ]);
+//                        }
+//                        else{
+//                            $customerComplaintDetailModel = ([
+//                                'customer_id'       => null,
+//                                'customer_name'     => "",
+//                                'customer_avatar'    => "",
+//                                'employee_id'       => $complaintDB->employee_id,
+//                                'employee_name'     => $complaintDB->employee->first_name." ".$complaintDB->employee->last_name,
+//                                'employee_avatar'    => asset('storage/employees/'. $complaintDB->employee->image_path),
+//                                'message'           => $complaintDB->message,
+//                                'image'             => $messageImage,
+//                                'date'              => Carbon::parse($complaintDB->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+//                            ]);
+//                        }
+//                        $title = "ICare";
+//                        $body = "Customer complain terjadi eskalasi";
+//                        $data = array(
+//                            "type_id" => 301,
+//                            "complaint_id" => $complaintDB->id,
+//                            "complaint_subject" => $complaintDB->subject,
+//                            "complaint_detail_model" => $customerComplaintDetailModel,
+//                        );
+//                        //Push Notification to employee App.
+//                        $ProjectEmployees = ProjectEmployee::where('project_id', $complaintDB->project_id)
+//                            ->where('employee_roles_id', $complaintDB->employee_handler_role_id)
+//                            ->get();
+//                        if($ProjectEmployees->count() >= 0){
+//                            foreach ($ProjectEmployees as $ProjectEmployee){
+//                                $user = \App\Models\User::where('employee_id', $ProjectEmployee->employee_id)->first();
+//                                FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//
+//            Log::channel('cronjob')->info($now." = Sukses");
             return "Sukses";
         }
         catch (\Exception $ex){

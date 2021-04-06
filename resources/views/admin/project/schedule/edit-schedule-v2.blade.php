@@ -155,8 +155,8 @@
                                                                         <td>{{($schedule['employee_code'])}} </td>
                                                                         @foreach($schedule["days"] as $scheduleDay)
                                                                             <td class="text-center">
-                                                                                @if($scheduleDay["status"] == 'M')
-                                                                                    M
+                                                                                @if($scheduleDay["status"] == 'H')
+                                                                                    H
                                                                                 @else
                                                                                     O
                                                                                 @endif

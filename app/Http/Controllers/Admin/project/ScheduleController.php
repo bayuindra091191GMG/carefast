@@ -391,7 +391,7 @@ class ScheduleController extends Controller
                 'start_date'            => $start_date,
                 'end_date'              => $end_date,
             ];
-        dd($data);
+//        dd($data);
             return view('admin.project.schedule.edit-schedule-v2')->with($data);
         }
         catch(\Exception $ex){
@@ -472,7 +472,6 @@ class ScheduleController extends Controller
             return response()->download($destinationPath.$file);
         }
         catch(\Exception $ex){
-            dd($ex);
             Log::error('Admin/ScheduleController - scheduleDownloadExcel error EX: '. $ex);
             return redirect()->back()->withErrors($ex)->withInput($request->all());
         }
@@ -488,7 +487,6 @@ class ScheduleController extends Controller
             return redirect()->route('admin.project.set-schedule',['id' => $id]);
         }
         catch(\Exception $ex){
-            dd($ex);
             Log::error('Admin/ScheduleController - scheduleUploadExcel error EX: '. $ex);
             return redirect()->back()->withErrors($ex)->withInput($request->all());
         }
