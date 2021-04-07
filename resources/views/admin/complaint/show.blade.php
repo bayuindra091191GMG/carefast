@@ -84,18 +84,30 @@
                                                         </div>
                                                         <div class="chat-content">
                                                             <h6 class="font-medium">{{ $complaint->customer_name }} - Customer</h6>
-                                                            <div class="box bg-light-info" style="background:#27a9e3;color: white;">{{ $detail->message }}</div>
+                                                            <div class="box bg-light-info" style="background:#27a9e3;color: white;">
+                                                                {{ $detail->message }}
+                                                                @if(!empty($detail->image))
+                                                                    <br>
+                                                                    <img src="{{asset('storage/complaints/'. $detail->image)}}" alt="employee">
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     @else
                                                         <div class="chat-img">
                                                             @if(!empty($detail->employee_id))
-                                                                <img src="{{asset('storage/employees/'. $detail->employee->image_path)}}" alt="employee">
+                                                                <img src="{{asset('storage/employees/'. $detail->employee->image_path)}}" alt="employee" width="200">
                                                             @endif
                                                         </div>
                                                         <div class="chat-content">
                                                             <h6 class="font-medium">{{ $detail->employee->first_name. ' '. $detail->employee->last_name }} - {{ $detail->employee->employee_role->name }}</h6>
 
-                                                            <div class="box bg-light-info">{{ $detail->message }}</div>
+                                                            <div class="box bg-light-info">
+                                                                {{ $detail->message }}
+                                                                @if(!empty($detail->image))
+                                                                    <br>
+                                                                    <img src="{{asset('storage/complaints/'. $detail->image)}}" alt="employee" width="200">
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     @endif
                                                     <div class="chat-time">{{ $detail->created_at_string }}</div>
