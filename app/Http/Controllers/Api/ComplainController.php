@@ -667,6 +667,7 @@ class ComplainController extends Controller
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
+            $employeeLoginRoleId = $user->employee_role_id;
 
             $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
                 ->get();
@@ -681,10 +682,13 @@ class ComplainController extends Controller
             $categoryId = $request->input('category_id');
 
             if($categoryId != 0){
-                $customerComplaints =  Complaint::where('project_id', $ids)->where('category_id', $categoryId);
+                $customerComplaints =  Complaint::whereIn('project_id', $ids)
+                    ->where('employee_handler_role_id', $employeeLoginRoleId)
+                    ->where('category_id', $categoryId);
             }
             else{
-                $customerComplaints =  Complaint::whereIn('project_id', $ids);
+                $customerComplaints =  Complaint::whereIn('project_id', $ids)
+                    ->where('employee_handler_role_id', $employeeLoginRoleId);
             }
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
 //            $customerComplaints =  Complaint::whereIn('project_id', $ids);
