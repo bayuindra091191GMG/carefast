@@ -53,6 +53,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::get('/get-user-data', 'Api\UserController@show');
     Route::post('/save-user-device', 'Api\UserController@saveUserToken');
     Route::post('/imei-reset', 'Api\UserController@resetImei');
+    Route::post('/change-password', 'Api\UserController@changePassword');
     Route::post('/logout', 'Api\UserController@logout');
 
     //Place
@@ -123,6 +124,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintEmployee');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintEmployee');
 
+    Route::post('/get-complaint-count', 'Api\ComplainController@getComplaintCount');
+
     //Plotting
     Route::get('/plotting/get-employees', 'Api\EmployeeController@getEmployeeCSO');
     Route::get('/plotting/get-plottings', 'Api\EmployeeController@getPlottings');
@@ -141,11 +144,14 @@ Route::middleware('auth:customer')->prefix('customer')->group(function(){
     //customer complain
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintCustomer');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintCustomer');
+    Route::post('/complaint-reject', 'Api\ComplainController@rejectComplaint');
     Route::post('/complaint-close', 'Api\ComplainController@closeComplaint');
     Route::get('/get-projects', 'Api\ComplainController@getProjectListCustomer');
     Route::post('/get-complaints', 'Api\ComplainController@getComplaint');
     Route::post('/get-complaint-header', 'Api\ComplainController@getComplaintHeader');
     Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
+
+    Route::post('/get-complaint-count', 'Api\ComplainController@getComplaintCount');
 });
 
 

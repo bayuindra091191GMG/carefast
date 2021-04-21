@@ -803,6 +803,51 @@ class ComplainController extends Controller
         }
     }
 
+    public function getComplaintCount(Request $request){
+        try{
+            if(empty($request->input('project_id'))){
+                return response()->json("Bad Request", 400);
+            }
+
+            $projectId = $request->input('project_id');
+            $pendingCount = DB::table('complaints')
+                ->select('id')
+                ->where('status_id', 10)
+                ->where('project_id', $projectId)
+                ->count();
+            $progressCount = DB::table('complaints')
+                ->select('id')
+                ->where('status_id', 11)
+                ->orWhere('status_id', 9)
+                ->where('project_id', $projectId)
+                ->count();
+            $doneCount = DB::table('complaints')
+                ->select('id')
+                ->where('status_id', 8)
+                ->where('project_id', $projectId)
+                ->count();
+            $closeCount = DB::table('complaints')
+                ->select('id')
+                ->where('status_id', 12)
+                ->where('project_id', $projectId)
+                ->count();
+
+            $returnModel = collect([
+                'pending_count'         => $pendingCount,
+                'progress_count'        => $progressCount,
+                'done_count'            => $doneCount,
+                'close_count'           => $closeCount,
+            ]);
+
+
+            return Response::json($returnModel, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getComplaintDetail error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
     public function getComplaintHeader(Request $request){
         try{
             if(empty($request->input('complaint_id'))){
@@ -902,6 +947,34 @@ class ComplainController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - getComplaintDetail error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function rejectComplaint(Request $request){
+        try{
+            if(!$request->filled('complaint_id')){
+                return response()->json("Complaint harus terisi", 400);
+            }
+
+
+            $user = auth('customer')->user();
+            $customer = Customer::find($user->id);
+
+            $customerComplaint =  Complaint::find($request->input('complaint_id'));
+            if(empty($customerComplaint)){
+                return Response::json("Complaint tidak ditemukan", 482);
+            }
+            if($customer->id != $customerComplaint->customer_id){
+                return Response::json("Anda tidak dapat reject complaint ini", 482);
+            }
+            $customerComplaint->status_id = 9;
+            $customerComplaint->save();
+
+            return Response::json("Berhasil menutup complaint", 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - closeComplaint error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

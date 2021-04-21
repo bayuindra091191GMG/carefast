@@ -43,7 +43,8 @@ class ComplaintEscalationCron extends Command
     public function handle()
     {
         try{
-            $complaintDBs = Complaint::whereIn('status_id', [10, 11])->get();
+//            $complaintDBs = Complaint::whereIn('status_id', [10, 11])->get();
+            $complaintDBs = Complaint::where('status_id', 10)->get();
             $temp = Carbon::now('Asia/Jakarta');
             $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
 

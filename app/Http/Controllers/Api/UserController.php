@@ -15,6 +15,7 @@ use App\Notifications\FCMNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -611,6 +612,42 @@ class UserController extends Controller
             Log::error("Api/UserController - setAddress error: ". $ex);
             return Response::json([
                 'error'   => $ex,
+            ], 500);
+        }
+    }
+
+    /**
+     * Function to save user token.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function changePassword(Request $request)
+    {
+        try{
+            $user = auth('api')->user();
+
+            $userDB = User::find($user->id);
+
+            if($request->input('new_password') == $request->input('retype_password')){
+                $userDB->password = Hash::make($request->input('new_password'));
+                $userDB->updated_at = Carbon::now('Asia/Jakarta');
+                $userDB->save();
+
+                return Response::json([
+                    'message' => "Success Change Customer Password!",
+                ], 200);
+            }
+            return Response::json([
+                'message' => "Password and Retype Password not match!",
+            ], 500);
+
+        }
+        catch(\Exception $ex){
+            Log::error('Api/CustomerController - changePassword error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
             ], 500);
         }
     }
