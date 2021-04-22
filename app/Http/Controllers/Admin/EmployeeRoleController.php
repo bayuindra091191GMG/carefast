@@ -13,6 +13,7 @@ use App\Transformer\EmployeeRoleTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -197,11 +198,21 @@ class EmployeeRoleController extends Controller
     public function destroy(Request $request){
         try{
             $deletedId = $request->input('id');
-            $employeeRole = EmployeeRole::find($deletedId);
-            $employeeRole->status_id = 2;
-            $employeeRole->save();
 
-            Session::flash('success', 'Sukses mengganti status employee!');
+            if(DB::table('employees')->where('employee_role_id', $deletedId)->count() > 0){
+                $employeeDB = DB::table('employees')->select('code', 'first_name')->where('employee_role_id', $deletedId)->get();
+                $stringEmployee = "";
+                foreach ($employeeDB as $employee){
+                    $stringEmployee .= $employee->first_name."(".$employee->code."), ";
+                }
+                Session::flash('error', 'Jabatan masih digunakan oleh employee '.$stringEmployee);
+                return Response::json(array('errors' => 'INVALID'));
+            }
+            $employeeRole = EmployeeRole::find($deletedId);
+//            $employeeRole->status_id = 2;
+            $employeeRole->delete();
+
+            Session::flash('success', 'Sukses menghapus jabatan!');
             return Response::json(array('success' => 'VALID'));
         }
         catch(\Exception $ex){

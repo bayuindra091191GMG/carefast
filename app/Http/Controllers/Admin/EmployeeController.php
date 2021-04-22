@@ -97,7 +97,7 @@ class EmployeeController extends Controller
 
     public function create(){
         try{
-            $employeeRoles = EmployeeRole::where('id', '>', 3)->where('id', '!=', 9)->where('id', '!=', 10)->get();
+            $employeeRoles = EmployeeRole::where('id', '>', 2)->where('id', '!=', 9)->where('id', '!=', 10)->get();
 
             return view('admin.employee.create', compact('employeeRoles'));
         }
@@ -212,10 +212,12 @@ class EmployeeController extends Controller
             ->where('employee_id', $id)
             ->where('status_id', 1)
             ->first();
+        $employeeRoles = EmployeeRole::where('id', '>', 2)->where('id', '!=', 9)->where('id', '!=', 10)->get();
 
         $data = [
             'employee'          => $employee,
             'currentProject'    => $currentProject,
+            'employeeRoles'    => $employeeRoles,
             'email'             => $user->email
         ];
 

@@ -84,6 +84,5 @@
             $('#deleted-id').val($(this).data('id'));
         });
 </script>
-@include('partials._deletejs', ['routeUrl' => 'admin.employee_role.destroy', 'redirectUrl' =>
-'admin.employee_role.index'])
+@include('partials._deletejs', ['routeUrl' => 'admin.employee_role.destroy', 'redirectUrl' => 'admin.employee_role.index'])
 @endsection

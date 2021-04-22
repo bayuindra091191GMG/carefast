@@ -208,6 +208,24 @@
                                         </div>
                                     </div>
 
+                                    @if($employee->employee_role_id > 1)
+                                        <div class="col-md-12">
+                                            <div class="form-group form-float form-group-lg">
+                                                <div class="form-line">
+                                                    <label class="form-label" for="role">Role/Posisi</label>
+                                                    <select id="role" class="form-control" name="role">
+                                                        <option value="-1"> - Pilih Role - </option>
+                                                        @foreach($employeeRoles as $role)
+                                                            <option value="{{ $role->id }}" @if($employee->employee_role_id === $role->id) selected @endif>
+                                                                {{ $role->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
                                     <div class="col-md-12">
                                         <div class="form-group form-float form-group-lg">
                                             <div class="form-line">

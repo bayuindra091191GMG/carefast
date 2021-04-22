@@ -17,7 +17,7 @@ class EmployeeRoleTransformer extends TransformerAbstract
             $employeeRoleEditUrl = route('admin.employee_role.edit', ['id' => $employeeRole->id]);
 
             $action = "<a class='btn btn-xs btn-info' href='".$employeeRoleEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a> ";
-            $action .= "<a class='btn btn-xs btn-danger' data-id='". $employeeRole->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
+            $action .= "<a class='btn btn-xs btn-danger delete-modal' data-id='". $employeeRole->id ."' ><i class='fas fa-trash-alt text-white'></i></a>";
 
             return[
                 'name'        => $employeeRole->name,
