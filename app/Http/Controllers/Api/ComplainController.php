@@ -10,6 +10,8 @@ use App\Models\Complaint;
 use App\Models\ComplaintCategory;
 use App\Models\ComplaintDetail;
 use App\Models\ComplaintHeaderImage;
+use App\Models\ComplaintReject;
+use App\Models\ComplaintRejectImage;
 use App\Models\Employee;
 use App\Models\Customer;
 use App\Models\Project;
@@ -253,8 +255,8 @@ class ComplainController extends Controller
                 'updated_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
             ]);
 
+            $complaint = Complaint::find($data->complaint_id);
             if($request->hasFile('image')){
-                $complaint = Complaint::find($data->complaint_id);
 
                 $imageFolder = str_replace('/','-', $complaint->code);
                 $publicPath = 'storage/complaints/'. $imageFolder;
@@ -286,7 +288,6 @@ class ComplainController extends Controller
                 'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
             ]);
 
-            $complaint = Complaint::find($data->complaint_id);
             //Send notification to
             //Employee
             $title = "ICare";
@@ -504,6 +505,9 @@ class ComplainController extends Controller
 
             $complaint = Complaint::find($data->complaint_id);
             $complaint->status_id = 11;
+            $complaint->employee_handler_id = $employee->id;
+            $complaint->updated_by = $user->id;
+            $complaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $complaint->response_limit_date = $datetimenow;
             $complaint->save();
 
@@ -637,6 +641,27 @@ class ComplainController extends Controller
                     $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
                     $complaintImages->push($complaintImage);
                 }
+                //get complaint reject
+                $rejectModels = collect();
+                if(count($customerComplaints->complaint_rejects) > 0){
+                    $messageImage = empty($customerComplaints->complaint_rejects->image) ? null : asset('storage/complaints/'. $customerComplaints->complaint_rejects->image);
+                    $complaintRejectModel = ([
+//                        'customer_id'       => $customerComplaints->complaint_rejects->customer_id,
+//                        'customer_name'     => $customerComplaints->complaint_rejects->customer->name,
+//                        'customer_avatar'   => asset('storage/customers/'. $customerComplaints->complaint_rejects->customer->image_path),
+//                        'employee_id'       => null,
+//                        'employee_name'     => "",
+//                        'employee_avatar'   => "",
+//                        'date'              => Carbon::parse($customerComplaints->complaint_rejects->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                        'message'           => $customerComplaints->complaint_rejects->message,
+                        'image'             => $messageImage,
+                    ]);
+                    $rejectModels->push($complaintRejectModel);
+                }
+                $lastComplaintDetail = ComplaintDetail::where('complaint_id', $customerComplaint->id)
+                    ->where('employee_id', "!=", null)
+                    ->orderBy('created_at')
+                    ->first();
                 $customerComplaintModel = collect([
                     'id'                    => $customerComplaint->id,
 //                    'category_id'           => $customerComplaint->complaint_categories->description,
@@ -645,12 +670,14 @@ class ComplainController extends Controller
                     'code'                  => $customerComplaint->code,
                     'customer_id'           => $customerComplaint->customer_id,
                     'employee_id'           => $customerComplaint->employee_id,
-                    'employee_handler_id'   => $customerComplaint->employee_handler_id,
+                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id." ".$lastComplaintDetail->employee->id : "0" ,
+                    'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->first_name." ".$lastComplaintDetail->employee->last_name : "" ,
                     'customer_name'         => $customerComplaint->customer_name,
                     'subject'               => $customerComplaint->subject,
                     'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                     'status_id'             => $customerComplaint->status_id,
-                    'images'                 => $complaintImages
+                    'images'                => $complaintImages,
+                    'reject_models'         => $rejectModels,
                 ]);
                 $complaintModels->push($customerComplaintModel);
             }
@@ -718,6 +745,23 @@ class ComplainController extends Controller
                 foreach ($complaintImageDBs as $complaintImageDB){
                     $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
                     $complaintImages->push($complaintImage);
+                }
+                //get complaint reject
+                $rejectModels = collect();
+                if(count($customerComplaints->complaint_rejects) > 0){
+                    $messageImage = empty($customerComplaints->complaint_rejects->image) ? null : asset('storage/complaints/'. $customerComplaints->complaint_rejects->image);
+                    $complaintRejectModel = ([
+//                        'customer_id'       => $customerComplaints->complaint_rejects->customer_id,
+//                        'customer_name'     => $customerComplaints->complaint_rejects->customer->name,
+//                        'customer_avatar'   => asset('storage/customers/'. $customerComplaints->complaint_rejects->customer->image_path),
+//                        'employee_id'       => null,
+//                        'employee_name'     => "",
+//                        'employee_avatar'   => "",
+//                        'date'              => Carbon::parse($customerComplaints->complaint_rejects->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                        'message'           => $customerComplaints->complaint_rejects->message,
+                        'image'             => $messageImage,
+                    ]);
+                    $rejectModels->push($complaintRejectModel);
                 }
                 $customerComplaintModel = collect([
                     'id'                    => $customerComplaint->id,
@@ -866,6 +910,24 @@ class ComplainController extends Controller
                 $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
                 $complaintImages->push($complaintImage);
             }
+            //get complaint reject
+            $rejectModels = collect();
+            if(count($complaint->complaint_rejects) > 0){
+                $messageImage = empty($complaint->complaint_rejects->image) ? null : asset('storage/complaints/'. $complaint->complaint_rejects->image);
+                $complaintRejectModel = ([
+                    'customer_id'       => $complaint->complaint_rejects->customer_id,
+                    'customer_name'     => $complaint->complaint_rejects->customer->name,
+                    'customer_avatar'   => asset('storage/customers/'. $complaint->complaint_rejects->customer->image_path),
+                    'employee_id'       => null,
+                    'employee_name'     => "",
+                    'employee_avatar'   => "",
+                    'message'           => $complaint->complaint_rejects->message,
+                    'image'             => $messageImage,
+                    'date'              => Carbon::parse($complaint->complaint_rejects->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                ]);
+                $rejectModels->push($complaintRejectModel);
+            }
+
             $customerComplaintModel = collect([
                 'id'                    => $complaint->id,
 //                'category_id'           => $complaint->complaint_categories->description,
@@ -879,7 +941,8 @@ class ComplainController extends Controller
                 'subject'               => $complaint->subject,
                 'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                 'status_id'             => $complaint->status_id,
-                'images'                 => $complaintImages
+                'images'                => $complaintImages,
+                'reject_models'         => $rejectModels,
             ]);
 
             return Response::json($customerComplaintModel, 200);
@@ -953,14 +1016,22 @@ class ComplainController extends Controller
 
     public function rejectComplaint(Request $request){
         try{
-            if(!$request->filled('complaint_id')){
+            $data = json_decode($request->input('complaint_reject_model'));
+
+            if(!($request->hasFile('image'))){
+                if(empty($data->message)){
+                    return response()->json("Message harus terisi", 400);
+                }
+            }
+            if(empty($data->complaint_id)){
                 return response()->json("Complaint harus terisi", 400);
             }
 
-
             $user = auth('customer')->user();
+
             $customer = Customer::find($user->id);
 
+            //ubah header menjadi on process lagi
             $customerComplaint =  Complaint::find($request->input('complaint_id'));
             if(empty($customerComplaint)){
                 return Response::json("Complaint tidak ditemukan", 482);
@@ -969,12 +1040,92 @@ class ComplainController extends Controller
                 return Response::json("Anda tidak dapat reject complaint ini", 482);
             }
             $customerComplaint->status_id = 9;
+            $customerComplaint->updated_by = $user->id;
+            $customerComplaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $customerComplaint->save();
 
-            return Response::json("Berhasil menutup complaint", 200);
+            $datetimenow = Carbon::now('Asia/Jakarta')->toDateTimeString();
+
+            //create complaint reject
+            $newComplaintDetail = ComplaintReject::create([
+                'complaint_id'        => $data->complaint_id,
+                'customer_id'         => $customer->id,
+                'employee_id'         => null,
+                'message'             => $data->message,
+                'created_by'          => $user->id,
+                'created_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_by'          => $user->id,
+                'updated_at'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+            ]);
+
+            $complaint = Complaint::find($data->complaint_id);
+            if($request->hasFile('images')){
+                $count = 1;
+                foreach($request->file('images') as $exampleImage){
+                    $imageFolder = str_replace('/','-', $complaint->code);
+//                    Log::info('imagefolder = '.$imageFolder);
+                    $publicPath = 'storage/complaints/'. $imageFolder;
+                    if(!File::isDirectory($publicPath)){
+                        File::makeDirectory(public_path($publicPath), 0777, true, true);
+                    }
+
+                    $image = $exampleImage;
+                    $avatar = Image::make($exampleImage);
+                    $extension = $image->extension();
+                    $filename = $imageFolder . '_'. $newComplaintDetail->id . '_' . $count . '_' .
+                        Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+                    $avatar->save(public_path($publicPath ."/". $filename));
+
+                    $imageComplaintHeader = ComplaintRejectImage::create([
+                        'complaint_id'  => $complaint->id,
+                        'image'         => $imageFolder."/".$filename,
+                        'created_by'    => $user->id,
+                        'created_at'    => $datetimenow->toDateTimeString(),
+                        'updated_by'    => $user->id,
+                        'updated_at'    => $datetimenow->toDateTimeString(),
+                    ]);
+                    $count++;
+
+                }
+            }
+
+            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
+            $customerComplaintDetailModel = ([
+                'customer_id'       => $newComplaintDetail->customer_id,
+                'customer_name'     => $newComplaintDetail->customer->name,
+                'customer_avatar'    => asset('storage/customers/'. $newComplaintDetail->customer->image_path),
+                'employee_id'       => null,
+                'employee_name'     => "",
+                'employee_avatar'    => "",
+                'message'           => $newComplaintDetail->message,
+                'image'             => $messageImage,
+                'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+            ]);
+
+            //Send notification to
+            //Employee
+            $title = "ICare";
+            $body = "Customer reject complaint ".$complaint->subject;
+            $data = array(
+                "type_id" => 303,
+                "complaint_id" => $complaint->id,
+                "complaint_detail_model" => $customerComplaintDetailModel,
+            );
+            //Push Notification to employee App.
+            $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
+                ->where('employee_roles_id', $complaint->employee_handler_role_id)
+                ->get();
+            if($ProjectEmployees->count() >= 0){
+                foreach ($ProjectEmployees as $ProjectEmployee){
+                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                }
+            }
+
+            return Response::json("Berhasil reject complaint", 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/ComplainController - closeComplaint error EX: '. $ex);
+            Log::error('Api/ComplainController - rejectComplaint error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -997,6 +1148,8 @@ class ComplainController extends Controller
                 return Response::json("Anda tidak dapat menutup complaint ini", 482);
             }
             $customerComplaint->status_id = 12;
+            $customerComplaint->updated_by = $user->id;
+            $customerComplaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $customerComplaint->save();
 
             return Response::json("Berhasil menutup complaint", 200);
@@ -1025,12 +1178,44 @@ class ComplainController extends Controller
                 return Response::json("Anda tidak dapat menutup complaint", 482);
             }
             $employeeComplaint->status_id = 12;
+            $employeeComplaint->updated_by = $user->id;
+            $employeeComplaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $employeeComplaint->save();
 
             return Response::json("Berhasil menutup complaint ini", 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - closeComplaint error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function doneComplaint(Request $request){
+        try{
+            if(!$request->filled('complaint_id')){
+                return response()->json("Complaint harus terisi", 400);
+            }
+
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $employeeComplaint =  Complaint::find($request->input('complaint_id'));
+            if(empty($employeeComplaint)){
+                return Response::json("Complaint tidak ditemukan", 482);
+            }
+//            if($employee->id != $employeeComplaint->employee_id){
+//                return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
+//            }
+            $employeeComplaint->status_id = 8;
+            $employeeComplaint->updated_by = $user->id;
+            $employeeComplaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $employeeComplaint->save();
+
+            return Response::json("Berhasil menyelesaikan complaint ini", 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - doneComplaint error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
