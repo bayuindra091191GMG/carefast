@@ -16,6 +16,7 @@ use App\Models\Employee;
 use App\Models\Customer;
 use App\Models\Project;
 use App\Models\ProjectEmployee;
+use App\Models\ProjectObject;
 use App\Models\User;
 use App\Notifications\FCMNotification;
 use Carbon\Carbon;
@@ -743,8 +744,8 @@ class ComplainController extends Controller
                 }
                 //get complaint reject
                 $rejectModels = collect();
-                if(count($customerComplaints->complaint_rejects) > 0){
-                    $messageImage = empty($customerComplaints->complaint_rejects->image) ? null : asset('storage/complaints/'. $customerComplaints->complaint_rejects->image);
+                if(count($customerComplaint->complaint_rejects) > 0){
+                    $messageImage = empty($customerComplaint->complaint_rejects->image) ? null : asset('storage/complaints/'. $customerComplaint->complaint_rejects->image);
                     $complaintRejectModel = ([
 //                        'customer_id'       => $customerComplaints->complaint_rejects->customer_id,
 //                        'customer_name'     => $customerComplaints->complaint_rejects->customer->name,
@@ -753,15 +754,29 @@ class ComplainController extends Controller
 //                        'employee_name'     => "",
 //                        'employee_avatar'   => "",
 //                        'date'              => Carbon::parse($customerComplaints->complaint_rejects->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                        'message'           => $customerComplaints->complaint_rejects->message,
+                        'message'           => $customerComplaint->complaint_rejects->message,
                         'image'             => $messageImage,
                     ]);
                     $rejectModels->push($complaintRejectModel);
                 }
+                //get last employee reply
                 $lastComplaintDetail = ComplaintDetail::where('complaint_id', $customerComplaint->id)
                     ->where('employee_id', "!=", null)
                     ->orderBy('created_at')
                     ->first();
+
+                //get project's location (from project_objects tables)
+                $locationModels = collect();
+                $locationDB = ProjectObject::where('project_id', $customerComplaint->project_id)
+                    ->where('status_id', 1)
+                    ->get();
+                if(count($locationDB) > 0){
+                    foreach ($locationDB as $location){
+                        $locationModel = $location->place_name. " - ".$location->unit_name;
+                        $locationModels->push($locationModel);
+                    }
+                }
+
                 $customerComplaintModel = collect([
                     'id'                    => $customerComplaint->id,
 //                    'category_id'           => $customerComplaint->complaint_categories->description,
@@ -778,6 +793,7 @@ class ComplainController extends Controller
                     'status_id'             => $customerComplaint->status_id,
                     'images'                => $complaintImages,
                     'reject_models'         => $rejectModels,
+                    'locations'              => $locationModels,
                 ]);
                 $complaintModels->push($customerComplaintModel);
             }
@@ -929,8 +945,8 @@ class ComplainController extends Controller
                 }
                 //get complaint reject
                 $rejectModels = collect();
-                if(count($customerComplaints->complaint_rejects) > 0){
-                    $messageImage = empty($customerComplaints->complaint_rejects->image) ? null : asset('storage/complaints/'. $customerComplaints->complaint_rejects->image);
+                if(count($customerComplaint->complaint_rejects) > 0){
+                    $messageImage = empty($customerComplaint->complaint_rejects->image) ? null : asset('storage/complaints/'. $customerComplaint->complaint_rejects->image);
                     $complaintRejectModel = ([
 //                        'customer_id'       => $customerComplaints->complaint_rejects->customer_id,
 //                        'customer_name'     => $customerComplaints->complaint_rejects->customer->name,
@@ -939,10 +955,22 @@ class ComplainController extends Controller
 //                        'employee_name'     => "",
 //                        'employee_avatar'   => "",
 //                        'date'              => Carbon::parse($customerComplaints->complaint_rejects->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                        'message'           => $customerComplaints->complaint_rejects->message,
+                        'message'           => $customerComplaint->complaint_rejects->message,
                         'image'             => $messageImage,
                     ]);
                     $rejectModels->push($complaintRejectModel);
+                }
+
+                //get project's location (from project_objects tables)
+                $locationModels = collect();
+                $locationDB = ProjectObject::where('project_id', $customerComplaint->project_id)
+                    ->where('status_id', 1)
+                    ->get();
+                if(count($locationDB) > 0){
+                    foreach ($locationDB as $location){
+                        $locationModel = $location->place_name. " - ".$location->unit_name;
+                        $locationModels->push($locationModel);
+                    }
                 }
                 $customerComplaintModel = collect([
                     'id'                    => $customerComplaint->id,
@@ -959,6 +987,7 @@ class ComplainController extends Controller
                     'status_id'             => $customerComplaint->status_id,
                     'images'                 => $complaintImages,
                     'reject_models'         => $rejectModels,
+                    'locations'              => $locationModels,
                 ]);
                 $complaintModels->push($customerComplaintModel);
             }
@@ -966,6 +995,33 @@ class ComplainController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - getComplaintEmployeeV2 error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function getProjectLocations(Request $request){
+        try{
+            $user = auth('customer')->user();
+
+            if(empty($request->input('project_id'))){
+                return response()->json("Bad Request", 400);
+            }
+
+            $locationModels = collect();
+            $locationDB = ProjectObject::where('project_id', $request->input('project_id'))
+                ->where('status_id', 1)
+                ->get();
+            if(count($locationDB) > 0){
+                foreach ($locationDB as $location){
+                    $locationModel = $location->place_name. " - ".$location->unit_name;
+                    $locationModels->push($locationModel);
+                }
+            }
+
+            return Response::json($locationModels, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getProjectLocations error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -1110,6 +1166,18 @@ class ComplainController extends Controller
                 $rejectModels->push($complaintRejectModel);
             }
 
+            //get project's location (from project_objects tables)
+            $locationModels = collect();
+            $locationDB = ProjectObject::where('project_id', $complaint->project_id)
+                ->where('status_id', 1)
+                ->get();
+            if(count($locationDB) > 0){
+                foreach ($locationDB as $location){
+                    $locationModel = $location->place_name. " - ".$location->unit_name;
+                    $locationModels->push($locationModel);
+                }
+            }
+
             $customerComplaintModel = collect([
                 'id'                    => $complaint->id,
 //                'category_id'           => $complaint->complaint_categories->description,
@@ -1125,6 +1193,7 @@ class ComplainController extends Controller
                 'status_id'             => $complaint->status_id,
                 'images'                => $complaintImages,
                 'reject_models'         => $rejectModels,
+                'locations'              => $locationModels,
             ]);
 
             return Response::json($customerComplaintModel, 200);

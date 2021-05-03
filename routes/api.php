@@ -122,6 +122,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/get-complaint-header-v2', 'Api\ComplainController@getComplaintHeaderV2');
     Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
     Route::get('/get-projects', 'Api\ComplainController@getProjectListEmployee');
+    Route::post('/get-project-locations', 'Api\ComplainController@getProjectLocations');
     Route::post('/complaint-done', 'Api\ComplainController@doneComplaint');
     Route::post('/complaint-close', 'Api\ComplainController@closeComplaintEmployee');
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintEmployee');
@@ -150,6 +151,7 @@ Route::middleware('auth:customer')->prefix('customer')->group(function(){
     Route::post('/complaint-reject', 'Api\ComplainController@rejectComplaint');
     Route::post('/complaint-close', 'Api\ComplainController@closeComplaint');
     Route::get('/get-projects', 'Api\ComplainController@getProjectListCustomer');
+    Route::post('/get-project-locations', 'Api\ComplainController@getProjectLocations');
     Route::post('/get-complaints', 'Api\ComplainController@getComplaint');
     Route::post('/get-complaints-v2', 'Api\ComplainController@getComplaintV2');
     Route::post('/get-complaint-header', 'Api\ComplainController@getComplaintHeader');
