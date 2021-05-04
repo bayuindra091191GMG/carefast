@@ -685,21 +685,18 @@ class ComplainController extends Controller
                 $projectDB = Project::where('customer_id', 'like', $customer->id.'#%')->get();
             }
             $customerString = "";
-            $projectArr = [];
-            foreach ($projectDB as $project){
-                array_push($projectArr, $project->id);
-                $customerString .= $project->customer_id;
-            }
+//            $projectArr = [];
+//            foreach ($projectDB as $project){
+//                array_push($projectArr, $project->id);
+//                $customerString .= $project->customer_id;
+//            }
             $customerArr = explode('#', $customerString);
 
             $skip = intval($request->input('skip'));
             $statusId = intval($request->input('complaint_status'));
             $orderingType = $request->input('ordering_type');
             $categoryId = $request->input('category_id');
-
-//            Log::info('skip: '. $skip);
-//            Log::info('order_status: '. $statusId);
-//            Log::info('ordering_type: '. $orderingType);
+            $projectId = $request->input('project_id');
 
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
 //            if($categoryId != 0){
@@ -709,10 +706,10 @@ class ComplainController extends Controller
 //                $customerComplaints =  Complaint::where('customer_id', $customer->id);
 //            }
             if($categoryId != 0){
-                $customerComplaints =  Complaint::whereIn('project_id', $projectArr)->where('category_id', $categoryId);
+                $customerComplaints =  Complaint::where('project_id', $projectId)->where('category_id', $categoryId);
             }
             else{
-                $customerComplaints =  Complaint::whereIn('project_id', $projectArr);
+                $customerComplaints =  Complaint::where('project_id', $projectId);
             }
             if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
@@ -785,7 +782,7 @@ class ComplainController extends Controller
                     'code'                  => $customerComplaint->code,
                     'customer_id'           => $customerComplaint->customer_id,
                     'employee_id'           => $customerComplaint->employee_id,
-                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id." ".$lastComplaintDetail->employee->id : "0" ,
+                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id : "0" ,
                     'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->first_name." ".$lastComplaintDetail->employee->last_name : "" ,
                     'customer_name'         => $customerComplaint->customer_name,
                     'subject'               => $customerComplaint->subject,
@@ -893,25 +890,26 @@ class ComplainController extends Controller
             $employee = $user->employee;
             $employeeLoginRoleId = $user->employee_role_id;
 
-            $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
-                ->get();
-            $ids = collect();
-            foreach ($employeeDB as $employee){
-                $ids->push($employee->project_id);
-            }
+//            $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
+//                ->get();
+//            $ids = collect();
+//            foreach ($employeeDB as $employee){
+//                $ids->push($employee->project_id);
+//            }
 
             $skip = intval($request->input('skip'));
             $statusId = intval($request->input('complaint_status'));
             $orderingType = $request->input('ordering_type');
             $categoryId = $request->input('category_id');
+            $projectId = $request->input('project_id');
 
             if($categoryId != 0){
-                $customerComplaints =  Complaint::whereIn('project_id', $ids)
+                $customerComplaints =  Complaint::where('project_id', $projectId)
                     ->where('employee_handler_role_id', $employeeLoginRoleId)
                     ->where('category_id', $categoryId);
             }
             else{
-                $customerComplaints =  Complaint::whereIn('project_id', $ids)
+                $customerComplaints =  Complaint::where('project_id', $projectId)
                     ->where('employee_handler_role_id', $employeeLoginRoleId);
             }
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
@@ -960,6 +958,11 @@ class ComplainController extends Controller
                     ]);
                     $rejectModels->push($complaintRejectModel);
                 }
+                //get last employee reply
+                $lastComplaintDetail = ComplaintDetail::where('complaint_id', $customerComplaint->id)
+                    ->where('employee_id', "!=", null)
+                    ->orderBy('created_at')
+                    ->first();
 
                 //get project's location (from project_objects tables)
                 $locationModels = collect();
@@ -980,7 +983,8 @@ class ComplainController extends Controller
                     'code'                  => $customerComplaint->code,
                     'customer_id'           => $customerComplaint->customer_id,
                     'employee_id'           => $customerComplaint->employee_id,
-                    'employee_handler_id'   => $customerComplaint->employee_handler_id,
+                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id : "0" ,
+                    'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->first_name." ".$lastComplaintDetail->employee->last_name : "" ,
                     'customer_name'         => $customerComplaint->customer_name,
                     'subject'               => $customerComplaint->subject,
                     'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
