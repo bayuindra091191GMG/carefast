@@ -685,11 +685,11 @@ class ComplainController extends Controller
                 $projectDB = Project::where('customer_id', 'like', $customer->id.'#%')->get();
             }
             $customerString = "";
-//            $projectArr = [];
-//            foreach ($projectDB as $project){
-//                array_push($projectArr, $project->id);
-//                $customerString .= $project->customer_id;
-//            }
+            $projectArr = [];
+            foreach ($projectDB as $project){
+                array_push($projectArr, $project->id);
+                $customerString .= $project->customer_id;
+            }
             $customerArr = explode('#', $customerString);
 
             $skip = intval($request->input('skip'));
@@ -705,11 +705,14 @@ class ComplainController extends Controller
 //            else{
 //                $customerComplaints =  Complaint::where('customer_id', $customer->id);
 //            }
-            if($categoryId != 0){
-                $customerComplaints =  Complaint::where('project_id', $projectId)->where('category_id', $categoryId);
+            if($projectId != 0){
+                $customerComplaints =  Complaint::where('project_id', $projectId);
             }
             else{
-                $customerComplaints =  Complaint::where('project_id', $projectId);
+                $customerComplaints =  Complaint::whereIn('project_id', $projectArr);
+            }
+            if($categoryId != 0){
+                $customerComplaints =  $customerComplaints->where('category_id', $categoryId);
             }
             if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
@@ -890,12 +893,12 @@ class ComplainController extends Controller
             $employee = $user->employee;
             $employeeLoginRoleId = $user->employee_role_id;
 
-//            $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
-//                ->get();
-//            $ids = collect();
-//            foreach ($employeeDB as $employee){
-//                $ids->push($employee->project_id);
-//            }
+            $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
+                ->get();
+            $ids = collect();
+            foreach ($employeeDB as $employee){
+                $ids->push($employee->project_id);
+            }
 
             $skip = intval($request->input('skip'));
             $statusId = intval($request->input('complaint_status'));
@@ -903,17 +906,19 @@ class ComplainController extends Controller
             $categoryId = $request->input('category_id');
             $projectId = $request->input('project_id');
 
-            if($categoryId != 0){
+            if($projectId != 0){
                 $customerComplaints =  Complaint::where('project_id', $projectId)
-                    ->where('employee_handler_role_id', $employeeLoginRoleId)
-                    ->where('category_id', $categoryId);
+                    ->where('employee_handler_role_id', $employeeLoginRoleId);
             }
             else{
-                $customerComplaints =  Complaint::where('project_id', $projectId)
+                $customerComplaints =  Complaint::whereIn('project_id', $ids)
                     ->where('employee_handler_role_id', $employeeLoginRoleId);
             }
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
 //            $customerComplaints =  Complaint::whereIn('project_id', $ids);
+            if($categoryId != 0){
+                $customerComplaints =  $customerComplaints->where('category_id', $categoryId);
+            }
             if($statusId != 0) {
                 $customerComplaints = $customerComplaints->where('status_id', $statusId);
             }
