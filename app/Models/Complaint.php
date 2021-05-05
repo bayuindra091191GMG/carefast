@@ -23,6 +23,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $employee_handler_role_id
  * @property string $customer_name
  * @property string $subject
+ * @property string $location
  * @property int $status_id
  * @property \Carbon\Carbon $date
  * @property \Carbon\Carbon $response_limit_date
@@ -73,6 +74,7 @@ class Complaint extends Eloquent
 		'employee_handler_role_id',
 		'customer_name',
 		'subject',
+		'location',
 		'date',
 		'status_id',
 		'response_limit_date',

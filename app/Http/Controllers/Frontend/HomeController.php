@@ -73,6 +73,39 @@ class HomeController extends Controller
 
     public function testingFunction(){
         try{
+
+
+            $skip = 0;
+            $statusId = 11;
+            $orderingType = 'desc';
+            $categoryId = 0;
+            $projectId = 1;
+
+//            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
+//            if($categoryId != 0){
+//                $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
+//            }
+//            else{
+//                $customerComplaints =  Complaint::where('customer_id', $customer->id);
+//            }
+            if($projectId != 0){
+                $customerComplaints =  Complaint::where('project_id', $projectId);
+            }
+
+            if($categoryId != 0){
+                $customerComplaints =  $customerComplaints->where('category_id', $categoryId);
+            }
+//            if($statusId != 0) {
+//                $customerComplaints = $customerComplaints->where('status_id', $statusId);
+//            }
+
+            $customerComplaints = $customerComplaints
+                ->orderBy('date', $orderingType)
+                ->skip($skip)
+                ->limit(10)
+                ->get();
+            dd($customerComplaints);
+
             //add pak charles, akiong dan zul ke semua project
             // 9094=charles, role= 8 | 9098=akiong, role= 7 | 9097=zul, role= 7
 

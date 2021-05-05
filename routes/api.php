@@ -126,6 +126,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/complaint-done', 'Api\ComplainController@doneComplaint');
     Route::post('/complaint-close', 'Api\ComplainController@closeComplaintEmployee');
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintEmployee');
+    Route::post('/complaint-create-v2', 'Api\ComplainController@createComplaintEmployeeV2');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintEmployee');
 
     Route::post('/get-complaint-count', 'Api\ComplainController@getComplaintCount');
@@ -147,6 +148,7 @@ Route::middleware('auth:customer')->prefix('customer')->group(function(){
 
     //customer complain
     Route::post('/complaint-create', 'Api\ComplainController@createComplaintCustomer');
+    Route::post('/complaint-create-v2', 'Api\ComplainController@createComplaintCustomerV2');
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintCustomer');
     Route::post('/complaint-reject', 'Api\ComplainController@rejectComplaint');
     Route::post('/complaint-close', 'Api\ComplainController@closeComplaint');
