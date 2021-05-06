@@ -346,10 +346,10 @@ class ComplainController extends Controller
             $customerComplaintDetailModel = ([
                 'customer_id'       => $newComplaintDetail->customer_id,
                 'customer_name'     => $newComplaintDetail->customer->name,
-                'customer_avatar'    => asset('storage/customers/'. $newComplaintDetail->customer->image_path),
+                'customer_avatar'   => asset('storage/customers/'. $newComplaintDetail->customer->image_path),
                 'employee_id'       => null,
                 'employee_name'     => "",
-                'employee_avatar'    => "",
+                'employee_avatar'   => "",
                 'message'           => $newComplaintDetail->message,
                 'image'             => $messageImage,
                 'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
@@ -1351,7 +1351,8 @@ class ComplainController extends Controller
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
-            $employeeLoginRoleId = $user->employee_role_id;
+            $employeeLoginRoleId = $user->employee->employee_role_id;
+
 
             $employeeDB = ProjectEmployee::where('employee_id', $employee->id)
                 ->get();
@@ -1367,14 +1368,12 @@ class ComplainController extends Controller
             $projectId = intval($request->input('project_id'));
 
             if($projectId != 0){
-                $customerComplaints =  Complaint::where('project_id', $projectId);
-//                $customerComplaints =  Complaint::where('project_id', $projectId)
-//                    ->where('employee_handler_role_id', $employeeLoginRoleId);
+                $customerComplaints =  Complaint::where('project_id', $projectId)
+                    ->where('employee_handler_role_id', $employeeLoginRoleId);
             }
             else{
-//                $customerComplaints =  Complaint::whereIn('project_id', $ids)
-//                    ->where('employee_handler_role_id', $employeeLoginRoleId);
-                $customerComplaints =  Complaint::whereIn('project_id', $ids);
+                $customerComplaints =  Complaint::whereIn('project_id', $ids)
+                    ->where('employee_handler_role_id', $employeeLoginRoleId);
             }
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
 //            $customerComplaints =  Complaint::whereIn('project_id', $ids);
