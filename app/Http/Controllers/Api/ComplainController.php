@@ -1366,11 +1366,13 @@ class ComplainController extends Controller
 
             if($projectId != 0){
                 $customerComplaints =  Complaint::where('project_id', $projectId);
+//                $customerComplaints =  Complaint::where('project_id', $projectId)
 //                    ->where('employee_handler_role_id', $employeeLoginRoleId);
             }
             else{
-                $customerComplaints =  Complaint::whereIn('project_id', $ids);
+//                $customerComplaints =  Complaint::whereIn('project_id', $ids)
 //                    ->where('employee_handler_role_id', $employeeLoginRoleId);
+                $customerComplaints =  Complaint::whereIn('project_id', $ids);
             }
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
 //            $customerComplaints =  Complaint::whereIn('project_id', $ids);
@@ -1795,6 +1797,123 @@ class ComplainController extends Controller
         }
     }
 
+    public function getComplaintDetailV2(Request $request){
+        try{
+            if(empty($request->input('complaint_id'))){
+                return response()->json("Bad Request", 400);
+            }
+            //get complaint header, reject, finish
+
+
+            //get complaint details
+            $complaintDetails =  ComplaintDetail::where('complaint_id', $request->input('complaint_id'));
+            $complaintDetailModels = collect();
+
+            $complaintDetails = $complaintDetails
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            if($complaintDetails->count() == 0){
+                return Response::json($complaintDetailModels, 200);
+            }
+            else{
+                foreach($complaintDetails as $customerComplaintDetail){
+                    if(empty($customerComplaintDetail->customer_id)){
+                        $messageImage = empty($customerComplaintDetail->image) ? null : asset('storage/complaints/'. $customerComplaintDetail->image);
+                        $customerComplaintDetailModel = ([
+                            'customer_id'       => null,
+                            'customer_name'     => "",
+                            'customer_avatar'   => "",
+                            'employee_id'       => $customerComplaintDetail->employee_id,
+                            'employee_name'     => $customerComplaintDetail->employee->first_name." ".$customerComplaintDetail->employee->last_name,
+                            'employee_avatar'   => asset('storage/employees/'. $customerComplaintDetail->employee->image_path),
+                            'message'           => $customerComplaintDetail->message,
+                            'image'             => $messageImage,
+                            'date'              => Carbon::parse($customerComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                        ]);
+                    }
+                    else{
+                            $messageImage = empty($customerComplaintDetail->image) ? null : asset('storage/complaints/'. $customerComplaintDetail->image);
+                            $customerComplaintDetailModel = ([
+                                'customer_id'       => $customerComplaintDetail->customer_id,
+                                'customer_name'     => $customerComplaintDetail->customer->name,
+                                'customer_avatar'   => asset('storage/customers/'. $customerComplaintDetail->customer->image_path),
+                                'employee_id'       => null,
+                                'employee_name'     => "",
+                                'employee_avatar'   => "",
+                                'message'           => $customerComplaintDetail->message,
+                                'image'             => $messageImage,
+                                'date'              => Carbon::parse($customerComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                            ]);
+                    }
+                    $complaintDetailModels->push($customerComplaintDetailModel);
+                }
+            }
+
+            return Response::json($complaintDetailModels, 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getComplaintDetail error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function processComplaint(Request $request){
+        try{
+            if(!$request->filled('complaint_id')){
+                return response()->json("Complaint harus terisi", 400);
+            }
+
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $complaint =  Complaint::find($request->input('complaint_id'));
+            if(empty($complaint)){
+                return Response::json("Complaint tidak ditemukan", 482);
+            }
+//            if($employee->id != $employeeComplaint->employee_id){
+//                return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
+//            }
+            $complaint->employee_handler_id = $employee->id;
+            $complaint->status_id = 11;
+            $complaint->updated_by = $user->id;
+            $complaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $complaint->save();
+
+            //Send notification to
+            //Customer
+            $messageImage = empty($complaint->image) ? null : asset('storage/complaints/'. $complaint->image);
+            $employeeComplaintDetailModel = ([
+                'customer_id'       => null,
+                'customer_name'     => "",
+                'customer_avatar'    => "",
+                'employee_id'       => $complaint->employee_id,
+                'employee_name'     => $complaint->employee->first_name." ".$complaint->employee->last_name,
+                'employee_avatar'    => asset('storage/employees/'. $complaint->employee->image_path),
+                'message'           => $complaint->message,
+                'image'             => $messageImage,
+                'date'              => Carbon::parse($complaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+            ]);
+            $title = "ICare";
+            $body = "Employee processing complaint ".$complaint->subject;
+            $data = array(
+                "type_id" => 304,
+                "complaint_id" => $complaint->id,
+                "complaint_detail_model" => $employeeComplaintDetailModel,
+            );
+            //Push Notification to customer App.
+            if(!empty($complaint->customer_id)){
+                FCMNotification::SendNotification($complaint->customer_id, 'customer', $title, $body, $data);
+            }
+            return Response::json("Berhasil memproses complaint ini", 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - doneComplaint error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
     public function rejectComplaint(Request $request){
         try{
             $data = json_decode($request->input('complaint_reject_model'));
@@ -1978,17 +2097,43 @@ class ComplainController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            $employeeComplaint =  Complaint::find($request->input('complaint_id'));
-            if(empty($employeeComplaint)){
+            $complaint =  Complaint::find($request->input('complaint_id'));
+            if(empty($complaint)){
                 return Response::json("Complaint tidak ditemukan", 482);
             }
 //            if($employee->id != $employeeComplaint->employee_id){
 //                return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
 //            }
-            $employeeComplaint->status_id = 8;
-            $employeeComplaint->updated_by = $user->id;
-            $employeeComplaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
-            $employeeComplaint->save();
+            $complaint->status_id = 8;
+            $complaint->updated_by = $user->id;
+            $complaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+            $complaint->save();
+
+            //Send notification to
+            //Customer
+            $messageImage = empty($complaint->image) ? null : asset('storage/complaints/'. $complaint->image);
+            $employeeComplaintDetailModel = ([
+                'customer_id'       => null,
+                'customer_name'     => "",
+                'customer_avatar'    => "",
+                'employee_id'       => $complaint->employee_id,
+                'employee_name'     => $complaint->employee->first_name." ".$complaint->employee->last_name,
+                'employee_avatar'    => asset('storage/employees/'. $complaint->employee->image_path),
+                'message'           => $complaint->message,
+                'image'             => $messageImage,
+                'date'              => Carbon::parse($complaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+            ]);
+            $title = "ICare";
+            $body = "Employee finish processing complaint ".$complaint->subject;
+            $data = array(
+                "type_id" => 305,
+                "complaint_id" => $complaint->id,
+                "complaint_detail_model" => $employeeComplaintDetailModel,
+            );
+            //Push Notification to customer App.
+            if(!empty($complaint->customer_id)){
+                FCMNotification::SendNotification($complaint->customer_id, 'customer', $title, $body, $data);
+            }
 
             return Response::json("Berhasil menyelesaikan complaint ini", 200);
         }
