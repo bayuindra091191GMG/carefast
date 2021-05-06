@@ -41,6 +41,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Illuminate\Database\Eloquent\Collection $complaint_absent_histories
  * @property \Illuminate\Database\Eloquent\Collection $complaint_details
  * @property \Illuminate\Database\Eloquent\Collection $complaint_rejects
+ * @property \Illuminate\Database\Eloquent\Collection $complaint_finishs
  * @property \Illuminate\Database\Eloquent\Collection $complaint_header_images
  *
  * @package App\Models
@@ -138,6 +139,11 @@ class Complaint extends Eloquent
 	public function complaint_rejects()
 	{
 		return $this->hasMany(\App\Models\ComplaintReject::class);
+	}
+
+	public function complaint_finishs()
+	{
+		return $this->hasMany(\App\Models\ComplaintFinish::class);
 	}
 
 	public function complaint_header_images()

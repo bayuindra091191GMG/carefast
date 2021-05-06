@@ -133,7 +133,7 @@ class ComplaintEscalationCron extends Command
             return "Sukses";
         }
         catch (\Exception $ex){
-            Log::channel('cronjob')->error($ex);
+            Log::channel('cronjob')->error("Cronjob Error : ". $ex);
             return "failed";
         }
     }
