@@ -2258,13 +2258,13 @@ class ComplainController extends Controller
                     $avatar->save(public_path($publicPath ."/". $filename));
 
                     $imageComplaintHeader = ComplaintFinishImage::create([
-                        'complaint_id'  => $complaint->id,
-                        'complaint_finish_id'  => $newComplaintDetail->id,
-                        'image'         => $imageFolder."/".$filename,
-                        'created_by'    => $user->id,
-                        'created_at'    => $datetimenow->toDateTimeString(),
-                        'updated_by'    => $user->id,
-                        'updated_at'    => $datetimenow->toDateTimeString(),
+                        'complaint_id'          => $complaint->id,
+                        'complaint_finish_id'   => $newComplaintDetail->id,
+                        'image'                 => $imageFolder."/".$filename,
+                        'created_by'            => $user->id,
+                        'created_at'            => $datetimenow->toDateTimeString(),
+                        'updated_by'            => $user->id,
+                        'updated_at'            => $datetimenow->toDateTimeString(),
                     ]);
                     $count++;
                 }
