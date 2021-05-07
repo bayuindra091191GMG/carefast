@@ -1368,12 +1368,14 @@ class ComplainController extends Controller
             $projectId = intval($request->input('project_id'));
 
             if($projectId != 0){
-                $customerComplaints =  Complaint::where('project_id', $projectId)
-                    ->where('employee_handler_role_id', $employeeLoginRoleId);
+//                $customerComplaints =  Complaint::where('project_id', $projectId)
+//                    ->where('employee_handler_role_id', $employeeLoginRoleId);
+                $customerComplaints =  Complaint::where('project_id', $projectId);
             }
             else{
-                $customerComplaints =  Complaint::whereIn('project_id', $ids)
-                    ->where('employee_handler_role_id', $employeeLoginRoleId);
+//                $customerComplaints =  Complaint::whereIn('project_id', $ids)
+//                    ->where('employee_handler_role_id', $employeeLoginRoleId);
+                $customerComplaints =  Complaint::whereIn('project_id', $ids);
             }
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
 //            $customerComplaints =  Complaint::whereIn('project_id', $ids);
@@ -1798,6 +1800,10 @@ class ComplainController extends Controller
         }
     }
 
+    /*
+     * function to get complaint chat data (previously using getComplaintDetails function)
+     *
+     * */
     public function getComplaintChats(Request $request){
         try{
             if(empty($request->input('complaint_id'))){
@@ -1859,6 +1865,10 @@ class ComplainController extends Controller
         }
     }
 
+    /*
+     * function to get complaint detail
+     *
+     * */
     public function getComplaintDetail(Request $request){
         try{
             if(empty($request->input('complaint_id'))){
@@ -1876,20 +1886,38 @@ class ComplainController extends Controller
             }
             //get complaint reject
             $complaintResponses = collect();
-            if(count($complaint->complaint_rejects) > 0){
-                foreach($complaint->complaint_rejects as $complaintRejects){
-                    $messageImage = empty($complaintRejects->image) ? null : asset('storage/complaints/'. $complaintRejects->image);
+            $complaintRejects = ComplaintReject::where('complaint_id', $request->input('complaint_id'))
+                ->orderBy('created_at')
+                ->get();
+            if(count($complaintRejects) > 0){
+                foreach($complaintRejects as $complaintReject){
+                    $messageImage = collect();
+                    $rejectDetails = ComplaintRejectImage::where('complaint_id', $request->input('complaint_id'))->get();
+                    foreach ($rejectDetails as $rejectDetail){
+                        $detailImage = empty($rejectDetail->image) ? null : asset('storage/complaints/'. $rejectDetail->image);
+                        $messageImage->push($detailImage);
+                    }
+//                    $messageImage = empty($complaintRejects->image) ? null : asset('storage/complaints/'. $complaintRejects->image);
                     $complaintRejectModel = ([
                         'status'            => 9,
-                        'message'           => $complaintRejects->message,
+                        'message'           => $complaintReject->message,
                         'image'             => $messageImage,
                     ]);
                     $complaintResponses->push($complaintRejectModel);
                 }
             }
-            if(count($complaint->complaint_finishs) > 0){
-                foreach($complaint->complaint_finishs as $complaintFinish){
-                    $messageImage = empty($complaintFinish->image) ? null : asset('storage/complaints/'. $complaintFinish->image);
+            $complaintfinishs = ComplaintFinish::where('complaint_id', $request->input('complaint_id'))
+                ->orderBy('created_at')
+                ->get();
+            if(count($complaintfinishs) > 0){
+                foreach($complaintfinishs as $complaintFinish){
+                    $messageImage = collect();
+                    $finishDetails = ComplaintFinishImage::where('complaint_id', $request->input('complaint_id'))->get();
+                    foreach ($finishDetails as $finishDetail){
+                        $detailImage = empty($finishDetail->image) ? null : asset('storage/complaints/'. $finishDetail->image);
+                        $messageImage->push($detailImage);
+                    }
+//                    $messageImage = empty($complaintFinish->image) ? null : asset('storage/complaints/'. $complaintFinish->image);
                     $complaintRejectModel = ([
                         'status'            => 8,
                         'message'           => $complaintFinish->message,
@@ -1930,7 +1958,7 @@ class ComplainController extends Controller
                 'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                 'status_id'             => $complaint->status_id,
                 'images'                => $complaintImages,
-                'complaint_response'    => $complaintResponses,
+                'response_model'        => $complaintResponses,
                 'locations'             => $locationModels,
                 'location'              => $complaint->location,
             ]);
@@ -1951,7 +1979,7 @@ class ComplainController extends Controller
 
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
-            $employee = $user->employee;
+            $employee = Employee::find($user->employee_id);
 
             $complaint =  Complaint::find($request->input('complaint_id'));
             if(empty($complaint)){
@@ -1973,9 +2001,9 @@ class ComplainController extends Controller
                 'customer_id'       => null,
                 'customer_name'     => "",
                 'customer_avatar'    => "",
-                'employee_id'       => $complaint->employee_id,
-                'employee_name'     => $complaint->employee->first_name." ".$complaint->employee->last_name,
-                'employee_avatar'    => asset('storage/employees/'. $complaint->employee->image_path),
+                'employee_id'       => $employee->id,
+                'employee_name'     => $employee->first_name." ".$employee->last_name,
+                'employee_avatar'    => asset('storage/employees/'. $employee->image_path),
                 'message'           => $complaint->message,
                 'image'             => $messageImage,
                 'date'              => Carbon::parse($complaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
@@ -2059,6 +2087,7 @@ class ComplainController extends Controller
 
                     $imageComplaintHeader = ComplaintRejectImage::create([
                         'complaint_id'  => $complaint->id,
+                        'complaint_reject_id'  => $newComplaintDetail->id,
                         'image'         => $imageFolder."/".$filename,
                         'created_by'    => $user->id,
                         'created_at'    => $datetimenow->toDateTimeString(),
@@ -2166,7 +2195,7 @@ class ComplainController extends Controller
             return Response::json("Berhasil menutup complaint ini", 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/ComplainController - closeComplaint error EX: '. $ex);
+            Log::error('Api/ComplainController - closeComplaintEmployee error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -2183,9 +2212,9 @@ class ComplainController extends Controller
 
             $userLogin = auth('api')->user();
             $user = User::where('phone', $userLogin->phone)->first();
-            $employee = $user->employee;
+            $employee = Employee::find($user->employee_id);
 
-            $complaint =  Complaint::find($data->complaint_id);
+            $complaint =  Complaint::where('id', $data->complaint_id)->first();
             if(empty($complaint)){
                 return Response::json("Complaint tidak ditemukan", 482);
             }
@@ -2230,6 +2259,7 @@ class ComplainController extends Controller
 
                     $imageComplaintHeader = ComplaintFinishImage::create([
                         'complaint_id'  => $complaint->id,
+                        'complaint_finish_id'  => $newComplaintDetail->id,
                         'image'         => $imageFolder."/".$filename,
                         'created_by'    => $user->id,
                         'created_at'    => $datetimenow->toDateTimeString(),
@@ -2243,13 +2273,14 @@ class ComplainController extends Controller
             //Send notification to
             //Customer
             $messageImage = empty($complaint->image) ? null : asset('storage/complaints/'. $complaint->image);
+
             $employeeComplaintDetailModel = ([
                 'customer_id'       => null,
                 'customer_name'     => "",
                 'customer_avatar'    => "",
-                'employee_id'       => $complaint->employee_id,
-                'employee_name'     => $complaint->employee->first_name." ".$complaint->employee->last_name,
-                'employee_avatar'    => asset('storage/employees/'. $complaint->employee->image_path),
+                'employee_id'       => $employee->id,
+                'employee_name'     => $employee->first_name." ".$employee->last_name,
+                'employee_avatar'    => asset('storage/employees/'. $employee->image_path),
                 'message'           => $complaint->message,
                 'image'             => $messageImage,
                 'date'              => Carbon::parse($complaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
@@ -2269,7 +2300,7 @@ class ComplainController extends Controller
             return Response::json("Berhasil menyelesaikan complaint ini", 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/ComplainController - doneComplaint error EX: '. $ex);
+            Log::error('Api/ComplainController - finishComplaint error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

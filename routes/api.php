@@ -162,8 +162,9 @@ Route::middleware('auth:customer')->prefix('customer')->group(function(){
     Route::post('/get-complaints-v2', 'Api\ComplainController@getComplaintV2');
     Route::post('/get-complaint-header', 'Api\ComplainController@getComplaintHeader');
     Route::post('/get-complaint-header-v2', 'Api\ComplainController@getComplaintHeaderV2');
-    Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetail');
-    Route::post('/get-complaint-details-v2', 'Api\ComplainController@getComplaintDetailV2');
+    Route::post('/get-complaint-details', 'Api\ComplainController@getComplaintDetails');
+    Route::post('/get-complaint-chats', 'Api\ComplainController@getComplaintChats');
+    Route::post('/get-complaint-detail', 'Api\ComplainController@getComplaintDetail');
 
     Route::post('/get-complaint-count', 'Api\ComplainController@getComplaintCount');
 });

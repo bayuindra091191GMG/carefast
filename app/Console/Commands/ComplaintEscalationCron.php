@@ -52,6 +52,14 @@ class ComplaintEscalationCron extends Command
                 $trxDate = Carbon::parse(date_format($complaintDB->response_limit_date, 'j-F-Y H:i:s'));
                 // mencari perbedaan menit
                 $intervalMinute = $trxDate->diffInMinutes($now);
+
+                if($complaintDB->project_id == 1){
+                    $isValid1 =  $trxDate < $now;
+                    $isValid2 =  $complaintDB->response_limit_date < $temp;
+                    Log::channel('cronjob')
+                        ->info("complaint Number = ".$complaintDB->code." | now = ".$now." | trxDate = ".$trxDate.
+                            " | check validation 1 (formated) = ".$isValid1." | check validation 2 (unformated) = ".$isValid2);
+                }
 //                Log::channel('cronjob')
 //                    ->info("complaint Number = ".$complaintDB->code." | now = ".$now." | trxDate = ".$trxDate." | intervalMinute = ".$intervalMinute);
 
