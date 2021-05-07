@@ -1901,7 +1901,7 @@ class ComplainController extends Controller
                     $complaintRejectModel = ([
                         'status'            => 9,
                         'message'           => $complaintReject->message,
-                        'image'             => $messageImage,
+                        'images'             => $messageImage,
                     ]);
                     $complaintResponses->push($complaintRejectModel);
                 }
@@ -1921,7 +1921,7 @@ class ComplainController extends Controller
                     $complaintRejectModel = ([
                         'status'            => 8,
                         'message'           => $complaintFinish->message,
-                        'image'             => $messageImage,
+                        'images'             => $messageImage,
                     ]);
                     $complaintResponses->push($complaintRejectModel);
                 }
@@ -1958,7 +1958,7 @@ class ComplainController extends Controller
                 'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
                 'status_id'             => $complaint->status_id,
                 'images'                => $complaintImages,
-                'response_model'        => $complaintResponses,
+                'response_models'        => $complaintResponses,
                 'locations'             => $locationModels,
                 'location'              => $complaint->location,
             ]);
