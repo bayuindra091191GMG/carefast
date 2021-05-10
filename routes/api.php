@@ -156,6 +156,7 @@ Route::middleware('auth:customer')->prefix('customer')->group(function(){
     Route::post('/complaint-reply', 'Api\ComplainController@replyComplaintCustomer');
     Route::post('/complaint-reject', 'Api\ComplainController@rejectComplaint');
     Route::post('/complaint-close', 'Api\ComplainController@closeComplaint');
+    Route::post('/complaint-scoring', 'Api\ComplainController@scoringComplaint');
     Route::get('/get-projects', 'Api\ComplainController@getProjectListCustomer');
     Route::post('/get-project-locations', 'Api\ComplainController@getProjectLocations');
     Route::post('/get-complaints', 'Api\ComplainController@getComplaint');

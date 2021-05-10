@@ -1164,6 +1164,10 @@ class ComplainController extends Controller
             $categoryId = intval($request->input('category_id'));
             $projectId = intval($request->input('project_id'));
 
+            $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d 00:00:00');
+            $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d 00:00:00');
+            $finishDate2 = Carbon::parse($finishDate)->addDay();
+
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
 //            if($categoryId != 0){
 //                $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
@@ -1172,10 +1176,12 @@ class ComplainController extends Controller
 //                $customerComplaints =  Complaint::where('customer_id', $customer->id);
 //            }
             if($projectId != 0){
-                $customerComplaints =  Complaint::where('project_id', $projectId);
+                $customerComplaints =  Complaint::where('project_id', $projectId)
+                    ->whereBetween('created_at', [$startDate, $finishDate2]);
             }
             else{
-                $customerComplaints =  Complaint::whereIn('project_id', $projectArr);
+                $customerComplaints =  Complaint::whereIn('project_id', $projectArr)
+                    ->whereBetween('created_at', [$startDate, $finishDate2]);
             }
             if($categoryId != 0){
                 $customerComplaints =  $customerComplaints->where('category_id', $categoryId);
@@ -1388,15 +1394,21 @@ class ComplainController extends Controller
             $categoryId = intval($request->input('category_id'));
             $projectId = intval($request->input('project_id'));
 
+            $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d 00:00:00');
+            $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d 00:00:00');
+            $finishDate2 = Carbon::parse($finishDate)->addDay();
+
             if($projectId != 0){
 //                $customerComplaints =  Complaint::where('project_id', $projectId)
 //                    ->where('employee_handler_role_id', $employeeLoginRoleId);
-                $customerComplaints =  Complaint::where('project_id', $projectId);
+                $customerComplaints =  Complaint::where('project_id', $projectId)
+                    ->whereBetween('created_at', [$startDate, $finishDate2]);
             }
             else{
 //                $customerComplaints =  Complaint::whereIn('project_id', $ids)
 //                    ->where('employee_handler_role_id', $employeeLoginRoleId);
-                $customerComplaints =  Complaint::whereIn('project_id', $ids);
+                $customerComplaints =  Complaint::whereIn('project_id', $ids)
+                    ->whereBetween('created_at', [$startDate, $finishDate2]);
             }
 //            $customerComplaints =  Complaint::where('customer_id', $customer->id)->where('category_id', $categoryId);
 //            $customerComplaints =  Complaint::whereIn('project_id', $ids);
@@ -2349,6 +2361,30 @@ class ComplainController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - finishComplaint error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+    public function scoringComplaint(Request $request){
+        try{
+            $user = auth('customer')->user();
+            $customer = Customer::find($user->id);
+
+            $complaintId = intval($request->input('complaint_id'));
+            $score = $request->input('score');
+            $message = intval($request->input('message'));
+
+            $complaint =  Complaint::where('id', $complaintId)->first();
+            if(empty($complaint)){
+                return Response::json("Complaint Tidak ditemukan", 482);
+            }
+            $complaint->score = $score;
+            $complaint->score_message = $message;
+            $complaint->save();
+
+            return Response::json("Berhasil menilai complaint ini", 200);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - scoringComplaint error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
