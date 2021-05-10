@@ -403,10 +403,15 @@ class ComplainController extends Controller
                 $rejectModels->push($complaintRejectModel);
             }
             //get last employee reply
-            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $customerComplaint->id)
-                ->where('employee_id', "!=", null)
-                ->orderBy('created_at')
-                ->first();
+//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
+//                ->where('employee_id', "!=", null)
+//                ->orderBy('created_at')
+//                ->first();
+            $lastComplaintDetailRole = "";
+            if(!empty($customerComplaint->employee_handler_id)){
+                $lastComplaintDetail = Employee::where('id', $customerComplaint->employee_handler_id)->first();
+                $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
+            }
 
             //get project's location (from project_objects tables)
             $locationModels = collect();
@@ -428,8 +433,10 @@ class ComplainController extends Controller
                 'code'                  => $customerComplaint->code,
                 'customer_id'           => $customerComplaint->customer_id,
                 'employee_id'           => $customerComplaint->employee_id,
-                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id : "0" ,
-                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->first_name." ".$lastComplaintDetail->employee->last_name : "" ,
+                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
+                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
+                'employee_handler_role' => $lastComplaintDetailRole,
+                'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
                 'customer_name'         => $customerComplaint->customer_name,
                 'subject'               => $customerComplaint->subject,
                 'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
@@ -881,10 +888,15 @@ class ComplainController extends Controller
                 $rejectModels->push($complaintRejectModel);
             }
             //get last employee reply
-            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $customerComplaint->id)
-                ->where('employee_id', "!=", null)
-                ->orderBy('created_at')
-                ->first();
+//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
+//                ->where('employee_id', "!=", null)
+//                ->orderBy('created_at')
+//                ->first();
+            $lastComplaintDetailRole = "";
+            if(!empty($customerComplaint->employee_handler_id)){
+                $lastComplaintDetail = Employee::where('id', $customerComplaint->employee_handler_id)->first();
+                $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
+            }
 
             //get project's location (from project_objects tables)
             $locationModels = collect();
@@ -905,8 +917,10 @@ class ComplainController extends Controller
                 'code'                  => $customerComplaint->code,
                 'customer_id'           => $customerComplaint->customer_id,
                 'employee_id'           => $customerComplaint->employee_id,
-                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id : "0" ,
-                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->first_name." ".$lastComplaintDetail->employee->last_name : "" ,
+                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
+                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
+                'employee_handler_role' => $lastComplaintDetailRole,
+                'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
                 'customer_name'         => $customerComplaint->customer_name,
                 'subject'               => $customerComplaint->subject,
                 'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
@@ -1219,10 +1233,15 @@ class ComplainController extends Controller
                     }
                 }
                 //get last employee reply
-                $lastComplaintDetail = ComplaintDetail::where('complaint_id', $customerComplaint->id)
-                    ->where('employee_id', "!=", null)
-                    ->orderBy('created_at')
-                    ->first();
+//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
+//                ->where('employee_id', "!=", null)
+//                ->orderBy('created_at')
+//                ->first();
+                $lastComplaintDetailRole = "";
+                if(!empty($customerComplaint->employee_handler_id)){
+                    $lastComplaintDetail = Employee::where('id', $customerComplaint->employee_handler_id)->first();
+                    $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
+                }
 
                 //get project's location (from project_objects tables)
                 $locationModels = collect();
@@ -1244,8 +1263,10 @@ class ComplainController extends Controller
                     'code'                  => $customerComplaint->code,
                     'customer_id'           => $customerComplaint->customer_id,
                     'employee_id'           => $customerComplaint->employee_id,
-                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id : "0" ,
-                    'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->first_name." ".$lastComplaintDetail->employee->last_name : "" ,
+                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
+                    'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
+                    'employee_handler_role' => $lastComplaintDetailRole,
+                    'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
                     'customer_name'         => $customerComplaint->customer_name,
                     'subject'               => $customerComplaint->subject,
                     'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
@@ -1443,10 +1464,15 @@ class ComplainController extends Controller
                     }
                 }
                 //get last employee reply
-                $lastComplaintDetail = ComplaintDetail::where('complaint_id', $customerComplaint->id)
-                    ->where('employee_id', "!=", null)
-                    ->orderBy('created_at')
-                    ->first();
+//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
+//                ->where('employee_id', "!=", null)
+//                ->orderBy('created_at')
+//                ->first();
+                $lastComplaintDetailRole = "";
+                if(!empty($customerComplaint->employee_handler_id)){
+                    $lastComplaintDetail = Employee::where('id', $customerComplaint->employee_handler_id)->first();
+                    $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
+                }
 
                 //get project's location (from project_objects tables)
                 $locationModels = collect();
@@ -1467,8 +1493,10 @@ class ComplainController extends Controller
                     'code'                  => $customerComplaint->code,
                     'customer_id'           => $customerComplaint->customer_id,
                     'employee_id'           => $customerComplaint->employee_id,
-                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id : "0" ,
-                    'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->first_name." ".$lastComplaintDetail->employee->last_name : "" ,
+                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
+                    'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
+                    'employee_handler_role' => $lastComplaintDetailRole,
+                    'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
                     'customer_name'         => $customerComplaint->customer_name,
                     'subject'               => $customerComplaint->subject,
                     'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
@@ -1670,6 +1698,16 @@ class ComplainController extends Controller
                     $locationModels->push($locationModel);
                 }
             }
+            //get last employee reply
+//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
+//                ->where('employee_id', "!=", null)
+//                ->orderBy('created_at')
+//                ->first();
+            $lastComplaintDetailRole = "";
+            if(!empty($complaint->employee_handler_id)){
+                $lastComplaintDetail = Employee::where('id', $complaint->employee_handler_id)->first();
+                $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
+            }
 
             $customerComplaintModel = collect([
                 'id'                    => $complaint->id,
@@ -1679,7 +1717,10 @@ class ComplainController extends Controller
                 'code'                  => $complaint->code,
                 'customer_id'           => $complaint->customer_id,
                 'employee_id'           => $complaint->employee_id,
-                'employee_handler_id'   => $complaint->employee_handler_id,
+                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
+                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
+                'employee_handler_role' => $lastComplaintDetailRole,
+                'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
                 'customer_name'         => $complaint->customer_name,
                 'subject'               => $complaint->subject,
                 'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
@@ -1927,10 +1968,15 @@ class ComplainController extends Controller
                 }
             }
             //get last employee reply
-            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
-                ->where('employee_id', "!=", null)
-                ->orderBy('created_at')
-                ->first();
+//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
+//                ->where('employee_id', "!=", null)
+//                ->orderBy('created_at')
+//                ->first();
+            $lastComplaintDetailRole = "";
+            if(!empty($complaint->employee_handler_id)){
+                $lastComplaintDetail = Employee::where('id', $complaint->employee_handler_id)->first();
+                $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
+            }
 
             //get project's location (from project_objects tables)
             $locationModels = collect();
@@ -1951,8 +1997,10 @@ class ComplainController extends Controller
                 'code'                  => $complaint->code,
                 'customer_id'           => $complaint->customer_id,
                 'employee_id'           => $complaint->employee_id,
-                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->id : "0" ,
-                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->employee->first_name." ".$lastComplaintDetail->employee->last_name : "" ,
+                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
+                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
+                'employee_handler_role' => $lastComplaintDetailRole,
+                'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
                 'customer_name'         => $complaint->customer_name,
                 'subject'               => $complaint->subject,
                 'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),

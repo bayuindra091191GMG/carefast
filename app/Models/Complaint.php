@@ -27,6 +27,8 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $status_id
  * @property \Carbon\Carbon $date
  * @property \Carbon\Carbon $response_limit_date
+ * @property int $score
+ * @property string $score_message
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -56,6 +58,7 @@ class Complaint extends Eloquent
 		'employee_handler_id' => 'int',
 		'employee_handler_role_id' => 'int',
 		'status_id' => 'int',
+		'score' => 'int',
 		'created_by' => 'int',
 		'updated_by' => 'int'
 	];
@@ -79,6 +82,8 @@ class Complaint extends Eloquent
 		'date',
 		'status_id',
 		'response_limit_date',
+		'score',
+		'score_message',
 		'created_by',
 		'updated_by'
 	];
