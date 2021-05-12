@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\libs\ComplaintDetailFunc;
 use App\libs\Utilities;
 use App\Models\Attendance;
 use App\Models\AttendanceDetail;
@@ -193,7 +194,7 @@ class ComplainController extends Controller
                 "type_id" => 301,
                 "complaint_id" => $newComplaint->id,
                 "complaint_subject" => $newComplaint->subject,
-                "complaint_detail_model" => $customerComplaintDetailModel,
+                "complaint_detail_model" => $this->getComplaintDetailFunc($newComplaint->id),
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
@@ -282,6 +283,7 @@ class ComplainController extends Controller
                 'customer_id'       => $customer->id,
                 'customer_name'     => $customer->name,
                 'subject'           => $data->subject,
+                'description'       => $data->message,
                 'location'           => $data->location,
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
@@ -362,7 +364,7 @@ class ComplainController extends Controller
                 "type_id" => 301,
                 "complaint_id" => $newComplaint->id,
                 "complaint_subject" => $newComplaint->subject,
-                "complaint_detail_model" => $customerComplaintDetailModel,
+                "complaint_detail_model" => $this->getComplaintDetailFunc($newComplaint->id),
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $data->project_id)
@@ -769,6 +771,7 @@ class ComplainController extends Controller
                 'employee_id'       => $employee->id,
                 'customer_name'     => $employee->first_name." ".$employee->last_name,
                 'subject'           => $data->subject,
+                'description'       => $data->message,
                 'location'           => $data->location,
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
@@ -1213,75 +1216,7 @@ class ComplainController extends Controller
             }
 
             foreach($customerComplaints as $customerComplaint){
-                $complaintImageDBs = $customerComplaint->complaint_header_images;
-                $complaintImages = collect();
-                foreach ($complaintImageDBs as $complaintImageDB){
-                    $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
-                    $complaintImages->push($complaintImage);
-                }
-                //get complaint reject
-                $rejectModels = collect();
-                if(count($customerComplaint->complaint_rejects) > 0){
-                    foreach($customerComplaint->complaint_rejects as $complaintRejects){
-                        $messageImage = empty($complaintRejects->image) ? null : asset('storage/complaints/'. $complaintRejects->image);
-                        $complaintRejectModel = ([
-//                        'customer_id'       => $customerComplaints->complaint_rejects->customer_id,
-//                        'customer_name'     => $customerComplaints->complaint_rejects->customer->name,
-//                        'customer_avatar'   => asset('storage/customers/'. $customerComplaints->complaint_rejects->customer->image_path),
-//                        'employee_id'       => null,
-//                        'employee_name'     => "",
-//                        'employee_avatar'   => "",
-//                        'date'              => Carbon::parse($customerComplaints->complaint_rejects->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                            'message'           => $complaintRejects->message,
-                            'image'             => $messageImage,
-                        ]);
-                        $rejectModels->push($complaintRejectModel);
-                    }
-                }
-                //get last employee reply
-//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
-//                ->where('employee_id', "!=", null)
-//                ->orderBy('created_at')
-//                ->first();
-                $lastComplaintDetailRole = "";
-                if(!empty($customerComplaint->employee_handler_id)){
-                    $lastComplaintDetail = Employee::where('id', $customerComplaint->employee_handler_id)->first();
-                    $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
-                }
-
-                //get project's location (from project_objects tables)
-                $locationModels = collect();
-                $locationDB = ProjectObject::where('project_id', $customerComplaint->project_id)
-                    ->where('status_id', 1)
-                    ->get();
-                if(count($locationDB) > 0){
-                    foreach ($locationDB as $location){
-                        $locationModel = $location->place_name. " - ".$location->unit_name;
-                        $locationModels->push($locationModel);
-                    }
-                }
-
-                $customerComplaintModel = collect([
-                    'id'                    => $customerComplaint->id,
-//                    'category_id'           => $customerComplaint->complaint_categories->description,
-                    'project_id'            => $customerComplaint->project_id,
-                    'project_name'          => $customerComplaint->project->name,
-                    'code'                  => $customerComplaint->code,
-                    'customer_id'           => $customerComplaint->customer_id,
-                    'employee_id'           => $customerComplaint->employee_id,
-                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
-                    'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
-                    'employee_handler_role' => $lastComplaintDetailRole,
-                    'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
-                    'customer_name'         => $customerComplaint->customer_name,
-                    'subject'               => $customerComplaint->subject,
-                    'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                    'status_id'             => $customerComplaint->status_id,
-                    'images'                => $complaintImages,
-                    'reject_models'         => $rejectModels,
-                    'locations'              => $locationModels,
-                    'location'              => $customerComplaint->location,
-                ]);
+                $customerComplaintModel = $this->getComplaintDetailFunc($customerComplaint->id);
                 $complaintModels->push($customerComplaintModel);
             }
 
@@ -1450,74 +1385,7 @@ class ComplainController extends Controller
             }
 
             foreach($customerComplaints as $customerComplaint){
-                $complaintImageDBs = $customerComplaint->complaint_header_images;
-                $complaintImages = collect();
-                foreach ($complaintImageDBs as $complaintImageDB){
-                    $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
-                    $complaintImages->push($complaintImage);
-                }
-                //get complaint reject
-                $rejectModels = collect();
-                if(count($customerComplaint->complaint_rejects) > 0){
-                    foreach($customerComplaint->complaint_rejects as $complaintRejects){
-                        $messageImage = empty($complaintRejects->image) ? null : asset('storage/complaints/'. $complaintRejects->image);
-                        $complaintRejectModel = ([
-//                        'customer_id'       => $customerComplaints->complaint_rejects->customer_id,
-//                        'customer_name'     => $customerComplaints->complaint_rejects->customer->name,
-//                        'customer_avatar'   => asset('storage/customers/'. $customerComplaints->complaint_rejects->customer->image_path),
-//                        'employee_id'       => null,
-//                        'employee_name'     => "",
-//                        'employee_avatar'   => "",
-//                        'date'              => Carbon::parse($customerComplaints->complaint_rejects->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                            'message'           => $complaintRejects->message,
-                            'image'             => $messageImage,
-                        ]);
-                        $rejectModels->push($complaintRejectModel);
-                    }
-                }
-                //get last employee reply
-//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
-//                ->where('employee_id', "!=", null)
-//                ->orderBy('created_at')
-//                ->first();
-                $lastComplaintDetailRole = "";
-                if(!empty($customerComplaint->employee_handler_id)){
-                    $lastComplaintDetail = Employee::where('id', $customerComplaint->employee_handler_id)->first();
-                    $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
-                }
-
-                //get project's location (from project_objects tables)
-                $locationModels = collect();
-                $locationDB = ProjectObject::where('project_id', $customerComplaint->project_id)
-                    ->where('status_id', 1)
-                    ->get();
-                if(count($locationDB) > 0){
-                    foreach ($locationDB as $location){
-                        $locationModel = $location->place_name. " - ".$location->unit_name;
-                        $locationModels->push($locationModel);
-                    }
-                }
-                $customerComplaintModel = collect([
-                    'id'                    => $customerComplaint->id,
-//                    'category_id'           => $customerComplaint->complaint_categories->description,
-                    'project_id'            => $customerComplaint->project_id,
-                    'project_name'          => $customerComplaint->project->name,
-                    'code'                  => $customerComplaint->code,
-                    'customer_id'           => $customerComplaint->customer_id,
-                    'employee_id'           => $customerComplaint->employee_id,
-                    'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
-                    'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
-                    'employee_handler_role' => $lastComplaintDetailRole,
-                    'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
-                    'customer_name'         => $customerComplaint->customer_name,
-                    'subject'               => $customerComplaint->subject,
-                    'date'                  => Carbon::parse($customerComplaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                    'status_id'             => $customerComplaint->status_id,
-                    'images'                 => $complaintImages,
-                    'reject_models'         => $rejectModels,
-                    'locations'              => $locationModels,
-                    'location'              => $customerComplaint->location,
-                ]);
+                $customerComplaintModel = $this->getComplaintDetailFunc($customerComplaint->id);
                 $complaintModels->push($customerComplaintModel);
             }
             return Response::json($complaintModels, 200);
@@ -1740,6 +1608,9 @@ class ComplainController extends Controller
                 'images'                => $complaintImages,
                 'reject_models'         => $rejectModels,
                 'locations'              => $locationModels,
+                'is_rated'              => !empty($complaint->score) ? 1 : 0,
+                'rating'                => $complaint->score,
+                'rating_message'        => $complaint->score_message,
             ]);
 
             return Response::json($customerComplaintModel, 200);
@@ -1928,100 +1799,7 @@ class ComplainController extends Controller
                 return response()->json("Bad Request", 400);
             }
 
-            $complaint =  Complaint::where('id', $request->input('complaint_id'))->first();
-
-            //get complaint header, reject, finish
-            $complaintImageDBs = $complaint->complaint_header_images;
-            $complaintImages = collect();
-            foreach ($complaintImageDBs as $complaintImageDB){
-                $complaintImage = asset('storage/complaints/'. $complaintImageDB->image);
-                $complaintImages->push($complaintImage);
-            }
-            //get complaint reject
-            $complaintResponses = collect();
-            $complaintRejects = ComplaintReject::where('complaint_id', $request->input('complaint_id'))
-                ->orderBy('created_at')
-                ->get();
-            if(count($complaintRejects) > 0){
-                foreach($complaintRejects as $complaintReject){
-                    $messageImage = collect();
-                    $rejectDetails = ComplaintRejectImage::where('complaint_id', $request->input('complaint_id'))->get();
-                    foreach ($rejectDetails as $rejectDetail){
-                        $detailImage = empty($rejectDetail->image) ? null : asset('storage/complaints/'. $rejectDetail->image);
-                        $messageImage->push($detailImage);
-                    }
-//                    $messageImage = empty($complaintRejects->image) ? null : asset('storage/complaints/'. $complaintRejects->image);
-                    $complaintRejectModel = ([
-                        'status'            => 9,
-                        'message'           => $complaintReject->message,
-                        'images'             => $messageImage,
-                    ]);
-                    $complaintResponses->push($complaintRejectModel);
-                }
-            }
-            $complaintfinishs = ComplaintFinish::where('complaint_id', $request->input('complaint_id'))
-                ->orderBy('created_at')
-                ->get();
-            if(count($complaintfinishs) > 0){
-                foreach($complaintfinishs as $complaintFinish){
-                    $messageImage = collect();
-                    $finishDetails = ComplaintFinishImage::where('complaint_id', $request->input('complaint_id'))->get();
-                    foreach ($finishDetails as $finishDetail){
-                        $detailImage = empty($finishDetail->image) ? null : asset('storage/complaints/'. $finishDetail->image);
-                        $messageImage->push($detailImage);
-                    }
-//                    $messageImage = empty($complaintFinish->image) ? null : asset('storage/complaints/'. $complaintFinish->image);
-                    $complaintRejectModel = ([
-                        'status'            => 8,
-                        'message'           => $complaintFinish->message,
-                        'images'             => $messageImage,
-                    ]);
-                    $complaintResponses->push($complaintRejectModel);
-                }
-            }
-            //get last employee reply
-//            $lastComplaintDetail = ComplaintDetail::where('complaint_id', $complaint->id)
-//                ->where('employee_id', "!=", null)
-//                ->orderBy('created_at')
-//                ->first();
-            $lastComplaintDetailRole = "";
-            if(!empty($complaint->employee_handler_id)){
-                $lastComplaintDetail = Employee::where('id', $complaint->employee_handler_id)->first();
-                $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
-            }
-
-            //get project's location (from project_objects tables)
-            $locationModels = collect();
-            $locationDB = ProjectObject::where('project_id', $complaint->project_id)
-                ->where('status_id', 1)
-                ->get();
-            if(count($locationDB) > 0){
-                foreach ($locationDB as $location){
-                    $locationModel = $location->place_name. " - ".$location->unit_name;
-                    $locationModels->push($locationModel);
-                }
-            }
-
-            $complaintModel = collect([
-                'id'                    => $complaint->id,
-                'project_id'            => $complaint->project_id,
-                'project_name'          => $complaint->project->name,
-                'code'                  => $complaint->code,
-                'customer_id'           => $complaint->customer_id,
-                'employee_id'           => $complaint->employee_id,
-                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : "0" ,
-                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
-                'employee_handler_role' => $lastComplaintDetailRole,
-                'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
-                'customer_name'         => $complaint->customer_name,
-                'subject'               => $complaint->subject,
-                'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                'status_id'             => $complaint->status_id,
-                'images'                => $complaintImages,
-                'response_models'        => $complaintResponses,
-                'locations'             => $locationModels,
-                'location'              => $complaint->location,
-            ]);
+            $complaintModel = $this->getComplaintDetailFunc($request->input('complaint_id'));
 
             return Response::json($complaintModel, 200);
         }
@@ -2045,6 +1823,11 @@ class ComplainController extends Controller
             if(empty($complaint)){
                 return Response::json("Complaint tidak ditemukan", 482);
             }
+            if(!empty($complaint->employee_handler_id)){
+                if($user->employee_id != $complaint->employee_handler_id){
+                    return Response::json("Complaint sudah di proses", 483);
+                }
+            }
 //            if($employee->id != $employeeComplaint->employee_id){
 //                return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
 //            }
@@ -2056,24 +1839,24 @@ class ComplainController extends Controller
 
             //Send notification to
             //Customer
-            $messageImage = empty($complaint->image) ? null : asset('storage/complaints/'. $complaint->image);
-            $employeeComplaintDetailModel = ([
-                'customer_id'       => null,
-                'customer_name'     => "",
-                'customer_avatar'    => "",
-                'employee_id'       => $employee->id,
-                'employee_name'     => $employee->first_name." ".$employee->last_name,
-                'employee_avatar'    => asset('storage/employees/'. $employee->image_path),
-                'message'           => $complaint->message,
-                'image'             => $messageImage,
-                'date'              => Carbon::parse($complaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-            ]);
+//            $messageImage = empty($complaint->image) ? null : asset('storage/complaints/'. $complaint->image);
+//            $employeeComplaintDetailModel = ([
+//                'customer_id'       => null,
+//                'customer_name'     => "",
+//                'customer_avatar'    => "",
+//                'employee_id'       => $employee->id,
+//                'employee_name'     => $employee->first_name." ".$employee->last_name,
+//                'employee_avatar'    => asset('storage/employees/'. $employee->image_path),
+//                'message'           => $complaint->message,
+//                'image'             => $messageImage,
+//                'date'              => Carbon::parse($complaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+//            ]);
             $title = "ICare";
             $body = "Employee processing complaint ".$complaint->subject;
             $data = array(
                 "type_id" => 304,
                 "complaint_id" => $complaint->id,
-                "complaint_detail_model" => $employeeComplaintDetailModel,
+                "complaint_detail_model" => $this->getComplaintDetailFunc($complaint->id),
             );
             //Push Notification to customer App.
             if(!empty($complaint->customer_id)){
@@ -2159,19 +1942,6 @@ class ComplainController extends Controller
                 }
             }
 
-            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
-            $customerComplaintDetailModel = ([
-                'customer_id'       => $newComplaintDetail->customer_id,
-                'customer_name'     => $newComplaintDetail->customer->name,
-                'customer_avatar'    => asset('storage/customers/'. $newComplaintDetail->customer->image_path),
-                'employee_id'       => null,
-                'employee_name'     => "",
-                'employee_avatar'    => "",
-                'message'           => $newComplaintDetail->message,
-                'image'             => $messageImage,
-                'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-            ]);
-
             //Send notification to
             //Employee
             $title = "ICare";
@@ -2179,7 +1949,7 @@ class ComplainController extends Controller
             $data = array(
                 "type_id" => 303,
                 "complaint_id" => $complaint->id,
-                "complaint_detail_model" => $customerComplaintDetailModel,
+                "complaint_detail_model" => $this->getComplaintDetailFunc($complaint->id),
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
@@ -2332,25 +2102,25 @@ class ComplainController extends Controller
 
             //Send notification to
             //Customer
-            $messageImage = empty($complaint->image) ? null : asset('storage/complaints/'. $complaint->image);
-
-            $employeeComplaintDetailModel = ([
-                'customer_id'       => null,
-                'customer_name'     => "",
-                'customer_avatar'    => "",
-                'employee_id'       => $employee->id,
-                'employee_name'     => $employee->first_name." ".$employee->last_name,
-                'employee_avatar'    => asset('storage/employees/'. $employee->image_path),
-                'message'           => $complaint->message,
-                'image'             => $messageImage,
-                'date'              => Carbon::parse($complaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-            ]);
+//            $messageImage = empty($complaint->image) ? null : asset('storage/complaints/'. $complaint->image);
+//
+//            $employeeComplaintDetailModel = ([
+//                'customer_id'       => null,
+//                'customer_name'     => "",
+//                'customer_avatar'    => "",
+//                'employee_id'       => $employee->id,
+//                'employee_name'     => $employee->first_name." ".$employee->last_name,
+//                'employee_avatar'    => asset('storage/employees/'. $employee->image_path),
+//                'message'           => $complaint->message,
+//                'image'             => $messageImage,
+//                'date'              => Carbon::parse($complaint->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
+//            ]);
             $title = "ICare";
             $body = "Employee finish processing complaint ".$complaint->subject;
             $data = array(
                 "type_id" => 305,
                 "complaint_id" => $complaint->id,
-                "complaint_detail_model" => $employeeComplaintDetailModel,
+                "complaint_detail_model" => $this->getComplaintDetailFunc($complaint->id),
             );
             //Push Notification to customer App.
             if(!empty($complaint->customer_id)){
@@ -2370,8 +2140,8 @@ class ComplainController extends Controller
             $customer = Customer::find($user->id);
 
             $complaintId = intval($request->input('complaint_id'));
-            $score = $request->input('score');
-            $message = intval($request->input('message'));
+            $message = $request->input('message');
+            $score = intval($request->input('rating'));
 
             $complaint =  Complaint::where('id', $complaintId)->first();
             if(empty($complaint)){
@@ -2386,6 +2156,16 @@ class ComplainController extends Controller
         catch (\Exception $ex){
             Log::error('Api/ComplainController - scoringComplaint error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    public function getComplaintDetailFunc($complaint_id){
+        try{
+            return ComplaintDetailFunc::getComplaintDetailFunc($complaint_id);
+        }
+        catch (\Exception $ex){
+            Log::error('Api/ComplainController - getComplaintDetailFunc error EX: '. $ex);
+            return null;
         }
     }
 }
