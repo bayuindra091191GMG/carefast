@@ -338,7 +338,7 @@ Route::prefix('admin')->group(function(){
 //    Route::get('/project/schedule/set/{id}', 'Admin\project\ScheduleController@scheduleEdit')->name('admin.project.set-schedule');
     Route::get('/project/schedule/set/{id}', 'Admin\project\ScheduleController@scheduleEditv2')->name('admin.project.set-schedule');
     Route::post('/project/schedule/upload/{id}', 'Admin\project\ScheduleController@scheduleUploadExcel')->name('admin.project.upload-schedule');
-    Route::get('/project/schedule/upload/download-template', 'Admin\project\ScheduleController@scheduleDownloadExcelTemplate')->name('admin.project.upload-template-download');
+    Route::get('/project/schedule/upload/download-template/{id}', 'Admin\project\ScheduleController@scheduleDownloadExcelTemplate')->name('admin.project.upload-template-download');
     Route::get('/project/schedule/download/{id}', 'Admin\project\ScheduleController@scheduleDownloadExcel')->name('admin.project.download-schedule');
     Route::post('/project/schedule/store/{id}', 'Admin\project\ScheduleController@scheduleStore')->name('admin.project.store-schedule');
 

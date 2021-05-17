@@ -477,14 +477,66 @@ class ScheduleController extends Controller
         }
     }
 
-    public function scheduleDownloadExcelTemplate(){
+    public function scheduleDownloadExcelTemplate(int $id){
         try{
             $destinationPath = public_path()."/storage/carefast - contoh upload jadwal.xlsx";
-            return response()->download($destinationPath);
+
+            $newCollection = collect();
+
+            $users = (new FastExcel)->withoutHeaders()->import($destinationPath, function ($line) {
+                // Skip if empty or first line (i.e. header), ...
+                // ... return the object otherwise (without the first columns)
+                return $line;
+            });
+            $employeeProjects = ProjectEmployee::with('employee')
+                ->where('project_id', $id)
+                ->where('employee_roles_id','<', 4)
+                ->where('status_id', 1)
+                ->get();
+
+            $emptyRow = [];
+            for($ct = 0; $ct < 33; $ct++){
+                array_push($emptyRow, '');
+            }
+
+            $emptyRow2 = [];
+            for($ct = 0; $ct < 1; $ct++){
+                array_push($emptyRow2, $emptyRow);
+            }
+            $users->splice(2, 0, $emptyRow2);
+
+            $projectName = '';
+            $projectCode = '';
+            foreach($employeeProjects as $employeeProject){
+                $newItem = [];
+                $employeeName = $employeeProject->employee->first_name. ' '.$employeeProject->employee->last_name;
+                array_push($newItem, $employeeName);
+                $employeeNuc = $employeeProject->employee->code;
+                array_push($newItem, $employeeNuc);
+                for($ct = 2; $ct < 33; $ct++){
+                    array_push($newItem, 'H');
+                }
+                $users->push($newItem);
+                $projectName = $employeeProject->project->name;
+                $projectCode = $employeeProject->project->code;
+            }
+            $data = $users->jsonserialize();
+            $data[0][1] = $projectName;
+            $data[1][1] = $projectCode;
+
+            $file = "contoh upload jadwal - ".$projectName."(". $projectCode .")".'.xlsx';
+
+            $destinationPath = public_path()."/download_attendance/";
+
+            (new FastExcel($data))
+                ->withoutHeaders()
+                ->export($destinationPath.$file);
+
+            return response()->download($destinationPath.$file);
         }
         catch(\Exception $ex){
             dd($ex);
-            Log::error('Admin/ScheduleController - scheduleDownloadExcel error EX: '. $ex);
+            Log::error('Admin/ScheduleController - scheduleDownloadExcelTemplate error EX: '. $ex);
             return null;
         }
     }

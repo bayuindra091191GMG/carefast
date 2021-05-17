@@ -130,51 +130,90 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-12">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-bordered table-hover" id="tab_logic">
-                                                                <thead>
-                                                                <tr>
-                                                                    <th class="text-center">
-                                                                        Nama
-                                                                    </th>
-                                                                    <th class="text-center">
-                                                                        NUC
-                                                                    </th>
-                                                                    @foreach($days as $day)
-                                                                        <th class="text-center" style="min-width:75px;">
-                                                                            {{$day}}
-                                                                        </th>
-                                                                    @endforeach
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                @foreach($projectScheduleModel as $schedule)
-                                                                    <tr>
-                                                                        <td>{{$schedule['employee_name']}}</td>
-                                                                        <td>{{($schedule['employee_code'])}} </td>
-                                                                        @foreach($schedule["days"] as $scheduleDay)
-                                                                            <td class="text-center">
-                                                                                @if($scheduleDay["status"] == 'H')
-                                                                                    H
-                                                                                @else
-                                                                                    O
-                                                                                @endif
+{{--                                                    <div class="col-md-12">--}}
+{{--                                                        <div class="table-responsive">--}}
+{{--                                                            <table class="table table-bordered table-hover" id="tab_logic">--}}
+{{--                                                                <thead>--}}
+{{--                                                                <tr>--}}
+{{--                                                                    <th class="text-center">--}}
+{{--                                                                        Nama--}}
+{{--                                                                    </th>--}}
+{{--                                                                    <th class="text-center">--}}
+{{--                                                                        NUC--}}
+{{--                                                                    </th>--}}
+{{--                                                                    @foreach($days as $day)--}}
+{{--                                                                        <th class="text-center" style="min-width:75px;">--}}
+{{--                                                                            {{$day}}--}}
+{{--                                                                        </th>--}}
+{{--                                                                    @endforeach--}}
+{{--                                                                </tr>--}}
+{{--                                                                </thead>--}}
+{{--                                                                <tbody>--}}
+{{--                                                                @foreach($projectScheduleModel as $schedule)--}}
+{{--                                                                    <tr>--}}
+{{--                                                                        <td>{{$schedule['employee_name']}}</td>--}}
+{{--                                                                        <td>{{($schedule['employee_code'])}} </td>--}}
+{{--                                                                        @foreach($schedule["days"] as $scheduleDay)--}}
+{{--                                                                            <td class="text-center">--}}
+{{--                                                                                @if($scheduleDay["status"] == 'H')--}}
+{{--                                                                                    H--}}
+{{--                                                                                @else--}}
+{{--                                                                                    O--}}
+{{--                                                                                @endif--}}
 {{--                                                                                <select name="statuses[]" class='form-control'>--}}
 {{--                                                                                    <option value='1' @if($scheduleDay["status"] == 1) selected @endif>H</option>--}}
 {{--                                                                                    <option value='0' @if($scheduleDay["status"] == 0) selected @endif>O</option>--}}
 {{--                                                                                </select>--}}
-                                                                                {{--                                                                                    <input type="hidden" id="days" name="days[]"  value="{{$scheduleDay['day']}}">--}}
-                                                                                {{--                                                                                    <input type="hidden" id="employeeId" name="employeeId[]"  value="{{$schedule['employee_id']}}">--}}
-                                                                            </td>
-                                                                        @endforeach
-                                                                    </tr>
-                                                                @endforeach
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
+{{--                                                                                --}}{{--                                                                                    <input type="hidden" id="days" name="days[]"  value="{{$scheduleDay['day']}}">--}}
+{{--                                                                                --}}{{--                                                                                    <input type="hidden" id="employeeId" name="employeeId[]"  value="{{$schedule['employee_id']}}">--}}
+{{--                                                                            </td>--}}
+{{--                                                                        @endforeach--}}
+{{--                                                                    </tr>--}}
+{{--                                                                @endforeach--}}
+{{--                                                                </tbody>--}}
+{{--                                                            </table>--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
 
+                                                {{-- test freeze column --}}
+                                                    <div class="dwrapper">
+                                                        <table id="fixed_hdr1">
+                                                            <thead>
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Nama
+                                                                </th>
+                                                                <th class="text-center">
+                                                                    NUC
+                                                                </th>
+                                                                @foreach($days as $day)
+                                                                    <th class="text-center">
+                                                                        {{$day}}
+                                                                    </th>
+                                                                @endforeach
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                            @foreach($projectScheduleModel as $schedule)
+                                                                <tr>
+                                                                    <td>{{$schedule['employee_name']}}</td>
+                                                                    <td>{{($schedule['employee_code'])}} </td>
+                                                                    @foreach($schedule["days"] as $scheduleDay)
+                                                                        <td class="text-center">
+                                                                            @if($scheduleDay["status"] == 'H')
+                                                                                H
+                                                                            @else
+                                                                                O
+                                                                            @endif
+                                                                            <input type="hidden" id="employeeId" name="employeeId[]"  value="{{$schedule['employee_id']}}">
+                                                                        </td>
+                                                                    @endforeach
+                                                                </tr>
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                                 <hr>
                                                 <div class="col-md-12">
@@ -187,7 +226,7 @@
                                                                 </div>
                                                                 <p>
                                                                     Keterangan = <br>
-                                                                    - Contoh Template excel dapat di <a href="{{route('admin.project.upload-template-download')}}">download disini</a><br>
+                                                                    - Contoh Template excel dapat di <a href="{{route('admin.project.upload-template-download', ['id'=>$project->id])}}">download disini</a><br>
                                                                     - Setelah mengupload Excel jadwal yang baru, jadwal yang lama akan di ubah, pastikan data dalam excel sudah benar
                                                                 </p>
                                                             </div>
@@ -232,6 +271,8 @@
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/bootstrap-datepicker.min.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    <link href="{{ asset('css/fixed_table_rc.css') }}" rel="stylesheet"/>
+
     <style>
         .select2-selection--multiple{
             overflow: hidden !important;
@@ -262,6 +303,9 @@
     {{--    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}"></script>--}}
     <script src="{{ asset('js/jquery.inputmask.bundle.min.js') }}"></script>
     <script src="{{ asset('backend/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+
+    <script src="{{ asset('js/fixed_table_rc.js') }}"></script>
+
     <script type="text/javascript">
         $("#refresh_date").click(function(){
             var start_date = $('#start_date').val();
@@ -278,6 +322,42 @@
             autoclose: true,
             todayHighlight: true,
             format: "dd M yyyy"
+        });
+
+        let dayCount = '{{count($days)}}';
+        $(function () {
+            let colums = [];
+            var newDayCount = parseInt(dayCount) + 2;
+            for(var a=0;a < newDayCount; a++){
+                if(a==0){
+                    let colum = {
+                        "width": "300",
+                        "align": "center",
+                    };
+                    colums.push(colum);
+                }
+                else if(a==1){
+                    let colum = {
+                        "width": "100",
+                        "align": "center",
+                    };
+                    colums.push(colum);
+                }
+                else{
+                    let colum = {
+                        "width": "50",
+                        "align": "center",
+                    };
+                    colums.push(colum);
+                }
+            }
+            console.log(colums);
+            $('#fixed_hdr1').fxdHdrCol({
+                fixedCols: 2,
+                width:     '100%',
+                height:    250,
+                colModal: colums
+            });
         });
     </script>
 @endsection
