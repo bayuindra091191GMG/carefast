@@ -56,14 +56,21 @@ class ComplaintEscalationCron extends Command
                 $intervalMinute = $trxDate->diffInMinutes($now);
 
                 if($complaintDB->project_id == 1){
-                    $isValid1 =  $trxDate < $now;
+                    $trueOrFalse = "false";
+//                    $isValid1 =  $trxDate < $now;
+                    $isValid1 =  $trxDate->gt($now);
+                    if($isValid1) $trueOrFalse= "true";
                     Log::channel('cronjob')
                         ->info("Test complaint 1 now = ".
-                            $now." | trxDate = ".$trxDate." | check validation 1 (formated) = ".$isValid1);
-                    $isValid2 =  $complaintDB->response_limit_date < $temp;
+                            $now." | trxDate = ".$trxDate." | check validation 1 (formated) = ".$trueOrFalse);
+
+                    $trueOrFalse = "false";
+//                    $isValid2 =  $complaintDB->response_limit_date < $temp;
+                    $isValid2 =  $complaintDB->response_limit_date->gt($temp);
+                    if($isValid2)
                     Log::channel('cronjob')
                         ->info("Test complaint 2 complaintDB->response_limit_date = ".
-                            $complaintDB->response_limit_date." | temp = ".$temp." | check validation 2 (unformated) = ".$isValid2);
+                            $complaintDB->response_limit_date." | temp = ".$temp." | check validation 2 (unformated) = ".$trueOrFalse);
                 }
 //                Log::channel('cronjob')
 //                    ->info("complaint Number = ".$complaintDB->code." | now = ".$now." | trxDate = ".$trxDate." | intervalMinute = ".$intervalMinute);

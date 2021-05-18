@@ -108,7 +108,7 @@ class IntegrationController extends Controller
                             'address' => $employee['address'],
                             'employee_role_id' => $employee['role'],
                             'status_id' => 1,
-//                            'notes' => $employee['job_name'] ?? ""
+                            'notes' => $employee['job_name'] ?? ""
                         ]);
 
                         User::create([
@@ -129,7 +129,7 @@ class IntegrationController extends Controller
                         $employeeChecking->employee_role_id = $employee['role'];
                         $employeeChecking->address = $employee['address'] ?? "";
                         $employeeChecking->status_id = 1;
-//                        $employeeChecking->notes = $employee['job_name'] ?? "";
+                        $employeeChecking->notes = $employee['job_name'] ?? "";
                         if($employeeChecking->phone == '-'){
                             $employeeChecking->phone = "";
                         }
