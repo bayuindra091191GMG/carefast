@@ -28,7 +28,7 @@ class CustomerController extends Controller
         $term = trim($request->q);
         $customers = Customer::where(function ($q) use ($term) {
             $q->where('name', 'LIKE', '%' . $term . '%')
-                ->where('email', 'LIKE', '%' . $term . '%');
+                ->orwhere('email', 'LIKE', '%' . $term . '%');
         })
             ->get();
 

@@ -632,7 +632,7 @@ class AttendanceProcess
                                     ]);
                                     $dataModel->push($projectCSOModel);
                                 }
-                                //kalau scehdulenya tipenya M = masuk
+                                //kalau scehdulenya tipenya H = masuk
                                 else{
 //                                    dd($startDateMonth.'-'.$date[0].' 00:00:00', $endDateMonth.'-'.$date[0].' 23:59:00');
 

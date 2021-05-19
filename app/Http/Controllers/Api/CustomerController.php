@@ -116,7 +116,7 @@ class CustomerController extends Controller
         try{
             $customer = auth('customer')->user();
 
-            $customerDB = Customer::find($customer->id);
+            $customerDB = Customer::where('id', $customer->id)->first();
 
             if($request->input('new_password') == $request->input('retype_password')){
                 $customerDB->password = Hash::make($request->input('new_password'));

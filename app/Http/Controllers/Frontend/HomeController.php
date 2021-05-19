@@ -817,14 +817,14 @@ class HomeController extends Controller
 
     public function submitIntegrationEmployee(){
         try {
-            $data = '';
+            $data = '[{"code":"1000002","first_name":"SIGIT TEST","last_name":"","phone":"10002","dob":"1989-03-04","nik":"10002","address":"-","role":1,"job_code":"LEADER","job_name":"LEADER"},{"code":"1000003","first_name":"YANSEN TEST","last_name":"","phone":"10003","dob":"1989-03-04","nik":"10003","address":"-","role":1,"job_code":"SPV","job_name":"SPV"},{"code":"1000004","first_name":"IVAN TEST","last_name":"","phone":"10004","dob":"1989-03-04","nik":"10004","address":"-","role":1,"job_code":"CHIEF","job_name":"CHIEF"},{"code":"1000005","first_name":"ANTO TEST","last_name":"","phone":"10005","dob":"1989-03-04","nik":"10005","address":"-","role":1,"job_code":"FM","job_name":"FM"},{"code":"1000006","first_name":"KEVIN TEST","last_name":"","phone":"10006","dob":"1989-03-04","nik":"10006","address":"-","role":1,"job_code":"OM","job_name":"OM"},{"code":"1000007","first_name":"AKHIONG TEST","last_name":"","phone":"10007","dob":"1989-03-04","nik":"10007","address":"-","role":1,"job_code":"GM","job_name":"GM"}]';
             $employees = json_decode($data, true);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
 //            dd(count($employees));
 
-            $nonActiveEmp = DB::statement("update employees set status_id = 2 where id > 29 and status_id = 1 and employee_role_id < 4");
-            sleep(60);
+//            $nonActiveEmp = DB::statement("update employees set status_id = 2 where id > 29 and status_id = 1 and employee_role_id < 4");
+//            sleep(60);
 
             $ct = 1;
             foreach ($employees as $employee) {
@@ -854,18 +854,6 @@ class HomeController extends Controller
                 }
 
                 try{
-//                    $tempEmployee = TempInsysEmploye::create([
-//                        'code' => $employee['code'],
-//                        'first_name' => $employee['first_name'],
-//                        'last_name' => $employee['last_name'],
-//                        'phone' => $employee['phone'],
-//                        'dob' => $employee['dob'],
-//                        'nik' => $employee['nik'],
-//                        'address' => $employee['address'],
-//                        'role' => $employee['role'],
-//                    ]);
-
-
                     $phone = "";
                     if(!empty($employee['phone'])){
                         if($employee['phone'] == "-" || $employee['phone'] == "--" ||
@@ -946,9 +934,9 @@ class HomeController extends Controller
                 $ct++;
             }
 
-            sleep(30);
-            $nonActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 2");
-            $nonActiveUserPhone = DB::statement("update users as a, employees as b set a.status_id = 2, a.phone = '' where a.employee_id = b.id and b.status_id = 2");
+//            sleep(30);
+//            $nonActiveEmpPhone = DB::statement("update employees set phone = '' where status_id = 2");
+//            $nonActiveUserPhone = DB::statement("update users as a, employees as b set a.status_id = 2, a.phone = '' where a.employee_id = b.id and b.status_id = 2");
 
             Log::channel('in_sys')
                 ->info('API/IntegrationController - employees PROCESS DONE');
@@ -969,23 +957,12 @@ class HomeController extends Controller
     public function submitIntegrationProject(){
 
         try {
-            $data = '';
+            $data = '[{"code":"CFHO","name":"CAREFAST HO","description":"CAREFAST HO","phone":null,"start_date":"2014-09-30","finish_date":"2050-10-15","address":null}]';
             $projects = json_decode($data, true);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - projects DATA : '.json_encode($projects));
 
             foreach ($projects as $project) {
-                //add to temp table
-
-                TempInsysProject::create([
-                    'code' => $project['code'],
-                    'name' => $project['name'],
-                    'phone' => $project['phone'],
-                    'address' => $project['address'],
-                    'description' => $project['description'],
-                    'start_date' => $project['start_date'],
-                    'finish_date' => $project['finish_date'],
-                ]);
 
                 if (!DB::table('projects')->where('code', $project['code'])->exists()) {
                     Project::create([
@@ -1038,7 +1015,7 @@ class HomeController extends Controller
 
     public function submitIntegrationJobAssigment(){
         try{
-            $data = '';
+            $data = '[{"project_code":"CFHO","employee_codes":["1000002","1000003","1000004","1000005","1000006","1000007"]}]';
             $projects = json_decode($data, true);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - jobAssignments DATA : '.json_encode($projects));
