@@ -36,7 +36,8 @@ class IntegrationController extends Controller
             Log::channel('in_sys')
                 ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
 
-            $nonActiveEmp = DB::statement("update employees set status_id = 2 where id > 29 and status_id = 1 and employee_role_id < 4");
+            $nonActiveEmp = DB::statement(
+                "update employees set status_id = 2 where id > 29 and id !=10085 and id !=10086 and id !=30 and id !=10087 and id !=10088 and id !=10089 and status_id = 1 and employee_role_id < 4");
             sleep(20);
 
             $ct = 1;

@@ -7,6 +7,7 @@ use App\Imports\DacImport;
 use App\Imports\InitialDataImport;
 use App\Imports\ProjectEmployeeImport;
 use App\libs\AttendanceProcess;
+use App\libs\ComplaintDetailFunc;
 use App\libs\Utilities;
 use App\Mail\EmailVerification;
 use App\Http\Controllers\Controller;
@@ -32,6 +33,7 @@ use App\Models\TempInsysProject;
 use App\Models\User;
 use App\Notifications\FCMNotification;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Crypt;
@@ -341,117 +343,43 @@ class HomeController extends Controller
         return $isSuccess;
     }
     public function testNotifSendToAndroid(){
-        $newComplaint = Complaint::where('project_id', 1)
-            ->orderBy('date', 'desc')
-            ->first();
-        $newComplaintDetail = ComplaintDetail::where('complaint_id', $newComplaint->id)
-            ->whereNotNull('customer_id')
-            ->orderBy('created_at', 'desc')
-            ->first();
-        $employeeDB = ProjectEmployee::where('project_id', $newComplaint->project_id)
-            ->where('employee_roles_id', '>', 1)
-            ->orderBy('employee_roles_id', 'asc')
-            ->first();
-        $type = 3;
+        try{
+            $string = "";
+            $complaintDB = Complaint::where('id', 113)->first();
+            $title = "ICare";
+            $body = "Customer complain terjadi eskalasi";
+            $data = array(
+                "type_id" => 311,
+                "complaint_id" => $complaintDB->id,
+                "complaint_subject" => $complaintDB->subject,
+                "complaint_detail_model" => ComplaintDetailFunc::getComplaintDetailFunc($complaintDB->id),
+            );
+            //Push Notification to employee App.
+            $user = \App\Models\User::where('employee_id', 10088)->first();
+            $result = FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
 
-        $isSuccess = "false";
-        switch ($type){
-            case 1:
-                $complaintheaderImage = ComplaintHeaderImage::where('complaint_id', $newComplaint->id)->first();
-                $messageImage = empty($complaintheaderImage) ? null : asset('storage/complaints/'. $complaintheaderImage->image);
-//            $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
+            $string.= "notif 311 = ".$result." | ";
 
-                $customerComplaintDetailModel = ([
-                    'customer_id'       => $newComplaintDetail->customer_id,
-                    'customer_name'     => $newComplaintDetail->customer->name,
-                    'customer_avatar'    => asset('storage/customers/'. $newComplaintDetail->customer->image_path),
-                    'employee_id'       => null,
-                    'employee_name'     => "",
-                    'employee_avatar'    => "",
-                    'message'           => $newComplaintDetail->message,
-                    'image'             => $messageImage,
-                    'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                ]);
-                //Send notification to
-                //Employee
-                $title = "ICare";
-                $body = "Customer membuat complaint baru";
-                $notifData = array(
-                    "type_id" => 301,
-                    "complaint_id" => $newComplaint->id,
-                    "complaint_subject" => $newComplaint->subject,
-                    "complaint_detail_model" => $customerComplaintDetailModel,
-                );
-                //Push Notification to employee App.
-                $ProjectEmployees = ProjectEmployee::where('project_id', $newComplaint->project_id)
-                    ->where('employee_roles_id', $employeeDB->employee_roles_id)
-                    ->get();
-                if($ProjectEmployees->count() >= 0){
-                    foreach ($ProjectEmployees as $ProjectEmployee){
-                        $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
-                        $isSuccess = FCMNotification::SendNotification($user->id, 'user', $title, $body, $notifData);
-                    }
-                }
-                return $isSuccess;
-                break;
-            case 2:
-                $messageImage = empty($newComplaintDetail->image) ? null : asset('storage/complaints/'. $newComplaintDetail->image);
-                $employeeComplaintDetailModel = ([
-                    'customer_id'       => null,
-                    'customer_name'     => "",
-                    'customer_avatar'    => "",
-                    'employee_id'       => $newComplaintDetail->employee_id,
-                    'employee_name'     => $newComplaintDetail->employee->first_name." ".$newComplaintDetail->employee->last_name,
-                    'employee_avatar'    => asset('storage/employees/'. $newComplaintDetail->employee->image_path),
-                    'message'           => $newComplaintDetail->message,
-                    'image'             => $messageImage,
-                    'date'              => Carbon::parse($newComplaintDetail->created_at, 'Asia/Jakarta')->format('d M Y H:i:s'),
-                ]);
+            $title = "ICare";
+            $body = "Komplain Customer belum diselesaikan, tolong ingatkan penanggung jawab komplain";
+            $data = array(
+                "type_id" => 312,
+                "complaint_id" => $complaintDB->id,
+                "complaint_subject" => $complaintDB->subject,
+                "complaint_detail_model" => ComplaintDetailFunc::getComplaintDetailFunc($complaintDB->id),
+            );
+            //Push Notification to employee App.
+            //Push Notification to employee App.
+            $user = \App\Models\User::where('employee_id', 10088)->first();
+            $result2 = FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
 
-                //Send notification to
-                //Customer
-                $title = "ICare";
-                $body = "Employee reply complaint ".$newComplaint->subject;
-                $data = array(
-                    "type_id" => 302,
-                    "complaint_id" => $newComplaint->id,
-                    "complaint_detail_model" => $employeeComplaintDetailModel,
-                );
-                //Push Notification to customer App.
-                if(!empty($newComplaint->customer_id)){
-                    $isSuccess = FCMNotification::SendNotification($newComplaint->customer_id, 'customer', $title, $body, $data);
-                }
-                return $isSuccess;
-                break;
+            $string.= "notif 312 = ".$result2." | ";
 
-                //notif for customer (role_id > 1)
-            case 3:
-                $project = Project::where('id', 1)->first();
-                $employee = Employee::where('id', 2)->first();
-                //Send notification to
-                //Customer
-                $title = "ICare";
-                $body = "Manager sedang meninjau project";
-                $data = array(
-                    "type_id" => 501,
-                    "project_id" => $project->id,
-                    "project_name" => $project->name,
-                    "employee_name" => $employee->first_name. " " .$employee->last_name,
-                );
-//                dd($project, $employee, $data);
-                if(strpos($project->customer_id, '#') !== false){
-                    $cusArr = explode('#', $project->customer_id);
-                    foreach ($cusArr as $custId){
-                        if(!empty($custId)){
-                            $isSuccess = FCMNotification::SendNotification($custId, 'customer', $title, $body, $data);
-                        }
-                    }
-                }
-                else{
-                    $isSuccess = FCMNotification::SendNotification($project->customer_id, 'customer', $title, $body, $data);
-                }
-                return $isSuccess;
-                break;
+            return $string;
+        }
+        catch (\Exception $ex){
+            Log::error('Frontend/HomeController - testNotifSendToAndroid error EX: '. $ex);
+            dd($ex);
         }
     }
     public function testEmail(){
@@ -1081,8 +1009,8 @@ class HomeController extends Controller
     public function submitIntegrationGetAttendance(){
         try{
             $projectCode = 'TSC';
-            $startDate = '2020-11-16';
-            $endDate = "2021-02-16";
+            $startDate = '2021-04-16';
+            $endDate = "2021-05-15";
 //            Log::channel('in_sys')
 //                ->info('API/IntegrationController - getAttendances data projectCode = '. $projectCode . " | beginDate = ".$startDate." | endDate = ".$endDate);
             $project = Project::where('code', $projectCode)->first();
@@ -1097,10 +1025,12 @@ class HomeController extends Controller
                     'error' => 'Please provide Begin Date and End Date!'
                 ], 400);
             }
+
             $startDateMonth = Carbon::parse($startDate)->format('Y-m');
             $endDateMonth = Carbon::parse($endDate)->format('Y-m');
 
-            $dataModel = AttendanceProcess::DownloadAttendanceProcessV2($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
+//            $dataModel = AttendanceProcess::DownloadAttendanceProcessV2($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
+            $dataModel = AttendanceProcess::DownloadAttendanceProcessV3($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
 
             $date = Carbon::now('Asia/Jakarta')->timestamp;
             $returnModel = collect([

@@ -28,7 +28,7 @@ Route::get('/icare', 'Admin\DashboardController@dashboard')->name('admin.dashboa
 //Route::get('/test-notif', 'Frontend\HomeController@testNotif')->name('testNotif');
 //Route::get('/test-email', 'Frontend\HomeController@testEmail')->name('testEmail');
 //Route::get('/test-notif-send', 'Frontend\HomeController@testNotifSend')->name('testNotifSend');
-//Route::get('/android-notif-send', 'Frontend\HomeController@testNotifSendToAndroid')->name('testNotifSend');
+Route::get('/android-notif-send', 'Frontend\HomeController@testNotifSendToAndroid')->name('testNotifSend');
 //Route::get('/integration-project', 'Frontend\HomeController@submitIntegrationProject');
 //Route::get('/integration-employee', 'Frontend\HomeController@submitIntegrationEmployee');
 //Route::get('/integration-jobassign', 'Frontend\HomeController@submitIntegrationJobAssigment');

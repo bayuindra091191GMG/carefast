@@ -155,7 +155,7 @@ class ComplaintEscalationCron extends Command
                             $title = "ICare";
                             $body = "Customer complain terjadi eskalasi";
                             $data = array(
-                                "type_id" => 300,
+                                "type_id" => 311,
                                 "complaint_id" => $complaintDB->id,
                                 "complaint_subject" => $complaintDB->subject,
                                 "complaint_detail_model" => ComplaintDetailFunc::getComplaintDetailFunc($complaintDB->id),
@@ -190,9 +190,9 @@ class ComplaintEscalationCron extends Command
                             if($intervalMinute >= 30){
                                 //send notif to upper role employee
                                 $title = "ICare";
-                                $body = "Customer complain belum diselesaikan, tolong ingatkan penanggung jawab";
+                                $body = "Komplain Customer belum diselesaikan, tolong ingatkan penanggung jawab komplain";
                                 $data = array(
-                                    "type_id" => 300,
+                                    "type_id" => 312,
                                     "complaint_id" => $complaintDB->id,
                                     "complaint_subject" => $complaintDB->subject,
                                     "complaint_detail_model" => ComplaintDetailFunc::getComplaintDetailFunc($complaintDB->id),
