@@ -888,21 +888,37 @@ class AttendanceProcess
     public static function DownloadAttendanceProcessV3($project, $startDate, $startDateMonth, $endDate, $endDateMonth){
         try{
             $dataModel = collect();
-            $projectEmployees = ProjectEmployee::where('project_id', $project->id)
-                ->where('status_id', 1)
-                ->where('employee_roles_id', '<', 5)
-                ->orderBy('employee_roles_id')
+//            $projectEmployees = ProjectEmployee::where('project_id', $project->id)
+//                ->where('status_id', 1)
+//                ->where('employee_roles_id', '<', 5)
+//                ->orderBy('employee_roles_id')
+//                ->get();
+            $projectEmployees = DB::table('project_employees')
+                ->join('employees', 'project_employees.employee_id', '=', 'employees.id')
+                ->select('project_employees.id as project_employee_id',
+                    'employees.id as employee_id',
+                    'employees.code as employee_code')
+                ->where('project_employees.project_id', $project->id)
+                ->where('project_employees.status_id',1)
+                ->where('project_employees.employee_roles_id', '<', 5)
+                ->orderBy('project_employees.employee_roles_id')
                 ->get();
+
 
             //ambil tanggal dari start_date ke end_date
             $period = CarbonPeriod::create($startDate, $endDate);
             $dayPeriods = [];
             foreach ($period as $date) {
-                array_push($dayPeriods, $date->format('d'));
+                // formated j = The day of the month without leading zeros (1 to 31)
+                array_push($dayPeriods, $date->format('j'));
             }
 
             foreach ($projectEmployees as $projectEmployee){
-                $employeeSchedule = EmployeeSchedule::where('employee_id', $projectEmployee->employee_id)->first();
+//                $employeeSchedule = EmployeeSchedule::where('employee_id', $projectEmployee->employee_id)->first();
+                $employeeSchedule = DB::table('employee_schedules')
+                    ->select('day_status','employee_id', 'employee_code')
+                    ->where('employee_id', $projectEmployee->employee_id)
+                    ->first();
 
                 //check kalau sudah pernah dibuat jadwal dari backend
                 if(!empty($employeeSchedule)){
@@ -912,14 +928,14 @@ class AttendanceProcess
                         $days = explode(';', $employeeSchedule->day_status);
                         $dayCollections = collect();
                         foreach($days as $day){
+                            if(empty($day)) continue;
                             $date = explode(':', $day);
                             $item = ([
                                 'day'        => $date[0],
                                 'status'      => $date[1]
                             ]);
-                            $dayCollections->push($date);
+                            $dayCollections->push($item);
                         }
-                        dd($dayCollections, $dayPeriods);
 
                         $status = "A";
                         $attendanceIn = "";
@@ -927,11 +943,18 @@ class AttendanceProcess
                         $description = "";
                         //ambil tanggal dan banding kan dengan database
                         foreach ($dayPeriods as $dayPeriod){
-                            $dayCollection = $dayCollections->where('day', $dayPeriod);
+                            $dayCollection = $dayCollections->where('day', $dayPeriod)->first();
+                            $dayObject = (object)$dayCollection;
 
-                            $createdAt = $startDateMonth.'-'.$dayCollection->day;
+                            if($dayObject->day < 10){
+                                $createdAt = $startDateMonth.'-0'.$dayObject->day;
+                            }
+                            else{
+                                $createdAt = $startDateMonth.'-'.$dayObject->day;
+                            }
+
                             //kalau scehdulenya tipenya O = Off
-                            if($dayCollection->status == 'O'){
+                            if($dayObject->status == 'O'){
                                 $status = "O";
                                 $attendanceIn = $createdAt;
 
@@ -976,8 +999,8 @@ class AttendanceProcess
 
                                 if($attendanceAbsents->count() < 1){
                                     $projectCSOModel = ([
-                                        'employeeId'        => $projectEmployee->employee->id,
-                                        'employeeCode'      => $projectEmployee->employee->code,
+                                        'employeeId'        => $projectEmployee->employee_id,
+                                        'employeeCode'      => $projectEmployee->employee_code,
                                         'transDate'         => $createdAt,
                                         'shiftCode'         => 1,
                                         'attendanceIn'      => "",
@@ -1026,8 +1049,8 @@ class AttendanceProcess
 
                                             if($intervalMinute >= 480){
                                                 $projectCSOModel = ([
-                                                    'employeeId'        => $projectEmployee->employee->id,
-                                                    'employeeCode'      => $projectEmployee->employee->code,
+                                                    'employeeId'        => $projectEmployee->employee_id,
+                                                    'employeeCode'      => $projectEmployee->employee_code,
                                                     'transDate'         => $createdAt->format('Y-m-d'),
                                                     'shiftCode'         => 1,
                                                     'attendanceIn'      => $attendanceIn,
@@ -1040,8 +1063,8 @@ class AttendanceProcess
                                         }
                                         else{
                                             $projectCSOModel = ([
-                                                'employeeId'        => $projectEmployee->employee->id,
-                                                'employeeCode'      => $projectEmployee->employee->code,
+                                                'employeeId'        => $projectEmployee->employee_id,
+                                                'employeeCode'      => $projectEmployee->employee_code,
                                                 'transDate'         => $createdAt->format('Y-m-d'),
                                                 'shiftCode'         => 1,
                                                 'attendanceIn'      => $attendanceIn,
@@ -1169,6 +1192,7 @@ class AttendanceProcess
             return $dataModel;
         }
         catch (\Exception $ex){
+            dd($ex);
             Log::error('libs/AttendanceProcess/DownloadAttendanceProcess  error EX: '. $ex);
 
             $dataModel = collect();
