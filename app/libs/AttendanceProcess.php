@@ -869,7 +869,9 @@ class AttendanceProcess
             return $dataModel;
         }
         catch (\Exception $ex){
-            Log::error('libs/AttendanceProcess/DownloadAttendanceProcess  error EX: '. $ex);
+//            Log::error('libs/AttendanceProcess/DownloadAttendanceProcessV2  error EX: '. $ex);
+            Log::channel('in_sys')
+                ->error('libs/AttendanceProcess/DownloadAttendanceProcessV2  error EX: '. $ex);
 
             $dataModel = collect();
 
@@ -1192,8 +1194,8 @@ class AttendanceProcess
             return $dataModel;
         }
         catch (\Exception $ex){
-            dd($ex);
-            Log::error('libs/AttendanceProcess/DownloadAttendanceProcess  error EX: '. $ex);
+            Log::channel('in_sys')
+                ->error('libs/AttendanceProcess/DownloadAttendanceProcessV3  error EX: '. $ex);
 
             $dataModel = collect();
 
