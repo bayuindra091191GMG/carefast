@@ -1976,7 +1976,6 @@ class ComplainController extends Controller
                 return response()->json("Complaint harus terisi", 400);
             }
 
-
             $user = auth('customer')->user();
             $customer = Customer::find($user->id);
 
@@ -1991,6 +1990,26 @@ class ComplainController extends Controller
             $customerComplaint->updated_by = $user->id;
             $customerComplaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $customerComplaint->save();
+
+            //Send notification to
+            //Employee
+            $title = "ICare";
+            $body = "Customer Close complaint ".$customerComplaint->subject;
+            $data = array(
+                "type_id" => 306,
+                "complaint_id" => $customerComplaint->id,
+                "complaint_detail_model" => $this->getComplaintDetailFunc($customerComplaint->id),
+            );
+            //Push Notification to employee App.
+            $ProjectEmployees = ProjectEmployee::where('project_id', $customerComplaint->project_id)
+                ->where('employee_roles_id', $customerComplaint->employee_handler_role_id)
+                ->get();
+            if($ProjectEmployees->count() >= 0){
+                foreach ($ProjectEmployees as $ProjectEmployee){
+                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                }
+            }
 
             return Response::json("Berhasil menutup complaint", 200);
         }
@@ -2021,6 +2040,26 @@ class ComplainController extends Controller
             $employeeComplaint->updated_by = $user->id;
             $employeeComplaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $employeeComplaint->save();
+
+            //Send notification to
+            //Employee
+            $title = "ICare";
+            $body = "Employee Close complaint ".$employeeComplaint->subject;
+            $data = array(
+                "type_id" => 306,
+                "complaint_id" => $employeeComplaint->id,
+                "complaint_detail_model" => $this->getComplaintDetailFunc($employeeComplaint->id),
+            );
+            //Push Notification to employee App.
+            $ProjectEmployees = ProjectEmployee::where('project_id', $employeeComplaint->project_id)
+                ->where('employee_roles_id', $employeeComplaint->employee_handler_role_id)
+                ->get();
+            if($ProjectEmployees->count() >= 0){
+                foreach ($ProjectEmployees as $ProjectEmployee){
+                    $user = User::where('employee_id', $ProjectEmployee->employee_id)->first();
+                    FCMNotification::SendNotification($user->id, 'user', $title, $body, $data);
+                }
+            }
 
             return Response::json("Berhasil menutup complaint ini", 200);
         }
