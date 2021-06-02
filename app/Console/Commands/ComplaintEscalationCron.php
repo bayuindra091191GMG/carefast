@@ -79,15 +79,25 @@ class ComplaintEscalationCron extends Command
                             ->first();
                         if(!empty($employeeDB)){
                             //mencari waktu eskalasi
-                            $minute = 30;
+//                            $minute = 30;
+//                            if($employeeDB->employee_roles_id == 5){
+//                                $minute = 60;
+//                            }
+//                            if($employeeDB->employee_roles_id == 6){
+//                                $minute = 1260;
+//                            }
+//                            if($employeeDB->employee_roles_id == 7){
+//                                $minute = 30;
+//                            }
+                            $minute = 1;
                             if($employeeDB->employee_roles_id == 5){
-                                $minute = 60;
+                                $minute = 1;
                             }
                             if($employeeDB->employee_roles_id == 6){
-                                $minute = 1260;
+                                $minute = 1;
                             }
                             if($employeeDB->employee_roles_id == 7){
-                                $minute = 30;
+                                $minute = 1;
                             }
 
                             // update setelah pindah role
@@ -181,7 +191,8 @@ class ComplaintEscalationCron extends Command
 //                            ->info("complaint pending and process notification | complaint id= ".$complaintDB->id. " | now = ".
 //                                $now." | trxDate = ".$trxDate);
                         $employeeDB = ProjectEmployee::where('project_id', $complaintDB->project_id)
-                            ->where('employee_roles_id', '>', $complaintDB->employee_handler_role_id)
+                            ->where('employee_roles_id', '>=', $complaintDB->employee_handler_role_id)
+                            ->where('employee_roles_id', '<', 8)
                             ->orderBy('employee_roles_id', 'asc')
                             ->first();
                         if(!empty($employeeDB)){

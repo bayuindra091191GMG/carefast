@@ -250,9 +250,9 @@ class ComplainController extends Controller
                 ->where('customer_id', $user->id)
                 ->where('status_id', '!=', 12)
                 ->count();
-            if($customerComplaintCount >= 5){
-                return response()->json("Quota complaint anda sudah mencapai maksimal", 482);
-            }
+//            if($customerComplaintCount >= 5){
+//                return response()->json("Quota complaint anda sudah mencapai maksimal", 482);
+//            }
 
             $datetimenow = Carbon::now('Asia/Jakarta');
             $project = Project::find($data->project_id);
@@ -776,7 +776,7 @@ class ComplainController extends Controller
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
                 'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
-                'response_limit_date'  => Carbon::now('Asia/Jakarta')->addHours(6)->toDateTimeString(),
+                'response_limit_date'  => Carbon::now('Asia/Jakarta')->addMinutes(1)->toDateTimeString(),
                 'created_by'          => $user->id,
                 'created_at'          => $datetimenow,
                 'updated_by'          => $user->id,
@@ -974,12 +974,12 @@ class ComplainController extends Controller
             ]);
 
             $complaint = Complaint::find($data->complaint_id);
-            $complaint->status_id = 11;
-            $complaint->employee_handler_id = $employee->id;
-            $complaint->updated_by = $user->id;
-            $complaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
-            $complaint->response_limit_date = $datetimenow;
-            $complaint->save();
+//            $complaint->status_id = 11;
+//            $complaint->employee_handler_id = $employee->id;
+//            $complaint->updated_by = $user->id;
+//            $complaint->updated_at = Carbon::now('Asia/Jakarta')->toDateTimeString();
+//            $complaint->response_limit_date = $datetimenow;
+//            $complaint->save();
 
             if($request->hasFile('image')){
                 $imageFolder = str_replace('/','-', $complaint->code);
@@ -1027,7 +1027,8 @@ class ComplainController extends Controller
             }
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
-                ->where('employee_roles_id', $complaint->employee_handler_role_id)
+//                ->where('employee_roles_id', $complaint->employee_handler_role_id)
+                ->where('employee_roles_id', '<=', $complaint->employee_handler_role_id)
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
@@ -1335,13 +1336,15 @@ class ComplainController extends Controller
 
             if($projectId != 0){
 //                $customerComplaints =  Complaint::where('project_id', $projectId)
-//                    ->where('employee_handler_role_id', $employeeLoginRoleId);
+//                    ->where('employee_handler_role_id', $employeeLoginRoleId)
+//                    ->whereBetween('created_at', [$startDate, $finishDate2]);
                 $customerComplaints =  Complaint::where('project_id', $projectId)
                     ->whereBetween('created_at', [$startDate, $finishDate2]);
             }
             else{
 //                $customerComplaints =  Complaint::whereIn('project_id', $ids)
-//                    ->where('employee_handler_role_id', $employeeLoginRoleId);
+//                    ->where('employee_handler_role_id', $employeeLoginRoleId)
+//                    ->whereBetween('created_at', [$startDate, $finishDate2]);
                 $customerComplaints =  Complaint::whereIn('project_id', $ids)
                     ->whereBetween('created_at', [$startDate, $finishDate2]);
             }
@@ -1410,7 +1413,19 @@ class ComplainController extends Controller
                 ->get();
             if(count($locationDB) > 0){
                 foreach ($locationDB as $location){
-                    $locationModel = $location->place_name. " - ".$location->unit_name;
+//                    $locationModel = $location->place_name. " - ".$location->unit_name;
+//                    $locationModels->push($locationModel);
+
+                    $objects = collect();
+                    foreach ($locationDB->where('place_id', $location->place_id) as $locationObject){
+                        $objectModel = $locationObject->unit_name;
+                        $objects->push($objectModel);
+                    }
+
+                    $locationModel = collect([
+                        'place_name' => $location->place_name,
+                        'objects'   => $objects
+                    ]);
                     $locationModels->push($locationModel);
                 }
             }
@@ -1827,6 +1842,9 @@ class ComplainController extends Controller
                 if($user->employee_id != $complaint->employee_handler_id){
                     return Response::json("Complaint sudah di proses", 483);
                 }
+//                if($employee->employee_role_id > $complaint->employee_handler_id){
+//                    return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
+//                }
             }
 //            if($employee->id != $employeeComplaint->employee_id){
 //                return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
@@ -1953,7 +1971,7 @@ class ComplainController extends Controller
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $complaint->project_id)
-                ->where('employee_roles_id', $complaint->employee_handler_role_id)
+                ->where('employee_roles_id', '<=', $complaint->employee_handler_role_id)
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){
@@ -2002,7 +2020,7 @@ class ComplainController extends Controller
             );
             //Push Notification to employee App.
             $ProjectEmployees = ProjectEmployee::where('project_id', $customerComplaint->project_id)
-                ->where('employee_roles_id', $customerComplaint->employee_handler_role_id)
+                ->where('employee_roles_id', '<=', $customerComplaint->employee_handler_role_id)
                 ->get();
             if($ProjectEmployees->count() >= 0){
                 foreach ($ProjectEmployees as $ProjectEmployee){

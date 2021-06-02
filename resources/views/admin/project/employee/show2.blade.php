@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 
 @section('content')
-    {{ $projectId = \Illuminate\Support\Facades\Auth::guard('admin')->user()->project_id }}
+{{--    {{ $projectId = \Illuminate\Support\Facades\Auth::guard('admin')->user()->project_id }}--}}
+    @php($projectId = \Illuminate\Support\Facades\Auth::guard('admin')->user()->project_id)
 
     <div class="row">
         <div class="col-12">

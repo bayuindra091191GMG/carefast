@@ -10,9 +10,19 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-8 col-12">
-                        <a href="{{ route('admin.project.information.index') }}" class="btn btn-outline-primary float-left mr-3">
-                            <i class="fas fa-arrow-left"></i>
-                        </a>
+
+                        @if($projectId == 0)
+                            <a href="{{ route('admin.project.information.index') }}" class="btn btn-outline-primary float-left mr-3">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                        @else
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-primary float-left mr-3">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                        @endif
+{{--                        <a href="{{ route('admin.project.information.index') }}" class="btn btn-outline-primary float-left mr-3">--}}
+{{--                            <i class="fas fa-arrow-left"></i>--}}
+{{--                        </a>--}}
                         <h3>DETIL DATA PROJECT {{ $project->name }}</h3>
                     </div>
                     <div class="col-md-4 col-12 text-right">

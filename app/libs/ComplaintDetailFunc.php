@@ -17,6 +17,7 @@ use App\Models\ComplaintFinishImage;
 use App\Models\ComplaintReject;
 use App\Models\ComplaintRejectImage;
 use App\Models\Employee;
+use App\Models\EmployeeRole;
 use App\Models\EmployeeSchedule;
 use App\Models\Place;
 use App\Models\Project;
@@ -116,6 +117,11 @@ class ComplaintDetailFunc
                 $lastComplaintDetail = Employee::where('id', $complaint->employee_handler_id)->first();
                 $lastComplaintDetailRole = $lastComplaintDetail->employee_role->name;
             }
+            $currentHandlerRole = "";
+            if(!empty($complaint->employee_handler_role_id)){
+                $currentRole = EmployeeRole::where('id', $complaint->employee_handler_role_id)->first();
+                $currentHandlerRole = $currentRole->description;
+            }
 
             //get project's location (from project_objects tables)
             $locationModels = collect();
@@ -158,10 +164,13 @@ class ComplaintDetailFunc
                 'employee_name'         => $employeeName,
                 'employee_avatar'       => $employeeAvatar,
 
-                'employee_handler_id'   => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : 0 ,
-                'employee_handler_name' => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
-                'employee_handler_role' => $lastComplaintDetailRole,
+                'employee_handler_id'       => !empty($lastComplaintDetail) ? $lastComplaintDetail->id : 0 ,
+                'employee_handler_name'     => !empty($lastComplaintDetail) ? $lastComplaintDetail->first_name." ".$lastComplaintDetail->last_name : "" ,
+                'employee_handler_role'     => $lastComplaintDetailRole,
                 'employee_handler_avatar'   => !empty($lastComplaintDetail) ? asset('storage/employees/'. $lastComplaintDetail->image_path) : "",
+
+                'employee_handler_current_role_name'    => $currentHandlerRole,
+                'employee_handler_current_role_id'      => $complaint->employee_handler_role_id,
 
                 'subject'               => $complaint->subject,
                 'description'           => !empty($complaint->description) ? $complaint->description : "",

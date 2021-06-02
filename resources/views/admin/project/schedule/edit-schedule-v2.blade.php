@@ -187,7 +187,7 @@
                                                                     NUC
                                                                 </th>
                                                                 @foreach($days as $day)
-                                                                    <th class="text-center">
+                                                                    <th>
                                                                         {{$day}}
                                                                     </th>
                                                                 @endforeach
@@ -200,7 +200,7 @@
                                                                     <td>{{$schedule['employee_name']}}</td>
                                                                     <td>{{($schedule['employee_code'])}} </td>
                                                                     @foreach($schedule["days"] as $scheduleDay)
-                                                                        <td class="text-center">
+                                                                        <td>
                                                                             @if($scheduleDay["status"] == 'H')
                                                                                 H
                                                                             @else
@@ -324,19 +324,21 @@
             format: "dd M yyyy"
         });
 
-        let dayCount = '{{count($days)}}';
         $(function () {
+        // function loadTable() {
             let colums = [];
-            var newDayCount = parseInt(dayCount) + 2;
-            for(var a=0;a < newDayCount; a++){
-                if(a==0){
+            let dayCount = '{{count($days)}}';
+            console.log("dayCount = " + dayCount);
+            let newDayCount = parseInt(dayCount) + 2;
+            for(let a=0;a < newDayCount; a++){
+                if(a===0){
                     let colum = {
                         "width": "300",
                         "align": "center",
                     };
                     colums.push(colum);
                 }
-                else if(a==1){
+                else if(a===1){
                     let colum = {
                         "width": "100",
                         "align": "center",
@@ -353,11 +355,57 @@
             }
             console.log(colums);
             $('#fixed_hdr1').fxdHdrCol({
-                fixedCols: 2,
-                width:     '100%',
-                height:    250,
-                colModal: colums
+                fixedCols   : 2,
+                width       : '100%',
+                height      : 250,
+                // colModal    : colums
+
+                colModal: [
+                    { width: 300, align: 'center' },
+                    { width: 100, align: 'center' },
+
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                    { width: 50, align: 'center' },
+                ],
             });
+        // }
         });
     </script>
 @endsection
