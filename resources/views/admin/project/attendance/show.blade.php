@@ -78,7 +78,7 @@
                                                                         <div class="form-group form-float form-group-lg">
                                                                             <div class="form-line">
                                                                                 <label class="form-label" for="total_mp_onduty">Tanggal Selesai *</label>
-                                                                                <input id="finish_date" name="finish_date" type="text" class="form-control" autocomplete="off" required>
+                                                                                <input id="finish_date" name="end_date" type="text" class="form-control" autocomplete="off" required>
                                                                             </div>
                                                                         </div>
                                                                     </div>

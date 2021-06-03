@@ -1416,17 +1416,20 @@ class ComplainController extends Controller
 //                    $locationModel = $location->place_name. " - ".$location->unit_name;
 //                    $locationModels->push($locationModel);
 
-                    $objects = collect();
-                    foreach ($locationDB->where('place_id', $location->place_id) as $locationObject){
-                        $objectModel = $locationObject->unit_name;
-                        $objects->push($objectModel);
-                    }
+                    $foundPlace = $locationModels->where('place_name', $location->place_name)->first();
+                    if(empty($foundPlace)){
+                        $objects = collect();
+                        foreach ($locationDB->where('place_id', $location->place_id) as $locationObject){
+                            $objectModel = $locationObject->unit_name;
+                            $objects->push($objectModel);
+                        }
 
-                    $locationModel = collect([
-                        'place_name' => $location->place_name,
-                        'objects'   => $objects
-                    ]);
-                    $locationModels->push($locationModel);
+                        $locationModel = collect([
+                            'place_name' => $location->place_name,
+                            'objects'   => $objects
+                        ]);
+                        $locationModels->push($locationModel);
+                    }
                 }
             }
 

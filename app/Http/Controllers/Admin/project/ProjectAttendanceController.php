@@ -83,6 +83,7 @@ class ProjectAttendanceController extends Controller
             ->where('attendance_absents.project_id', $projectId)
             ->where('attendance_absents.status_id',6)
             ->orderBy('attendance_absents.employee_id')
+            ->orderBy('attendance_absents.date')
             ->get();
 
         $now = Carbon::now('Asia/Jakarta');
@@ -123,10 +124,11 @@ class ProjectAttendanceController extends Controller
                 'Description' => $attendanceAbsent->description,
             ]);
             $list->push($singleData);
+            $projectCode = $attendanceAbsent->project_code;
         }
 //        dd($list);
         $destinationPath = public_path()."/download_attendance/";
-        $file = "attendance-report_ ".$now->format('d F Y_G.i.s').'.xlsx';
+        $file = "attendance-report-".$projectCode."_".$now->format('d F Y_G.i.s').'.xlsx';
 //        dd($destinationPath.$file);
         (new FastExcel($list))->export($destinationPath.$file);
 

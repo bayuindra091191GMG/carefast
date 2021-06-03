@@ -47,114 +47,114 @@
 {{--                            </li>--}}
 {{--                        </ul>--}}
 {{--                    </li>--}}
-                    <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                           aria-expanded="false">
-                            <i class="mdi mdi-account-settings-variant"></i>
-                            <span class="hide-menu">Place </span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse  first-level">
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.place.index')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Daftar Place </span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.place.create')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Buat Place Baru</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                           aria-expanded="false">
-                            <i class="mdi mdi-account-settings-variant"></i>
-                            <span class="hide-menu"> Object </span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse  first-level">
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.unit.index')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Daftar Object </span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.sub1unit.index')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Daftar Sub Object 1 </span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.sub2unit.index')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Daftar Sub Object 2</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.unit.create')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Tambah Object </span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.sub1unit.create')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Tambah Sub Object 1 </span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.sub2unit.create')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Tambah Sub Object 2 </span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                           aria-expanded="false">
-                            <i class="mdi mdi-account-settings-variant"></i>
-                            <span class="hide-menu"> Action </span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse  first-level">
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.action.index')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Daftar Action </span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.action.create')}}" class="sidebar-link">
-                                    <i class="mdi mdi-account"></i>
-                                    <span class="hide-menu"> Tambah Action </span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                           aria-expanded="false">
-                            <i class="mdi mdi-exclamation"></i>
-                            <span class="hide-menu"> Keluhan </span>
-                        </a>
-                        <ul aria-expanded="false" class="collapse  first-level">
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.complaint.index', ['type' => 'customers'])}}" class="sidebar-link">
-                                    <i class="mdi mdi-format-list-bulleted"></i>
-                                    <span class="hide-menu"> Daftar Keluhan Customer </span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="{{route('admin.complaint.index', ['type' => 'internals'])}}" class="sidebar-link">
-                                    <i class="mdi mdi-format-list-bulleted"></i>
-                                    <span class="hide-menu"> Daftar Keluhan Internal </span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+{{--                    <li class="sidebar-item">--}}
+{{--                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"--}}
+{{--                           aria-expanded="false">--}}
+{{--                            <i class="mdi mdi-account-settings-variant"></i>--}}
+{{--                            <span class="hide-menu">Place </span>--}}
+{{--                        </a>--}}
+{{--                        <ul aria-expanded="false" class="collapse  first-level">--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.place.index')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Daftar Place </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.place.create')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Buat Place Baru</span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                        </ul>--}}
+{{--                    </li>--}}
+{{--                    <li class="sidebar-item">--}}
+{{--                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"--}}
+{{--                           aria-expanded="false">--}}
+{{--                            <i class="mdi mdi-account-settings-variant"></i>--}}
+{{--                            <span class="hide-menu"> Object </span>--}}
+{{--                        </a>--}}
+{{--                        <ul aria-expanded="false" class="collapse  first-level">--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.unit.index')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Daftar Object </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.sub1unit.index')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Daftar Sub Object 1 </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.sub2unit.index')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Daftar Sub Object 2</span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.unit.create')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Tambah Object </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.sub1unit.create')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Tambah Sub Object 1 </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.sub2unit.create')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Tambah Sub Object 2 </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                        </ul>--}}
+{{--                    </li>--}}
+{{--                    <li class="sidebar-item">--}}
+{{--                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"--}}
+{{--                           aria-expanded="false">--}}
+{{--                            <i class="mdi mdi-account-settings-variant"></i>--}}
+{{--                            <span class="hide-menu"> Action </span>--}}
+{{--                        </a>--}}
+{{--                        <ul aria-expanded="false" class="collapse  first-level">--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.action.index')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Daftar Action </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.action.create')}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-account"></i>--}}
+{{--                                    <span class="hide-menu"> Tambah Action </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                        </ul>--}}
+{{--                    </li>--}}
+{{--                    <li class="sidebar-item">--}}
+{{--                        <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"--}}
+{{--                           aria-expanded="false">--}}
+{{--                            <i class="mdi mdi-exclamation"></i>--}}
+{{--                            <span class="hide-menu"> Keluhan </span>--}}
+{{--                        </a>--}}
+{{--                        <ul aria-expanded="false" class="collapse  first-level">--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.complaint.index', ['type' => 'customers'])}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-format-list-bulleted"></i>--}}
+{{--                                    <span class="hide-menu"> Daftar Keluhan Customer </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li class="sidebar-item">--}}
+{{--                                <a href="{{route('admin.complaint.index', ['type' => 'internals'])}}" class="sidebar-link">--}}
+{{--                                    <i class="mdi mdi-format-list-bulleted"></i>--}}
+{{--                                    <span class="hide-menu"> Daftar Keluhan Internal </span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                        </ul>--}}
+{{--                    </li>--}}
                 </ul>
             @else
                 <ul id="sidebarnav" class="pt-3 mt-3" style="border-top: 1px solid #eeeeee;">
