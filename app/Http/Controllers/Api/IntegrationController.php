@@ -563,7 +563,7 @@ class IntegrationController extends Controller
             $endDateMonth = Carbon::parse($endDate)->format('Y-m');
 
 //            $dataModel = AttendanceProcess::DownloadAttendanceProcessV2($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
-            $dataModel = AttendanceProcess::DownloadAttendanceProcessV3($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
+            $dataModel = AttendanceProcess::DownloadAttendanceProcessV4($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
 
             $date = Carbon::now('Asia/Jakarta')->timestamp;
             $returnModel = collect([
