@@ -81,6 +81,24 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        @if($projectShifts->count() > 0)
+                                                        <div class="col-md-12">
+                                                            <table>
+                                                                <tr>
+                                                                    <td width="100">Tipe Shift</td>
+                                                                    <td width="100">Start Time</td>
+                                                                    <td width="100">Finish Time</td>
+                                                                </tr>
+                                                                @foreach($projectShifts as $projectShift)
+                                                                <tr>
+                                                                    <td>{{$projectShift->shift_type}}</td>
+                                                                    <td>{{$projectShift->start_time}}</td>
+                                                                    <td>{{$projectShift->finish_time}}</td>
+                                                                </tr>
+                                                                @endforeach
+                                                            </table>
+                                                        </div>
+                                                        @endif
 
                                                         <div class="row">
 {{--                                                            <div class="col-md-6">--}}
@@ -191,11 +209,15 @@
                                                                         {{$day}}
                                                                     </th>
                                                                 @endforeach
+                                                                <th>
+                                                                    Opsi
+                                                                </th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
 
                                                             @foreach($projectScheduleModel as $schedule)
+                                                                @php($offCt = 0)
                                                                 <tr>
                                                                     <td>{{$schedule['employee_name']}}</td>
                                                                     <td>{{($schedule['employee_code'])}} </td>
@@ -203,12 +225,31 @@
                                                                         <td>
                                                                             @if($scheduleDay["status"] == 'H')
                                                                                 H
+                                                                            @elseif($scheduleDay["status"] == 'HP')
+                                                                                HP
+                                                                            @elseif($scheduleDay["status"] == 'HS')
+                                                                                HS
+                                                                            @elseif($scheduleDay["status"] == 'HM')
+                                                                                HM
+                                                                            @elseif($scheduleDay["status"] == 'HM1')
+                                                                                HM1
+                                                                            @elseif($scheduleDay["status"] == 'HM2')
+                                                                                HM2
                                                                             @else
                                                                                 O
+                                                                            @php($offCt++)
                                                                             @endif
                                                                             <input type="hidden" id="employeeId" name="employeeId[]"  value="{{$schedule['employee_id']}}">
                                                                         </td>
                                                                     @endforeach
+                                                                    <td>
+                                                                        @if($offCt > 10)
+                                                                        <a href="{{route('admin.project.schedule-edit-employee', ['id'=>$schedule['employee_id']]).'?projectId='.$project->id }}"
+                                                                           class="btn btn-primary">
+                                                                            Ubah
+                                                                        </a>
+                                                                        @endif
+                                                                    </td>
                                                                 </tr>
                                                             @endforeach
                                                             </tbody>

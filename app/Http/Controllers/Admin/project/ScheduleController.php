@@ -14,6 +14,7 @@ use App\Models\EmployeeRole;
 use App\Models\EmployeeSchedule;
 use App\Models\Project;
 use App\Models\ProjectEmployee;
+use App\Models\ProjectShift;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use App\Transformer\CustomerTransformer;
@@ -374,7 +375,7 @@ class ScheduleController extends Controller
                     foreach($dayArr as $day){
                         $scheduleDetail = ([
                             'day'   => $day,
-                            'status' => "M",
+                            'status' => "",
                         ]);
                         $scheduleModel->push($scheduleDetail);
                     }
@@ -383,8 +384,11 @@ class ScheduleController extends Controller
                 }
             }
 
+            //get project shift
+            $projectShifts = ProjectShift::Where('project_code', $currentProject->code)->get();
             $data = [
                 'project'               => $currentProject,
+                'projectShifts'         => $projectShifts,
                 'projectScheduleModel'  => $projectScheduleModel,
                 'days'                  => $dayArr,
                 'isSelectDate'          => $isSelectDate,
@@ -396,6 +400,140 @@ class ScheduleController extends Controller
         }
         catch(\Exception $ex){
             Log::error('Admin/ScheduleController - scheduleEdit error EX: '. $ex);
+            return redirect()->back()->withErrors($ex);
+        }
+    }
+    public function scheduleEditEmployee(Request $request, int $id){
+        try{
+            $projectId = $request->projectId;
+            $currentProject = Project::find($projectId);
+
+            if(empty($currentProject)){
+                return redirect()->back();
+            }
+            $start_date = Carbon::now()->format("d M Y");
+            $end_date = Carbon::now()->format("d M Y");
+            $employeeProjects = ProjectEmployee::with('employee')
+                ->where('project_id', $projectId)
+//                ->where('employee_id', $id)
+                ->where('employee_roles_id','<', 4)
+                ->where('status_id', 1)
+                ->get();
+
+            $isSelectDate = true;
+            $dayArr = collect();
+            $projectScheduleModel = collect();
+
+            foreach($employeeProjects as $employeeProject){
+                $isEmpty = true;
+                $scheduleModel = collect();
+                $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeProject->employee_id)->first();
+
+                $schedule = collect([
+                    'employee_id'   => $employeeProject->employee_id,
+                    'employee_name' => $employeeProject->employee->first_name. ' '.$employeeProject->employee->last_name,
+                    'employee_code' => $employeeProject->employee->code,
+                    'days'          => '',
+                ]);
+                if(!empty($employeeSchedule)){
+                    if(!empty($employeeSchedule->day_status)){
+                        $isEmpty = false;
+                        $days = explode(";", $employeeSchedule->day_status);
+                        $dayArr = collect();
+                        foreach ($days as $day){
+                            if(!empty($day)){
+                                $dayStatus = explode(":", $day);
+                                $scheduleDetail = ([
+                                    'day'   => $dayStatus[0],
+                                    'status' => $dayStatus[1],
+                                ]);
+                                $scheduleModel->push($scheduleDetail);
+                                $dayArr->push($dayStatus[0]);
+                            }
+                        }
+                        $schedule['days'] = $scheduleModel;
+                        $projectScheduleModel->push($schedule);
+                    }
+                }
+                if($isEmpty){
+                    foreach($dayArr as $day){
+                        $scheduleDetail = ([
+                            'day'   => $day,
+                            'status' => "",
+                        ]);
+                        $scheduleModel->push($scheduleDetail);
+                    }
+                    $schedule['days'] = $scheduleModel;
+                    $projectScheduleModel->push($schedule);
+                }
+            }
+
+            $data = [
+                'selectedEmployee'      => $id,
+                'project'               => $currentProject,
+                'projectScheduleModel'  => $projectScheduleModel,
+                'days'                  => $dayArr,
+                'isSelectDate'          => $isSelectDate,
+                'start_date'            => $start_date,
+                'end_date'              => $end_date,
+            ];
+//        dd($data);
+            return view('admin.project.schedule.edit-schedule-employee')->with($data);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ScheduleController - scheduleEditEmployee error EX: '. $ex);
+            return redirect()->back()->withErrors($ex);
+        }
+    }
+    public function scheduleUpdateEmployee(Request $request, int $id){
+        try{
+            $projectId = $request->input('projectId');
+            $currentProject = Project::find($projectId);
+
+            if(empty($currentProject)){
+                return redirect()->back();
+            }
+
+            $employeeDB = DB::table('employees')
+                ->select('id', 'code')
+                ->where('id', $request->input('employeeId'))
+                ->first();
+            if(!empty($employeeDB)){
+                $ct =0 ;
+                $tempSchedule = "";
+                //create day_status
+                // ex : 16:M;17:M;18:M;19:M;20:M;21:M;22:O;23:M;24:M;25:M;26:M;27:M;28:M;29:O;30:O;31:O;1:M;2:M;3:M;4:M;5:M;6:M;7:O;8:M;9:M;10:M;11:M;12:M;13:M;14:O;15:M;
+                $days = $request->input('days');
+                $statuses = $request->input('statuses');
+                foreach($days as $day){
+                    $tempSchedule .= $days[$ct].":".$statuses[$ct].";";
+                    $ct++;
+                }
+                $employeeScheduleDB = EmployeeSchedule::where('employee_code', $employeeDB->code)->first();
+//                dd($tempSchedule, $employeeScheduleDB);
+                if(empty($employeeScheduleDB)){
+                    $employeeSchedule = EmployeeSchedule::create([
+                        'employee_id'       => $employeeDB->id,
+                        'employee_code'     => $employeeDB->code,
+                        'day_status'        => $tempSchedule,
+//                        'status_id'         => 1,
+                        'created_by'        => 1,
+                        'created_at'        => Carbon::now('Asia/Jakarta')
+                    ]);
+                }
+                else{
+                    $employeeScheduleDB->day_status = $tempSchedule;
+                    $employeeScheduleDB->updated_by = 1;
+                    $employeeScheduleDB->updated_at = Carbon::now('Asia/Jakarta');
+                    $employeeScheduleDB->save();
+                }
+
+            }
+//        dd($data);
+            return redirect()->route('admin.project.set-schedule',['id' => $projectId]);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ScheduleController - scheduleEditEmployee error EX: '. $ex);
             return redirect()->back()->withErrors($ex);
         }
     }
@@ -612,6 +750,34 @@ class ScheduleController extends Controller
         catch(\Exception $ex){
             dd($ex);
             Log::error('Admin/ScheduleController - scheduleStore error EX: '. $ex);
+            return redirect()->back()->withErrors($ex)->withInput($request->all());
+        }
+    }
+
+    public function editProjectShift(int $id){
+        try{
+//            dd($request);
+            $excel = request()->file('excel');
+            $exportResult = Excel::import(new EmployeeScheduleImport(), $excel);
+
+            return view('admin.project.schedule.edit-schedule-employee');
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ScheduleController - editProjectShift error EX: '. $ex);
+            return redirect()->back()->withErrors($ex)->withInput();
+        }
+    }
+    public function updateProjectShift(Request $request){
+        try{
+//            dd($request);
+            $excel = request()->file('excel');
+            $exportResult = Excel::import(new EmployeeScheduleImport(), $excel);
+
+            Session::flash('success', 'Sukses mengubah jadwal karyawan!');
+            return redirect()->route('admin.project.set-schedule',['id' => $id]);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ScheduleController - changeProjectShift error EX: '. $ex);
             return redirect()->back()->withErrors($ex)->withInput($request->all());
         }
     }

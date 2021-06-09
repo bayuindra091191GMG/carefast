@@ -1431,7 +1431,7 @@ class AttendanceProcess
                     'employees.id as employee_id',
                     'employees.code as employee_code')
                 ->where('project_employees.project_id', $project->id)
-                ->where('project_employees.status_id',1)
+//                ->where('project_employees.status_id',1)
                 ->where('project_employees.employee_roles_id', '<', 5)
                 ->orderBy('project_employees.employee_roles_id')
                 ->get();
@@ -1519,32 +1519,44 @@ class AttendanceProcess
 
                             //kalau scehdulenya tipenya O = Off
                             if($dayObject->status == 'O'){
-                                $status = "O";
-                                $attendanceIn = $createdAt;
-                                foreach ($attendanceAbsents as $attendanceAbsent){
-                                    $status = "H";
-                                    $transDate = Carbon::parse($attendanceAbsent->created_at);
-                                    $attendanceIn = $attendanceAbsent->date;
 
-                                    if(!empty($attendanceAbsent->date_checkout)){
-                                        $status = "H";
-                                        $attendanceOut = $attendanceAbsent->date_checkout;
-                                    }
+                                if($attendanceAbsents->count() < 1){
+                                    $projectCSOModel = ([
+                                        'employeeId'        => $projectEmployee->employee_id,
+                                        'employeeCode'      => $projectEmployee->employee_code,
+                                        'transDate'         => $createdAt,
+                                        'shiftCode'         => 1,
+                                        'attendanceIn'      => "",
+                                        'attendanceOut'     => "",
+                                        'attendanceStatus'   => "O",
+                                        'description'       => "Off Schedule",
+                                    ]);
+                                    $dataModel->push($projectCSOModel);
                                 }
+                                else{
+                                    foreach ($attendanceAbsents as $attendanceAbsent){
+                                        $status = "H";
+                                        if(!empty($attendanceAbsent->date_checkout)){
+                                            $status = "H";
+                                            $attendanceIn = $attendanceAbsent->date;
+                                            $attendanceOut = $attendanceAbsent->date_checkout;
+                                        }
+                                    }
 
-                                $projectCSOModel = ([
-                                    'employeeId'        => $employeeSchedule->employee_id,
-                                    'employeeCode'      => $employeeSchedule->employee_code,
-                                    'transDate'         => $transDate->format('Y-m-d'),
-                                    'shiftCode'         => 1,
-                                    'attendanceIn'      => $attendanceIn,
-                                    'attendanceOut'     => $attendanceOut,
-                                    'attendanceStatus'  => $status,
-                                    'description'       => "Schedule O, but found attendance",
-                                ]);
-                                $dataModel->push($projectCSOModel);
+                                    $projectCSOModel = ([
+                                        'employeeId'        => $employeeSchedule->employee_id,
+                                        'employeeCode'      => $employeeSchedule->employee_code,
+                                        'transDate'         => $createdAt,
+                                        'shiftCode'         => 1,
+                                        'attendanceIn'      => $attendanceIn,
+                                        'attendanceOut'     => $attendanceOut,
+                                        'attendanceStatus'  => $status,
+                                        'description'       => "Schedule O, but found attendance",
+                                    ]);
+                                    $dataModel->push($projectCSOModel);
+                                }
                             }
-                            //kalau scehdulenya tipenya H = masuk
+                            //kalau schedulenya tipenya H = masuk
                             else{
                                 if($attendanceAbsents->count() < 1){
                                     $status = "A";
@@ -1734,11 +1746,11 @@ class AttendanceProcess
                                     $intervalMinute = $trxDate->diffInMinutes($trxDateOut);
 
                                     if($intervalMinute >= 480){
-                                        $createdAt = Carbon::parse($attendanceAbsent->created_at);
+//                                        $createdAt = Carbon::parse($attendanceAbsent->created_at);
                                         $projectCSOModel = ([
                                             'employeeId'        => $attendanceAbsent->employee_id,
                                             'employeeCode'      => $attendanceAbsent->employee_code,
-                                            'transDate'         => $createdAt->format('Y-m-d'),
+                                            'transDate'         => $createdAt,
                                             'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
                                             'attendanceIn'      => $attendanceAbsent->date,
                                             'attendanceOut'     => $attendanceOut,
@@ -1747,27 +1759,27 @@ class AttendanceProcess
                                         ]);
                                         $dataModel->push($projectCSOModel);
                                     }
-                                    else{
-                                        $createdAt = Carbon::parse($attendanceAbsent->created_at);
-                                        $projectCSOModel = ([
-                                            'employeeId'        => $attendanceAbsent->employee_id,
-                                            'employeeCode'      => $attendanceAbsent->employee_code,
-                                            'transDate'         => $createdAt->format('Y-m-d'),
-                                            'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
-                                            'attendanceIn'      => $attendanceAbsent->date,
-                                            'attendanceOut'     => $attendanceOut,
-                                            'attendanceStatus'  => "A",
-                                            'description'       => $description,
-                                        ]);
-                                        $dataModel->push($projectCSOModel);
-                                    }
+//                                    else{
+////                                        $createdAt = Carbon::parse($attendanceAbsent->created_at);
+//                                        $projectCSOModel = ([
+//                                            'employeeId'        => $attendanceAbsent->employee_id,
+//                                            'employeeCode'      => $attendanceAbsent->employee_code,
+//                                            'transDate'         => $createdAt,
+//                                            'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
+//                                            'attendanceIn'      => $attendanceAbsent->date,
+//                                            'attendanceOut'     => $attendanceOut,
+//                                            'attendanceStatus'  => "A",
+//                                            'description'       => $description,
+//                                        ]);
+//                                        $dataModel->push($projectCSOModel);
+//                                    }
                                 }
                                 else{
-                                    $createdAt = Carbon::parse($attendanceAbsent->created_at);
+//                                    $createdAt = Carbon::parse($attendanceAbsent->created_at);
                                     $projectCSOModel = ([
                                         'employeeId'        => $attendanceAbsent->employee_id,
                                         'employeeCode'      => $attendanceAbsent->employee_code,
-                                        'transDate'         => $createdAt->format('Y-m-d'),
+                                        'transDate'         => $createdAt,
                                         'shiftCode'         => $attendanceAbsent->shift_type ?? 0,
                                         'attendanceIn'      => $attendanceAbsent->date,
                                         'attendanceOut'     => $attendanceOut,
@@ -1788,7 +1800,7 @@ class AttendanceProcess
         }
         catch (\Exception $ex){
             Log::channel('in_sys')
-                ->error('libs/AttendanceProcess/DownloadAttendanceProcessV3  error EX: '. $ex);
+                ->error('libs/AttendanceProcess/DownloadAttendanceProcessV4  error EX: '. $ex);
 
             $dataModel = collect();
 

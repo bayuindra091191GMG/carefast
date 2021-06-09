@@ -49,9 +49,11 @@
                                                                 <div class="form-line">
                                                                     <label class="form-label">Shift*</label>
                                                                     <select name='shift_type' class='form-control'>
-                                                                        <option value='1'>SHIFT 1</option>
-                                                                        <option value='2'>SHIFT 2</option>
-                                                                        <option value='3'>SHIFT 3</option>
+                                                                        <option value='1'>SHIFT PAGI</option>
+                                                                        <option value='2'>SHIFT SIANG</option>
+                                                                        <option value='3'>SHIFT MALAM</option>
+                                                                        <option value='4'>SHIFT MIDDLE 1</option>
+                                                                        <option value='5'>SHIFT MIDDLE 2</option>
                                                                     </select>
                                                                 </div>
                                                             </div>

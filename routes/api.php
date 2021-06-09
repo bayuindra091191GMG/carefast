@@ -78,10 +78,12 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
     // Attendance absent Test
     Route::get('/attendance/checking', 'Api\AttendanceAbsentTestController@attendanceChecking');
+    Route::get('/attendance/checking-v2', 'Api\AttendanceAbsentTestController@attendanceCheckingV2');
     Route::post('/attendance/qrcode', 'Api\AttendanceAbsentTestController@getProjectCodeEncrypted');
     Route::post('/attendance/in', 'Api\AttendanceAbsentTestController@attendanceIn');
     Route::post('/attendance/out', 'Api\AttendanceAbsentTestController@attendanceOut');
     Route::post('/attendance/log', 'Api\AttendanceAbsentTestController@attendanceLog');
+    Route::post('/attendance/log-v2', 'Api\AttendanceAbsentTestController@attendanceLogV2');
 
     //Employee
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');

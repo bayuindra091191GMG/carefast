@@ -340,6 +340,78 @@ class AttendanceAbsentTestController extends Controller
         }
     }
     /**
+     * Function to checking employee already checkin or not.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function attendanceCheckingV2(Request $request){
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $projectEmployee = ProjectEmployee::where('employee_id', $employee->id)->first();
+
+            if($projectEmployee->employee_roles_id  == 1){
+                //pengecekan harus di ganti dengan pengecekan weeks dan days dan finish
+//                $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+//                    ->where('project_employee_id', $projectEmployee->id)
+//                    ->first();
+//
+//                if(empty($schedule)){
+//                    return Response::json("Tidak ada schedule saat ini!", 482);
+//                }
+            }
+//            $date = Carbon::now('Asia/Jakarta');
+//            $time = $date->format('H:i:s');
+//            $schedule = Schedule::where('project_id', $projectEmployee->project_id)
+//                ->where('project_employee_id', $projectEmployee->id)
+//                ->where('start' >= $time)
+//                ->where('finish' <= $time)->first();
+
+            //checking checkin with attendance
+//            $attendance = AttendanceAbsent::where('employee_id', $employee->id)
+////                ->where('schedule_id', $schedule->id)
+//                ->where('status_id', 6)
+//                ->where('is_done', 0)
+//                ->first();
+            $attendance = DB::table('attendance_absents')
+                ->where('employee_id', $employee->id)
+                ->where('status_id', 6)
+                ->where('is_done', 0)
+                ->first();
+
+            if(empty($attendance)){
+                return Response::json("Tidak ada Attendance!", 482);
+            }
+            else{
+//                $place = Place::find($attendance->place_id);
+//                Log::info('checkinChecking place id = '.$attendance->place_id);
+//                if(empty($place)){
+//                    return Response::json("Place Tidak ditemukan!", 482);
+//                }
+
+                $placeModel = collect([
+                    'id'                => $projectEmployee->project_id,
+                    'place_name'        => $projectEmployee->project->name,
+                    'project_name'      => $projectEmployee->project->name,
+                    'attendance_time'      => Carbon::parse($attendance->created_at)->format('d m Y H:i:s'),
+                    'attendance_out_time'      => "",
+                ]);
+                return Response::json($placeModel, 200);
+            }
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceController - checkinChecking error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
+    /**
      * Function to get employee attendance log.
      *
      * @param Request $request
@@ -376,6 +448,63 @@ class AttendanceAbsentTestController extends Controller
                     }
                     else{
                         $attOut = Carbon::parse($attendance->date_checkout)->format('d M Y H:i:s');
+//                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
+                    }
+                    $attendanceModel = collect([
+                        'attendance_in_date'    => $attIn,
+                        'attendance_out_date'   => $attOut,
+                    ]);
+                    $attendanceModels->push($attendanceModel);
+                }
+                return Response::json($attendanceModels, 200);
+            }
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceController - attendanceLog error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+    /**
+     * Function to get employee attendance log.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function attendanceLogV2(Request $request){
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d 00:00:00');
+
+            $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d 00:00:00');
+            $finishDate2 = Carbon::parse($finishDate)->addDay();
+
+            $attendances = DB::table('attendance_absents')
+                ->where('employee_id', $employee->id)
+                ->whereBetween('created_at', [$startDate, $finishDate2])
+                ->where('status_id', 6)
+                ->orderByDesc('date')
+                ->get();
+
+            if($attendances->count() == 0){
+                return Response::json("Tidak ada Attendance!", 482);
+            }
+            else{
+                $attendanceModels = collect();
+                foreach ($attendances as $attendance){
+                    $attIn = Carbon::parse($attendance->date)->format('d m Y H:i:s');
+//                    $attIn = $attendance->date->format('Y-m-d H:i:s');
+                    if(empty($attendance->date_checkout)){
+                        $attOut = "";
+                    }
+                    else{
+                        $attOut = Carbon::parse($attendance->date_checkout)->format('d m Y H:i:s');
 //                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
                     }
                     $attendanceModel = collect([

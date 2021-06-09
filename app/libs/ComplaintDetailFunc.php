@@ -174,7 +174,7 @@ class ComplaintDetailFunc
 
                 'subject'               => $complaint->subject,
                 'description'           => !empty($complaint->description) ? $complaint->description : "",
-                'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d M Y H:i:s'),
+                'date'                  => Carbon::parse($complaint->date, 'Asia/Jakarta')->format('d m Y H:i:s'),
                 'status_id'             => $complaint->status_id,
                 'images'                => $complaintImages,
                 'response_models'        => $complaintResponsesSorted,

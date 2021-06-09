@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
 
         $schedule->command('complaint_escalation:cron')
-            ->everyTenMinutes();
+            ->everyMinute();
     }
 
     /**

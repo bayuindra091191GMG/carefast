@@ -745,7 +745,7 @@ class HomeController extends Controller
 
     public function submitIntegrationEmployee(){
         try {
-            $data = '[{"code":"1000002","first_name":"SIGIT TEST","last_name":"","phone":"10002","dob":"1989-03-04","nik":"10002","address":"-","role":1,"job_code":"LEADER","job_name":"LEADER"},{"code":"1000003","first_name":"YANSEN TEST","last_name":"","phone":"10003","dob":"1989-03-04","nik":"10003","address":"-","role":1,"job_code":"SPV","job_name":"SPV"},{"code":"1000004","first_name":"IVAN TEST","last_name":"","phone":"10004","dob":"1989-03-04","nik":"10004","address":"-","role":1,"job_code":"CHIEF","job_name":"CHIEF"},{"code":"1000005","first_name":"ANTO TEST","last_name":"","phone":"10005","dob":"1989-03-04","nik":"10005","address":"-","role":1,"job_code":"FM","job_name":"FM"},{"code":"1000006","first_name":"KEVIN TEST","last_name":"","phone":"10006","dob":"1989-03-04","nik":"10006","address":"-","role":1,"job_code":"OM","job_name":"OM"},{"code":"1000007","first_name":"AKHIONG TEST","last_name":"","phone":"10007","dob":"1989-03-04","nik":"10007","address":"-","role":1,"job_code":"GM","job_name":"GM"}]';
+            $data = '[{"code":"10001","first_name":"Charles Iskandar","last_name":"","phone":null,"dob":"1989-03-04","nik":"10001","address":"-","role":1,"job_code":"CLEANER","job_name":"CS-CLEANER"}]';
             $employees = json_decode($data, true);
             Log::channel('in_sys')
                 ->info('API/IntegrationController - employees DATA : '.json_encode($employees));
