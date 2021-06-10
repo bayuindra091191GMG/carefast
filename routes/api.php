@@ -187,16 +187,3 @@ Route::group(['namespace' => 'Api', 'middleware' => 'api', 'prefix' => 'password
 
 // Dashboard
 Route::get('/dashboard', 'Api\DashboardController@getData');
-
-Route::middleware('auth:api')->group(function() {
-    // Cart
-    Route::get('/cart', 'Api\CartController@getCart');
-    Route::post('/cart/add', 'Api\CartController@addToCart');
-    Route::post('/cart/update', 'Api\CartController@updateCart');
-    Route::post('/cart/delete', 'Api\CartController@deleteCart');
-
-});
-
-// Product
-Route::get('/product/get', 'Api\ProductController@getAllProduct');
-Route::get('/product/show', 'Api\ProductController@show');

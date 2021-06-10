@@ -756,28 +756,73 @@ class ScheduleController extends Controller
 
     public function editProjectShift(int $id){
         try{
-//            dd($request);
-            $excel = request()->file('excel');
-            $exportResult = Excel::import(new EmployeeScheduleImport(), $excel);
+            $currentProject = Project::find($id);
+            $projectShifts = ProjectShift::Where('project_id', $id)->get();
+            $data = [
+                'project'               => $currentProject,
+                'projectShifts'         => $projectShifts,
+            ];
 
-            return view('admin.project.schedule.edit-schedule-employee');
+            return view('admin.project.schedule.edit-shift')->with($data);
         }
         catch(\Exception $ex){
             Log::error('Admin/ScheduleController - editProjectShift error EX: '. $ex);
             return redirect()->back()->withErrors($ex)->withInput();
         }
     }
-    public function updateProjectShift(Request $request){
+    public function updateProjectShift(Request $request, int $id){
         try{
-//            dd($request);
-            $excel = request()->file('excel');
-            $exportResult = Excel::import(new EmployeeScheduleImport(), $excel);
 
-            Session::flash('success', 'Sukses mengubah jadwal karyawan!');
+            $shifts = $request->input('shift_types');
+            $start_time = $request->input('start_time');
+            $finish_time = $request->input('finish_time');
+//            dd($shifts, $start_time, $finish_time);
+
+            //validation
+            if(in_array(null, $start_time, true) || in_array(null, $finish_time, true)){
+                return redirect()->back()->withErrors("Start or Finish time not set")->withInput($request->all());
+            }
+            $isDouble = false;
+            for ($i=0; $i < count($shifts); $i++){
+                for ($j=0; $j < count($shifts); $j++){
+                    if($i == $j) continue;
+                    if($shifts[$i] == $shifts[$j]) $isDouble = true;
+                }
+            }
+            if($isDouble){
+                return redirect()->back()->withErrors("More Than 1 shift type")->withInput($request->all());
+            }
+
+            $currentProject = Project::find($id);
+            $projectShifts = ProjectShift::Where('project_id', $id)->get();
+            if(count($projectShifts) > 0){
+                foreach ($projectShifts as $projectShift){
+                    $projectShift->delete();
+                }
+            }
+
+            $ct=0;
+            foreach($shifts as $shift){
+                if($shift == null){
+                    $ct++;
+                    continue;
+                }
+                $newProjectShift = ProjectShift::create([
+                    'project_id'            => $currentProject->id,
+                    'project_code'          => $currentProject->code,
+                    'shift_type'            => $shift,
+                    'start_time'            => $start_time[$ct] ?? '00:00',
+                    'finish_time'           => $finish_time[$ct] ?? '00:00',
+                ]);
+                $ct++;
+            }
+
+
+            Session::flash('success', 'Sukses mengubah Shift Project!');
             return redirect()->route('admin.project.set-schedule',['id' => $id]);
         }
         catch(\Exception $ex){
-            Log::error('Admin/ScheduleController - changeProjectShift error EX: '. $ex);
+            Log::error('Admin/ScheduleController - updateProjectShift error EX: '. $ex);
             return redirect()->back()->withErrors($ex)->withInput($request->all());
         }
     }

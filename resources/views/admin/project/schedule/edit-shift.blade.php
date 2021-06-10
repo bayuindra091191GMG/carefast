@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        {{ Form::open(['route'=>['admin.project.upload-schedule', $project->id],'method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
+                        {{ Form::open(['route'=>['admin.project.update-shift', $project->id],'method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
 
                         <div class="row">
                             <div class="col-md-12">
@@ -38,20 +38,19 @@
                                             @endif
 
                                             <div class="col-md-12">
-                                                @if($projectShifts->count() > 0)
                                                     <div class="col-md-12">
                                                         <table class="table table-bordered table-hover" id="tab_logic">
                                                             <tr>
-                                                                <td width="100">Tipe Shift</td>
-                                                                <td width="100">Start Time</td>
-                                                                <td width="100">Finish Time</td>
+                                                                <td width="150">Tipe Shift</td>
+                                                                <td width="150">Start Time</td>
+                                                                <td width="150">Finish Time</td>
                                                             </tr>
 
                                                             @if($projectShifts->count() > 0)
                                                                 @foreach($projectShifts as $projectShift)
                                                                     <tr>
                                                                         <td>
-                                                                            <select name="shiftTypes[]" class='form-control'>
+                                                                            <select name="shift_types[]" class='form-control'>
                                                                                 <option value='HP' @if($projectShift->shift_type == "HP") selected @endif>HP</option>
                                                                                 <option value='HS' @if($projectShift->shift_type == "HS") selected @endif>HS</option>
                                                                                 <option value='HM' @if($projectShift->shift_type == "HM") selected @endif>HM</option>
@@ -61,11 +60,11 @@
                                                                         </td>
                                                                         <td>
                                                                             <input class='form-control time-inputmask' name='start_time[]' placeholder='HH:MM'
-                                                                                   value="{{$projectShift->start_time}}" required/>
+                                                                                   value="{{$projectShift->start_time}}"/>
                                                                         </td>
                                                                         <td>
                                                                             <input class='form-control time-inputmask' name='finish_time[]' placeholder='HH:MM'
-                                                                                   value="{{$projectShift->finish_time}}" required/>
+                                                                                   value="{{$projectShift->finish_time}}"/>
                                                                         </td>
                                                                     </tr>
                                                                 @endforeach
@@ -87,8 +86,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <hr>
                                     </div>
                                 </div>
                             </div>
@@ -146,7 +143,8 @@
         $(".time-inputmask").inputmask("hh:mm", {
             placeholder: "HH:MM",
             insertMode: false,
-            showMaskOnHover: false
+            showMaskOnHover: false,
+
         });
 
         var i=1;
@@ -155,7 +153,7 @@
             $('#sch'+i).html(
 
                 "<td>" +
-                "<select>" +
+                "<select class='form-control' name='shift_types[]'>" +
                 "<option value='HP'>HP</option><option value='HS'>HS</option>" +
                 "<option value='HM'>HM</option><option value='HM1'>HM1</option>" +
                 "<option value='HM2'>HM2</option>" +
@@ -163,11 +161,11 @@
                 "</td>" +
 
                 "<td>" +
-                "<input id='start"+ i +"' class='form-control time-inputmask' name='start_times[]' placeholder='HH:MM' required/>" +
+                "<input id='start"+ i +"' class='form-control time-inputmask' name='start_time[]' placeholder='HH:MM'/>" +
                 "</td>" +
 
                 "<td>" +
-                "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_times[]' placeholder='HH:MM' required/>" +
+                "<input id='finish"+ i +"' class='form-control time-inputmask' name='finish_time[]' placeholder='HH:MM'/>" +
                 "</td>"
             );
             $('#tab_logic').append('<tr id="sch'+(i+1)+'"></tr>');

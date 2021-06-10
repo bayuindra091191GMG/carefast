@@ -81,26 +81,33 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        @if($projectShifts->count() > 0)
-                                                        <div class="col-md-12">
-                                                            <table>
-                                                                <tr>
-                                                                    <td width="100">Tipe Shift</td>
-                                                                    <td width="100">Start Time</td>
-                                                                    <td width="100">Finish Time</td>
-                                                                </tr>
-                                                                @foreach($projectShifts as $projectShift)
-                                                                <tr>
-                                                                    <td>{{$projectShift->shift_type}}</td>
-                                                                    <td>{{$projectShift->start_time}}</td>
-                                                                    <td>{{$projectShift->finish_time}}</td>
-                                                                </tr>
-                                                                @endforeach
-                                                            </table>
-                                                        </div>
-                                                        @endif
-
                                                         <div class="row">
+                                                            @if($projectShifts->count() > 0)
+                                                                <div class="col-md-6">
+                                                                    <table>
+                                                                        <tr>
+                                                                            <td width="150">Tipe Shift</td>
+                                                                            <td width="150">Start Time</td>
+                                                                            <td width="150">Finish Time</td>
+                                                                        </tr>
+                                                                        @foreach($projectShifts as $projectShift)
+                                                                            <tr>
+                                                                                <td>{{$projectShift->shift_type}}</td>
+                                                                                <td>{{$projectShift->start_time}}</td>
+                                                                                <td>{{$projectShift->finish_time}}</td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </table>
+                                                                </div>
+                                                            @endif
+                                                            <div class="col-md-6">
+                                                                <a href="{{route('admin.project.edit-shift',['id' => $project->id])}}" class="btn btn-success">
+                                                                    UBAH Waktu Shift
+                                                                </a>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mt-5">
 {{--                                                            <div class="col-md-6">--}}
 {{--                                                                <div class="row">--}}
 {{--                                                                    <div class="col-md-6">--}}
