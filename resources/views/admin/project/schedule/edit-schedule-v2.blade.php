@@ -148,7 +148,11 @@
                                                             <div class="col-md-6">
                                                                 <p>
                                                                     Keterangan = <br>
-                                                                    - H = Hadir <br>
+                                                                    - HP = Hadir Pagi<br>
+                                                                    - HS = Hadir Siang<br>
+                                                                    - HM = Hadir Malam<br>
+                                                                    - HM1 = Hadir Middle 1<br>
+                                                                    - HM2 = Hadir Middle 2<br>
                                                                     - O = Off <br>
                                                                     - Angka pada table menunjukan tanggal
                                                                 </p>

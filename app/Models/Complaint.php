@@ -30,6 +30,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property \Carbon\Carbon $response_limit_date
  * @property int $score
  * @property string $score_message
+ * @property string $priority
  * @property \Carbon\Carbon $created_at
  * @property int $created_by
  * @property \Carbon\Carbon $updated_at
@@ -86,6 +87,7 @@ class Complaint extends Eloquent
 		'response_limit_date',
 		'score',
 		'score_message',
+		'priority',
 		'created_by',
 		'updated_by'
 	];

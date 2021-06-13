@@ -67,6 +67,9 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/attendance/leader/checkout', 'Api\AttendanceController@submitCheckoutByLeader');
     Route::post('/attendance/leader/assessment', 'Api\AttendanceController@leaderSubmit');
 
+    Route::post('/attendance/checkin-v2', 'Api\AttendanceController@submitCheckinShift');
+    Route::post('/attendance/checkout-v2', 'Api\AttendanceController@submitCheckoutShift');
+
     // Attendance absent
 //    Route::get('/attendance/checking', 'Api\AttendanceAbsentController@attendanceChecking');
 //    Route::post('/attendance/qrcode', 'Api\AttendanceAbsentController@getProjectCodeEncrypted');
@@ -143,6 +146,9 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::get('/plotting/get-dacs', 'Api\EmployeeController@getDacs');
     Route::post('/plotting/submit-plottings', 'Api\EmployeeController@submitPlottings');
 
+
+    //shift
+    Route::get('/shift/get', 'Api\ShiftController@getSchedule');
 });
 
 

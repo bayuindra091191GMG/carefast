@@ -53,6 +53,31 @@ class AttendanceController extends Controller
         }
     }
     /**
+     * Function to Submit Attendance with shift validation.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function submitCheckinShift(Request $request)
+    {
+        try{
+
+            $data = json_decode($request->input('checkin_model'));
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+
+            $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+
+            return Response::json($result["desc"], $result["status_code"]);
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceController - submitCheckin error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+    /**
      * Function to Submit Attendance by leader.
      *
      * @param Request $request
