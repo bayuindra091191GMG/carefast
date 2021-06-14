@@ -48,6 +48,7 @@ class ShiftController extends Controller
             $employeeId =  $request->input('employee_id');
             $id = $request->input('project_id');
             $projects =  Project::find($id);
+//            Log::error('Api/ShiftController - get | employee_id : '.$employeeId.' | project_id : '. $id);
 
             $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeId)->first();
             if(empty($employeeSchedule)){
@@ -55,7 +56,7 @@ class ShiftController extends Controller
             }
 
             $projectShifts = ProjectShift::Where('project_id', $id)->get();
-            if(count($projectShifts) > 0){
+            if(count($projectShifts) == 0){
                 return Response::json("Project Shift Tidak ditemukan!", 483);
             }
 

@@ -148,7 +148,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
 
 
     //shift
-    Route::get('/shift/get', 'Api\ShiftController@getSchedule');
+    Route::post('/shift/get', 'Api\ShiftController@getSchedule');
 });
 
 

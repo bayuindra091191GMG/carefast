@@ -183,6 +183,7 @@ class ComplaintDetailFunc
                 'is_rated'              => !empty($complaint->score) ? 1 : 0,
                 'rating'                => $complaint->score,
                 'rating_message'        => $complaint->score_message,
+                'priority'              => $complaint->priority
             ]);
             return $complaintModel;
         }
