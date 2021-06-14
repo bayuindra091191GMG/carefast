@@ -324,6 +324,7 @@ Route::get('/select-projectObjects', 'Admin\project\ProjectObjectController@getP
 Route::get('/select-projectObjectActivities', 'Admin\project\ProjectObjectController@getProjectObjectActivities')->name('select.projectObjectActivities');
 Route::get('/select-actions', 'Admin\ActionController@getActions')->name('select.actions');
 Route::get('/select-projects', 'Admin\project\ProjectController@getProjects')->name('select.projects');
+Route::get('/select-fms', 'Admin\project\ProjectController@getFms')->name('select.fms');
 
 Route::get('/select-admin-users', 'Admin\AdminUserController@getAdminUsers')->name('select.admin-users');
 Route::get('/select-user-categories', 'Admin\UserCategoryController@getCategories')->name('select.user-categories');

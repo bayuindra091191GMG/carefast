@@ -112,18 +112,32 @@
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="role">Project (Jika memilih Admin Project)</label>
+                                                        <label for="status">Status *</label>
+                                                        <select id="status" name="status" class="form-control">
+                                                            <option value="1">Active</option>
+                                                            <option value="2">Not Active</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="role">Project (Jika memilih Role = Admin Project)</label>
                                                         <select id="project_id" name="project_id" class='form-control'><option value='0'>Semua</option></select>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="status">Status *</label>
-                                                        <select id="status" name="status" class="form-control">
-                                                            <option value="1">Active</option>
-                                                            <option value="2">Not Active</option>
-                                                        </select>
+                                                        <label for="role">FM (jika memilih Role = FM)</label>
+                                                        <select id="fm_id" name="fm_id" class='form-control'></select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="role">FM (Jika memilih Role = OM)</label>
+                                                        <select id="multi_fm_id" name="multi_fm_id[]" class='form-control' multiple></select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -150,6 +164,12 @@
 
 @section('styles')
     <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet"/>
+    <style>
+        .select2-selection--multiple{
+            overflow: hidden !important;
+            height: auto !important;
+        }
+    </style>
 @endsection
 
 @section('scripts')
@@ -167,6 +187,52 @@
             minimumInputLength: 0,
             ajax: {
                 url: '{{ route('select.projects') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $('#fm_id').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Project - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.fms') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $('#multi_fm_id').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih FM - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.fms') }}',
                 dataType: 'json',
                 data: function (params) {
                     return {

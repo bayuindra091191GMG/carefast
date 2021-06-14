@@ -118,18 +118,31 @@ class AdminUserController extends Controller
 //            }
         }
 
+
+        $fmString = "0";
+        if($request->input('role') == 4){
+            $fmString = $request->input('fm_id')."#";
+        }
+        else if($request->input('role') == 5){
+            $fmString = "";
+            $fmIds = $request->input('multi_fm_id');
+            foreach ($fmIds as $fmId){
+                $fmString .= $fmId."#";
+            }
+        }
+
         $adminUser = AdminUser::create([
-            'first_name'    => $request->input('first_name'),
-            'last_name'     => $request->input('last_name'),
-            'email'         => $request->input('email'),
-            'role_id'       => $request->input('role'),
-//            'waste_bank_id' => $assignedWasteBankId,
-            'password'      => Hash::make($request->input('password')),
-            'status_id'     => $request->input('status'),
-            'project_id'     => $request->input('project_id'),
-            'is_super_admin'=> 0,
-            'created_by'    => $user->id,
-            'created_at'    => Carbon::now('Asia/Jakarta')
+            'first_name'        => $request->input('first_name'),
+            'last_name'         => $request->input('last_name'),
+            'email'             => $request->input('email'),
+            'role_id'           => $request->input('role'),
+            'password'          => Hash::make($request->input('password')),
+            'status_id'         => $request->input('status'),
+            'project_id'        => $request->input('project_id'),
+            'fm_id'             => $fmString,
+            'is_super_admin'    => 0,
+            'created_by'        => $user->id,
+            'created_at'        => Carbon::now('Asia/Jakarta')
         ]);
 
         Session::flash('success', 'Sukses membuat Admin User baru');

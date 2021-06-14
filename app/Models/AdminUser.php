@@ -25,6 +25,7 @@ use SMartins\PassportMultiauth\HasMultiAuthApiTokens;
  * @property string $language
  * @property int $status_id
  * @property int $project_id
+ * @property string $fm_id
  * @property string $image_path
  * @property string $remember_token
  * @property \Carbon\Carbon $email_verified_at
@@ -74,7 +75,8 @@ class AdminUser extends Authenticatable
 		'image_path',
 		'remember_token',
 		'email_verified_at',
-        'project_id'
+        'project_id',
+        'fm_id',
 	];
 
 	public function status()
