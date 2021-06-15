@@ -55,7 +55,6 @@
             serverSide: true,
             pageLength: 25,
             ajax: '{!! route('datatables.admin_users') !!}',
-            order: [ [0, 'asc'] ],
             columns: [
                 { data: 'email', name: 'email', class: 'text-left'},
                 { data: 'name', name: 'name', class: 'text-center', orderable: false, searchable: false},

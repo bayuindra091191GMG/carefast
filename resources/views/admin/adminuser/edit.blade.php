@@ -132,15 +132,23 @@
                                                     <div class="form-group">
                                                         <label for="role">FM (jika memilih Role = FM)</label>
                                                         <select id="project_id" name="project_id" class='form-control'>
-                                                            <option value='{{$projectId}}'>{{$projectName}}</option>
+                                                            @if($adminUser->role_id == 4)
+                                                                <option value='{{$fmId}}'>{{$fmName}}</option>
+                                                            @endif
                                                         </select>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="role">FM (Jika memilih Role = OM)</label>
-                                                        <select id="multi_fm_id" name="multi_fm_id[]" class='form-control' multiple></select>
+                                                        <label for="role">OM (Jika memilih Role = OM)</label>
+                                                        <select id="multi_fm_id" name="multi_fm_id[]" class='form-control' multiple>
+                                                            @if($adminUser->role_id == 5)
+                                                                @foreach($fmList as $fmData)
+                                                                    <option value="{{$fmData->id}}">{{$fmData->code}} - {{$fmData->first_name}} {{$fmData->last_name}}</option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -203,6 +211,55 @@
                     };
                 }
             }
+        });
+
+        $('#fm_id').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih Project - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.fms') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $('#multi_fm_id').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih FM - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.fms') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+        $( document ).ready(function() {
+            $('#multi_fm_id').trigger('change');
         });
     </script>
 @endsection

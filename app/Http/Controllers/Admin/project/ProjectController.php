@@ -11,6 +11,7 @@ use App\Models\CustomerType;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\Project;
+use App\Models\ProjectEmployee;
 use App\Transformer\CustomerTransformer;
 use App\Transformer\EmployeeTransformer;
 use App\Transformer\ProjectTransformer;
@@ -43,14 +44,32 @@ class ProjectController extends Controller
 
     public function getIndex(Request $request){
         try{
-            $projects = Project::with(['customer', 'status'])->where('id', ">", 0);
+            $adminUser = Auth::guard('admin')->user();
+            $fmData = $adminUser->fm_id;
+            if($fmData == "0#"){
+                $projects = Project::with(['customer', 'status'])->where('id', ">", 0);
+            }
+            else{
+                $fmArr = explode('#', $adminUser->fm_id);
+                $projectLists = ProjectEmployee::select('project_id')
+                    ->whereIn('employee_id', $fmArr)
+                    ->where('status_id', 1)
+                    ->groupBy('project_id')
+                    ->get();
+                $projectIdArr = array();
+                foreach($projectLists as $projectList){
+                    array_push($projectIdArr, $projectList->project_id);
+                }
+                $projects = Project::with(['customer', 'status'])
+                    ->whereIn('id', $projectIdArr);
+            }
 
             return DataTables::of($projects)
                 ->setTransformer(new ProjectTransformer())
                 ->make(true);
         }
         catch (\Exception $ex){
-            error_log($ex);
+            error_log("Error = ".$ex);
             Log::error('Admin/information/ProjectController - getIndex error EX: '. $ex);
         }
     }

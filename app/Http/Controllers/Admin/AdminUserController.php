@@ -120,7 +120,7 @@ class AdminUserController extends Controller
         }
 
 
-        $fmString = "0";
+        $fmString = "0#";
         if($request->input('role') == 4){
             $fmString = $request->input('fm_id')."#";
         }
@@ -183,6 +183,7 @@ class AdminUserController extends Controller
         }
         $fmId = 0;
         $fmName = "";
+        $fmList = null;
         if($adminUser->role_id == 4){
             $fmArr = explode('#', $adminUser->fm_id);
             $fmData = Employee::where('id', $fmArr[0])->first();
@@ -191,19 +192,10 @@ class AdminUserController extends Controller
                 $fmName = $fmData->code.' - '.$fmData->first_name. " ". $fmData->last_name;
             }
         }
+
         else if($adminUser->role_id == 5){
             $fmArr = explode('#', $adminUser->fm_id);
-            $fmList = collect();
-            foreach ($fmArr as $fm){
-                $fmData = Employee::where('id', $fmArr[0])->first();
-                if(!empty($fmData)){
-
-                    $fmId = $fmData->id;
-                    $fmName = $fmData->code.' - '.$fmData->first_name. " ". $fmData->last_name;
-
-                    $fmList->add();
-                }
-            }
+            $fmList = Employee::whereIn('id', $fmArr)->get();
         }
 
         $data = [
@@ -213,6 +205,7 @@ class AdminUserController extends Controller
             'projectName'   => $projectName,
             'fmId'          => $fmId,
             'fmName'        => $fmName,
+            'fmList'        => $fmList,
         ];
 
         return view('admin.adminuser.edit')->with($data);
@@ -247,11 +240,23 @@ class AdminUserController extends Controller
         if($request->filled('password')){
             $adminUser->password = Hash::make($request->input('password'));
         }
+        $fmString = "0#";
+        if($request->input('role') == 4){
+            $fmString = $request->input('fm_id')."#";
+        }
+        else if($request->input('role') == 5){
+            $fmString = "";
+            $fmIds = $request->input('multi_fm_id');
+            foreach ($fmIds as $fmId){
+                $fmString .= $fmId."#";
+            }
+        }
 
         $adminUser->first_name = $request->input('first_name');
         $adminUser->last_name = $request->input('last_name');
         $adminUser->role_id = $request->input('role');
         $adminUser->status_id = $request->input('status');
+        $adminUser->fm_id =$fmString;
         $adminUser->project_id = $request->input('project_id');
         $adminUser->updated_at = Carbon::now('Asia/Jakarta');
         $adminUser->save();

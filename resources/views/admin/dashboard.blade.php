@@ -3,8 +3,9 @@
 @section('content')
 
     @php($projectAdminId = \Illuminate\Support\Facades\Auth::guard('admin')->user()->project_id)
+    @php($projectFmId = \Illuminate\Support\Facades\Auth::guard('admin')->user()->fm_id)
     <div class="container-fluid">
-        @if($projectAdminId != 0)
+        @if($projectAdminId != 0 || $projectFmId != "0#")
             <div class="row">
                 <div class="col-12 mb-3">
                     <h3>Selamat Datang {{$userAdmin->first_name}} {{$userAdmin->last_name}}.</h3>
