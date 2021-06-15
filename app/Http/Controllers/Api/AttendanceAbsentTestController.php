@@ -89,6 +89,28 @@ class AttendanceAbsentTestController extends Controller
 //                ->where('is_done', 0)
 //                ->first();
 
+            //validasi attendance oleh leader
+            if($data->cso_id != "0"){
+                $employee_id = $data->cso_id;
+                $leader_id = $user->employee_id;
+                $datenow = Carbon::now();
+                $datenowMonth = Carbon::parse($datenow)->format('m');
+                $datenowYear = Carbon::parse($datenow)->format('Y');
+                $firstDay = $datenow->firstOfMonth();
+                $lastDay = $datenow->lastOfMonth();
+
+                $firstDate = $datenowYear.'-'.$datenowMonth.'-'.$firstDay;
+                $lastDate = $datenowYear.'-'.$datenowMonth.'-'.$lastDay;
+                $existDate = AttendanceAbsent::where('employee_id', $employee_id)
+                    ->where('created_by', $leader_id)
+                    ->whereBetween('created_at', array($firstDate.' 00:00:00', $lastDate.' 23:59:00'))
+                    ->first();
+
+                if(!empty($existDate)){
+                    return Response::json("Leader sudah pernah absensi CSO tersebut", 483);
+                }
+            }
+
             $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
                 ->where('project_id', $project->id)
                 ->where('status_id', 6)

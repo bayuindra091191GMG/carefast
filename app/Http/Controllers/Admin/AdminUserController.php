@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AdminUser;
 use App\Models\AdminUserRole;
+use App\Models\Employee;
 use App\Models\Project;
 use App\Transformer\AdminUserTransformer;
 use Carbon\Carbon;
@@ -174,18 +175,44 @@ class AdminUserController extends Controller
         if($adminUser->project_id != 0){
             $project = Project::find($adminUser->project_id);
             $projectId = $project->id;
-            $projectName =$project->code.' - '. $project->name;
+            $projectName = $project->code.' - '. $project->name;
         }
         else{
             $projectId = 0;
             $projectName = "Semua";
         }
+        $fmId = 0;
+        $fmName = "";
+        if($adminUser->role_id == 4){
+            $fmArr = explode('#', $adminUser->fm_id);
+            $fmData = Employee::where('id', $fmArr[0])->first();
+            if(!empty($fmData)){
+                $fmId = $fmData->id;
+                $fmName = $fmData->code.' - '.$fmData->first_name. " ". $fmData->last_name;
+            }
+        }
+        else if($adminUser->role_id == 5){
+            $fmArr = explode('#', $adminUser->fm_id);
+            $fmList = collect();
+            foreach ($fmArr as $fm){
+                $fmData = Employee::where('id', $fmArr[0])->first();
+                if(!empty($fmData)){
+
+                    $fmId = $fmData->id;
+                    $fmName = $fmData->code.' - '.$fmData->first_name. " ". $fmData->last_name;
+
+                    $fmList->add();
+                }
+            }
+        }
 
         $data = [
             'adminUser'     => $adminUser,
             'roles'         => $roles,
-            'projectId'         => $projectId,
-            'projectName'         => $projectName,
+            'projectId'     => $projectId,
+            'projectName'   => $projectName,
+            'fmId'          => $fmId,
+            'fmName'        => $fmName,
         ];
 
         return view('admin.adminuser.edit')->with($data);

@@ -121,10 +121,26 @@
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="role">Project (Jika memilih Admin Project)</label>
+                                                        <label for="role">Project (Jika memilih Role = Admin Project)</label>
                                                         <select id="project_id" name="project_id" class='form-control'>
                                                             <option value='{{$projectId}}'>{{$projectName}}</option>
                                                         </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="role">FM (jika memilih Role = FM)</label>
+                                                        <select id="project_id" name="project_id" class='form-control'>
+                                                            <option value='{{$projectId}}'>{{$projectName}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label for="role">FM (Jika memilih Role = OM)</label>
+                                                        <select id="multi_fm_id" name="multi_fm_id[]" class='form-control' multiple></select>
                                                     </div>
                                                 </div>
                                             </div>

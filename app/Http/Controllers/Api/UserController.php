@@ -372,13 +372,13 @@ class UserController extends Controller
 
             $accessible_menus = "";
             if($user->employee->employee_role_id > 4){
-                $accessible_menus = "1,2,4,5,6,8,301,302,311,312,321";
+                $accessible_menus = "1,2,4,5,6,8,301,302,311,312,321,601";
             }
             else if($user->employee->employee_role_id == 1){
-                $accessible_menus = "1,2,3,8,301,311";
+                $accessible_menus = "1,2,3,8,301,311,601";
             }
             else{
-                $accessible_menus = "1,4,5,6,11,8,301,302,311,312,321";
+                $accessible_menus = "1,4,5,6,11,8,301,302,311,312,321,601";
             }
             //pengecekan jika employee adalah pembuat MR pada suatu project
 

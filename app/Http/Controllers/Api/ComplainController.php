@@ -285,6 +285,7 @@ class ComplainController extends Controller
                 'subject'           => $data->subject,
                 'description'       => $data->message,
                 'location'           => $data->location,
+                'priority'           => $data->urgency,
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
                 'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
@@ -773,6 +774,7 @@ class ComplainController extends Controller
                 'subject'           => $data->subject,
                 'description'       => $data->message,
                 'location'           => $data->location,
+                'priority'           => $data->urgency,
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
                 'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
@@ -1629,7 +1631,7 @@ class ComplainController extends Controller
                 'is_rated'              => !empty($complaint->score) ? 1 : 0,
                 'rating'                => $complaint->score,
                 'rating_message'        => $complaint->score_message,
-                'priority'              => $complaint->priority,
+                'urgency'              => $complaint->priority,
             ]);
 
             return Response::json($customerComplaintModel, 200);

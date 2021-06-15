@@ -108,6 +108,12 @@ class ShiftController extends Controller
                 ]);
                 $shiftCollections->push($item);
             }
+            $item = ([
+                'type'        => "O",
+                'start'      => "-",
+                'end'      => "-"
+            ]);
+            $shiftCollections->push($item);
 
             $shiftModel = collect([
                 'shifts'    => $shiftCollections,
