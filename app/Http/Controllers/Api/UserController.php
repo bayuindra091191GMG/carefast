@@ -370,15 +370,17 @@ class UserController extends Controller
             //    312. permission list
             //    321. overtime list
 
+            //  601. shift
+
             $accessible_menus = "";
             if($user->employee->employee_role_id > 4){
-                $accessible_menus = "1,2,4,5,6,8,301,302,311,312,321,601";
+                $accessible_menus = "1,601,2,8,4,5,6,301,302,311,312,321";
             }
             else if($user->employee->employee_role_id == 1){
-                $accessible_menus = "1,2,3,8,301,311,601";
+                $accessible_menus = "1,601,2,8,3,301,311";
             }
             else{
-                $accessible_menus = "1,4,5,6,11,8,301,302,311,312,321,601";
+                $accessible_menus = "1,601,4,8,5,6,11,301,302,311,312,321";
             }
             //pengecekan jika employee adalah pembuat MR pada suatu project
 

@@ -285,11 +285,11 @@ class ComplainController extends Controller
                 'subject'           => $data->subject,
                 'description'       => $data->message,
                 'location'           => $data->location,
-                'priority'           => $data->urgency,
+                'priority'           => $data->urgency ?? "NORMAL",
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
                 'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
-                'response_limit_date'  => Carbon::now('Asia/Jakarta')->addMinutes(5)->toDateTimeString(),
+                'response_limit_date'  => Carbon::now('Asia/Jakarta')->addMinutes(1)->toDateTimeString(),
                 'created_by'          => $user->id,
                 'created_at'          => $datetimenow->toDateTimeString(),
                 'updated_by'          => $user->id,
@@ -774,7 +774,7 @@ class ComplainController extends Controller
                 'subject'           => $data->subject,
                 'description'       => $data->message,
                 'location'           => $data->location,
-                'priority'           => $data->urgency,
+                'priority'           => $data->urgency ?? "NORMAL",
                 'date'              => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'status_id'          => 10,
                 'employee_handler_role_id'  => empty($employeeDB) ? null : $employeeDB->employee_roles_id,
@@ -1844,17 +1844,25 @@ class ComplainController extends Controller
             if(empty($complaint)){
                 return Response::json("Complaint tidak ditemukan", 482);
             }
-            if(!empty($complaint->employee_handler_id)){
-                if($user->employee_id != $complaint->employee_handler_id){
-                    return Response::json("Complaint sudah di proses", 483);
-                }
-//                if($employee->employee_role_id > $complaint->employee_handler_id){
-//                    return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
+//            if(!empty($complaint->employee_handler_id)){
+//                if($user->employee_id != $complaint->employee_handler_id){
+//                    return Response::json("Complaint sudah di proses", 483);
 //                }
+////                if($employee->employee_role_id > $complaint->employee_handler_id){
+////                    return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
+////                }
+//            }
+
+            if($complaint->status_id == 11){
+                return Response::json("Complaint sudah di proses", 482);
             }
+
 //            if($employee->id != $employeeComplaint->employee_id){
 //                return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
 //            }
+            $employee_handler_id_history = $complaint->employee_handler_id_history."#".$employee->id;
+
+            $complaint->employee_handler_id_history = $employee_handler_id_history;
             $complaint->employee_handler_id = $employee->id;
             $complaint->status_id = 11;
             $complaint->updated_by = $user->id;

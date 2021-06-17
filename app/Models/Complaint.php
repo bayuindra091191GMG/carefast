@@ -22,6 +22,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $employee_handler_id
  * @property int $employee_handler_role_id
  * @property string $customer_name
+ * @property string $employee_handler_id_history
  * @property string $subject
  * @property string $description
  * @property string $location
@@ -76,6 +77,7 @@ class Complaint extends Eloquent
 		'category_id',
 		'customer_id',
 		'employee_id',
+		'employee_handler_id_history',
 		'employee_handler_id',
 		'employee_handler_role_id',
 		'customer_name',

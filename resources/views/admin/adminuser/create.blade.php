@@ -134,10 +134,17 @@
                                                     </div>
                                                 </div>
 
+{{--                                                <div class="col-md-12">--}}
+{{--                                                    <div class="form-group">--}}
+{{--                                                        <label for="role">OM (Jika memilih Role = OM)</label>--}}
+{{--                                                        <select id="multi_fm_id" name="multi_fm_id[]" class='form-control' multiple></select>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="role">FM (Jika memilih Role = OM)</label>
-                                                        <select id="multi_fm_id" name="multi_fm_id[]" class='form-control' multiple></select>
+                                                        <label for="role">OM (Jika memilih Role = OM)</label>
+                                                        <select id="om_id" name="om_id" class='form-control'></select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -233,6 +240,29 @@
             minimumInputLength: 0,
             ajax: {
                 url: '{{ route('select.fms') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $('#om_id').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih OM - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.oms') }}',
                 dataType: 'json',
                 data: function (params) {
                     return {

@@ -73,7 +73,11 @@ class EmployeeLeavesController extends Controller
             $employee = Employee::where('id', $user->employee_id)->first();
             $id = $employee->id;
 
-            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->get();
+            $projectEmployeeArr = [];
+            foreach ($projectEmployee as $prjtEmp){
+                array_push($projectEmployeeArr, $prjtEmp->project_id);
+            }
             if($employee->employee_role_id == 1){
                 $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
                     ->where('employee_id', $id)
@@ -81,7 +85,7 @@ class EmployeeLeavesController extends Controller
                     ->get();
             }
             else{
-                $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
+                $sickLeaves = AttendanceSickLeafe::whereIn('project_id', $projectEmployeeArr)
                     ->orderby('is_approve')
                     ->get();
             }
@@ -138,7 +142,7 @@ class EmployeeLeavesController extends Controller
                     'project_id'   => $data->project_id,
                     'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
                     'description'  => $data->description,
-                    'is_approve'   => 0,
+                    'is_approve'   => 1,
                     'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'created_by'   => $user->id,
                 ]);
@@ -445,7 +449,7 @@ class EmployeeLeavesController extends Controller
                     'date_start'         => Carbon::parse($data->date_start)->format('Y-m-d H:i:s'),
                     'date_end'         => Carbon::parse($data->date_end)->format('Y-m-d H:i:s'),
                     'description'  => $data->description,
-                    'is_approve'   => 0,
+                    'is_approve'   => 1,
                     'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'created_by'   => $user->id,
                 ]);

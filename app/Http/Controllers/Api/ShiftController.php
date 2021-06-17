@@ -51,51 +51,10 @@ class ShiftController extends Controller
 //            Log::error('Api/ShiftController - get | employee_id : '.$employeeId.' | project_id : '. $id);
 
             $employeeSchedule = EmployeeSchedule::where('employee_id', $employeeId)->first();
-            if(empty($employeeSchedule)){
-                return Response::json("Employee Schedule Tidak ditemukan!", 482);
-            }
 
             $projectShifts = ProjectShift::Where('project_id', $id)->get();
             if(count($projectShifts) == 0){
                 return Response::json("Project Shift Tidak ditemukan!", 483);
-            }
-
-            //process employee schedule
-            $days = explode(';', $employeeSchedule->day_status);
-            $dayCollections = collect();
-            foreach($days as $day){
-                if(empty($day)) continue;
-                $date = explode(':', $day);
-                $item = ([
-                    'date'        => $date[0],
-                    'shift_type'      => $date[1]
-                ]);
-                $dayCollections->push($item);
-            }
-
-            //process lembur
-            $datenow = Carbon::now();
-            $datenowMonth = Carbon::parse($datenow)->format('m');
-            $datenowYear = Carbon::parse($datenow)->format('Y');
-            $firstDate = $datenow->firstOfMonth();
-            $lastDate = $datenow->lastOfMonth();
-
-            $firstDate = $datenowYear.'-'.$datenowMonth.'-'.$firstDate;
-            $lastDate = $datenowYear.'-'.$datenowMonth.'-'.$lastDate;
-
-            $overtimes = AttendanceOvertime::where('replaced_employee_id', $employeeId)
-                ->where('project_id', $id)
-                ->where('type', 'ganti')
-                ->where('is_approve', 1)
-                ->whereBetween('date',
-                    array($firstDate.' 00:00:00', $lastDate.' 23:59:00'))
-                ->get();
-            foreach($overtimes as $overtime){
-                $item = ([
-                    'date'            => Carbon::parse($overtime->date)->format('j'),
-                    'shift_type'      => "HL"
-                ]);
-                $dayCollections->push($item);
             }
 
             //process project shift
@@ -115,10 +74,96 @@ class ShiftController extends Controller
             ]);
             $shiftCollections->push($item);
 
+            if(empty($employeeSchedule)){
+                $shiftModel = collect([
+                    'shifts'    => $shiftCollections,
+                    'schedules'   => collect(),
+                ]);
+                return Response::json($shiftModel, 200);
+            }
+
+            //process employee schedule
+            $days = explode(';', $employeeSchedule->day_status);
+            $dayCollections = collect();
+            foreach($days as $day){
+                if(empty($day)) continue;
+                $date = explode(':', $day);
+                $item = ([
+                    'date'        => $date[0],
+                    'shift_type'      => $date[1]
+                ]);
+                $dayCollections->push($item);
+            }
+
+            //process lembur
+            $datenow = Carbon::now();
+            $datenow2 = Carbon::now();
+//            $datenowMonth = Carbon::parse($datenow)->format('m');
+//            $datenowYear = Carbon::parse($datenow)->format('Y');
+            $firstDate = $datenow->firstOfMonth();
+            $lastDate = $datenow2->lastOfMonth();
+
+//            $firstDate = $datenowYear.'-'.$datenowMonth.'-'.$firstDate;
+//            $lastDate = $datenowYear.'-'.$datenowMonth.'-'.$lastDate;
+
+            $overtimes = AttendanceOvertime::where('employee_id', $employeeId)
+                ->where('project_id', $id)
+                ->where('is_approve', 1)
+                ->whereBetween('date',
+                    array($firstDate.' 00:00:00', $lastDate.' 23:59:00'))
+                ->get();
+
+            foreach($overtimes as $overtime){
+                $dayFormat = Carbon::parse($overtime->date)->format('j');
+
+                if($overtime->type == "ganti"){
+                    $employeeSchedule = EmployeeSchedule::where('employee_id', $overtime->replaced_employee_id)->first();
+                    if(!empty($employeeSchedule)){
+                        $days = explode(';', $employeeSchedule->day_status);
+                        $dayCollectionDBs = collect();
+                        foreach($days as $day){
+                            if(empty($day)) continue;
+                            $date = explode(':', $day);
+                            $item = ([
+                                'day'        => $date[0],
+                                'status'      => $date[1]
+                            ]);
+                            $dayCollectionDBs->push($item);
+                        }
+                        $daySelected = $dayCollectionDBs->where('day', $dayFormat)->first();
+                        $dayObject = (object)$daySelected;
+                        $projectShiftDb = ProjectShift::where('shift_type', $dayObject->status)->first();
+
+                        $item = ([
+                            'day'           => $dayFormat,
+                            'type'          => "HL",
+                            'start'         => $projectShiftDb->start_time,
+                            'end'           => $projectShiftDb->finish_time
+                        ]);
+                        $shiftCollections->push($item);
+                    }
+                }
+                else{
+                    $item = ([
+                        'day'           => $dayFormat,
+                        'type'          => "HL",
+                        'start'         => $overtime->time_start,
+                        'end'           => $overtime->time_end
+                    ]);
+                    $shiftCollections->push($item);
+                }
+                $item = ([
+                    'date'            => Carbon::parse($overtime->date)->format('j'),
+                    'shift_type'      => "HL"
+                ]);
+                $dayCollections->push($item);
+            }
+
             $shiftModel = collect([
                 'shifts'    => $shiftCollections,
                 'schedules'   => $dayCollections,
             ]);
+            Log::error('Api/ShiftController - get shiftModel : '. json_encode($shiftModel));
 
             return Response::json($shiftModel, 200);
         }

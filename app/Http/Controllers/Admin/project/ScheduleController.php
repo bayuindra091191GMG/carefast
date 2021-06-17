@@ -331,7 +331,7 @@ class ScheduleController extends Controller
             $end_date = Carbon::now()->format("d M Y");
             $employeeProjects = ProjectEmployee::with('employee')
                 ->where('project_id', $id)
-                ->where('employee_roles_id','<', 4)
+                ->where('employee_roles_id','<', 5)
                 ->where('status_id', 1)
                 ->get();
 
@@ -628,7 +628,7 @@ class ScheduleController extends Controller
             });
             $employeeProjects = ProjectEmployee::with('employee')
                 ->where('project_id', $id)
-                ->where('employee_roles_id','<', 4)
+                ->where('employee_roles_id','<', 5)
                 ->where('status_id', 1)
                 ->get();
 

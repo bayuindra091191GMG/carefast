@@ -126,10 +126,11 @@ class AdminUserController extends Controller
         }
         else if($request->input('role') == 5){
             $fmString = "";
-            $fmIds = $request->input('multi_fm_id');
-            foreach ($fmIds as $fmId){
-                $fmString .= $fmId."#";
-            }
+            $fmString = $request->input('om_id')."#";
+//            $fmIds = $request->input('multi_fm_id');
+//            foreach ($fmIds as $fmId){
+//                $fmString .= $fmId."#";
+//            }
         }
 
         $adminUser = AdminUser::create([
@@ -194,8 +195,13 @@ class AdminUserController extends Controller
         }
 
         else if($adminUser->role_id == 5){
-            $fmArr = explode('#', $adminUser->fm_id);
-            $fmList = Employee::whereIn('id', $fmArr)->get();
+            $omArr = explode('#', $adminUser->fm_id);
+            $omList = Employee::whereIn('id', $omArr)->get();
+            $omData = Employee::where('id', $omArr[0])->first();
+            if(!empty($omData)){
+                $omId = $omData->id;
+                $omName = $omData->code.' - '.$omData->first_name. " ". $omData->last_name;
+            }
         }
 
         $data = [
@@ -205,6 +211,8 @@ class AdminUserController extends Controller
             'projectName'   => $projectName,
             'fmId'          => $fmId,
             'fmName'        => $fmName,
+            'omId'          => $omId,
+            'omName'        => $omName,
             'fmList'        => $fmList,
         ];
 
@@ -246,10 +254,11 @@ class AdminUserController extends Controller
         }
         else if($request->input('role') == 5){
             $fmString = "";
-            $fmIds = $request->input('multi_fm_id');
-            foreach ($fmIds as $fmId){
-                $fmString .= $fmId."#";
-            }
+            $fmString = $request->input('om_id')."#";
+//            $fmIds = $request->input('multi_fm_id');
+//            foreach ($fmIds as $fmId){
+//                $fmString .= $fmId."#";
+//            }
         }
 
         $adminUser->first_name = $request->input('first_name');

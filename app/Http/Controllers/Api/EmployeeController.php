@@ -180,7 +180,7 @@ class EmployeeController extends Controller
         try{
 
             $projectModels = collect();
-            $projectLists = DB::table('project_employees')->where('employee_id', $employee->id)->get();
+            $projectLists = DB::table('project_employees')->where('employee_id', $employee->id)->where('status_id', 1)->get();
 
             foreach ($projectLists as $projectList){
                 $project = DB::table('projects')->where('id', $projectList->project_id)->first();

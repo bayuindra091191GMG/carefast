@@ -53,7 +53,7 @@ class ComplaintEscalationCron extends Command
                 $now = Carbon::parse(date_format($temp,'j-F-Y H:i:s'));
 
                 //if pending status do escalation
-                if($complaintDB->status_id == 10){
+                if($complaintDB->status_id == 10 || $complaintDB->status_id == 9){
                     $trxDate = Carbon::parse(date_format($complaintDB->response_limit_date, 'j-F-Y H:i:s'));
                     // mencari perbedaan menit
                     //$intervalMinute = $trxDate->diffInMinutes($now);

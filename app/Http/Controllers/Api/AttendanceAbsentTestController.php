@@ -42,10 +42,12 @@ class AttendanceAbsentTestController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
 //            $employeeLogin = $user->employee;
             $employee_id =  $user->employee_id;
+            $leader_id = $user->employee_id;
 
             $data = json_decode($request->input('attendance_model'));
             if($data->cso_id != "0"){
                 $employee_id = $data->cso_id;
+                $leader_id = $user->employee_id;
             }
 //            Log::info('Api/AttendanceAbsentController - attendanceIn $employee_id : '. $employee_id.', cso_id : '.$data->cso_id);
             $employee = DB::table('employees')->where('id', $employee_id)->first();
@@ -94,20 +96,33 @@ class AttendanceAbsentTestController extends Controller
                 $employee_id = $data->cso_id;
                 $leader_id = $user->employee_id;
                 $datenow = Carbon::now();
-                $datenowMonth = Carbon::parse($datenow)->format('m');
-                $datenowYear = Carbon::parse($datenow)->format('Y');
-                $firstDay = $datenow->firstOfMonth();
-                $lastDay = $datenow->lastOfMonth();
+                $datenow2 = Carbon::now();
+//            $datenowMonth = Carbon::parse($datenow)->format('m');
+//            $datenowYear = Carbon::parse($datenow)->format('Y');
+                $firstDate = $datenow->firstOfMonth();
+                $lastDate = $datenow2->lastOfMonth();
 
-                $firstDate = $datenowYear.'-'.$datenowMonth.'-'.$firstDay;
-                $lastDate = $datenowYear.'-'.$datenowMonth.'-'.$lastDay;
-                $existDate = AttendanceAbsent::where('employee_id', $employee_id)
-                    ->where('created_by', $leader_id)
-                    ->whereBetween('created_at', array($firstDate.' 00:00:00', $lastDate.' 23:59:00'))
-                    ->first();
+//                $firstDate = $datenowYear.'-'.$datenowMonth.'-'.$firstDay;
+//                $lastDate = $datenowYear.'-'.$datenowMonth.'-'.$lastDay;
+                $projectUpperEmployees = ProjectEmployee::where('project_id', $project->id)
+                    ->where('employee_roles_id', '>', 1)
+                    ->where('status_id', 1)
+                    ->get();
+                foreach ($projectUpperEmployees as $projectUpperEmployee){
+                    $existDate = AttendanceAbsent::where('employee_id', $employee_id)
+                        ->where('created_by', $projectUpperEmployee->employee_id)
+                        ->whereBetween('created_at', array($firstDate, $lastDate))
+                        ->first();
 
-                if(!empty($existDate)){
-                    return Response::json("Leader sudah pernah absensi CSO tersebut", 483);
+                    Log::error('Api/AttendanceAbsentController - attendanceIn firstDate : '. $firstDate);
+                    Log::error('Api/AttendanceAbsentController - attendanceIn lastDate : '. $lastDate);
+                    Log::error('Api/AttendanceAbsentController - attendanceIn employee_id : '. $employee_id);
+                    Log::error('Api/AttendanceAbsentController - attendanceIn leader_id : '. $leader_id);
+                    Log::error('Api/AttendanceAbsentController - attendanceIn AttendanceAbsent : '. json_encode($existDate));
+
+                    if(!empty($existDate)){
+                        return Response::json("Leader sudah pernah absensi CSO tersebut", 483);
+                    }
                 }
             }
 
@@ -134,7 +149,7 @@ class AttendanceAbsentTestController extends Controller
                 return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
             }
             else{
-                $result = $this->attendandeInProcess($employee, $employee->id, $project->id, $request, $data);
+                $result = $this->attendandeInProcess($employee, $leader_id, $project->id, $request, $data);
             }
             if($result== 200){
                 //Push Notification to customer App.
@@ -600,7 +615,7 @@ class AttendanceAbsentTestController extends Controller
     public function attendandeInProcess($employee, $employeeId, $projectId, $request, $data){
         try{
             $newAttendance = AttendanceAbsent::create([
-                'employee_id'   => $employeeId,
+                'employee_id'   => $employee->id,
                 'project_id'    => $projectId,
 //                    'shift_type'    => $schedule->shift_type ?? 0,
                 'shift_type'    => 1,

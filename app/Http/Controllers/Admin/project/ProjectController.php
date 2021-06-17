@@ -352,4 +352,29 @@ class ProjectController extends Controller
             return \Response::json($formatted_tags);
         }
     }
+    public function getOms(Request $request){
+        try{
+            $term = trim($request->q);
+            $sub1_units = Employee::where(function ($q) use ($term) {
+                $q->where('first_name', 'LIKE', '%' . $term . '%')
+                    ->orWhere('last_name', 'LIKE', '%' . $term . '%')
+                    ->orWhere('code', 'LIKE', '%' . $term . '%');
+            })
+                ->where('employee_role_id', 6)
+                ->where('status_id', 1)
+                ->get();
+
+            $formatted_tags = [];
+
+            foreach ($sub1_units as $sub1unit) {
+                $formatted_tags[] = ['id' => $sub1unit->id, 'text' => $sub1unit->code.' - '.$sub1unit->first_name." ".$sub1unit->last_name];
+            }
+
+            return \Response::json($formatted_tags);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ProjectController - getFms error EX: '. $ex);
+            return \Response::json($formatted_tags);
+        }
+    }
 }

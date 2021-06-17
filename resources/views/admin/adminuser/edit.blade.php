@@ -131,7 +131,7 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="role">FM (jika memilih Role = FM)</label>
-                                                        <select id="project_id" name="project_id" class='form-control'>
+                                                        <select id="fm_id" name="fm_id" class='form-control'>
                                                             @if($adminUser->role_id == 4)
                                                                 <option value='{{$fmId}}'>{{$fmName}}</option>
                                                             @endif
@@ -141,16 +141,27 @@
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
-                                                        <label for="role">OM (Jika memilih Role = OM)</label>
-                                                        <select id="multi_fm_id" name="multi_fm_id[]" class='form-control' multiple>
+                                                        <label for="role">OM (jika memilih Role = OM)</label>
+                                                        <select id="om_id" name="om_id" class='form-control'>
                                                             @if($adminUser->role_id == 5)
-                                                                @foreach($fmList as $fmData)
-                                                                    <option value="{{$fmData->id}}">{{$fmData->code}} - {{$fmData->first_name}} {{$fmData->last_name}}</option>
-                                                                @endforeach
+                                                                <option value='{{$fmId}}'>{{$fmName}}</option>
                                                             @endif
                                                         </select>
                                                     </div>
                                                 </div>
+
+{{--                                                <div class="col-md-12">--}}
+{{--                                                    <div class="form-group">--}}
+{{--                                                        <label for="role">OM (Jika memilih Role = OM)</label>--}}
+{{--                                                        <select id="multi_fm_id" name="multi_fm_id[]" class='form-control' multiple>--}}
+{{--                                                            @if($adminUser->role_id == 5)--}}
+{{--                                                                @foreach($fmList as $fmData)--}}
+{{--                                                                    <option value="{{$fmData->id}}">{{$fmData->code}} - {{$fmData->first_name}} {{$fmData->last_name}}</option>--}}
+{{--                                                                @endforeach--}}
+{{--                                                            @endif--}}
+{{--                                                        </select>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
                                             </div>
                                             <div class="col-md-11 col-sm-11 col-xs-12" style="margin: 3% 0 3% 0;">
                                                 <a href="{{ route('admin.admin-users.index') }}" class="btn btn-danger">Kembali</a>
@@ -245,6 +256,29 @@
             minimumInputLength: 0,
             ajax: {
                 url: '{{ route('select.fms') }}',
+                dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: $.trim(params.term)
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                }
+            }
+        });
+
+        $('#om_id').select2({
+            placeholder: {
+                id: '-1',
+                text: ' - Pilih OM - '
+            },
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route('select.oms') }}',
                 dataType: 'json',
                 data: function (params) {
                     return {
