@@ -112,7 +112,7 @@ class AttendanceAbsentTestController extends Controller
 //                    Log::error('Api/AttendanceAbsentController - attendanceIn AttendanceAbsent : '. json_encode($existDate));
 
                 if(!empty($existDate)){
-                    return Response::json("Leader sudah pernah absensi CSO tersebut", 483);
+                    return Response::json("Leader sudah pernah absensi CSO tersebut", 484);
                 }
             }
 
@@ -251,7 +251,7 @@ class AttendanceAbsentTestController extends Controller
 //                    Log::error('Api/AttendanceAbsentController - attendanceIn AttendanceAbsent : '. json_encode($existDate));
 
                 if(!empty($existDate)){
-                    return Response::json("Leader sudah pernah absensi CSO tersebut", 483);
+                    return Response::json("Leader sudah pernah absensi CSO tersebut", 484);
                 }
             }
 
