@@ -127,11 +127,20 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                @php($isFm = "disabled")
+                                                @php($isOm = "disabled")
+                                                @if($adminUser->role_id == 4)
+                                                    @php($isFm = "")
+                                                    @php($isOm = "disabled")
+                                                @elseif($adminUser->role_id == 5)
+                                                    @php($isFm = "disabled")
+                                                    @php($isOm = "")
+                                                @endif
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="role">FM (jika memilih Role = FM)</label>
-                                                        <select id="fm_id" name="fm_id" class='form-control'>
+                                                        <select id="fm_id" name="fm_id" class='form-control' {{$isFm}}>
                                                             @if($adminUser->role_id == 4)
                                                                 <option value='{{$fmId}}'>{{$fmName}}</option>
                                                             @endif
@@ -142,9 +151,9 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="role">OM (jika memilih Role = OM)</label>
-                                                        <select id="om_id" name="om_id" class='form-control'>
+                                                        <select id="om_id" name="om_id" class='form-control' {{$isOm}}>
                                                             @if($adminUser->role_id == 5)
-                                                                <option value='{{$fmId}}'>{{$fmName}}</option>
+                                                                <option value='{{$omId}}'>{{$omName}}</option>
                                                             @endif
                                                         </select>
                                                     </div>
@@ -199,6 +208,21 @@
     <script type="text/javascript">
 
         $('#role').select2();
+        $('#role').on('change', function() {
+            var selectedRole = this.value;
+            if(selectedRole === "4"){
+                $('#fm_id').attr('disabled', false);
+                $('#om_id').attr('disabled', true);
+            }
+            else if(selectedRole === "5"){
+                $('#fm_id').attr('disabled', true);
+                $('#om_id').attr('disabled', false);
+            }
+            else{
+                $('#fm_id').attr('disabled', true);
+                $('#om_id').attr('disabled', true);
+            }
+        });
         // $('#waste_bank').select2();
 
         $('#project_id').select2({

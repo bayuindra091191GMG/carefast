@@ -185,6 +185,8 @@ class AdminUserController extends Controller
         $fmId = 0;
         $fmName = "";
         $fmList = null;
+        $omId = 0;
+        $omName = "";
         if($adminUser->role_id == 4){
             $fmArr = explode('#', $adminUser->fm_id);
             $fmData = Employee::where('id', $fmArr[0])->first();

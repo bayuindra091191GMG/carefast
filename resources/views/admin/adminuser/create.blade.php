@@ -130,7 +130,7 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="role">FM (jika memilih Role = FM)</label>
-                                                        <select id="fm_id" name="fm_id" class='form-control'></select>
+                                                        <select id="fm_id" name="fm_id" class='form-control' disabled></select>
                                                     </div>
                                                 </div>
 
@@ -144,7 +144,7 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label for="role">OM (Jika memilih Role = OM)</label>
-                                                        <select id="om_id" name="om_id" class='form-control'></select>
+                                                        <select id="om_id" name="om_id" class='form-control' disabled></select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -183,6 +183,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script type="text/javascript">
         $('#role').select2();
+        $('#role').on('change', function() {
+            var selectedRole = this.value;
+            if(selectedRole === "4"){
+                $('#fm_id').attr('disabled', false);
+                $('#om_id').attr('disabled', true);
+            }
+            else if(selectedRole === "5"){
+                $('#fm_id').attr('disabled', true);
+                $('#om_id').attr('disabled', false);
+            }
+            else{
+                $('#fm_id').attr('disabled', true);
+                $('#om_id').attr('disabled', true);
+            }
+        });
         // $('#waste_bank').select2();
 
         $('#project_id').select2({

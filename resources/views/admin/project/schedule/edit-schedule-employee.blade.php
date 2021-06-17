@@ -116,8 +116,7 @@
                                                         </tbody>
                                                     </table>
                                                 </div>
-
-
+                                                <a href="{{ route('admin.project.set-schedule', ['id'=>$project->id]) }}" class="btn btn-danger">BATAL</a>
                                                 <input type="submit" class="btn btn-success" value="SIMPAN">
                                             </div>
                                         </div>

@@ -82,6 +82,7 @@
                                         <div class="col-md-12">
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 col-xs-6" style="margin: 3% 0 3% 0;">
+                                                    <a href="{{ route('admin.project.set-schedule', ['id'=>$project->id]) }}" class="btn btn-danger">BATAL</a>
                                                     <input type="submit" class="btn btn-success" value="GANTI">
                                                 </div>
                                             </div>
