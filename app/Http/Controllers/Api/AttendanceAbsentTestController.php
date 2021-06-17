@@ -60,12 +60,6 @@ class AttendanceAbsentTestController extends Controller
                 return Response::json("Project Tidak ditemukan!", 400);
             }
 
-            //for testing offline queue, project TSC only
-            if($project->id == 1){
-                Log::info('Api/AttendanceAbsentTestController - attendanceIn data : '.
-                    json_encode($request->input('attendance_model')));
-            }
-
             //checking if employee on project
             $projectEmployeeExistence = ProjectEmployee::where('project_id', $project->id)
                 ->where('employee_id', $employee->id)
@@ -95,34 +89,169 @@ class AttendanceAbsentTestController extends Controller
             if($data->cso_id != "0"){
                 $employee_id = $data->cso_id;
                 $leader_id = $user->employee_id;
+
                 $datenow = Carbon::now();
                 $datenow2 = Carbon::now();
 //            $datenowMonth = Carbon::parse($datenow)->format('m');
 //            $datenowYear = Carbon::parse($datenow)->format('Y');
                 $firstDate = $datenow->firstOfMonth();
                 $lastDate = $datenow2->lastOfMonth();
-
 //                $firstDate = $datenowYear.'-'.$datenowMonth.'-'.$firstDay;
 //                $lastDate = $datenowYear.'-'.$datenowMonth.'-'.$lastDay;
-                $projectUpperEmployees = ProjectEmployee::where('project_id', $project->id)
-                    ->where('employee_roles_id', '>', 1)
-                    ->where('status_id', 1)
-                    ->get();
-                foreach ($projectUpperEmployees as $projectUpperEmployee){
-                    $existDate = AttendanceAbsent::where('employee_id', $employee_id)
-                        ->where('created_by', $projectUpperEmployee->employee_id)
-                        ->whereBetween('created_at', array($firstDate, $lastDate))
-                        ->first();
 
-                    Log::error('Api/AttendanceAbsentController - attendanceIn firstDate : '. $firstDate);
-                    Log::error('Api/AttendanceAbsentController - attendanceIn lastDate : '. $lastDate);
-                    Log::error('Api/AttendanceAbsentController - attendanceIn employee_id : '. $employee_id);
-                    Log::error('Api/AttendanceAbsentController - attendanceIn leader_id : '. $leader_id);
-                    Log::error('Api/AttendanceAbsentController - attendanceIn AttendanceAbsent : '. json_encode($existDate));
+                $existDate = AttendanceAbsent::where('employee_id', $employee_id)
+//                        ->where('created_by', $projectUpperEmployee->employee_id)
+                    ->where('created_by', '!=', $employee_id)
+                    ->whereBetween('created_at', array($firstDate, $lastDate))
+                    ->first();
 
-                    if(!empty($existDate)){
-                        return Response::json("Leader sudah pernah absensi CSO tersebut", 483);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn firstDate : '. $firstDate);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn lastDate : '. $lastDate);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn employee_id : '. $employee_id);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn leader_id : '. $leader_id);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn AttendanceAbsent : '. json_encode($existDate));
+
+                if(!empty($existDate)){
+                    return Response::json("Leader sudah pernah absensi CSO tersebut", 483);
+                }
+            }
+
+            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
+                ->where('project_id', $project->id)
+                ->where('status_id', 6)
+                ->where('is_done', 0)
+                ->first();
+
+            //if not exist, checkin absent
+            $result = 500;
+            if(!empty($attendanceData)){
+//                if(!empty($data->attendance_type)){
+//                    if($data->attendance_type == 'off'){
+//                        $result = $this->attendandeOutProcess($attendanceData, $employee, $employee->id, $project->id, $request, $data);
+//                    }
+//                    else{
+//                        return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
+//                    }
+//                }
+//                else{
+//                    return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
+//                }
+                return Response::json("Sudah pernah melakukan absen di tempat ini", 483);
+            }
+            else{
+                $result = $this->attendandeInProcess($employee, $leader_id, $project->id, $request, $data);
+            }
+            if($result== 200){
+                //Push Notification to customer App.
+                if(!empty($project->customer_id) && $employee->employee_role_id >= 5){
+                    //Send notification to
+                    //Customer
+                    $title = "ICare";
+                    $body = "Manager sedang meninjau project";
+                    $data = array(
+                        "type_id" => 501,
+                        "project_id" => $project->id,
+                        "project_name" => $project->name,
+                        "employee_name" => $employee->first_name. " " .$employee->last_name,
+                    );
+                    if(strpos($project->customer_id, '#') !== false){
+                        $cusArr = explode('#', $project->customer_id);
+                        foreach ($cusArr as $custId){
+                            if(!empty($custId)){
+                                FCMNotification::SendNotification($custId, 'customer', $title, $body, $data);
+                            }
+                        }
                     }
+                    else{
+                        FCMNotification::SendNotification($project->customer_id, 'customer', $title, $body, $data);
+                    }
+                }
+                return Response::json("Berhasil Proses Absen Keluar", 200);
+            }
+            else{
+                return Response::json([
+                    'message' => "Sorry Something went Wrong!",
+                    'ex' => "Please check log for further information",
+                ], 500);
+            }
+        }
+        catch (\Exception $ex){
+            Log::error('Api/AttendanceAbsentController - attendanceIn error EX: '. $ex);
+            return Response::json([
+                'message' => "Sorry Something went Wrong!",
+                'ex' => $ex,
+            ], 500);
+        }
+    }
+    /**
+     * Function to Submit Attendance Absent Checkin v2.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function attendanceInV2(Request $request)
+    {
+        try{
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+//            $employeeLogin = $user->employee;
+            $employee_id =  $user->employee_id;
+            $leader_id = $user->employee_id;
+
+            $data = json_decode($request->input('attendance_model'));
+            if($data->cso_id != "0"){
+                $employee_id = $data->cso_id;
+                $leader_id = $user->employee_id;
+            }
+
+            $employee = DB::table('employees')->where('id', $employee_id)->first();
+
+
+            $projectCode = $data->qr_code;
+
+            $project = DB::table('projects')->where('code', $projectCode)->first();
+            if(empty($project)){
+                return Response::json("Project Tidak ditemukan!", 400);
+            }
+
+            //for testing offline queue, project TSC only
+            if($project->id == 1){
+                Log::info('Api/AttendanceAbsentTestController - attendanceIn data : '.
+                    json_encode($request->input('attendance_model')));
+            }
+
+            //checking if employee on project
+            $projectEmployeeExistence = ProjectEmployee::where('project_id', $project->id)
+                ->where('employee_id', $employee->id)
+                ->first();
+            if(empty($projectEmployeeExistence)){
+                return Response::json("Bukan pada project yang sesuai", 482);
+            }
+
+            //validasi attendance oleh leader
+            if($data->cso_id != "0"){
+                $employee_id = $data->cso_id;
+                $leader_id = $user->employee_id;
+
+                $datenow = Carbon::now();
+                $datenow2 = Carbon::now();
+                $firstDate = $datenow->firstOfMonth();
+                $lastDate = $datenow2->lastOfMonth();
+
+                $existDate = AttendanceAbsent::where('employee_id', $employee_id)
+//                        ->where('created_by', $projectUpperEmployee->employee_id)
+                    ->where('created_by', '!=', $employee_id)
+                    ->whereBetween('created_at', array($firstDate, $lastDate))
+                    ->first();
+
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn firstDate : '. $firstDate);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn lastDate : '. $lastDate);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn employee_id : '. $employee_id);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn leader_id : '. $leader_id);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn AttendanceAbsent : '. json_encode($existDate));
+
+                if(!empty($existDate)){
+                    return Response::json("Leader sudah pernah absensi CSO tersebut", 483);
                 }
             }
 

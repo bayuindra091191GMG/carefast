@@ -67,9 +67,6 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/attendance/leader/checkout', 'Api\AttendanceController@submitCheckoutByLeader');
     Route::post('/attendance/leader/assessment', 'Api\AttendanceController@leaderSubmit');
 
-    Route::post('/attendance/checkin-v2', 'Api\AttendanceController@submitCheckinShift');
-    Route::post('/attendance/checkout-v2', 'Api\AttendanceController@submitCheckoutShift');
-
     // Attendance absent
 //    Route::get('/attendance/checking', 'Api\AttendanceAbsentController@attendanceChecking');
 //    Route::post('/attendance/qrcode', 'Api\AttendanceAbsentController@getProjectCodeEncrypted');
@@ -87,6 +84,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/attendance/out', 'Api\AttendanceAbsentTestController@attendanceOut');
     Route::post('/attendance/log', 'Api\AttendanceAbsentTestController@attendanceLog');
     Route::post('/attendance/log-v2', 'Api\AttendanceAbsentTestController@attendanceLogV2');
+
+    Route::post('/attendance/in-v2', 'Api\AttendanceAbsentTestController@attendanceInV2');
 
     //Employee
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');

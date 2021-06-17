@@ -81,12 +81,12 @@ class EmployeeLeavesController extends Controller
             if($employee->employee_role_id == 1){
                 $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
                     ->where('employee_id', $id)
-                    ->orderby('is_approve')
+                    ->orderbyDesc('created_at')
                     ->get();
             }
             else{
                 $sickLeaves = AttendanceSickLeafe::whereIn('project_id', $projectEmployeeArr)
-                    ->orderby('is_approve')
+                    ->orderbyDesc('created_at')
                     ->get();
             }
             $models = collect();
@@ -389,12 +389,12 @@ class EmployeeLeavesController extends Controller
             if($employee->employee_role_id == 1){
                 $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)
                     ->where('employee_id', $id)
-                    ->orderby('is_approve')
+                    ->orderbyDesc('created_at')
                     ->get();
             }
             else{
                 $permissions = AttendancePermission::where('project_id', $projectEmployee->project_id)
-                    ->orderby('is_approve')
+                    ->orderbyDesc('created_at')
                     ->get();
             }
             $models = collect();
@@ -754,7 +754,7 @@ class EmployeeLeavesController extends Controller
             $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
 
             $overtimes = AttendanceOvertime::where('project_id', $projectEmployee->project_id)
-                ->orderby('is_approve')
+                ->orderbyDesc('created_at')
                 ->get();
             $models = collect();
             if($overtimes->count() == 0){
