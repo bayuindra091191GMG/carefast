@@ -24,8 +24,10 @@ class EmployeeTransformer extends TransformerAbstract
             $code = "<a href='".$routeShowUrl."' data-toggle='tooltip' data-placement='top'>". $employee->code. "</a>";
 
             $action = "<a class='btn btn-xs btn-info' href='".$routeShowUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-info'></i></a>";
-            $action .= "&nbsp;<a class='btn btn-xs btn-success' href='".$routeDetailUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-child'></i></a>";
             $action .= "&nbsp;<a class='btn btn-xs btn-primary' href='".$routeEditUrl."' data-toggle='tooltip' data-placement='top'><i class='fas fa-pencil-alt'></i></a>";
+            if($employee->employee_role_id > 4){
+                $action .= "&nbsp;<a class='btn btn-xs btn-success' href='".$routeDetailUrl."' data-toggle='tooltip' data-placement='top'>Detail Absen</a>";
+            }
 
             $phones = '';
             if(!empty($employee->phone)){

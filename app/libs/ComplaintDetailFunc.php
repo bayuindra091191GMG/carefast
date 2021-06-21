@@ -12,6 +12,7 @@ use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\AutoNumber;
 use App\Models\Complaint;
+use App\Models\ComplaintCategory;
 use App\Models\ComplaintFinish;
 use App\Models\ComplaintFinishImage;
 use App\Models\ComplaintReject;
@@ -150,6 +151,13 @@ class ComplaintDetailFunc
                 $employeeAvatar = asset('storage/employees/'. $complaint->employee->image_path);
                 $employeeName = $complaint->employee->first_name." ".$complaint->employee->last_name;
             }
+            $categoryId = 1;
+            $categoryName = "";
+            $category = ComplaintCategory::where('id', $complaint->category_id)->first();
+            if(!empty($category)){
+                $categoryId = $complaint->category_id;
+                $categoryName = $category->description;
+            }
 
             $complaintModel = collect([
                 'id'                    => $complaint->id,
@@ -183,7 +191,10 @@ class ComplaintDetailFunc
                 'is_rated'              => !empty($complaint->score) ? 1 : 0,
                 'rating'                => $complaint->score,
                 'rating_message'        => $complaint->score_message,
-                'urgency'              => $complaint->priority
+                'urgency'              => $complaint->priority,
+
+                'category_id'           => $categoryId,
+                'category_name'         => $categoryName,
             ]);
             return $complaintModel;
         }

@@ -106,9 +106,9 @@ class ComplaintEscalationCron extends Command
                             }
                             $addedTime = $temp->addMinutes($minute)->toDateTimeString();
                             $complaintDB->response_limit_date = $addedTime;
-                            Log::channel('cronjob')
-                                ->info("complaint Number = ".$complaintDB->code." | temp = ".$temp.
-                                    " | response_limit_date = ".$addedTime);
+//                            Log::channel('cronjob')
+//                                ->info("complaint Number = ".$complaintDB->code." | temp = ".$temp.
+//                                    " | response_limit_date = ".$addedTime);
                             $complaintDB->save();
 
                             //send notif to employee escalation
@@ -198,7 +198,7 @@ class ComplaintEscalationCron extends Command
                         if(!empty($employeeDB)){
                             //mencari perbedaan waktu
                             $intervalMinute = $trxDate->diffInMinutes($now);
-                            if($intervalMinute >= 30){
+                            if($intervalMinute >= 1){
                                 //send notif to upper role employee
                                 $title = "ICare";
                                 $body = "Komplain Customer belum diselesaikan, tolong ingatkan penanggung jawab komplain";

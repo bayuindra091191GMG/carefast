@@ -134,13 +134,15 @@ class ShiftController extends Controller
                         $dayObject = (object)$daySelected;
                         $projectShiftDb = ProjectShift::where('shift_type', $dayObject->status)->first();
 
-                        $item = ([
-                            'day'           => $dayFormat,
-                            'type'          => "HL",
-                            'start'         => $projectShiftDb->start_time,
-                            'end'           => $projectShiftDb->finish_time
-                        ]);
-                        $shiftCollections->push($item);
+                        if($dayObject->status != "O"){
+                            $item = ([
+                                'day'           => $dayFormat,
+                                'type'          => "HL",
+                                'start'         => $projectShiftDb->start_time,
+                                'end'           => $projectShiftDb->finish_time
+                            ]);
+                            $shiftCollections->push($item);
+                        }
                     }
                 }
                 else{

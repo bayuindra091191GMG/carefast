@@ -29,6 +29,19 @@ class AttendanceTransformer extends TransformerAbstract
             }
 
             $status = Status::find($attendance->status_id);
+            $description = "";
+            if($attendance->type == "SR"){
+                $description = "Ijin Sakit";
+            }
+            elseif ($attendance->type == "S"){
+                $description = "Ijin Sakit Belum Approve";
+            }
+            elseif ($attendance->type == "IR"){
+                $description = "Ijin";
+            }
+            elseif ($attendance->type == "I"){
+                $description = "Ijin Belum Approve";
+            }
 
             return[
                 'first_name'        => $attendance->employee->first_name,
@@ -38,6 +51,7 @@ class AttendanceTransformer extends TransformerAbstract
                 'status'             => $status->id==6 ? 'ABSEN MASUK' : 'ABSEN KELUAR',
                 'image_path'         => $imgPath,
                 'created_at'         => $createdDate,
+                'description'         => $description,
 //                'action'             => $action
             ];
         }

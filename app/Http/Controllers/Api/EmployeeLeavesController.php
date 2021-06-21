@@ -37,12 +37,20 @@ class EmployeeLeavesController extends Controller
             if(empty($employees)){
                 return Response::json("data kosong", 482);
             }
+            $processBy = "";
+            Log::error('Api/EmployeeLeavesController - sickLeaves sickLeave->updated_by: '. $employees->updated_by);
+            if(!empty($employees->updated_by)){
+                $user = User::where('id', $employees->updated_by)->first();
+                $employeeApprove = Employee::where('id', $user->employee_id)->first();
+                $processBy = $employeeApprove->first_name. " ". $employeeApprove->last_name;
+            }
             $attImage = empty($employees->image_path) ? null : asset('storage/attendance_sick_leaves/'. $employees->image_path);
             $model = ([
                 'id'                => $employees->id,
                 'approval_status'   => $employees->is_approve,
+                'processed_by'        => $processBy,
                 'project_name'      => $employees->project->name,
-                'employee_name'     => $employees->employee->name,
+                'employee_name'     => $employees->employee->first_name. " ".$employees->employee->last_name,
                 'employee_code'     => $employees->employee->code,
                 'date'              => Carbon::parse($employees->date)->format('d M Y H:i:s'),
                 'description'       => $employees->description,
@@ -94,13 +102,22 @@ class EmployeeLeavesController extends Controller
                 return Response::json($models, 482);
             }
             foreach($sickLeaves as $sickLeave){
+                $processBy = "";
+                Log::error('Api/EmployeeLeavesController - getSickLeaves sickLeave->updated_by: '. $sickLeave->updated_by);
+                if(!empty($sickLeave->updated_by)){
+                    $user = User::where('id', $sickLeave->updated_by)->first();
+                    $employeeApprove = Employee::where('id', $user->employee_id)->first();
+                    $processBy = $employeeApprove->first_name. " ". $employeeApprove->last_name;
+                }
                 $attImage = empty($sickLeave->image_path) ? null : asset('storage/attendance_sick_leaves/'. $sickLeave->image_path);
                 $model = collect([
                     'id'                => $sickLeave->id,
                     'approval_status'   => $sickLeave->is_approve,
+                    'processed_by'        => $processBy,
                     'project_name'      => $sickLeave->project->name,
                     'employee_name'     => $sickLeave->employee->first_name.' '.$sickLeave->employee->last_name,
                     'employee_code'     => $sickLeave->employee->code,
+                    'employee_role_id'  => $sickLeave->employee->employee_role_id,
                     'date'              => Carbon::parse($sickLeave->date)->format('d M Y H:i:s'),
                     'description'       => $sickLeave->description,
                     'image_path'        => $attImage,
@@ -142,7 +159,7 @@ class EmployeeLeavesController extends Controller
                     'project_id'   => $data->project_id,
                     'date'         => Carbon::parse($data->date)->format('Y-m-d H:i:s'),
                     'description'  => $data->description,
-                    'is_approve'   => 1,
+                    'is_approve'   => 0,
                     'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'created_by'   => $user->id,
                 ]);
@@ -348,15 +365,25 @@ class EmployeeLeavesController extends Controller
                 return Response::json("data kosong", 482);
             }
 
+            $processBy = "";
+            Log::error('Api/EmployeeLeavesController - permissions permissions->updated_by: '. $employees->updated_by);
+            if(!empty($employees->updated_by)){
+                Log::error('Api/EmployeeLeavesController - permissions permissions->updated_by: '. $employees->updated_by);
+                $user = User::where('id', $employees->updated_by)->first();
+                $employeeApprove = Employee::where('id', $user->employee_id)->first();
+                $processBy = $employeeApprove->first_name. " ". $employeeApprove->last_name;
+            }
             $attImage = empty($employees->image_path) ? null : asset('storage/attendance_permission_leaves/'. $employees->image_path);
             $model = ([
                 'id'                => $employees->id,
                 'approval_status'   => $employees->is_approve,
+                'processed_by'        => $processBy,
                 'project_name'      => $employees->project->name,
                 'employee_name'     => $employees->employee->first_name.' '.$employees->employee->last_name,
+                'employee_code'     => $employees->employee->code,
                 'description'       => $employees->description,
-                'date_start'        => Carbon::parse($employees->date_start)->format('d M Y H:i:s'),
-                'date_end'          => Carbon::parse($employees->date_end)->format('d M Y H:i:s'),
+                'date_start'        => Carbon::parse($employees->date_start)->format('d M Y'),//H:i:s
+                'date_end'          => Carbon::parse($employees->date_end)->format('d M Y'),
                 'image_path'       => $attImage,
             ]);
 
@@ -402,15 +429,25 @@ class EmployeeLeavesController extends Controller
                 return Response::json($models, 482);
             }
             foreach($permissions as $permission){
+                $processBy = "";
+                Log::error('Api/EmployeeLeavesController - getPermissions permissions->updated_by: '. $permission->updated_by);
+                if(!empty($permission->updated_by)){
+                    $user = User::where('id', $permission->updated_by)->first();
+                    $employeeApprove = Employee::where('id', $user->employee_id)->first();
+                    $processBy = $employeeApprove->first_name. " ". $employeeApprove->last_name;
+                }
                 $attImage = empty($permission->image_path) ? null : asset('storage/attendance_permission_leaves/'. $permission->image_path);
                 $model = collect([
                     'id'                => $permission->id,
                     'approval_status'   => $permission->is_approve,
+                    'processed_by'        => $processBy,
                     'project_name'      => $permission->project->name,
                     'employee_name'     => $permission->employee->first_name.' '.$permission->employee->last_name,
+                    'employee_code'     => $permission->employee->code,
+                    'employee_role_id'  => $permission->employee->employee_role_id,
                     'description'       => $permission->description,
-                    'date_start'        => Carbon::parse($permission->date_start)->format('d M Y H:i:s'),
-                    'date_end'          => Carbon::parse($permission->date_end)->format('d M Y H:i:s'),
+                    'date_start'        => Carbon::parse($permission->date_start)->format('d M Y'), //H:i:s
+                    'date_end'          => Carbon::parse($permission->date_end)->format('d M Y'),//H:i:s
                     'image_path'       => $attImage,
                 ]);
                 $models->push($model);
@@ -449,7 +486,7 @@ class EmployeeLeavesController extends Controller
                     'date_start'         => Carbon::parse($data->date_start)->format('Y-m-d H:i:s'),
                     'date_end'         => Carbon::parse($data->date_end)->format('Y-m-d H:i:s'),
                     'description'  => $data->description,
-                    'is_approve'   => 1,
+                    'is_approve'   => 0,
                     'created_at'   => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'created_by'   => $user->id,
                 ]);
@@ -857,6 +894,22 @@ class EmployeeLeavesController extends Controller
                     ]);
                 }
                 else{
+                    //validasi ganti yang ada ijinnya.
+                    $ijinValid = AttendancePermission::where('employee_id', $data->replacement_employee_id)
+                        ->where('is_approve', 1)
+                        ->where('date_start', '>',Carbon::parse($data->date)->format('Y-m-d H:i:s'))
+                        ->where('date_end', "<",Carbon::parse($data->date)->format('Y-m-d H:i:s'))
+                        ->first();
+                    if(empty($ijinValid)){
+                        return Response::json("Tidak ada Ijin", 482);
+                    }
+                    $ijinValid2 = AttendanceSickLeafe::where('employee_id', $data->replacement_employee_id)
+                        ->where('is_approve', 1)
+                        ->where('date',Carbon::parse($data->date)->format('Y-m-d 00:00:00'))
+                        ->first();
+                    if(empty($ijinValid2)){
+                        return Response::json("Tidak ada Ijin", 482);
+                    }
                     $newAttendanceOvertime = AttendanceOvertime::create([
                         'employee_id'  => $data->replacement_employee_id,
                         'project_id'   => $data->project_id,

@@ -1509,31 +1509,93 @@ class ComplainController extends Controller
             }
 
             $projectId = $request->input('project_id');
-            $pendingCount = DB::table('complaints')
-                ->select('id')
-                ->where('status_id', 10)
-                ->where('project_id', $projectId)
-                ->count();
-            $progressCount = DB::table('complaints')
-                ->select('id')
-                ->where('status_id', 11)
-                ->where('project_id', $projectId)
-                ->count();
-            $rejectCount = DB::table('complaints')
-                ->select('id')
-                ->Where('status_id', 9)
-                ->where('project_id', $projectId)
-                ->count();
-            $doneCount = DB::table('complaints')
-                ->select('id')
-                ->where('status_id', 8)
-                ->where('project_id', $projectId)
-                ->count();
-            $closeCount = DB::table('complaints')
-                ->select('id')
-                ->where('status_id', 12)
-                ->where('project_id', $projectId)
-                ->count();
+            $categoryId = $request->input('category_id');
+            if($categoryId == null){
+                $pendingCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 10)
+                    ->where('project_id', $projectId)
+                    ->count();
+                $progressCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 11)
+                    ->where('project_id', $projectId)
+                    ->count();
+                $rejectCount = DB::table('complaints')
+                    ->select('id')
+                    ->Where('status_id', 9)
+                    ->where('project_id', $projectId)
+                    ->count();
+                $doneCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 8)
+                    ->where('project_id', $projectId)
+                    ->count();
+                $closeCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 12)
+                    ->where('project_id', $projectId)
+                    ->count();
+            }
+            else if($categoryId == 0){
+                $pendingCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 10)
+                    ->where('project_id', $projectId)
+                    ->count();
+                $progressCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 11)
+                    ->where('project_id', $projectId)
+                    ->count();
+                $rejectCount = DB::table('complaints')
+                    ->select('id')
+                    ->Where('status_id', 9)
+                    ->where('project_id', $projectId)
+                    ->count();
+                $doneCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 8)
+                    ->where('project_id', $projectId)
+                    ->count();
+                $closeCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 12)
+                    ->where('project_id', $projectId)
+                    ->count();
+            }
+            else{
+                $pendingCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 10)
+                    ->where('project_id', $projectId)
+                    ->where('category_id', $categoryId)
+                    ->count();
+                $progressCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 11)
+                    ->where('project_id', $projectId)
+                    ->where('category_id', $categoryId)
+                    ->count();
+                $rejectCount = DB::table('complaints')
+                    ->select('id')
+                    ->Where('status_id', 9)
+                    ->where('project_id', $projectId)
+                    ->where('category_id', $categoryId)
+                    ->count();
+                $doneCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 8)
+                    ->where('project_id', $projectId)
+                    ->where('category_id', $categoryId)
+                    ->count();
+                $closeCount = DB::table('complaints')
+                    ->select('id')
+                    ->where('status_id', 12)
+                    ->where('project_id', $projectId)
+                    ->where('category_id', $categoryId)
+                    ->count();
+            }
 
             $returnModel = collect([
                 'pending_count'         => $pendingCount,
@@ -1632,6 +1694,9 @@ class ComplainController extends Controller
                 'rating'                => $complaint->score,
                 'rating_message'        => $complaint->score_message,
                 'urgency'              => $complaint->priority,
+
+                'category_id'           => $complaint->category_id,
+                'category_name'         => $complaint->complaint_categories->description,
             ]);
 
             return Response::json($customerComplaintModel, 200);
@@ -1860,9 +1925,10 @@ class ComplainController extends Controller
 //            if($employee->id != $employeeComplaint->employee_id){
 //                return Response::json("Anda tidak dapat menyelesaikan complaint", 482);
 //            }
-            $employee_handler_id_history = $complaint->employee_handler_id_history."#".$employee->id;
 
-            $complaint->employee_handler_id_history = $employee_handler_id_history;
+//            $employee_handler_id_history = $complaint->employee_handler_id_history."#".$employee->id;
+//            $complaint->employee_handler_id_history = $employee_handler_id_history;
+
             $complaint->employee_handler_id = $employee->id;
             $complaint->status_id = 11;
             $complaint->updated_by = $user->id;

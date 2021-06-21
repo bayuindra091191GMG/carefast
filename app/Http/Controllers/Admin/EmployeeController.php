@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\EmployeeRole;
 use App\Models\EmployeeSchedule;
+use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\Unit;
 use App\Models\User;
@@ -15,6 +16,7 @@ use App\Transformer\EmployeeTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -76,6 +78,23 @@ class EmployeeController extends Controller
 
     public function detail(int $id)
     {
+//        $employee = Employee::find($id);
+//
+//        if(empty($employee)){
+//            return redirect()->back();
+//        }
+//
+//        $user = User::where('employee_id', $id)->first();
+//        if(empty($user)){
+//            return redirect()->back();
+//        }
+//
+//        $data = [
+//            'employee'          => $employee,
+//            'email'             => $user->email
+//        ];
+//
+//        return view('admin.employee.detail-attendance')->with($data);
         $employee = Employee::find($id);
 
         if(empty($employee)){
@@ -87,12 +106,44 @@ class EmployeeController extends Controller
             return redirect()->back();
         }
 
+        $attendances = DB::table('attendance_absents')
+            ->where('employee_id', $employee->id)
+            ->where('status_id', 6)
+            ->orderByDesc('date')
+            ->get();
+
+        $attendanceModels = collect();
+        foreach ($attendances as $attendance){
+            $attIn = Carbon::parse($attendance->date)->format('d M Y H:i:s');
+//                    $attIn = $attendance->date->format('Y-m-d H:i:s');
+            if(empty($attendance->date_checkout)){
+                $attOut = "";
+            }
+            else{
+                $attOut = Carbon::parse($attendance->date_checkout)->format('d M Y H:i:s');
+//                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
+            }
+            $projectName = "";
+            $project = Project::where('id', $attendance->project_id)->first();
+
+            if(!empty($project)){
+                $projectName = $project->name;
+            }
+            $attendanceModel = collect([
+                'attendance_in_date'    => $attIn,
+                'attendance_out_date'   => $attOut,
+                'project_name'          => $projectName,
+            ]);
+            $attendanceModels->push($attendanceModel);
+        }
+
         $data = [
             'employee'          => $employee,
-            'email'             => $user->email
+            'email'             => $user->email,
+            'attendanceModels'  => $attendanceModels,
         ];
 
-        return view('admin.employee.detail-attendance')->with($data);
+        return view('admin.employee.detail-attendance-v2')->with($data);
     }
 
     public function create(){

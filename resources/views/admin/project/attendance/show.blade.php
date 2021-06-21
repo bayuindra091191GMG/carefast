@@ -107,6 +107,7 @@
                                                                     <th class="text-center">Status</th>
                                                                     <th class="text-center">Image</th>
                                                                     <th class="text-center">Tanggal Dibuat</th>
+                                                                    <th class="text-center">Deskripsi</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody></tbody>
@@ -182,6 +183,7 @@
                         return data;
                     }
                 },
+                { data: 'description', name: 'description', orderable: false, searchable: false, class: 'text-center'}
                 // { data: 'action', name: 'action', orderable: false, searchable: false, class: 'text-center'}
             ],
         });

@@ -101,6 +101,7 @@ class AttendanceAbsentTestController extends Controller
 
                 $existDate = AttendanceAbsent::where('employee_id', $employee_id)
 //                        ->where('created_by', $projectUpperEmployee->employee_id)
+                    ->where('status_id', 6)
                     ->where('created_by', '!=', $employee_id)
                     ->whereBetween('created_at', array($firstDate, $lastDate))
                     ->first();
@@ -370,6 +371,37 @@ class AttendanceAbsentTestController extends Controller
 //            if(empty($schedule)){
 //                return Response::json("Tidak pada schedule penempatan", 482);
 //            }
+
+            if($data->cso_id != "0"){
+                $employee_id = $data->cso_id;
+
+                $datenow = Carbon::now();
+                $datenow2 = Carbon::now();
+//            $datenowMonth = Carbon::parse($datenow)->format('m');
+//            $datenowYear = Carbon::parse($datenow)->format('Y');
+                $firstDate = $datenow->firstOfMonth();
+                $lastDate = $datenow2->lastOfMonth();
+//                $firstDate = $datenowYear.'-'.$datenowMonth.'-'.$firstDay;
+//                $lastDate = $datenowYear.'-'.$datenowMonth.'-'.$lastDay;
+
+                $existDate = AttendanceAbsent::where('employee_id', $employee_id)
+//                        ->where('created_by', $projectUpperEmployee->employee_id)
+                    ->where('status_id', 7)
+                    ->where('created_by', '!=', $employee_id)
+                    ->whereBetween('created_at', array($firstDate, $lastDate))
+                    ->first();
+
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn firstDate : '. $firstDate);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn lastDate : '. $lastDate);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn employee_id : '. $employee_id);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn leader_id : '. $leader_id);
+//                    Log::error('Api/AttendanceAbsentController - attendanceIn AttendanceAbsent : '. json_encode($existDate));
+
+                if(!empty($existDate)){
+                    return Response::json("Leader sudah pernah absensi CSO tersebut", 484);
+                }
+            }
+
 
 
             //for testing offline queue, project TSC only
@@ -673,9 +705,17 @@ class AttendanceAbsentTestController extends Controller
                         $attOut = Carbon::parse($attendance->date_checkout)->format('d m Y H:i:s');
 //                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
                     }
+                    $projectName = "";
+                    $project = Project::where('id', $attendance->project_id)->first();
+
+                    if(!empty($project)){
+                        $projectName = $project->name;
+                    }
+
                     $attendanceModel = collect([
                         'attendance_in_date'    => $attIn,
                         'attendance_out_date'   => $attOut,
+                        'project_name'          => $projectName,
                     ]);
                     $attendanceModels->push($attendanceModel);
                 }
