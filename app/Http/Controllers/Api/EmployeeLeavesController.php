@@ -895,19 +895,22 @@ class EmployeeLeavesController extends Controller
                 }
                 else{
                     //validasi ganti yang ada ijinnya.
-                    $ijinValid = AttendancePermission::where('employee_id', $data->replacement_employee_id)
+                    $startDateFilter = Carbon::parse($data->date)->format('Y-m-d 00:00:00');
+                    $endDateFilter = Carbon::parse($data->date)->format('Y-m-d 23:59:59');
+                    $ijinValid = AttendancePermission::where('employee_id', $data->replaced_employee_id)
                         ->where('is_approve', 1)
-                        ->where('date_start', '>',Carbon::parse($data->date)->format('Y-m-d H:i:s'))
-                        ->where('date_end', "<",Carbon::parse($data->date)->format('Y-m-d H:i:s'))
+                        ->where(function ($q) use ($startDateFilter, $endDateFilter) {
+                            $q->whereBetween('date_start', array($startDateFilter, $endDateFilter))
+                                ->orWhereBetween('date_end', array($startDateFilter, $endDateFilter));
+                        })
                         ->first();
-                    if(empty($ijinValid)){
-                        return Response::json("Tidak ada Ijin", 482);
-                    }
-                    $ijinValid2 = AttendanceSickLeafe::where('employee_id', $data->replacement_employee_id)
+
+                    $ijinValid2 = AttendanceSickLeafe::where('employee_id', $data->replaced_employee_id)
                         ->where('is_approve', 1)
-                        ->where('date',Carbon::parse($data->date)->format('Y-m-d 00:00:00'))
+                        ->where('date',$startDateFilter)
                         ->first();
-                    if(empty($ijinValid2)){
+
+                    if(empty($ijinValid) && empty($ijinValid2)){
                         return Response::json("Tidak ada Ijin", 482);
                     }
                     $newAttendanceOvertime = AttendanceOvertime::create([
