@@ -907,7 +907,7 @@ class EmployeeLeavesController extends Controller
 
                     $ijinValid2 = AttendanceSickLeafe::where('employee_id', $data->replaced_employee_id)
                         ->where('is_approve', 1)
-                        ->where('date',$startDateFilter)
+                        ->whereBetween('date', array($startDateFilter, $endDateFilter))
                         ->first();
 
                     if(empty($ijinValid) && empty($ijinValid2)){
