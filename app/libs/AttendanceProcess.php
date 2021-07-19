@@ -1608,7 +1608,12 @@ class AttendanceProcess
 //                                              $intervalMinute = $trxDateOut->diffInMinutes($trxDate);
                                             $intervalMinute = $trxDate->diffInMinutes($trxDateOut);
 
-                                            if($intervalMinute >= 480){
+                                            $intervalMinutValidation = 480;
+                                            if($project->id == 803){
+                                                $intervalMinutValidation = 180;
+                                            }
+
+                                            if($intervalMinute >= $intervalMinutValidation){
                                                 $projectCSOModel = ([
                                                     'employeeId'        => $projectEmployee->employee_id,
                                                     'employeeCode'      => $projectEmployee->employee_code,
@@ -1622,32 +1627,71 @@ class AttendanceProcess
                                                 $dataModel->push($projectCSOModel);
                                             }
                                             else{
-                                                $createdAt = Carbon::parse($attendanceAbsent->created_at);
+                                                if($ct < 1){
+                                                    $createdAt = Carbon::parse($attendanceAbsent->created_at);
+                                                    $projectCSOModel = ([
+                                                        'employeeId'        => $attendanceAbsent->employee_id,
+                                                        'employeeCode'      => $attendanceAbsent->employee_code,
+                                                        'transDate'         => $createdAt->format('Y-m-d'),
+                                                        'shiftCode'         => 1,
+                                                        'attendanceIn'      => $attendanceIn,
+                                                        'attendanceOut'     => $attendanceOut,
+                                                        'attendanceStatus'  => "A",
+                                                        'description'       => "Absent not full",
+                                                    ]);
+                                                    $dataModel->push($projectCSOModel);
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            if($ct < 1){
                                                 $projectCSOModel = ([
-                                                    'employeeId'        => $attendanceAbsent->employee_id,
-                                                    'employeeCode'      => $attendanceAbsent->employee_code,
+                                                    'employeeId'        => $projectEmployee->employee_id,
+                                                    'employeeCode'      => $projectEmployee->employee_code,
                                                     'transDate'         => $createdAt->format('Y-m-d'),
                                                     'shiftCode'         => 1,
                                                     'attendanceIn'      => $attendanceIn,
                                                     'attendanceOut'     => $attendanceOut,
-                                                    'attendanceStatus'  => "A",
-                                                    'description'       => "Absent not 8 hours",
+                                                    'attendanceStatus'  => $status,
+                                                    'description'       => $description,
                                                 ]);
                                                 $dataModel->push($projectCSOModel);
                                             }
-                                        }
-                                        else{
-                                            $projectCSOModel = ([
-                                                'employeeId'        => $projectEmployee->employee_id,
-                                                'employeeCode'      => $projectEmployee->employee_code,
-                                                'transDate'         => $createdAt->format('Y-m-d'),
-                                                'shiftCode'         => 1,
-                                                'attendanceIn'      => $attendanceIn,
-                                                'attendanceOut'     => $attendanceOut,
-                                                'attendanceStatus'  => $status,
-                                                'description'       => $description,
-                                            ]);
-                                            $dataModel->push($projectCSOModel);
+                                            else{
+                                                if($attendanceAbsent->attendance_type != "NORMAL"){
+
+                                                    $projectCSOModel = ([
+                                                        'employeeId'        => $projectEmployee->employee_id,
+                                                        'employeeCode'      => $projectEmployee->employee_code,
+                                                        'transDate'         => $createdAt->format('Y-m-d'),
+                                                        'shiftCode'         => 1,
+                                                        'attendanceIn'      => $attendanceIn,
+                                                        'attendanceOut'     => $attendanceOut,
+                                                        'attendanceStatus'  => $status,
+                                                        'description'       => $description,
+                                                    ]);
+                                                    $selected = [];
+//                                                    foreach ($dataModel as $key => $item) {
+//                                                        dd($item);
+//                                                        if ($dataModel->selected == true) {
+//                                                            $selected[] = $item;
+//                                                            $dataModel->forget($key);
+//                                                        }
+//                                                    }
+
+                                                    $deleteKey = 0;
+                                                    foreach($dataModel as $data){
+
+                                                        if($data["employeeCode"] == $projectEmployee->employee_code &&
+                                                            $data["transDate"] == $createdAt->format('Y-m-d')){
+//                                                            dd($data,$projectCSOModel, $deleteKey);
+                                                            $dataModel->forget($deleteKey);
+                                                        }
+                                                        $deleteKey++;
+                                                    }
+                                                    $dataModel->push($projectCSOModel);
+                                                }
+                                            }
                                         }
                                         $ct++;
                                     }
@@ -1745,7 +1789,12 @@ class AttendanceProcess
 //                                $intervalMinute = $trxDateOut->diffInMinutes($trxDate);
                                     $intervalMinute = $trxDate->diffInMinutes($trxDateOut);
 
-                                    if($intervalMinute >= 480){
+                                    $intervalMinutValidation = 480;
+                                    if($project->id == 803){
+                                        $intervalMinutValidation = 180;
+                                    }
+
+                                    if($intervalMinute >= $intervalMinutValidation){
 //                                        $createdAt = Carbon::parse($attendanceAbsent->created_at);
                                         $projectCSOModel = ([
                                             'employeeId'        => $attendanceAbsent->employee_id,
