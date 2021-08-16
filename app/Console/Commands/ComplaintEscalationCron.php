@@ -79,26 +79,26 @@ class ComplaintEscalationCron extends Command
                             ->first();
                         if(!empty($employeeDB)){
                             //mencari waktu eskalasi
-//                            $minute = 30;
-//                            if($employeeDB->employee_roles_id == 5){
-//                                $minute = 60;
-//                            }
-//                            if($employeeDB->employee_roles_id == 6){
-//                                $minute = 1260;
-//                            }
-//                            if($employeeDB->employee_roles_id == 7){
-//                                $minute = 30;
-//                            }
-                            $minute = 1;
+                            $minute = 30;
                             if($employeeDB->employee_roles_id == 5){
-                                $minute = 1;
+                                $minute = 60;
                             }
                             if($employeeDB->employee_roles_id == 6){
-                                $minute = 1;
+                                $minute = 1440;
                             }
                             if($employeeDB->employee_roles_id == 7){
-                                $minute = 1;
+                                $minute = 1440;
                             }
+//                            $minute = 1;
+//                            if($employeeDB->employee_roles_id == 5){
+//                                $minute = 1;
+//                            }
+//                            if($employeeDB->employee_roles_id == 6){
+//                                $minute = 1;
+//                            }
+//                            if($employeeDB->employee_roles_id == 7){
+//                                $minute = 1;
+//                            }
 
                             // update setelah pindah role
                             if(!empty($employeeDB)){

@@ -284,6 +284,9 @@ class EmployeeLeavesController extends Controller
                 $attSick->type = "SR";
                 $attSick->save();
             }
+            $deleteRecordAttendance = $this->deleteAttendanceRecord($sickLeaves->employee_id,
+                $sickLeaves->project_id,
+                Carbon::now('Asia/Jakarta')->format('Y-m-d'));
 
             //Push Notification to employee App.
             $title = "ICare";
@@ -618,6 +621,9 @@ class EmployeeLeavesController extends Controller
                 $attPermission->type = "IR";
                 $attPermission->save();
             }
+            $deleteRecordAttendance = $this->deleteAttendanceRecord($attPermission->employee_id,
+                $attPermission->project_id,
+                Carbon::now('Asia/Jakarta')->format('Y-m-d'));
 
 //            for($i=0; $i<10000; $i++){
 //                $currentDate = Carbon::parse($permission->date_start)->addDays($i);
@@ -969,6 +975,25 @@ class EmployeeLeavesController extends Controller
                 'message' => "Sorry Something went Wrong!",
                 'ex' => $ex,
             ], 500);
+        }
+    }
+
+    public function deleteAttendanceRecord($employeeId, $projectId, $createdAt){
+        try{
+            $attendances = AttendanceAbsent::where('project_id', $projectId)
+                ->where('employee_id', $employeeId)
+                ->where('status_id', 6)
+                ->where('is_done', 1)
+                ->where('date', array($createdAt.' 00:00:00', $createdAt.' 23:59:00'))
+                ->get();
+            foreach($attendances as $attendance){
+                $attendance->delete();
+            }
+            return true;
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeLeavesController - deleteAttendanceRecord error EX: '. $ex);
+            return false;
         }
     }
     /**

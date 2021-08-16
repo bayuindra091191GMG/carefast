@@ -56,6 +56,9 @@
                                                                                 <option value='HM' @if($projectShift->shift_type == "HM") selected @endif>HM</option>
                                                                                 <option value='HM1' @if($projectShift->shift_type == "HM1") selected @endif>HM1</option>
                                                                                 <option value='HM2' @if($projectShift->shift_type == "HM2") selected @endif>HM2</option>
+                                                                                <option value='NS1' @if($projectShift->shift_type == "NS1") selected @endif>NS1</option>
+                                                                                <option value='NS2' @if($projectShift->shift_type == "NS2") selected @endif>NS2</option>
+                                                                                <option value='NS3' @if($projectShift->shift_type == "NS3") selected @endif>NS3</option>
                                                                             </select>
                                                                         </td>
                                                                         <td>
@@ -158,6 +161,8 @@
                 "<option value='HP'>HP</option><option value='HS'>HS</option>" +
                 "<option value='HM'>HM</option><option value='HM1'>HM1</option>" +
                 "<option value='HM2'>HM2</option>" +
+                "<option value='NS1'>NS1</option><option value='NS2'>NS2</option>" +
+                "<option value='NS3'>NS3</option>" +
                 "</select>" +
                 "</td>" +
 

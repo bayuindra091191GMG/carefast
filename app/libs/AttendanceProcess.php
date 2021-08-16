@@ -1420,6 +1420,7 @@ class AttendanceProcess
     public static function DownloadAttendanceProcessV4($project, $startDate, $startDateMonth, $endDate, $endDateMonth){
         try{
             $dataModel = collect();
+            $dataModelCopy = collect();
 //            $projectEmployees = ProjectEmployee::where('project_id', $project->id)
 //                ->where('status_id', 1)
 //                ->where('employee_roles_id', '<', 5)
@@ -1592,8 +1593,15 @@ class AttendanceProcess
                                             }
                                         }
                                         else{
-                                            $status = "A";
-                                            $description = "Ijin Tidak masuk/Sakit, dgn status = ".$attendanceAbsent->attendance_type;
+                                            if($attendanceAbsent->attendance_type == "SR" || $attendanceAbsent->attendance_type == "IR"){
+                                                $status = "A";
+                                                $description = "Ijin Tidak masuk/Sakit, dgn status = ".$attendanceAbsent->attendance_type;
+                                            }
+                                            else{
+                                                continue;
+                                            }
+//                                            $status = "A";
+//                                            $description = "Ijin Tidak masuk/Sakit, dgn status = ".$attendanceAbsent->attendance_type;
                                         }
                                         $createdAt = Carbon::parse($attendanceAbsent->created_at);
                                         $attendanceIn = $attendanceAbsent->date;
@@ -1624,7 +1632,10 @@ class AttendanceProcess
                                                     'attendanceStatus'  => $status,
                                                     'description'       => $description,
                                                 ]);
-                                                $dataModel->push($projectCSOModel);
+                                                $isNotDouble = self::checkAttendanceDouble($dataModel, $projectCSOModel, $createdAt);
+                                                if($isNotDouble){
+                                                    $dataModel->push($projectCSOModel);
+                                                }
                                             }
                                             else{
                                                 if($ct < 1){
@@ -1679,17 +1690,35 @@ class AttendanceProcess
 //                                                        }
 //                                                    }
 
-                                                    $deleteKey = 0;
-                                                    foreach($dataModel as $data){
+//                                                    $deleteKey = 0;
+//                                                    $dataModelCopy = $dataModel;
+//                                                    foreach($dataModel as $data){
+//                                                        if($data["employeeCode"] == $projectEmployee->employee_code &&
+//                                                            $data["transDate"] == $createdAt->format('Y-m-d')){
+////                                                            dd($data,$projectCSOModel, $deleteKey);
+//                                                            $dataModelCopy->forget($deleteKey);
+//                                                            $dataModel = collect();
+//                                                        }
+//                                                        $deleteKey++;
+//                                                    }
+//                                                    foreach($dataModelCopy as $data){
+//                                                        $projectCSOModel = ([
+//                                                            'employeeId'        => $data["employeeId"],
+//                                                            'employeeCode'      => $data["employeeCode"],
+//                                                            'transDate'         => $data["transDate"],
+//                                                            'shiftCode'         => $data["shiftCode"],
+//                                                            'attendanceIn'      => $data["attendanceIn"],
+//                                                            'attendanceOut'     => $data["attendanceOut"],
+//                                                            'attendanceStatus'  => $data["attendanceStatus"],
+//                                                            'description'       => $data["description"],
+//                                                        ]);
+//                                                        $dataModel->push($projectCSOModel);
+//                                                    }
 
-                                                        if($data["employeeCode"] == $projectEmployee->employee_code &&
-                                                            $data["transDate"] == $createdAt->format('Y-m-d')){
-//                                                            dd($data,$projectCSOModel, $deleteKey);
-                                                            $dataModel->forget($deleteKey);
-                                                        }
-                                                        $deleteKey++;
+                                                    $isNotDouble = self::checkAttendanceDouble($dataModel, $projectCSOModel, $createdAt);
+                                                    if($isNotDouble){
+                                                        $dataModel->push($projectCSOModel);
                                                     }
-                                                    $dataModel->push($projectCSOModel);
                                                 }
                                             }
                                         }
@@ -1806,7 +1835,10 @@ class AttendanceProcess
                                             'attendanceStatus'  => $status,
                                             'description'       => $description,
                                         ]);
-                                        $dataModel->push($projectCSOModel);
+                                        $isNotDouble = self::checkAttendanceDouble($dataModel, $projectCSOModel, $createdAt);
+                                        if($isNotDouble){
+                                            $dataModel->push($projectCSOModel);
+                                        }
                                     }
 //                                    else{
 ////                                        $createdAt = Carbon::parse($attendanceAbsent->created_at);
@@ -1835,7 +1867,10 @@ class AttendanceProcess
                                         'attendanceStatus'  => $status,
                                         'description'       => $description,
                                     ]);
-                                    $dataModel->push($projectCSOModel);
+                                    $isNotDouble = self::checkAttendanceDouble($dataModel, $projectCSOModel, $createdAt);
+                                    if($isNotDouble){
+                                        $dataModel->push($projectCSOModel);
+                                    }
                                 }
                             }
                         }
@@ -1845,6 +1880,7 @@ class AttendanceProcess
 
                 }
             }
+//            dd("Data Model = ".count($dataModel)." | Data Model Copy = ".count($dataModelCopy));
             return $dataModel;
         }
         catch (\Exception $ex){
@@ -1858,4 +1894,14 @@ class AttendanceProcess
 
     }
 
+    public static function checkAttendanceDouble($datas, $currentData, $createdAt){
+        $isNotFound = true;
+        foreach($datas as $data){
+            if($data["employeeCode"] == $currentData["employeeCode"] &&
+                $data["transDate"] == $createdAt){
+                $isNotFound = false;
+            }
+        }
+        return $isNotFound;
+    }
 }

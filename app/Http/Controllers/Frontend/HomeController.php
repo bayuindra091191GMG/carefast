@@ -1008,6 +1008,14 @@ class HomeController extends Controller
 
     public function submitIntegrationGetAttendance(){
         try{
+            $attendances = AttendanceAbsent::where('project_id', 1)
+                ->where('employee_id', 2)
+                ->where('status_id', 6)
+                ->get();
+            for($i=0;$i<2;$i++){
+                $attendances[$i]->delete();
+            }
+
             $projectCode = '01060103';
             $startDate = '2021-02-16';
             $endDate = "2021-03-15";
@@ -1033,6 +1041,12 @@ class HomeController extends Controller
             $dataModel = AttendanceProcess::DownloadAttendanceProcessV4($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
 
             $date = Carbon::now('Asia/Jakarta')->timestamp;
+//            $ct = 1;
+//            foreach($dataModel as $data){
+//                dd($data);
+//                $ct++;
+//            }
+//            dd($ct);
             $returnModel = collect([
                 'timestamp'     => $date,
                 'projectCode'   => $projectCode,
@@ -1043,7 +1057,7 @@ class HomeController extends Controller
             return Response::json($returnModel, 200);
         }
         catch (\Exception $ex){
-            Log::channel('in_sys')->error('API/IntegrationController - getAttendances error EX: '. $ex);
+            dd($ex);
             return Response::json([
                 'error' => $ex
             ], 500);

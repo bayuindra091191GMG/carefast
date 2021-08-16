@@ -153,6 +153,9 @@
                                                                     - HM = Hadir Malam<br>
                                                                     - HM1 = Hadir Middle 1<br>
                                                                     - HM2 = Hadir Middle 2<br>
+                                                                    - NS1 = No Shift 1<br>
+                                                                    - NS2 = No Shift 2<br>
+                                                                    - NS3 = No Shift 3<br>
                                                                     - O = Off <br>
                                                                     - Angka pada table menunjukan tanggal
                                                                 </p>
@@ -246,6 +249,12 @@
                                                                                 HM1
                                                                             @elseif($scheduleDay["status"] == 'HM2')
                                                                                 HM2
+                                                                            @elseif($scheduleDay["status"] == 'NS1')
+                                                                                NS1
+                                                                            @elseif($scheduleDay["status"] == 'NS2')
+                                                                                NS2
+                                                                            @elseif($scheduleDay["status"] == 'NS3')
+                                                                                NS3
                                                                             @else
                                                                                 O
                                                                             @php($offCt++)
