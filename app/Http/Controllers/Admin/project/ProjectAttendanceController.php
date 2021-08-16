@@ -104,6 +104,18 @@ class ProjectAttendanceController extends Controller
                     $attStatus = "H";
 //                        $attendanceOut = $attendanceAbsent->date_checkout->format('Y-m-d H:i:s');
                     $dataCheckout = $attendanceAbsent->date_checkout;
+
+                    $trxDateOut = Carbon::parse($attendanceAbsent->date_checkout);
+                    $trxDate = Carbon::parse($attendanceAbsent->date);
+                    $intervalMinute = $trxDate->diffInMinutes($trxDateOut);
+
+                    $intervalMinutValidation = 480;
+                    if($intervalMinute >= $intervalMinutValidation){
+                        $attStatus = "H";
+                    }
+                    else{
+                        $attStatus = "A";
+                    }
                 }
                 else{
                     $attStatus = "A";
