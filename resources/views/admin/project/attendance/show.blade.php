@@ -49,7 +49,8 @@
                                                 <div class="row">
                                                     <div class="col-12">
 
-                                                        {{ Form::open(['route'=>'admin.project.attendance.download','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
+{{--                                                        {{ Form::open(['route'=>'admin.project.attendance.download','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}--}}
+                                                        {{ Form::open(['route'=>'admin.project.attendance.download-insys','method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
                                                         <input type="hidden" name="project_id" value="{{$project->id}}">
                                                         <div class="row">
 {{--                                                            <div class="col-md-3">--}}

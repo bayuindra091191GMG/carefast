@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\libs\AttendanceProcess;
 use App\libs\Utilities;
 use App\Models\AttendanceAbsent;
+use App\Models\Employee;
 use App\Models\Project;
 use App\Transformer\AttendanceTransformer;
 use Carbon\Carbon;
@@ -50,6 +51,7 @@ class ProjectAttendanceController extends Controller
             ->setTransformer(new AttendanceTransformer())
             ->make(true);
     }
+
 
     public function downloadAttendance(Request $request)
     {
@@ -176,6 +178,47 @@ class ProjectAttendanceController extends Controller
 //        return response()->download($destinationPath.$file);
     }
 
+    public function downloadAttendanceInsys(Request $request)
+    {
+//        dd($request);
+        $projectId = $request->input('project_id');
+        $project = Project::where('id', $projectId)->first();
+        $startDateRequest = $request->input('start_date');
+        $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
+        $endDateRequest = $request->input('end_date');
+        $endDate = Carbon::parse($endDateRequest)->addDay()->format('Y-m-d H:i:s');
+
+        $startDateMonth = Carbon::parse($startDate)->format('Y-m');
+        $endDateMonth = Carbon::parse($endDate)->format('Y-m');
+
+        $attendanceAbsents = AttendanceProcess::DownloadAttendanceProcessV4($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
+
+        $now = Carbon::now('Asia/Jakarta');
+        $list = collect();
+        foreach($attendanceAbsents as $attendanceAbsent){
+            $employee = Employee::where('code', $attendanceAbsent["employeeCode"])->first();
+            $singleData = ([
+                'employee Id'        => $attendanceAbsent["employeeId"],
+                'employee Code'      => $attendanceAbsent["employeeCode"],
+                'employee Name'      => $employee->first_name. ' ' .$employee->last_name,
+                'trans Date'         => $attendanceAbsent["transDate"],
+                'shift Code'         => $attendanceAbsent["shiftCode"],
+                'attendance In'      => $attendanceAbsent["attendanceIn"],
+                'attendance Out'     => $attendanceAbsent["attendanceOut"],
+                'attendance Status'   => $attendanceAbsent["attendanceStatus"],
+                'description'       => $attendanceAbsent["description"],
+            ]);
+            $list->push($singleData);
+            $projectCode = $project->code;
+        }
+
+        $destinationPath = public_path()."/download_attendance/";
+        $file = "attendance-report-v2-".$projectCode."_".$now->format('d F Y_G.i.s').'.xlsx';
+
+        (new FastExcel($list))->export($destinationPath.$file);
+
+        return response()->download($destinationPath.$file);
+    }
 
     public function downloadForm(Request $request){
         try{
