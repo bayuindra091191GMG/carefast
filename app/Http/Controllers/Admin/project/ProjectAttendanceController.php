@@ -186,7 +186,7 @@ class ProjectAttendanceController extends Controller
         $startDateRequest = $request->input('start_date');
         $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
         $endDateRequest = $request->input('end_date');
-        $endDate = Carbon::parse($endDateRequest)->addDay()->format('Y-m-d H:i:s');
+        $endDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
 
         $startDateMonth = Carbon::parse($startDate)->format('Y-m');
         $endDateMonth = Carbon::parse($endDate)->format('Y-m');
