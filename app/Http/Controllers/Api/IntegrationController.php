@@ -346,6 +346,14 @@ class IntegrationController extends Controller
                         if(DB::table('employees')->where('code', strval($employee))->exists()){
                             $nEmployee = Employee::where('code', $employee)->first();
 
+
+                            $projectEmployeeOtherProject = ProjectEmployee::where('status_id', 1)
+                                ->where('employee_id', $nEmployee->id)
+                                ->get();
+                            foreach($projectEmployeeOtherProject as $projectEmployeeProject){
+                                $projectEmployeeProject->status_id = 0;
+                                $projectEmployeeProject->save();
+                            }
                             $projectEmployeeDB = ProjectEmployee::where('employee_id', $nEmployee->id)
                                 ->where('project_id', $nProject->id)->first();
                             if(empty($projectEmployeeDB)){

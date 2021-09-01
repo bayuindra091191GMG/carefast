@@ -183,6 +183,7 @@ class ProjectAttendanceController extends Controller
 //        dd($request);
         $projectId = $request->input('project_id');
         $project = Project::where('id', $projectId)->first();
+        $projectCode = $project->code;
         $startDateRequest = $request->input('start_date');
         $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
         $endDateRequest = $request->input('end_date');
@@ -209,7 +210,6 @@ class ProjectAttendanceController extends Controller
                 'description'       => $attendanceAbsent["description"],
             ]);
             $list->push($singleData);
-            $projectCode = $project->code;
         }
 
         $destinationPath = public_path()."/download_attendance/";
