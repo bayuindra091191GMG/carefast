@@ -95,6 +95,7 @@ class EmployeeController extends Controller
 
             $projectCSOs = ProjectEmployee::where('project_id', $projectEmployee->project_id)
                 ->where('employee_roles_id', 1)
+                ->where('status_id', 1)
                 ->get();
             $projectCSOModels = collect();
             //check if cleaner null
@@ -139,6 +140,7 @@ class EmployeeController extends Controller
 
             $projectCSOs = ProjectEmployee::where('project_id', $projectId)
                 ->where('employee_roles_id', 1)
+                ->where('status_id', 1)
                 ->get();
             $projectCSOModels = collect();
             //check if cleaner null
