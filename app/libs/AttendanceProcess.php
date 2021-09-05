@@ -1418,6 +1418,7 @@ class AttendanceProcess
      * @return  \Illuminate\Support\Collection
      */
     public static function DownloadAttendanceProcessV4($project, $startDate, $startDateMonth, $endDate, $endDateMonth){
+        $currentEmployeeNUC = "";
         try{
             $dataModel = collect();
             $dataModelCopy = collect();
@@ -1449,6 +1450,7 @@ class AttendanceProcess
             }
 
             foreach ($projectEmployees as $projectEmployee){
+                $currentEmployeeNUC = $projectEmployee->employee_id." | NUC = ".$projectEmployee->employee_code;
 //                $employeeSchedule = EmployeeSchedule::where('employee_id', $projectEmployee->employee_id)->first();
                 $employeeSchedule = DB::table('employee_schedules')
                     ->select('day_status','employee_id', 'employee_code')
@@ -1884,6 +1886,8 @@ class AttendanceProcess
             return $dataModel;
         }
         catch (\Exception $ex){
+            Log::channel('in_sys')
+                ->error('libs/AttendanceProcess/DownloadAttendanceProcessV4  latest Employee : '. $currentEmployeeNUC);
             Log::channel('in_sys')
                 ->error('libs/AttendanceProcess/DownloadAttendanceProcessV4  error EX: '. $ex);
 

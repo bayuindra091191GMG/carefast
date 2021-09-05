@@ -187,11 +187,11 @@ class ProjectAttendanceController extends Controller
         $startDateRequest = $request->input('start_date');
         $startDate = Carbon::parse($startDateRequest)->format('Y-m-d H:i:s');
         $endDateRequest = $request->input('end_date');
-        $endDate = Carbon::parse($endDateRequest)->format('Y-m-d H:i:s');
+        $endDate = Carbon::parse($endDateRequest)->format('Y-m-d 23:59:59');
 
         $startDateMonth = Carbon::parse($startDate)->format('Y-m');
         $endDateMonth = Carbon::parse($endDate)->format('Y-m');
-
+//dd($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
         $attendanceAbsents = AttendanceProcess::DownloadAttendanceProcessV4($project, $startDate, $startDateMonth, $endDate, $endDateMonth);
 
         $now = Carbon::now('Asia/Jakarta');
