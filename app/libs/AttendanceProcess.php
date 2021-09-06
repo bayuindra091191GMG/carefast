@@ -1430,6 +1430,7 @@ class AttendanceProcess
             $projectEmployees = DB::table('project_employees')
                 ->join('employees', 'project_employees.employee_id', '=', 'employees.id')
                 ->select('project_employees.id as project_employee_id',
+                    'project_employees.status_id as project_employee_status_id',
                     'employees.id as employee_id',
                     'employees.code as employee_code')
                 ->where('project_employees.project_id', $project->id)
@@ -1519,6 +1520,10 @@ class AttendanceProcess
                                 ->where('attendance_absents.employee_id', $projectEmployee->employee_id)
                                 ->where('attendance_absents.status_id',6)
                                 ->get();
+
+                            if($projectEmployee->project_employee_status_id == 0 && $attendanceAbsents->count() < 1){
+                                continue;
+                            }
 
                             //kalau scehdulenya tipenya O = Off
                             if($dayObject->status == 'O'){
@@ -1770,6 +1775,9 @@ class AttendanceProcess
                             ->where('attendance_absents.employee_id', $projectEmployee->employee_id)
                             ->where('attendance_absents.status_id',6)
                             ->get();
+                        if($projectEmployee->project_employee_status_id == 0 && $attendanceAbsents->count() < 1){
+                            continue;
+                        }
 
                         if($attendanceAbsents->count() < 1){
                             $projectCSOModel = ([
