@@ -237,38 +237,50 @@
                                                                     <td>{{($schedule['employee_code'])}} </td>
                                                                     @foreach($schedule["days"] as $scheduleDay)
                                                                         <td>
-                                                                            @if($scheduleDay["status"] == 'H')
-                                                                                H
-                                                                            @elseif($scheduleDay["status"] == 'HP')
-                                                                                HP
-                                                                            @elseif($scheduleDay["status"] == 'HS')
-                                                                                HS
-                                                                            @elseif($scheduleDay["status"] == 'HM')
-                                                                                HM
-                                                                            @elseif($scheduleDay["status"] == 'HM1')
-                                                                                HM1
-                                                                            @elseif($scheduleDay["status"] == 'HM2')
-                                                                                HM2
-                                                                            @elseif($scheduleDay["status"] == 'NS1')
-                                                                                NS1
-                                                                            @elseif($scheduleDay["status"] == 'NS2')
-                                                                                NS2
-                                                                            @elseif($scheduleDay["status"] == 'NS3')
-                                                                                NS3
-                                                                            @else
-                                                                                O
-                                                                            @php($offCt++)
+{{--                                                                            @foreach($projectShifts as $projectShift)--}}
+{{--                                                                                @if($scheduleDay['status'] == $projectShift->shift_type)--}}
+{{--                                                                                    {{$projectShift->shift_type}}--}}
+{{--                                                                                @else--}}
+{{--                                                                                    O--}}
+{{--                                                                                    @php($offCt++)--}}
+{{--                                                                                @endif--}}
+{{--                                                                            @endforeach--}}
+                                                                            {{$scheduleDay['status']}}
+                                                                            @if($scheduleDay["status"] == 'O')
+                                                                                @php($offCt++)
                                                                             @endif
+{{--                                                                            @if($scheduleDay["status"] == 'H')--}}
+{{--                                                                                H--}}
+{{--                                                                            @elseif($scheduleDay["status"] == 'HP')--}}
+{{--                                                                                HP--}}
+{{--                                                                            @elseif($scheduleDay["status"] == 'HS')--}}
+{{--                                                                                HS--}}
+{{--                                                                            @elseif($scheduleDay["status"] == 'HM')--}}
+{{--                                                                                HM--}}
+{{--                                                                            @elseif($scheduleDay["status"] == 'HM1')--}}
+{{--                                                                                HM1--}}
+{{--                                                                            @elseif($scheduleDay["status"] == 'HM2')--}}
+{{--                                                                                HM2--}}
+{{--                                                                            @elseif($scheduleDay["status"] == 'NS1')--}}
+{{--                                                                                NS1--}}
+{{--                                                                            @elseif($scheduleDay["status"] == 'NS2')--}}
+{{--                                                                                NS2--}}
+{{--                                                                            @elseif($scheduleDay["status"] == 'NS3')--}}
+{{--                                                                                NS3--}}
+{{--                                                                            @else--}}
+{{--                                                                                O--}}
+{{--                                                                            @php($offCt++)--}}
+{{--                                                                            @endif--}}
                                                                             <input type="hidden" id="employeeId" name="employeeId[]"  value="{{$schedule['employee_id']}}">
                                                                         </td>
                                                                     @endforeach
                                                                     <td>
-                                                                        @if($offCt > 10)
+{{--                                                                        @if($offCt > 10)--}}
                                                                         <a href="{{route('admin.project.schedule-edit-employee', ['id'=>$schedule['employee_id']]).'?projectId='.$project->id }}"
                                                                            class="btn btn-primary">
                                                                             Ubah
                                                                         </a>
-                                                                        @endif
+{{--                                                                        @endif--}}
                                                                     </td>
                                                                 </tr>
                                                             @endforeach

@@ -107,12 +107,13 @@
                                                                 @foreach($schedule["days"] as $scheduleDay)
                                                                     <td class="text-center">
                                                                         <select name="statuses[]" class='form-control'>
-                                                                            <option value='0'>O</option>
                                                                             @foreach($projectSchedules as $projectSchedule)
                                                                                 @if($scheduleDay['status'] == $projectSchedule->shift_type)
-                                                                                    <option value='{{$projectSchedule->shift_type}}' selected>
+                                                                                    <option value='{{$projectSchedule->shift_type}}' selected="selected">
                                                                                         {{$projectSchedule->shift_type}}
                                                                                     </option>
+                                                                                @elseif($scheduleDay['status'] == "O")
+                                                                                    <option value='0' selected="selected">O</option>
                                                                                 @else
                                                                                     <option value='{{$projectSchedule->shift_type}}'>
                                                                                         {{$projectSchedule->shift_type}}
@@ -121,6 +122,7 @@
                                                                             @endforeach
                                                                         </select>
                                                                         <input type="hidden" id="days" name="days[]"  value="{{$scheduleDay['day']}}">
+                                                                        <input type="hidden" id="days" name="statuses[]"  value="{{$scheduleDay['status']}}">
                                                                     </td>
                                                                 @endforeach
                                                             </tr>
