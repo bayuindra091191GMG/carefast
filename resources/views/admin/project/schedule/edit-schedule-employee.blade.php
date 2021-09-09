@@ -65,7 +65,14 @@
                                                     <div class="col-md-6">
                                                         <p>
                                                             Keterangan = <br>
-                                                            - H = Hadir <br>
+                                                            - HP = Hadir Pagi<br>
+                                                            - HS = Hadir Siang<br>
+                                                            - HM = Hadir Malam<br>
+                                                            - HM1 = Hadir Middle 1<br>
+                                                            - HM2 = Hadir Middle 2<br>
+                                                            - NS1 = No Shift 1<br>
+                                                            - NS2 = No Shift 2<br>
+                                                            - NS3 = No Shift 3<br>
                                                             - O = Off <br>
                                                             - Angka pada table menunjukan tanggal
                                                         </p>
@@ -101,11 +108,17 @@
                                                                     <td class="text-center">
                                                                         <select name="statuses[]" class='form-control'>
                                                                             <option value='0'>O</option>
-                                                                            <option value='HM2'>HM2</option>
-                                                                            <option value='HM1'>HM1</option>
-                                                                            <option value='HM'>HM</option>
-                                                                            <option value='HS'>HS</option>
-                                                                            <option value='HP' selected>HP</option>
+                                                                            @foreach($projectSchedules as $projectSchedule)
+                                                                                @if($scheduleDay['status'] == $projectSchedule->shift_type)
+                                                                                    <option value='{{$projectSchedule->shift_type}}' selected>
+                                                                                        {{$projectSchedule->shift_type}}
+                                                                                    </option>
+                                                                                @else
+                                                                                    <option value='{{$projectSchedule->shift_type}}'>
+                                                                                        {{$projectSchedule->shift_type}}
+                                                                                    </option>
+                                                                                @endif
+                                                                            @endforeach
                                                                         </select>
                                                                         <input type="hidden" id="days" name="days[]"  value="{{$scheduleDay['day']}}">
                                                                     </td>

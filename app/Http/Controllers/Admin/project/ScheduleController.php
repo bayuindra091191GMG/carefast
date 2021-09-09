@@ -419,6 +419,7 @@ class ScheduleController extends Controller
                 ->where('employee_roles_id','<', 4)
                 ->where('status_id', 1)
                 ->get();
+            $projectSchedule = ProjectShift::where('project_id', $projectId)->get();
 
             $isSelectDate = true;
             $dayArr = collect();
@@ -467,11 +468,13 @@ class ScheduleController extends Controller
                     $projectScheduleModel->push($schedule);
                 }
             }
+//            dd($scheduleModel, $projectSchedule);
 
             $data = [
                 'selectedEmployee'      => $id,
                 'project'               => $currentProject,
                 'projectScheduleModel'  => $projectScheduleModel,
+                'projectSchedules'       => $projectSchedule,
                 'days'                  => $dayArr,
                 'isSelectDate'          => $isSelectDate,
                 'start_date'            => $start_date,
