@@ -91,7 +91,7 @@
                                                                     NUC
                                                                 </th>
                                                                 @foreach($days as $day)
-                                                                    <th class="text-center" style="min-width:95px;">
+                                                                    <th class="text-center" style="min-width:100px;">
                                                                         {{$day}}
                                                                     </th>
                                                                 @endforeach
@@ -112,17 +112,17 @@
                                                                                     <option value='{{$projectSchedule->shift_type}}' selected="selected">
                                                                                         {{$projectSchedule->shift_type}}
                                                                                     </option>
-                                                                                @elseif($scheduleDay['status'] == "O")
-                                                                                    <option value='0' selected="selected">O</option>
+{{--                                                                                @elseif($scheduleDay['status'] == "O")--}}
+{{--                                                                                    <option value='0' selected="selected">O</option>--}}
                                                                                 @else
                                                                                     <option value='{{$projectSchedule->shift_type}}'>
                                                                                         {{$projectSchedule->shift_type}}
                                                                                     </option>
                                                                                 @endif
                                                                             @endforeach
+                                                                            <option value='O'>O</option>
                                                                         </select>
                                                                         <input type="hidden" id="days" name="days[]"  value="{{$scheduleDay['day']}}">
-                                                                        <input type="hidden" id="days" name="statuses[]"  value="{{$scheduleDay['status']}}">
                                                                     </td>
                                                                 @endforeach
                                                             </tr>

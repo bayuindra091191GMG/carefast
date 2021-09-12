@@ -13,12 +13,14 @@ use App\Models\Attendance;
 use App\Models\AttendanceDetail;
 use App\Models\AutoNumber;
 use App\Models\Place;
+use App\Models\Project;
 use App\Models\ProjectEmployee;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
@@ -170,6 +172,95 @@ class EmployeeProcess
             }
 
             return $scheduleModels;
+        }
+        catch (\Exception $ex){
+            Log::error('libs/EmployeeProcess - GetEmployeeSchedule error EX: '. $ex);
+            return null;
+        }
+
+    }
+    public static function GetEmployeeScheduleV2($employee_id, $projectId, $employee_name, $startDate, $finishDate){
+        try{
+            $attendances = DB::table('attendance_absents')
+                ->where('employee_id', $employee_id)
+                ->whereBetween('created_at', [$startDate, $finishDate])
+                ->where('status_id', 6)
+                ->orderByDesc('date')
+                ->get();
+
+            if($attendances->count() == 0){
+                return null;
+            }
+            else{
+                $attendanceModels = collect();
+                foreach ($attendances as $attendance){
+                    $attIn = Carbon::parse($attendance->date)->format('d m Y H:i:s');
+//                    $attIn = $attendance->date->format('Y-m-d H:i:s');
+                    if(empty($attendance->date_checkout)){
+                        $attOut = "";
+                    }
+                    else{
+                        $attOut = Carbon::parse($attendance->date_checkout)->format('d m Y H:i:s');
+//                        $attOut = $attendance->date_checkout->format('Y-m-d H:i:s');
+                    }
+                    $projectName = "";
+                    $project = Project::where('id', $attendance->project_id)->first();
+
+                    if(!empty($project)){
+                        $projectName = $project->name;
+                    }
+
+                    $checkInOutModels = collect();
+                    $attInAsStartDate = Carbon::parse($attendance->date)->format('d m Y 00:00:00');
+                    $attInAsFinishDate = Carbon::parse($attendance->date)->format('d m Y 23:59:59');
+
+                    $checkinAttendances = Attendance::where('employee_id', $employee_id)
+                        ->whereBetween('created_at', [$attInAsStartDate, $attInAsFinishDate])
+                        ->where('status_id', 6)
+                        ->get();
+                    foreach($checkinAttendances as $checkinAttendance){
+                        $checkIn = "";
+                        $placeId = "";
+                        $placeName = "";
+                        $ObjectName = "";
+                        $SubObjectName = "";
+
+                        $checkIn = Carbon::parse($checkinAttendance->date)->format('d m Y H:i:s');
+                        $placeId = $checkinAttendance->place_id;
+                        $placeName = $checkinAttendance->place->name;
+
+                        $checkOut = "";
+                        $checkoutAttendance = Attendance::where('employee_id', $employee_id)
+                            ->whereBetween('created_at', [$attInAsStartDate, $attInAsFinishDate])
+                            ->where('place_id', $placeId)
+                            ->where('status_id', 7)
+                            ->first();
+                        if(!empty($checkoutAttendance))
+                            $checkOut = Carbon::parse($checkoutAttendance->date)->format('d m Y H:i:s');
+
+                        $checkInOutModel = collect([
+                            'checkin_datetime'  => $checkIn,
+                            'checkout_datetime' => $checkOut,
+                            'place_id'          => $placeId,
+                            'place_name'        => $placeName,
+                            'object_name'       => $ObjectName,
+                            'sub_object_name'   => $SubObjectName
+                        ]);
+                        $checkInOutModels->push($checkInOutModel);
+                    }
+
+                    $attendanceModel = collect([
+                        'attendance_in_date'    => $attIn,
+                        'attendance_out_date'   => $attOut,
+                        'project_name'          => $projectName,
+                        'employee_id'           => $employee_id,
+                        'employee_name'         => $employee_name,
+                        'checkins'              => $checkInOutModels
+                    ]);
+                    $attendanceModels->push($attendanceModel);
+                }
+                return $attendanceModels;
+            }
         }
         catch (\Exception $ex){
             Log::error('libs/EmployeeProcess - GetEmployeeSchedule error EX: '. $ex);

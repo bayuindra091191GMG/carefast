@@ -48,13 +48,17 @@
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label">Shift*</label>
-                                                                    <select name='shift_type' class='form-control'>
-                                                                        <option value='1'>SHIFT PAGI</option>
-                                                                        <option value='2'>SHIFT SIANG</option>
-                                                                        <option value='3'>SHIFT MALAM</option>
-                                                                        <option value='4'>SHIFT MIDDLE 1</option>
-                                                                        <option value='5'>SHIFT MIDDLE 2</option>
-                                                                    </select>
+                                                                    @if(count($projectShifts) > 0)
+                                                                        <select name='shift_type' class='form-control'>
+                                                                            @foreach($projectShifts as $projectShift)
+                                                                                <option value='{{$projectShift->id}}'>
+                                                                                    {{$projectShift->shift_type}}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    @else
+                                                                        Belum ada Shift
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         </div>

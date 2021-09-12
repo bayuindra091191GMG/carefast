@@ -88,8 +88,9 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     Route::post('/attendance/in-v2', 'Api\AttendanceAbsentTestController@attendanceInV2');
 
     //Employee
+    Route::post('/checkinout/log', 'Api\EmployeeController@employeeCheckInOutLog');
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');
-    Route::get('/employee/schedule', 'Api\EmployeeController@employeeSchedule');
+    Route::post('/employee/schedule', 'Api\EmployeeController@employeeSchedule');
     Route::post('/employee/leader/schedule', 'Api\EmployeeController@employeeScheduleByLeader');
     Route::post('/employee/get-detail/', 'Api\EmployeeController@getEmployeeDetail');
     Route::get('/employee/get-direct-cso/', 'Api\EmployeeController@getEmployeeCSO');

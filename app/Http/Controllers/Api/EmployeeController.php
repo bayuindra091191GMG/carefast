@@ -525,6 +525,62 @@ class EmployeeController extends Controller
     }
 
     /**
+     * Function to get the employee checkin/out Log.
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function employeeCheckInOutLog(Request $request){
+        try{
+            $projectId = $request->input('project_id');
+
+            $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d 00:00:00');
+            $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d 23:59:59');
+
+            $userLogin = auth('api')->user();
+            $user = User::where('phone', $userLogin->phone)->first();
+            $employee = $user->employee;
+            $employeeId = $employee->id;
+            $employeeName = $employee->first_name." ".$employee->last_name;
+            $id = $request->input('employee_id');
+
+            //employee_id = 0 => leader, otherwise
+            if($id > 0){
+                $employeeDb = Employee::where('id', $id)->first();
+                $employeeId = $employeeDb->id;
+                $employeeName = $employeeDb->first_name." ".$employeeDb->last_name;
+
+                $employeeSchedule = EmployeeProcess::GetEmployeeScheduleV2($employeeId, $projectId, $employeeName, $startDate, $finishDate);
+                if(empty($employeeSchedule)){
+                    return Response::json("Tidak ada Date", 482);
+                }
+
+                return Response::json($employeeSchedule, 200);
+            }
+            else{
+                $projectEmployeeCsos = ProjectEmployee::where('project_id', $projectId)
+                    ->where('employee_roles_id', 1)
+                    ->where('status_id', 1)
+                    ->get();
+                $employeeSchedules = collect();
+                foreach ($projectEmployeeCsos as $projectEmployeeCso){
+                    $employeeDb = Employee::where('id', $projectEmployeeCso->employee_id)->first();
+                    $employeeId = $employeeDb->employee_id;
+                    $employeeName = $employeeDb->first_name." ".$employeeDb->last_name;
+                    $employeeSchedule = EmployeeProcess::GetEmployeeScheduleV2($employeeId, $projectId, $employeeName, $startDate, $finishDate);
+                    $employeeSchedules->push($employeeSchedule);
+                }
+
+            }
+
+        }
+        catch (\Exception $ex){
+            Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
+
+    /**
      * Function to get the employee assesment history
      *
      * @param $id

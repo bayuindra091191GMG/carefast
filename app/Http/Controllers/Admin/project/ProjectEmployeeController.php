@@ -476,35 +476,35 @@ class ProjectEmployeeController extends Controller
                 ->where('status_id', 1)
                 ->get();
 
-            // Unassign employee from project
-            foreach ($projectEmployees as $projectEmployee){
-                $isFound = false;
-
-                if(!empty($upperEmployeeIds)){
-                    foreach ($upperEmployeeIds as $upperEmployeeId){
-                        $valueArr = explode('#', $upperEmployeeId);
-                        $empId = intval($valueArr[0]);
-
-                        if($projectEmployee->employee_id === $empId){
-                            $isFound = true;
-                        }
-                    }
-                }
-
-                if(!empty($cleanerEmployeeIds)){
-                    foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
-                        $empId = intval($cleanerEmployeeId);
-
-                        if($projectEmployee->employee_id === $empId){
-                            $isFound = true;
-                        }
-                    }
-                }
-
-                if(!$isFound){
-                    $projectEmployee->delete();
-                }
-            }
+            // Unassign employee from project (indikasi terjadi kesalahan, malah ngedelete yang masih aktif)
+//            foreach ($projectEmployees as $projectEmployee){
+//                $isFound = false;
+//
+//                if(!empty($upperEmployeeIds)){
+//                    foreach ($upperEmployeeIds as $upperEmployeeId){
+//                        $valueArr = explode('#', $upperEmployeeId);
+//                        $empId = intval($valueArr[0]);
+//
+//                        if($projectEmployee->employee_id === $empId){
+//                            $isFound = true;
+//                        }
+//                    }
+//                }
+//
+//                if(!empty($cleanerEmployeeIds)){
+//                    foreach ($cleanerEmployeeIds as $cleanerEmployeeId){
+//                        $empId = intval($cleanerEmployeeId);
+//
+//                        if($projectEmployee->employee_id === $empId){
+//                            $isFound = true;
+//                        }
+//                    }
+//                }
+//
+//                if(!$isFound){
+//                    $projectEmployee->delete();
+//                }
+//            }
 
             $manpowerUsed = 0;
             if(!empty($upperEmployeeIds)){

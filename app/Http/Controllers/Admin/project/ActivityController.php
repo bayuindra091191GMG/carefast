@@ -16,6 +16,7 @@ use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
 use App\Models\ProjectObject;
+use App\Models\ProjectShift;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use App\Transformer\CustomerTransformer;
@@ -137,9 +138,10 @@ class ActivityController extends Controller
         try{
 
             $project = Project::find($id);
-
+            $projectShifts = ProjectShift::Where('project_code', $project->code)->get();
             $data = [
-                'project'           => $project,
+                'project'       => $project,
+                'projectShifts' => $projectShifts,
             ];
 
             return view('admin.project.activity.create-one')->with($data);
