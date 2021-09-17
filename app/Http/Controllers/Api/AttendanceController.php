@@ -42,7 +42,8 @@ class AttendanceController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+//            $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+            $result = AttendanceProcess::checkinProcessV2($employee, $request, $data);
 
             return Response::json($result["desc"], $result["status_code"]);
 
@@ -67,7 +68,8 @@ class AttendanceController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
-            $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+//            $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+            $result = AttendanceProcess::checkinProcessV2($employee, $request, $data);
 
             return Response::json($result["desc"], $result["status_code"]);
 
@@ -92,7 +94,8 @@ class AttendanceController extends Controller
             if($data->cso_id != "0"){
                 $employee = Employee::find($data->cso_id);
 
-                $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+//                $result = AttendanceProcess::checkinProcess($employee, $request, $data);
+                $result = AttendanceProcess::checkinProcessV2($employee, $request, $data);
 
                 return Response::json($result["desc"], $result["status_code"]);
             }
@@ -101,7 +104,8 @@ class AttendanceController extends Controller
                 $user = User::where('phone', $userLogin->phone)->first();
                 $employee = $user->employee;
 
-                $result = AttendanceProcess::checkinLeaderProcess($employee, $request, $data);
+//                $result = AttendanceProcess::checkinLeaderProcess($employee, $request, $data);
+                $result = AttendanceProcess::checkinLeaderProcessV2($employee, $request, $data);
 
                 return Response::json($result["desc"], $result["status_code"]);
             }
@@ -131,7 +135,8 @@ class AttendanceController extends Controller
 
 //            Log::info('Api/AttendanceController - submitCheckout: '. $data);
 
-            $result = AttendanceProcess::checkoutProcess($employee, $request, 1, $data);
+//            $result = AttendanceProcess::checkoutProcess($employee, $request, 1, $data);
+            $result = AttendanceProcess::checkoutProcessV2($employee, $request, 1, $data);
 
             return Response::json($result["desc"], $result["status_code"]);
 
@@ -159,7 +164,8 @@ class AttendanceController extends Controller
                 $type = 1;
                 $employee = Employee::find($data->cso_id);
 
-                $result = AttendanceProcess::checkoutProcess($employee, $request, $type, $data);
+//                $result = AttendanceProcess::checkoutProcess($employee, $request, $type, $data);
+                $result = AttendanceProcess::checkoutProcessV2($employee, $request, $type, $data);
 
                 return Response::json($result["desc"], $result["status_code"]);
             }
@@ -169,7 +175,8 @@ class AttendanceController extends Controller
                 $user = User::where('phone', $userLogin->phone)->first();
                 $employee = $user->employee;
 
-                $result = AttendanceProcess::checkoutProcess($employee, $request, $type, $data);
+//                $result = AttendanceProcess::checkoutProcess($employee, $request, $type, $data);
+                $result = AttendanceProcess::checkoutProcessV2($employee, $request, $type, $data);
 
                 return Response::json($result["desc"], $result["status_code"]);
             }

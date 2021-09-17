@@ -341,6 +341,212 @@ class AttendanceProcess
         }
 
     }
+
+    public static function checkinProcessV2($employee, $request, $data){
+        try{
+            $returnData = [
+                'status_code'           => 200,
+                'desc'                  => "Berhasil Check in",
+            ];
+
+            $place = Place::find($data->place_id);
+
+            //Check if Check in or Check out
+            //Check in  = 1
+            //Check out = 2
+            $message = "";
+//            if($request->hasFile('image')){
+                $attendance = Attendance::where('employee_id', $employee->id)
+                    ->where('status_id', 6)
+                    ->where('schedule_detail_id', $data->schedule_detail_id)
+                    ->where('is_done', 0)
+                    ->first();
+                if(!empty($attendance)){
+                    $returnData = [
+                        'status_code'           => 452,
+                        'desc'                  => "Sudah Pernah melakukan Checkin",
+                    ];
+                }
+
+                $newAttendance = Attendance::create([
+                    'employee_id'           => $employee->id,
+                    'schedule_id'           => null,
+                    'schedule_detail_id'    => null,
+                    'place_id'              => $place->id,
+                    'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'is_done'               => 0,
+                    'assessment_leader'     => 0,
+                    'status_id'             => 6
+                ]);
+
+                //Upload Image
+                //Creating Path Everyday
+//                $today = Carbon::now('Asia/Jakarta');
+//                $todayStr = $today->format('l d-m-y');
+//                $publicPath = 'storage/checkins/'. $todayStr;
+//                if(!File::isDirectory($publicPath)){
+//                    File::makeDirectory(public_path($publicPath), 0777, true, true);
+//                }
+//
+//                $image = $request->file('image');
+//                $avatar = Image::make($image);
+//                $extension = $image->extension();
+//                $filename = $employee->first_name . ' ' . $employee->last_name . '_checkin_'. $newAttendance->id . '_' .
+//                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+//                $avatar->save(public_path($publicPath ."/". $filename));
+//
+//                $newAttendance->image_path = $todayStr.'/'.$filename;
+//                $newAttendance->save();
+
+                return $returnData;
+//            }
+//            else{
+//                $returnData = [
+//                    'status_code'           => 400,
+//                    'desc'                  => "Harus mengupload Gambar",
+//                ];
+//                return $returnData;
+//            }
+
+        }
+        catch (\Exception $ex){
+            Log::error('libs/AttendanceProcess/checkinProcessV2 - checkinProcessV2 error EX: '. $ex);
+
+            $returnData = [
+                'status_code'           => 500,
+                'desc'                  => "Maaf terjadi kesalahan",
+            ];
+            return $returnData;
+        }
+
+    }
+    public static function checkinLeaderProcessV2($employee, $request, $data){
+        try{
+            $returnData = [
+                'status_code'           => 200,
+                'desc'                  => "Berhasil Check in",
+            ];
+
+            //Check Place
+            $place = Place::where('qr_code', $data->qr_code)->first();
+
+            $message = "";
+//            if($request->hasFile('image')){
+                $attendance = Attendance::where('employee_id', $employee->id)
+                    ->where('status_id', 6)
+                    ->where('schedule_detail_id', $data->schedule_detail_id)
+                    ->where('is_done', 0)
+                    ->first();
+                if(!empty($attendance)){
+                    $returnData = [
+                        'status_code'           => 452,
+                        'desc'                  => "Sudah Pernah melakukan Checkin",
+                    ];
+                }
+
+                $newAttendance = Attendance::create([
+                    'employee_id'   => $employee->id,
+                    'schedule_id'   => null,
+                    'schedule_detail_id'    => null,
+                    'place_id'      => $place->id,
+                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'is_done'       => 0,
+                    'assessment_leader'     => 0,
+                    'status_id'     => 6
+                ]);
+
+                //Upload Image
+                //Creating Path Everyday
+//                $today = Carbon::now('Asia/Jakarta');
+//                $todayStr = $today->format('l d-m-y');
+//                $publicPath = 'storage/checkins/'. $todayStr;
+//                if(!File::isDirectory($publicPath)){
+//                    File::makeDirectory(public_path($publicPath), 0777, true, true);
+//                }
+//
+//                $image = $request->file('image');
+//                $avatar = Image::make($image);
+//                $extension = $image->extension();
+//                $filename = $employee->first_name . ' ' . $employee->last_name . '_checkin_'. $newAttendance->id . '_' .
+//                    Carbon::now('Asia/Jakarta')->format('Ymdhms') . '.' . $extension;
+//                $avatar->save(public_path($publicPath ."/". $filename));
+//
+//                $newAttendance->image_path = $todayStr.'/'.$filename;
+//                $newAttendance->save();
+
+                return $returnData;
+//            }
+//            else{
+//                $returnData = [
+//                    'status_code'           => 400,
+//                    'desc'                  => "Harus mengupload Gambar",
+//                ];
+//                return $returnData;
+//            }
+
+        }
+        catch (\Exception $ex){
+            Log::error('libs/AttendanceProcess/checkinLeaderProcessV2 - checkinLeaderProcessV2 error EX: '. $ex);
+
+            $returnData = [
+                'status_code'           => 500,
+                'desc'                  => "Maaf terjadi kesalahan",
+            ];
+            return $returnData;
+        }
+
+    }
+
+    public static function checkoutProcessV2($employee, $request, $type, $data){
+        try{
+            $returnData = [
+                'status_code'           => 200,
+                'desc'                  => "Berhasil Check out",
+            ];
+
+            $attendance = Attendance::where('employee_id', $employee->id)
+                ->where('status_id', 6)
+//                ->where('schedule_detail_id', $request->input('schedule_detail_id'))
+                ->where('is_done', 0)
+                ->first();
+            if(empty($attendance)){
+                $returnData = [
+                    'status_code'           => 482,
+                    'desc'                  => "Belum melakukan Checkin",
+                ];
+                return $returnData;
+            }
+
+            $place = Place::find($attendance->place_id);
+
+            $attendance->is_done = 1;
+            $attendance->save();
+
+            $newAttendance = Attendance::create([
+                'employee_id'   => $employee->id,
+                'schedule_id'   => null,
+                'schedule_detail_id'    => null,
+                'place_id'      => $place->id,
+                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'is_done'       => 1,
+                'assessment_leader'     => 0,
+                'status_id'     => 7
+            ]);
+
+            return $returnData;
+        }
+        catch (\Exception $ex){
+            Log::error('libs/AttendanceProcess/checkoutProcessV2 - checkoutProcessV2 error EX: '. $ex);
+
+            $returnData = [
+                'status_code'           => 500,
+                'desc'                  => "Maaf terjadi kesalahan",
+            ];
+            return $returnData;
+        }
+
+    }
+
     public static function leaderAssessment($employee, $request){
         try{
             $returnData = [
