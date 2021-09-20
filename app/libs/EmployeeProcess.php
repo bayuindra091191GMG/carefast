@@ -151,8 +151,8 @@ class EmployeeProcess
 //                    'finish'            => Carbon::parse($schedule->finish)->toTimeString(),
 //                    'schedule_details'  => $scheduleDetailModels,
 
-                        'start_time'        => Carbon::parse($scheduleDetail->start)->format('H:i'),
-                        'finish_time'       => Carbon::parse($scheduleDetail->finish)->format('H:i'),
+                        'start_time'        => Carbon::parse($scheduleDetail->start)->format('H:i:s'),
+                        'finish_time'       => Carbon::parse($scheduleDetail->finish)->format('H:i:s'),
 //                        'start_time'        => Carbon::parse($scheduleDetail->start)->format('d M Y H:i:s'),
 //                        'finish_time'       => Carbon::parse($scheduleDetail->finish)->format('d M Y H:i:s'),
                         'place'             => $place->name,

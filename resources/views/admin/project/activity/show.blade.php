@@ -165,6 +165,7 @@
             </div>
         </div>
     </div>
+    @include('partials._delete')
 @endsection
 
 @section('styles')
@@ -213,5 +214,40 @@
             ],
         });
 
+        $(document).on('click', '.delete-modal', function(){
+            $('#deleteModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            $('#deleted-id').val($(this).data('id'));
+        });
+
+        let redirectUrl = '{{route('admin.project.activity.show',['id' => $project->id])}}';
+        let routeUrl = '{{route('admin.project.activity.destroy')}}';
+        $('.modal-footer').on('click', '.delete', function() {
+            $.ajax({
+                type: 'POST',
+                url: routeUrl,
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    'id': $('#deleted-id').val()
+                },
+                success: function(data) {
+                    if ((data.errors)){
+                        // setTimeout(function () {
+                        //     toastr.error('Gagal menghapus data!!', 'Peringatan', {timeOut: 6000, positionClass: "toast-top-center"});
+                        // }, 500);
+                        window.location =  redirectUrl;
+                    }
+                    else{
+                        window.location = redirectUrl;
+                    }
+                },
+                error: function (data) {
+                    alert("Error");
+                }
+            });
+        });
     </script>
 @endsection

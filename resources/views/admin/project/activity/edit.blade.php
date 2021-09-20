@@ -61,12 +61,16 @@
                                                             <div class="form-group form-float form-group-lg">
                                                                 <div class="form-line">
                                                                     <label class="form-label">Shift*</label>
-                                                                    @if($projectActivity->shift_type === 1)
-                                                                        <input id='place0' class='form-control ' name='places' disabled value='SHIFT 1' />
-                                                                    @elseif($projectActivity->shift_type === 2)
-                                                                        <input id='place0' class='form-control ' name='places' disabled value='SHIFT 2' />
-                                                                    @elseif($projectActivity->shift_type === 3)
-                                                                        <input id='place0' class='form-control ' name='places' disabled value='SHIFT 3' />
+                                                                    @if(count($projectShifts) > 0)
+                                                                        <select name='shift_type' class='form-control'>
+                                                                            @foreach($projectShifts as $projectShift)
+                                                                                <option value='{{$projectShift->id}}'>
+                                                                                    {{$projectShift->shift_type}}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    @else
+                                                                        Belum ada Shift
                                                                     @endif
                                                                 </div>
                                                             </div>
@@ -103,11 +107,11 @@
                                                             <tbody>
                                                             <tr id='sch0'>
                                                                 <td>
-                                                                    <input id='start0' class='form-control time-inputmask' name='start_times[]' placeholder="HH:MM" readonly required
+                                                                    <input id='start0' class='form-control time-inputmask' name='start_times' placeholder="HH:MM" required
                                                                            value='{{\Carbon\Carbon::parse($projectActivity->start)->format('H:i')}}' />
                                                                 </td>
                                                                 <td>
-                                                                    <input id='finish0' class='form-control time-inputmask' name='finish_times[]' placeholder="HH:MM" readonly required
+                                                                    <input id='finish0' class='form-control time-inputmask' name='finish_times' placeholder="HH:MM" required
                                                                            value='{{\Carbon\Carbon::parse($projectActivity->finish)->format('H:i')}}' />
                                                                 </td>
                                                                 <td>

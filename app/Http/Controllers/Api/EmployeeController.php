@@ -14,6 +14,7 @@ use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectActivity;
 use App\Models\ProjectEmployee;
 use App\Models\ProjectObject;
+use App\Models\ProjectShift;
 use App\Models\Schedule;
 use App\Models\ScheduleDetail;
 use App\Models\User;
@@ -330,17 +331,35 @@ class EmployeeController extends Controller
                         'action'   => $actionName
                     ]);
                     $dacDetailModel->push($dacDetail);
-                    $shiftString = $projectDetail->shift_type;
+                    $projectShifts = ProjectShift::Where('id', $projectDetail->shift_type)->first();
+                    $shiftString = empty($projectShifts) ? "-" : $projectShifts->shift_type;
                 }
                 $place = Place::find($projectActivity->place_id);
                 $project = Project::find($projectActivity->project_id);
+
+                $assignedCso = Schedule::where('project_activity_id', $projectActivity->id)->first();
+                $projectCSOModel = collect();
+                if(!empty($assignedCso)){
+                    $employee = Employee::find($assignedCso->employee_id);
+                    $employeeImage = empty($employee->image_path) ? null : asset('storage/employees/'. $employee->image_path);
+                    $projectCSOModel = ([
+                        'id'        => $employee->id,
+                        'name'      => $employee->first_name." ".$employee->last_name,
+                        'avatar'    => $employeeImage,
+                        'role'      => "",
+                    ]);
+                }
+
                 $dacHeaderModel = ([
                     'place'     => $place->name,
                     'object'    => $projectActivity->plotting_name,
                     'shift'     => $shiftString,
                     'project'   => $project->name,
-                    'details'   => $dacDetailModel
+                    'details'   => $dacDetailModel,
+                    'employee'  => $projectCSOModel
                 ]);
+
+
                 $projectActivityModels->push($dacHeaderModel);
             }
 

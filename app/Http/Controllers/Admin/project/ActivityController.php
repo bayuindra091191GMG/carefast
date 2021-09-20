@@ -530,11 +530,14 @@ class ActivityController extends Controller
                 }
             }
         }
+        $projectShifts = ProjectShift::Where('project_code', $project->code)->get();
+
         $data = [
             'projectActivity'           => $projectActivity,
             'projectActivityHeader'           => $projectActivityHeader,
             'actionName'           => $actionName,
             'project'           => $project,
+            'projectShifts' => $projectShifts,
         ];
 //        dd($data);
         return view('admin.project.activity.edit')->with($data);
@@ -547,20 +550,30 @@ class ActivityController extends Controller
             $activityDetailId = $request->input('project_activity_detail');
             $actions0 = $request->input('actions0');
             $actionNew = $request->input('actionNew');
+            $startTime = $request->input('start_times');
+            $finishTime = $request->input('finish_times');
+            $shiftType = $request->input('shift_type');
             $projectObjects = $request->input('project_objects0');
 
             $objectString = "";
-            for($i=0;$i<count($projectObjects);$i++){
-                if($i == count($projectObjects)-1){
-                    $objectString = $objectString.$projectObjects[$i];
-                }
-                else{
-                    $objectString = $objectString.$projectObjects[$i].", ";
-                }
-            }
-
             $projectDetailDB = ProjectActivitiesDetail::find($activityDetailId);
-            $projectDetailDB->object_name = $objectString;
+            if(!empty($projectObjects)){
+                for($i=0;$i<count($projectObjects);$i++){
+                    if($i == count($projectObjects)-1){
+                        $objectString = $objectString.$projectObjects[$i];
+                    }
+                    else{
+                        $objectString = $objectString.$projectObjects[$i].", ";
+                    }
+                }
+
+                $projectDetailDB->object_name = $objectString;
+            }
+            $startTimeParse = Carbon::parse('00-00-00 '.$startTime)->format('Y-m-d H:i:s');
+            $finishTimeParse = Carbon::parse('00-00-00 '.$finishTime)->format('Y-m-d H:i:s');
+            $projectDetailDB->start = $startTimeParse;
+            $projectDetailDB->finish = $finishTimeParse;
+            $projectDetailDB->shift_type = $shiftType;
 
             if(!empty($actions0) && empty($actionNew)){
                 $actionArr = explode("-", $actions0);
@@ -591,7 +604,21 @@ class ActivityController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Admin/activity/ActivityController - update error EX: '. $ex);
-            return "Something went wrong! Please contact administrator!";
+            return "Something went wrong! Please contact administrator! ". $ex;
+        }
+    }
+    public function destroy(Request $request){
+        try{
+            $deletedId = $request->input('id');
+            $sub1unit = ProjectActivitiesDetail::find($deletedId);
+            $sub1unit->delete();
+
+            Session::flash('success', 'Sukses menghapus data!');
+            return Response::json(array('success' => 'VALID'));
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ActivityController - destroy error EX: '. $ex);
+            return Response::json(array('errors' => 'INVALID'));
         }
     }
 }
