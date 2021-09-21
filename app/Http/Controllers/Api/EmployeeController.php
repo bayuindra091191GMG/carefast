@@ -338,19 +338,20 @@ class EmployeeController extends Controller
                 $project = Project::find($projectActivity->project_id);
 
                 $assignedCso = Schedule::where('project_activity_id', $projectActivity->id)->first();
-                $projectCSOModel = collect();
+                $projectCSOModel = null;
                 if(!empty($assignedCso)){
                     $employee = Employee::find($assignedCso->employee_id);
                     $employeeImage = empty($employee->image_path) ? null : asset('storage/employees/'. $employee->image_path);
-                    $projectCSOModel = ([
+                    $projectCSOModel = [
                         'id'        => $employee->id,
                         'name'      => $employee->first_name." ".$employee->last_name,
                         'avatar'    => $employeeImage,
                         'role'      => "",
-                    ]);
+                    ];
                 }
 
                 $dacHeaderModel = ([
+                    'id'        => $projectActivity->id,
                     'place'     => $place->name,
                     'object'    => $projectActivity->plotting_name,
                     'shift'     => $shiftString,
