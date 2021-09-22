@@ -211,13 +211,14 @@ class EmployeeProcess
                     }
 
                     $checkInOutModels = collect();
-                    $attInAsStartDate = Carbon::parse($attendance->date)->format('d m Y 00:00:00');
-                    $attInAsFinishDate = Carbon::parse($attendance->date)->format('d m Y 23:59:59');
+                    $attInAsStartDate = Carbon::parse($attendance->date)->format('Y-m-d 00:00:00');
+                    $attInAsFinishDate = Carbon::parse($attendance->date)->format('Y-m-d 23:59:59');
 
                     $checkinAttendances = Attendance::where('employee_id', $employee_id)
                         ->whereBetween('created_at', [$attInAsStartDate, $attInAsFinishDate])
                         ->where('status_id', 6)
                         ->get();
+
                     foreach($checkinAttendances as $checkinAttendance){
                         $checkIn = "";
                         $placeId = "";
@@ -225,18 +226,21 @@ class EmployeeProcess
                         $ObjectName = "";
                         $SubObjectName = "";
 
-                        $checkIn = Carbon::parse($checkinAttendance->date)->format('d m Y H:i:s');
+                        $checkIn = Carbon::parse($checkinAttendance->date)->format('d M Y H:i:s');
                         $placeId = $checkinAttendance->place_id;
                         $placeName = $checkinAttendance->place->name;
 
                         $checkOut = "";
-                        $checkoutAttendance = Attendance::where('employee_id', $employee_id)
-                            ->whereBetween('created_at', [$attInAsStartDate, $attInAsFinishDate])
-                            ->where('place_id', $placeId)
-                            ->where('status_id', 7)
-                            ->first();
-                        if(!empty($checkoutAttendance))
-                            $checkOut = Carbon::parse($checkoutAttendance->date)->format('d m Y H:i:s');
+                        if($checkinAttendance->is_done == 1){
+                            $checkOut = Carbon::parse($checkinAttendance->date_checkout)->format('d M Y H:i:s');
+                        }
+//                        $checkoutAttendance = Attendance::where('employee_id', $employee_id)
+//                            ->whereBetween('created_at', [$attInAsStartDate, $attInAsFinishDate])
+//                            ->where('place_id', $placeId)
+//                            ->where('status_id', 7)
+//                            ->first();
+//                        if(!empty($checkoutAttendance))
+//                            $checkOut = Carbon::parse($checkoutAttendance->date)->format('d M Y H:i:s');
 
                         $checkInOutModel = collect([
                             'checkin_datetime'  => $checkIn,
@@ -259,6 +263,8 @@ class EmployeeProcess
                     ]);
                     $attendanceModels->push($attendanceModel);
                 }
+                Log::channel('in_sys')
+                    ->info('GetEmployeeScheduleV2 attendanceResult count = '.json_encode($attendanceModels));
                 return $attendanceModels;
             }
         }

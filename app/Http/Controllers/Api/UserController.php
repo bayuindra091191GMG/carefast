@@ -354,8 +354,8 @@ class UserController extends Controller
 //            }
 
             //    accessible_menus =
-            //    1. checkin, 101 testing
-            //    2. checkout, 102 testing
+            //    1. checkin
+            //    2. checkout
             //    3. lihat jadwal (login sbg CSO)
             //    4. lihat jadwal cso (login sbg upper management)
             //    5. beri penilaian cso
@@ -374,13 +374,13 @@ class UserController extends Controller
 
             $accessible_menus = "";
             if($user->employee->employee_role_id > 4){
-                $accessible_menus = "1,601,2,8,4,5,6,301,302,311,312,321";
+                $accessible_menus = "1,601,2,8,4,5,6,301,302,311,312,321,102";
             }
             else if($user->employee->employee_role_id == 1){
-                $accessible_menus = "1,601,2,8,3,301,311";
+                $accessible_menus = "1,601,2,8,3,301,311,102";
             }
             else{
-                $accessible_menus = "1,601,4,8,5,6,11,301,302,311,312,321";
+                $accessible_menus = "1,601,4,8,5,6,11,301,302,311,312,321,102";
             }
             if($employee->id == 10264){
                 $accessible_menus .= ",101,102";

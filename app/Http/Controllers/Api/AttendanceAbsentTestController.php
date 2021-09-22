@@ -678,6 +678,9 @@ class AttendanceAbsentTestController extends Controller
             $user = User::where('phone', $userLogin->phone)->first();
             $employee = $user->employee;
 
+//            Log::error('Api/AttendanceAbsentTestController - attendanceLogV2 request data'.
+//                " | start_date = ".$request->input('start_date').
+//                " | finish_date = ".$request->input('finish_date'));
             $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d 00:00:00');
 
             $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d 00:00:00');

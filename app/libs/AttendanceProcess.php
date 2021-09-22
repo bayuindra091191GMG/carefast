@@ -349,16 +349,13 @@ class AttendanceProcess
                 'desc'                  => "Berhasil Check in",
             ];
 
-            $place = Place::find($data->place_id);
+            $place = Place::where('qr_code', $data->qr_code)->first();
 
-            //Check if Check in or Check out
-            //Check in  = 1
-            //Check out = 2
             $message = "";
 //            if($request->hasFile('image')){
                 $attendance = Attendance::where('employee_id', $employee->id)
                     ->where('status_id', 6)
-                    ->where('schedule_detail_id', $data->schedule_detail_id)
+//                    ->where('schedule_detail_id', $data->schedule_detail_id)
                     ->where('is_done', 0)
                     ->first();
                 if(!empty($attendance)){
@@ -372,7 +369,7 @@ class AttendanceProcess
                     'employee_id'           => $employee->id,
                     'schedule_id'           => null,
                     'schedule_detail_id'    => null,
-                    'place_id'              => $place->id,
+                    'place_id'              => empty($place) ? 0 : $place->id,
                     'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                     'is_done'               => 0,
                     'assessment_leader'     => 0,
@@ -434,7 +431,7 @@ class AttendanceProcess
 //            if($request->hasFile('image')){
                 $attendance = Attendance::where('employee_id', $employee->id)
                     ->where('status_id', 6)
-                    ->where('schedule_detail_id', $data->schedule_detail_id)
+//                    ->where('schedule_detail_id', $data->schedule_detail_id)
                     ->where('is_done', 0)
                     ->first();
                 if(!empty($attendance)){
@@ -445,14 +442,14 @@ class AttendanceProcess
                 }
 
                 $newAttendance = Attendance::create([
-                    'employee_id'   => $employee->id,
-                    'schedule_id'   => null,
+                    'employee_id'           => $employee->id,
+                    'schedule_id'           => null,
                     'schedule_detail_id'    => null,
-                    'place_id'      => $place->id,
-                    'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                    'is_done'       => 0,
+                    'place_id'              => empty($place) ? 0 : $place->id,
+                    'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    'is_done'               => 0,
                     'assessment_leader'     => 0,
-                    'status_id'     => 6
+                    'status_id'             => 6
                 ]);
 
                 //Upload Image
@@ -503,6 +500,7 @@ class AttendanceProcess
                 'status_code'           => 200,
                 'desc'                  => "Berhasil Check out",
             ];
+//            Log::info('submitCheckout - checkoutProcessV2 : data checkin_model: '. json_encode($data));
 
             $attendance = Attendance::where('employee_id', $employee->id)
                 ->where('status_id', 6)
@@ -517,20 +515,23 @@ class AttendanceProcess
                 return $returnData;
             }
 
-            $place = Place::find($attendance->place_id);
+            $place = Place::where('qr_code', $data->qr_code)->first();
+//            $place = Place::find($attendance->place_id);
 
             $attendance->is_done = 1;
+            $attendance->date_checkout = Carbon::now('Asia/Jakarta')->toDateTimeString();
             $attendance->save();
 
             $newAttendance = Attendance::create([
-                'employee_id'   => $employee->id,
-                'schedule_id'   => null,
+                'employee_id'           => $employee->id,
+                'schedule_id'           => null,
                 'schedule_detail_id'    => null,
-                'place_id'      => $place->id,
-                'date'          => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                'is_done'       => 1,
+                'place_id'              => empty($place) ? 0 : $place->id,
+                'date'                  => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'is_done'               => 1,
                 'assessment_leader'     => 0,
-                'status_id'     => 7
+                'status_id'             => 7,
+                'notes'                 => $data->notes,
             ]);
 
             return $returnData;

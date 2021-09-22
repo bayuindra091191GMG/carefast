@@ -539,7 +539,7 @@ class EmployeeController extends Controller
             return Response::json($employeeSchedule, 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
+            Log::error('Api/EmployeeController - employeeScheduleByLeader error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -553,6 +553,10 @@ class EmployeeController extends Controller
     public function employeeCheckInOutLog(Request $request){
         try{
             $projectId = $request->input('project_id');
+            Log::error('Api/EmployeeController - employeeCheckInOutLog request data projectID : '.$request->input('project_id').
+                " | start_date = ".$request->input('start_date').
+                " | finish_date = ".$request->input('finish_date').
+                " | employee_id = ".$request->input('employee_id'));
 
             $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d 00:00:00');
             $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d 23:59:59');
@@ -571,10 +575,10 @@ class EmployeeController extends Controller
                 $employeeName = $employeeDb->first_name." ".$employeeDb->last_name;
 
                 $employeeSchedule = EmployeeProcess::GetEmployeeScheduleV2($employeeId, $projectId, $employeeName, $startDate, $finishDate);
+                Log::error('Api/EmployeeController - employeeCheckInOutLog if data : '. json_encode($employeeSchedule));
                 if(empty($employeeSchedule)){
-                    return Response::json("Tidak ada Date", 482);
+                    return Response::json("Tidak ada Data", 482);
                 }
-
                 return Response::json($employeeSchedule, 200);
             }
             else{
@@ -588,14 +592,17 @@ class EmployeeController extends Controller
                     $employeeId = $employeeDb->employee_id;
                     $employeeName = $employeeDb->first_name." ".$employeeDb->last_name;
                     $employeeSchedule = EmployeeProcess::GetEmployeeScheduleV2($employeeId, $projectId, $employeeName, $startDate, $finishDate);
-                    $employeeSchedules->push($employeeSchedule);
+                    if(!empty($employeeSchedule)){
+                        $employeeSchedules->push($employeeSchedule);
+                    }
                 }
-
+                Log::error('Api/EmployeeController - employeeCheckInOutLog else data : '. json_encode($employeeSchedule));
+                return Response::json($employeeSchedule, 200);
             }
 
         }
         catch (\Exception $ex){
-            Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
+            Log::error('Api/EmployeeController - employeeCheckInOutLog error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
@@ -635,7 +642,7 @@ class EmployeeController extends Controller
             return Response::json($assessmentModels, 200);
         }
         catch (\Exception $ex){
-            Log::error('Api/EmployeeController - employeeSchedule error EX: '. $ex);
+            Log::error('Api/EmployeeController - employeeAssessments error EX: '. $ex);
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }

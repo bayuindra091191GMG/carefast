@@ -17,6 +17,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $schedule_id
  * @property int $place_id
  * @property \Carbon\Carbon $date
+ * @property \Carbon\Carbon $date_checkout
  * @property int $status_id
  * @property string $image_path
  * @property int $is_done
@@ -56,7 +57,8 @@ class Attendance extends Eloquent
 	];
 
 	protected $dates = [
-		'date'
+		'date',
+		'date_checkout',
 	];
 
 	protected $fillable = [
@@ -64,6 +66,7 @@ class Attendance extends Eloquent
 		'schedule_id',
 		'place_id',
 		'date',
+		'date_checkout',
 		'status_id',
 		'image_path',
 		'is_done',
