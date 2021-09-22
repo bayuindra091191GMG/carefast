@@ -179,7 +179,7 @@ class EmployeeProcess
         }
 
     }
-    public static function GetEmployeeScheduleV2($employee_id, $projectId, $employee_name, $startDate, $finishDate){
+    public static function GetEmployeeScheduleV2($employee_id, $projectId, $employee_name, $startDate, $finishDate, $attendanceModels){
         try{
             $attendances = DB::table('attendance_absents')
                 ->where('employee_id', $employee_id)
@@ -189,10 +189,9 @@ class EmployeeProcess
                 ->get();
 
             if($attendances->count() == 0){
-                return null;
+                return $attendanceModels;
             }
             else{
-                $attendanceModels = collect();
                 foreach ($attendances as $attendance){
                     $attIn = Carbon::parse($attendance->date)->format('d m Y H:i:s');
 //                    $attIn = $attendance->date->format('Y-m-d H:i:s');
@@ -226,13 +225,13 @@ class EmployeeProcess
                         $ObjectName = "";
                         $SubObjectName = "";
 
-                        $checkIn = Carbon::parse($checkinAttendance->date)->format('d M Y H:i:s');
+                        $checkIn = Carbon::parse($checkinAttendance->date)->format('d m Y H:i:s');
                         $placeId = $checkinAttendance->place_id;
                         $placeName = $checkinAttendance->place->name;
 
                         $checkOut = "";
                         if($checkinAttendance->is_done == 1){
-                            $checkOut = Carbon::parse($checkinAttendance->date_checkout)->format('d M Y H:i:s');
+                            $checkOut = Carbon::parse($checkinAttendance->date_checkout)->format('d m Y H:i:s');
                         }
 //                        $checkoutAttendance = Attendance::where('employee_id', $employee_id)
 //                            ->whereBetween('created_at', [$attInAsStartDate, $attInAsFinishDate])
@@ -263,14 +262,14 @@ class EmployeeProcess
                     ]);
                     $attendanceModels->push($attendanceModel);
                 }
-                Log::channel('in_sys')
-                    ->info('GetEmployeeScheduleV2 attendanceResult count = '.json_encode($attendanceModels));
+//                Log::channel('in_sys')
+//                    ->info('GetEmployeeScheduleV2 attendanceResult count = '.json_encode($attendanceModels));
                 return $attendanceModels;
             }
         }
         catch (\Exception $ex){
             Log::error('libs/EmployeeProcess - GetEmployeeSchedule error EX: '. $ex);
-            return null;
+            return $attendanceModels;
         }
 
     }

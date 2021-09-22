@@ -553,10 +553,6 @@ class EmployeeController extends Controller
     public function employeeCheckInOutLog(Request $request){
         try{
             $projectId = $request->input('project_id');
-            Log::error('Api/EmployeeController - employeeCheckInOutLog request data projectID : '.$request->input('project_id').
-                " | start_date = ".$request->input('start_date').
-                " | finish_date = ".$request->input('finish_date').
-                " | employee_id = ".$request->input('employee_id'));
 
             $startDate = Carbon::parse($request->input('start_date'))->format('Y-m-d 00:00:00');
             $finishDate = Carbon::parse($request->input('finish_date'))->format('Y-m-d 23:59:59');
@@ -574,8 +570,8 @@ class EmployeeController extends Controller
                 $employeeId = $employeeDb->id;
                 $employeeName = $employeeDb->first_name." ".$employeeDb->last_name;
 
-                $employeeSchedule = EmployeeProcess::GetEmployeeScheduleV2($employeeId, $projectId, $employeeName, $startDate, $finishDate);
-                Log::error('Api/EmployeeController - employeeCheckInOutLog if data : '. json_encode($employeeSchedule));
+                $attendanceModels = collect();
+                $employeeSchedule = EmployeeProcess::GetEmployeeScheduleV2($employeeId, $projectId, $employeeName, $startDate, $finishDate, $attendanceModels);
                 if(empty($employeeSchedule)){
                     return Response::json("Tidak ada Data", 482);
                 }
@@ -585,19 +581,22 @@ class EmployeeController extends Controller
                 $projectEmployeeCsos = ProjectEmployee::where('project_id', $projectId)
                     ->where('employee_roles_id', 1)
                     ->where('status_id', 1)
+                    ->orderBy('employee_id')
                     ->get();
-                $employeeSchedules = collect();
+                $attendanceModels = collect();
                 foreach ($projectEmployeeCsos as $projectEmployeeCso){
                     $employeeDb = Employee::where('id', $projectEmployeeCso->employee_id)->first();
-                    $employeeId = $employeeDb->employee_id;
+                    $employeeId = $employeeDb->id;
                     $employeeName = $employeeDb->first_name." ".$employeeDb->last_name;
-                    $employeeSchedule = EmployeeProcess::GetEmployeeScheduleV2($employeeId, $projectId, $employeeName, $startDate, $finishDate);
-                    if(!empty($employeeSchedule)){
-                        $employeeSchedules->push($employeeSchedule);
-                    }
+                    $newAttendanceModels = EmployeeProcess::GetEmployeeScheduleV2($employeeId, $projectId, $employeeName, $startDate, $finishDate, $attendanceModels);
+                    $attendanceModels = $newAttendanceModels;
+//                    if(!empty($employeeSchedule)){
+//                        $employeeSchedules->push($employeeSchedule);
+//                    }
                 }
-                Log::error('Api/EmployeeController - employeeCheckInOutLog else data : '. json_encode($employeeSchedule));
-                return Response::json($employeeSchedule, 200);
+//                Log::channel('in_sys')
+//                    ->info('Api/EmployeeController - employeeCheckInOutLog result data = '.json_encode($attendanceModels));
+                return Response::json($attendanceModels, 200);
             }
 
         }

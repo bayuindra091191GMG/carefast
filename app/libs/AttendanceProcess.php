@@ -9,6 +9,7 @@
 namespace App\libs;
 
 use App\Models\Attendance;
+use App\Models\AttendanceAbsent;
 use App\Models\AttendanceDetail;
 use App\Models\AutoNumber;
 use App\Models\Employee;
@@ -344,12 +345,20 @@ class AttendanceProcess
 
     public static function checkinProcessV2($employee, $request, $data){
         try{
+            Log::error('libs/AttendanceProcess/checkinProcessV2 - data : '. json_encode($data));
             $returnData = [
                 'status_code'           => 200,
                 'desc'                  => "Berhasil Check in",
             ];
 
             $place = Place::where('qr_code', $data->qr_code)->first();
+            if(empty($place)){
+                $returnData = [
+                    'status_code'           => 483,
+                    'desc'                  => "Tempat yang discan tidak tepat",
+                ];
+                return $returnData;
+            }
 
             $message = "";
 //            if($request->hasFile('image')){
@@ -363,7 +372,17 @@ class AttendanceProcess
                         'status_code'           => 452,
                         'desc'                  => "Sudah Pernah melakukan Checkin",
                     ];
+                    return $returnData;
                 }
+            $attendanceData = AttendanceAbsent::where('employee_id', $employee->id)
+//                ->where('project_id', $data->project_id)
+                ->where('status_id', 6)
+                ->where('is_done', 0)
+                ->first();
+            $result = 500;
+            if(empty($attendanceData)){
+                return Response::json("Anda Belum Absen Masuk", 483);
+            }
 
                 $newAttendance = Attendance::create([
                     'employee_id'           => $employee->id,
@@ -439,6 +458,7 @@ class AttendanceProcess
                         'status_code'           => 452,
                         'desc'                  => "Sudah Pernah melakukan Checkin",
                     ];
+                    return $returnData;
                 }
 
                 $newAttendance = Attendance::create([
@@ -502,8 +522,18 @@ class AttendanceProcess
             ];
 //            Log::info('submitCheckout - checkoutProcessV2 : data checkin_model: '. json_encode($data));
 
+            $place = Place::where('qr_code', $data->qr_code)->first();
+            if(empty($place)){
+                $returnData = [
+                    'status_code'           => 483,
+                    'desc'                  => "Tempat yang discan tidak tepat",
+                ];
+                return $returnData;
+            }
+
             $attendance = Attendance::where('employee_id', $employee->id)
                 ->where('status_id', 6)
+                ->where('place_id', $place->id)
 //                ->where('schedule_detail_id', $request->input('schedule_detail_id'))
                 ->where('is_done', 0)
                 ->first();
