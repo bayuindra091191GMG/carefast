@@ -11,7 +11,9 @@ use App\Models\CustomerType;
 use App\Models\EmployeeRole;
 use App\Models\Place;
 use App\Models\Project;
+use App\Models\ProjectActivitiesHeader;
 use App\Models\ProjectObject;
+use App\Models\Schedule;
 use App\Models\Sub1Unit;
 use App\Models\Sub2Unit;
 use App\Models\Unit;
@@ -317,6 +319,29 @@ class ProjectObjectController extends Controller
             $user = Auth::guard('admin')->user();
             $project = Project::find($request->input('project-id'));
 
+            foreach ($project->project_objects as $projectObject){
+                $isFound = false;
+                if (in_array($projectObject->id, $projectObjectIds)) {
+                    $isFound = true;
+                }
+                if(!$isFound){
+                    $scheduleDb = Schedule::where('project_id',$request->input('project-id'))->where('place_id', $projectObject->place_id)->first();
+                    if(!empty($scheduleDb)){
+
+                        Session::flash('error', 'Place terdapat diplotting');
+                        return redirect()->route('admin.project.object.edit',['id' => $project->id]);
+                    }
+
+                    $projectActivityHeaderDb = ProjectActivitiesHeader::where('project_id',$request->input('project-id'))->where('place_id', $projectObject->place_id)->first();
+                    if(!empty($projectActivityHeaderDb)){
+                        Session::flash('error', 'Place terdapat diplotting');
+                        return redirect()->route('admin.project.object.edit',['id' => $project->id]);
+                    }
+
+                    $projectObject->delete();
+                }
+            }
+
             $i = 0;
             foreach($places as $place){
                 $selectedPlace = "";
@@ -411,15 +436,15 @@ class ProjectObjectController extends Controller
                     $selectedSubUnit2Name = $sub2unitDBNew->name;
                 }
 
-                foreach ($project->project_objects as $projectObject){
-                    $isFound = false;
-                    if (in_array($projectObject->id, $projectObjectIds)) {
-                        $isFound = true;
-                    }
-                    if(!$isFound){
-                        $projectObject->delete();
-                    }
-                }
+//                foreach ($project->project_objects as $projectObject){
+//                    $isFound = false;
+//                    if (in_array($projectObject->id, $projectObjectIds)) {
+//                        $isFound = true;
+//                    }
+//                    if(!$isFound){
+//                        $projectObject->delete();
+//                    }
+//                }
 
 //                dd($selectedPlace, $selectedUnit, $selectedSubUnit1, $selectedSubUnit2,$selectedPlaceName,$selectedUnitName,$selectedSubUnit1Name,$selectedSubUnit2Name);
                 if($projectObjectIds[$i] != '-1'){
