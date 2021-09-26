@@ -90,7 +90,7 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     //Employee
     Route::post('/checkinout/log', 'Api\EmployeeController@employeeCheckInOutLog');
     Route::get('/employee/get', 'Api\EmployeeController@getEmployees');
-    Route::post('/employee/schedule', 'Api\EmployeeController@employeeSchedule');
+    Route::get('/employee/schedule', 'Api\EmployeeController@employeeSchedule');
     Route::post('/employee/leader/schedule', 'Api\EmployeeController@employeeScheduleByLeader');
     Route::post('/employee/get-detail/', 'Api\EmployeeController@getEmployeeDetail');
     Route::get('/employee/get-direct-cso/', 'Api\EmployeeController@getEmployeeCSO');
