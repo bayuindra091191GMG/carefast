@@ -64,6 +64,7 @@
                                     <div class="card">
                                         <div class="card-body b-b">
                                             <div class="col-md-12 col-12 text-right">
+                                                <a href="{{ route('admin.project.activity.show-schedule-plotting', ['id' => $project->id]) }}" class="btn btn-primary">JADWAL PLOTTING</a> &nbsp;
                                                 <a href="{{ route('admin.project.activity.create', ['id' => $project->id]) }}" class="btn btn-success">TAMBAH PLOTTING</a>
                                             </div>
                                             <div class="body">

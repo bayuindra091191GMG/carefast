@@ -195,7 +195,7 @@ Route::prefix('admin')->group(function(){
     Route::get('/project/object/create/{id}', 'Admin\project\ProjectObjectController@create')->name('admin.project.object.create');
     Route::get('/project/object/edit/{id}', 'Admin\project\ProjectObjectController@edit')->name('admin.project.object.edit');
     Route::post('/project/object/store', 'Admin\project\ProjectObjectController@store')->name('admin.project.object.store');
-    Route::post('/project/object/update/{id}', 'Admin\project\ProjectObjectController@update')->name('admin.project.object.update');
+    Route::post('/project/object/update/{id}', 'Admin\project\ProjectObjectController@updateupdate')->name('admin.project.object.update');
     Route::get('/project/object/qr_code/{id}', 'Admin\project\ProjectObjectController@qrcode')->name('admin.project.object.qrcode');
 
     // Project Employee
@@ -230,6 +230,10 @@ Route::prefix('admin')->group(function(){
     Route::get('/project/activity/edit/{id}', 'Admin\project\ActivityController@edit')->name('admin.project.activity.edit');
     Route::post('/project/activity/update/{id}', 'Admin\project\ActivityController@update')->name('admin.project.activity.update');
     Route::post('/project/activity/delete', 'Admin\project\ActivityController@destroy')->name('admin.project.activity.destroy');
+    // Project Jadwal Plotting
+    Route::get('/project/activity/show-schedule-plotting/{id}', 'Admin\project\ActivityController@schedulePlottingShow')->name('admin.project.activity.show-schedule-plotting');
+    Route::get('/project/activity/edit-schedule-plotting/{id}', 'Admin\project\ActivityController@schedulePlottingEdit')->name('admin.project.activity.edit-schedule-plotting');
+    Route::post('/project/activity/update-schedule-plotting/', 'Admin\project\ActivityController@schedulePlottingUpdate')->name('admin.project.activity.update-schedule-plotting');
 
     // Project Schedule
 //    Route::get('/project/schedule/show/{id}', 'Admin\project\ProjectScheduleController@show')->name('admin.project.schedule.show');

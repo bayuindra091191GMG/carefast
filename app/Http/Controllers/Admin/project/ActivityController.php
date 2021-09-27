@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Action;
 use App\Models\Customer;
 use App\Models\CustomerType;
+use App\Models\Employee;
+use App\Models\EmployeePlottingSchedule;
 use App\Models\EmployeeRole;
 use App\Models\Place;
 use App\Models\Project;
@@ -25,6 +27,7 @@ use App\Transformer\ProjectActivityTransformer;
 use App\Transformer\ProjectScheduleEmployeeTransformer;
 use App\Transformer\ProjectTransformer;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -619,6 +622,287 @@ class ActivityController extends Controller
         catch(\Exception $ex){
             Log::error('Admin/ActivityController - destroy error EX: '. $ex);
             return Response::json(array('errors' => 'INVALID'));
+        }
+    }
+
+    //JADWAL PLOTTING
+    public function schedulePlottingShow(Request $request, int $id)
+    {
+        try {
+            $currentProject = Project::find($id);
+
+            if (empty($currentProject)) {
+                return redirect()->back();
+            }
+            $start_date = Carbon::now()->startOfMonth()->toDateString();
+            $end_date = Carbon::now()->endOfMonth()->toDateString();
+
+            $isSelectDate = true;
+            $dayArr = collect();
+            $period = CarbonPeriod::create($start_date, $end_date);
+            foreach ($period as $date) {
+                // formated j = The day of the month without leading zeros (1 to 31)
+                $dayArr->push($date->format('j'));
+            }
+
+            $projectPlottingScheduleModel = collect();
+            $projectActivities = ProjectActivitiesHeader::where('project_id', $id)->get();
+            if (count($projectActivities) > 0) {
+                foreach ($projectActivities as $projectActivity) {
+                    $isEmpty = true;
+                    $scheduleModel = collect();
+                    $dacDetailDescription = "";
+
+                    $employeePlottingSchedule = EmployeePlottingSchedule::where('project_activity_id', $projectActivity->id)->first();
+                    $place = Place::find($projectActivity->place_id);
+                    $projectActivityDetail = ProjectActivitiesDetail::where('activities_header_id', $projectActivity->id)->first();
+                    $projectShifts = ProjectShift::Where('id', $projectActivityDetail->shift_type)->first();
+                    $shiftString = $projectShifts == null ? "-" : $projectShifts->shift_type;
+
+                    foreach ($projectActivity->project_activities_details as $projectDetail){
+                        $actionName = collect();
+//                    $actionName = "";
+                        if(!empty($projectDetail->action_id)){
+                            $actionList = explode('#', $projectDetail->action_id);
+                            foreach ($actionList as $action){
+                                if(!empty($action)){
+                                    $action = Action::find($action);
+//                                $actionName .= $action->name. ", ";
+                                    $actionName->push($action->name);
+                                }
+                            }
+                        }
+                        $dacDetailDescription .= Carbon::parse($projectDetail->start)->format('H:i')." - ".Carbon::parse($projectDetail->finish)->format('H:i'). " ".$actionName."\n";
+                    }
+                    $plottingModel = collect([
+                        'project_activities_header_id' => $projectActivity->id,
+                        'project_activities_detail_description'     => $dacDetailDescription,
+                        'place' => $place->name,
+                        'shift' => $shiftString,
+                        'days' => '',
+                    ]);
+
+                    if (!empty($employeePlottingSchedule)) {
+                        if (!empty($employeePlottingSchedule->day_employee_id)) {
+                            $isEmpty = false;
+                            $days = explode(";", $employeePlottingSchedule->day_employee_id);
+                            $dayArr = collect();
+                            foreach ($days as $day) {
+                                if (!empty($day)) {
+                                    $dayStatus = explode(":", $day);
+                                    $employeeDB = Employee::find($dayStatus[1]);
+
+                                    $scheduleDetail = ([
+                                        'day' => $dayStatus[0],
+                                        'employee_id' => $dayStatus[1],
+                                        'employee_name' => $employeeDB->first_name." ".$employeeDB->last_name,
+                                    ]);
+                                    $scheduleModel->push($scheduleDetail);
+                                    $dayArr->push($dayStatus[0]);
+                                }
+                            }
+                            $plottingModel['days'] = $scheduleModel;
+                            $projectPlottingScheduleModel->push($plottingModel);
+                        }
+                    }
+                    if ($isEmpty) {
+                        foreach ($dayArr as $day) {
+                            $scheduleDetail = ([
+                                'day' => $day,
+                                'employee_id' => "",
+                                'employee_name' => "",
+                            ]);
+                            $scheduleModel->push($scheduleDetail);
+                        }
+                        $plottingModel['days'] = $scheduleModel;
+                        $projectPlottingScheduleModel->push($plottingModel);
+                    }
+                }
+            }
+
+            //get project shift
+            $projectShifts = ProjectShift::Where('project_code', $currentProject->code)->get();
+            $data = [
+                'project' => $currentProject,
+                'projectShifts' => $projectShifts,
+                'projectPlottingScheduleModel' => $projectPlottingScheduleModel,
+                'days' => $dayArr,
+                'isSelectDate' => $isSelectDate,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+            ];
+//        dd($data);
+            return view('admin.project.activity.show-plotting')->with($data);
+        } catch (\Exception $ex) {
+            Log::error('Admin/ActivityController - schedulePlottingShow error EX: ' . $ex);
+            return redirect()->back()->withErrors($ex);
+        }
+    }
+    public function schedulePlottingEdit(Request $request, int $id){
+        try{
+            $projectId = $request->projectId;
+            $currentProject = Project::find($projectId);
+
+            if (empty($currentProject)) {
+                return redirect()->back();
+            }
+            $start_date = Carbon::now()->startOfMonth()->toDateString();
+            $end_date = Carbon::now()->endOfMonth()->toDateString();
+
+            $isSelectDate = true;
+            $dayArr = collect();
+            $period = CarbonPeriod::create($start_date, $end_date);
+            foreach ($period as $date) {
+                // formated j = The day of the month without leading zeros (1 to 31)
+                $dayArr->push($date->format('j'));
+            }
+
+            $projectPlottingScheduleModel = collect();
+            $projectActivity = ProjectActivitiesHeader::where('id', $id)->first();
+            if (!empty($projectActivity)) {
+                $isEmpty = true;
+                $dacDetailDescription = "";
+                $scheduleModel = collect();
+
+                $employeePlottingSchedule = EmployeePlottingSchedule::where('project_activity_id', $projectActivity->id)->first();
+                $place = Place::find($projectActivity->place_id);
+                $projectActivityDetail = ProjectActivitiesDetail::where('activities_header_id', $projectActivity->id)->first();
+                $projectShifts = ProjectShift::Where('id', $projectActivityDetail->shift_type)->first();
+                $shiftString = $projectShifts == null ? "-" : $projectShifts->shift_type;
+
+                foreach ($projectActivity->project_activities_details as $projectDetail){
+                    $actionName = collect();
+//                    $actionName = "";
+                    if(!empty($projectDetail->action_id)){
+                        $actionList = explode('#', $projectDetail->action_id);
+                        foreach ($actionList as $action){
+                            if(!empty($action)){
+                                $action = Action::find($action);
+//                                $actionName .= $action->name. ", ";
+                                $actionName->push($action->name);
+                            }
+                        }
+                    }
+                    $dacDetailDescription .= Carbon::parse($projectDetail->start)->format('H:i')." - ".Carbon::parse($projectDetail->finish)->format('H:i'). " ".$actionName."\n";
+                }
+                $plottingModel = collect([
+                    'project_activities_header_id' => $projectActivity->id,
+                    'project_activities_detail_description'     => $dacDetailDescription,
+                    'place' => $place->name,
+                    'shift' => $shiftString,
+                    'days' => '',
+                ]);
+
+                if (!empty($employeePlottingSchedule)) {
+                    if (!empty($employeePlottingSchedule->day_employee_id)) {
+                        $isEmpty = false;
+                        $days = explode(";", $employeePlottingSchedule->day_employee_id);
+                        $dayArr = collect();
+                        foreach ($days as $day) {
+                            if (!empty($day)) {
+                                $dayStatus = explode(":", $day);
+                                $employeeDB = Employee::find($dayStatus[1]);
+
+                                $scheduleDetail = ([
+                                    'day' => $dayStatus[0],
+                                    'employee_id' => $dayStatus[1],
+                                    'employee_name' => $employeeDB->first_name." ".$employeeDB->last_name,
+                                ]);
+                                $scheduleModel->push($scheduleDetail);
+                                $dayArr->push($dayStatus[0]);
+                            }
+                        }
+                        $plottingModel['days'] = $scheduleModel;
+                        $projectPlottingScheduleModel->push($plottingModel);
+                    }
+                }
+                if ($isEmpty) {
+                    foreach ($dayArr as $day) {
+                        $scheduleDetail = ([
+                            'day' => $day,
+                            'employee_id' => "",
+                            'employee_name' => "",
+                        ]);
+                        $scheduleModel->push($scheduleDetail);
+                    }
+                    $plottingModel['days'] = $scheduleModel;
+                    $projectPlottingScheduleModel->push($plottingModel);
+                }
+            }
+
+            //get project shift
+            $employeeProjects = ProjectEmployee::with('employee')
+                ->where('project_id', $projectId)
+                ->where('employee_roles_id', 1)
+                ->where('status_id', 1)
+                ->get();
+            $data = [
+                'project' => $currentProject,
+                'employeeProjects' => $employeeProjects,
+                'projectPlottingScheduleModel' => $projectPlottingScheduleModel,
+                'days' => $dayArr,
+                'isSelectDate' => $isSelectDate,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+            ];
+//            dd($data);
+            return view('admin.project.activity.edit-plotting')->with($data);
+        }
+        catch(\Exception $ex){
+            Log::error('Admin/ActivityController - schedulePlottingEdit error EX: '. $ex);
+            return redirect()->back()->withErrors($ex);
+        }
+    }
+    public function schedulePlottingUpdate(Request $request){
+        try{
+            $projectId = $request->input('projectId');
+            $currentProject = Project::find($projectId);
+
+            if(empty($currentProject)){
+                return redirect()->back();
+            }
+
+            $ct =0 ;
+            $tempPlottingSchedule = "";
+            $projectActivitesHeaderId = 1;
+            //create day_status
+            // ex : 16:M;17:M;18:M;19:M;20:M;21:M;22:O;23:M;24:M;25:M;26:M;27:M;28:M;29:O;30:O;31:O;1:M;2:M;3:M;4:M;5:M;6:M;7:O;8:M;9:M;10:M;11:M;12:M;13:M;14:O;15:M;
+            $days = $request->input('days');
+            $employees = $request->input('employeeIds');
+            $projectActivitesHeaderIds = $request->input('projectActivitesHeaderIds');
+            foreach($days as $day){
+                $tempPlottingSchedule .= $days[$ct].":".$employees[$ct].";";
+                $projectActivitesHeaderId = $projectActivitesHeaderIds[$ct];
+                $ct++;
+            }
+            $employeeScheduleDB = EmployeePlottingSchedule::where('project_activity_id', $projectActivitesHeaderId)
+                ->where('project_id', $projectId)
+                ->first();
+//            dd($tempPlottingSchedule, $employeeScheduleDB);
+            if(empty($employeeScheduleDB)){
+                $employeeSchedule = EmployeePlottingSchedule::create([
+                    'project_id'            => $projectId,
+                    'project_activity_id'   => $projectActivitesHeaderId,
+                    'day_employee_id'       => $tempPlottingSchedule,
+//                        'status_id'           => 1,
+                    'created_by'            => 1,
+                    'created_at'            => Carbon::now('Asia/Jakarta')
+                ]);
+            }
+            else{
+                $employeeScheduleDB->day_employee_id = $tempPlottingSchedule;
+                $employeeScheduleDB->updated_by = 1;
+                $employeeScheduleDB->updated_at = Carbon::now('Asia/Jakarta');
+                $employeeScheduleDB->save();
+            }
+
+//        dd($data);
+            return redirect()->route('admin.project.activity.show-schedule-plotting',['id' => $projectId]);
+        }
+        catch(\Exception $ex){
+            dd($ex);
+            Log::error('Admin/ScheduleController - scheduleEditEmployee error EX: '. $ex);
+            return redirect()->back()->withErrors($ex);
         }
     }
 }
