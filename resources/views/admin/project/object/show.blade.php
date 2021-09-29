@@ -48,6 +48,7 @@
                                     <div class="card">
                                         <div class="card-body b-b">
                                             <div class="col-md-12 col-12 text-right">
+                                                <a href="{{ route('admin.project.checkin-out.download-form', ['id' => $project->id]) }}" class="btn btn-instagram" style="color: white;">LIST CHECK-IN/OUT</a>
                                                 @if($isCreate)
                                                     <a href="{{ route('admin.project.object.create', ['id' => $project->id]) }}" class="btn btn-success">TAMBAH OBJECT</a>
                                                 @else

@@ -218,6 +218,10 @@ Route::prefix('admin')->group(function(){
     Route::get('/project/attendance/download-file/{filename}', 'Admin\project\ProjectAttendanceController@downloadAllAttendanceFile')->name('admin.project.attendance.download-file');
 
 
+    // Project Checkin/out
+    Route::get('/project/checkin-out/download-form/{id}', 'Admin\project\ProjectCheckinOutController@downloadForm')->name('admin.project.checkin-out.download-form');
+    Route::post('/project/checkin-out/download-all', 'Admin\project\ProjectCheckinOutController@downloadAll')->name('admin.project.checkin-out.download-all');
+
     // Project Plotting
     Route::get('/project/activity/show/{id}', 'Admin\project\ActivityController@show')->name('admin.project.activity.show');
     Route::get('/project/activity/copy/{id}', 'Admin\project\ActivityController@show')->name('admin.project.activity.copy');
