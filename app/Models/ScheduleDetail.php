@@ -14,6 +14,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  *
  * @property int $id
  * @property int $schedule_id
+ * @property int $project_activity_detail_id
  * @property string $project_object_id
  * @property string $action_id
  * @property \Carbon\Carbon $start
@@ -34,6 +35,7 @@ class ScheduleDetail extends Eloquent
 {
 	protected $casts = [
 		'schedule_id' => 'int',
+		'project_activity_detail_id' => 'int',
 		'project_object_id' => 'int',
 		'action_id' => 'int',
 		'created_by' => 'int',
@@ -47,6 +49,7 @@ class ScheduleDetail extends Eloquent
 
 	protected $fillable = [
 		'schedule_id',
+		'project_activity_detail_id',
 		'project_object_id',
 		'action_id',
         'start',

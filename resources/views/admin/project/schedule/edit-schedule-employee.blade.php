@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        {{ Form::open(['route'=>['admin.project.schedule-update-employeeschedule-update-employee', $project->id],'method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
+                        {{ Form::open(['route'=>['admin.project.schedule-update-employee', $project->id],'method' => 'post','id' => 'general-form', 'enctype' => 'multipart/form-data']) }}
 
                         <div class="row">
                             <div class="col-md-12">

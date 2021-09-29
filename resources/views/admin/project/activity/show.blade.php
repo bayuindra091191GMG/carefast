@@ -64,7 +64,9 @@
                                     <div class="card">
                                         <div class="card-body b-b">
                                             <div class="col-md-12 col-12 text-right">
+                                                @if($project->id == 1 || $project->id == 803)
                                                 <a href="{{ route('admin.project.activity.show-schedule-plotting', ['id' => $project->id]) }}" class="btn btn-primary">JADWAL PLOTTING</a> &nbsp;
+                                                @endif
                                                 <a href="{{ route('admin.project.activity.create', ['id' => $project->id]) }}" class="btn btn-success">TAMBAH PLOTTING</a>
                                             </div>
                                             <div class="body">

@@ -143,7 +143,8 @@ Route::middleware('auth:api')->prefix('user')->group(function(){
     //Plotting
     Route::get('/plotting/get-employees', 'Api\EmployeeController@getEmployeeCSO');
     Route::get('/plotting/get-plottings', 'Api\EmployeeController@getPlottings');
-    Route::get('/plotting/get-dacs', 'Api\EmployeeController@getDacs');
+//    Route::get('/plotting/get-dacs', 'Api\EmployeeController@getDacs');
+    Route::get('/plotting/get-dacs', 'Api\EmployeeController@getDacsV2');
     Route::post('/plotting/submit-plottings', 'Api\EmployeeController@submitPlottings');
 
 

@@ -7,6 +7,7 @@ use App\libs\EmployeeProcess;
 use App\Models\Action;
 use App\Models\Attendance;
 use App\Models\Employee;
+use App\Models\EmployeePlottingSchedule;
 use App\Models\Place;
 use App\Models\Project;
 use App\Models\ProjectActivitiesDetail;
@@ -425,6 +426,108 @@ class EmployeeController extends Controller
             return Response::json("Maaf terjadi kesalahan!", 500);
         }
     }
+    public function getDacsV2()
+    {
+        $userLogin = auth('api')->user();
+        $user = User::where('phone', $userLogin->phone)->first();
+        $employee = $user->employee;
+        $id = $employee->id;
+        try{
+            $projectEmployee = ProjectEmployee::where('employee_id', $id)->where('status_id', 1)->first();
+            $projectActivities = ProjectActivitiesHeader::where('project_id', $projectEmployee->project_id)
+                ->get();
+            $projectActivityModels = collect();
+            //check if cleaner null
+            if($projectActivities->count() == 0){
+                return Response::json($projectActivityModels, 482);
+            }
+
+            $projectActivityModels = collect();
+            foreach ($projectActivities as $projectActivity){
+                $dacDetailModel = collect();
+
+                $shiftString = "";
+                foreach ($projectActivity->project_activities_details as $projectDetail){
+                    $actionName = collect();
+//                    $actionName = "";
+                    if(!empty($projectDetail->action_id)){
+                        $actionList = explode('#', $projectDetail->action_id);
+                        foreach ($actionList as $action){
+                            if(!empty($action)){
+                                $action = Action::find($action);
+//                                $actionName .= $action->name. ", ";
+                                $actionName->push($action->name);
+                            }
+                        }
+                    }
+                    $dacDetail = ([
+                        //id in here for header_id
+                        'id'       => $projectActivity->id,
+                        'time'     => Carbon::parse($projectDetail->start)->format('H:i')." - ".Carbon::parse($projectDetail->finish)->format('H:i'),
+                        'action'   => $actionName
+                    ]);
+                    $dacDetailModel->push($dacDetail);
+                    $projectShifts = ProjectShift::Where('id', $projectDetail->shift_type)->first();
+                    $shiftString = empty($projectShifts) ? "-" : $projectShifts->shift_type;
+                }
+                $place = Place::find($projectActivity->place_id);
+                $project = Project::find($projectActivity->project_id);
+
+                //section to get employee from employee_schedule_plotting
+                $projectCSOModel = null;
+                $employeeSchedulePlotting = EmployeePlottingSchedule::where('project_activity_id', $projectActivity->id)->first();
+                if(!empty($employeeSchedulePlotting)){
+                    $days = explode(';', $employeeSchedulePlotting->day_employee_id);
+                    $todayDay = Carbon::now()->format('j');
+                    $csoFromSchedulePlotting = "";
+                    foreach($days as $day){
+                        if(empty($day)) continue;
+                        $date = explode(':', $day);
+                        if($todayDay == $date[0]){
+                            $csoFromSchedulePlotting = $date[1];
+                        }
+                    }
+                }
+
+                //section to get employee from schedule (plotting from leader)
+                $assignedCso = Schedule::where('project_activity_id', $projectActivity->id)->first();
+                if(!empty($assignedCso)){
+                    $csoFromSchedulePlotting = $assignedCso->employee_id;
+                }
+
+                if($csoFromSchedulePlotting != ""){
+                    $employee = Employee::find($csoFromSchedulePlotting);
+                    $employeeImage = empty($employee->image_path) ? null : asset('storage/employees/'. $employee->image_path);
+                    $projectCSOModel = [
+                        'id'        => $employee->id,
+                        'name'      => $employee->first_name." ".$employee->last_name,
+                        'avatar'    => $employeeImage,
+                        'role'      => "",
+                    ];
+                }
+
+                $dacHeaderModel = ([
+                    'id'        => $projectActivity->id,
+                    'place'     => $place->name,
+                    'object'    => $projectActivity->plotting_name,
+                    'shift'     => $shiftString,
+                    'project'   => $project->name,
+                    'details'   => $dacDetailModel,
+                    'employee'  => $projectCSOModel
+                ]);
+
+
+                $projectActivityModels->push($dacHeaderModel);
+            }
+
+            Log::error('Api/EmployeeController - getDacsV2 ' .json_encode($projectActivityModels));
+            return Response::json($projectActivityModels, 200);
+        }
+        catch(\Exception $ex){
+            Log::error('Api/EmployeeController - getDacs error EX: '. $ex);
+            return Response::json("Maaf terjadi kesalahan!", 500);
+        }
+    }
 
     public function submitPlottings(Request $request){
         try{
@@ -468,14 +571,15 @@ class EmployeeController extends Controller
                             $projectActivityDetails = ProjectActivitiesDetail::where("activities_header_id", $plotting)->get();
                             foreach ($projectActivityDetails as $projectActivityDetail){
                                 $scheduleDetail = ScheduleDetail::create([
-                                    'schedule_id'           => $schedule->id,
-                                    'action_id'             => $projectActivityDetail->action_id,
-                                    'start'                 => $projectActivityDetail->start,
-                                    'finish'                => $projectActivityDetail->finish,
-                                    'created_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                                    'created_by'            => $user->id,
-                                    'updated_at'            => Carbon::now('Asia/Jakarta')->toDateTimeString(),
-                                    'updated_by'            => $user->id,
+                                    'schedule_id'                   => $schedule->id,
+                                    'project_activity_detail_id'    => $projectActivityDetail->id,
+                                    'action_id'                     => $projectActivityDetail->action_id,
+                                    'start'                         => $projectActivityDetail->start,
+                                    'finish'                        => $projectActivityDetail->finish,
+                                    'created_at'                    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                    'created_by'                    => $user->id,
+                                    'updated_at'                    => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                                    'updated_by'                    => $user->id,
                                 ]);
                             }
                         }

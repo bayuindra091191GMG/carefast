@@ -601,6 +601,11 @@ class ActivityController extends Controller
             }
             $projectDetailDB->save();
 
+            $scheduleDetail = ScheduleDetail::where('project_activity_detail_id', $activityDetailId)->first();
+            $scheduleDetail->project_activity_detail_id = $action;
+            $scheduleDetail->save();
+
+
             Session::flash('success', 'Sukses mengubah data plotting!');
             return redirect()->route('admin.project.activity.show',['id' => $id]);
 
@@ -615,6 +620,10 @@ class ActivityController extends Controller
             $deletedId = $request->input('id');
             $sub1unit = ProjectActivitiesDetail::find($deletedId);
             $sub1unit->delete();
+
+            $scheduleDetail = ScheduleDetail::where('project_activity_detail_id', $deletedId);
+            $scheduleDetail->delete();
+
 
             Session::flash('success', 'Sukses menghapus data!');
             return Response::json(array('success' => 'VALID'));
