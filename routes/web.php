@@ -230,6 +230,7 @@ Route::prefix('admin')->group(function(){
     Route::get('/project/activity/edit/{id}', 'Admin\project\ActivityController@edit')->name('admin.project.activity.edit');
     Route::post('/project/activity/update/{id}', 'Admin\project\ActivityController@update')->name('admin.project.activity.update');
     Route::post('/project/activity/delete', 'Admin\project\ActivityController@destroy')->name('admin.project.activity.destroy');
+    Route::get('/project/activity/download-file/{id}', 'Admin\project\ActivityController@downloadEmployeePlotting')->name('admin.project.activity.download-file');
     // Project Jadwal Plotting
     Route::get('/project/activity/show-schedule-plotting/{id}', 'Admin\project\ActivityController@schedulePlottingShow')->name('admin.project.activity.show-schedule-plotting');
     Route::get('/project/activity/edit-schedule-plotting/{id}', 'Admin\project\ActivityController@schedulePlottingEdit')->name('admin.project.activity.edit-schedule-plotting');

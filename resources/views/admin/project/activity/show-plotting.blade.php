@@ -120,6 +120,9 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
+                                                    <br>
+                                                    <a href="{{ route('admin.project.activity.show', ['id' => $project->id]) }}" class="btn btn-danger">Back</a> &nbsp;
+
                                                 </div>
                                             </div>
                                         </div>
@@ -127,6 +130,7 @@
                                 </div>
 
                                 {{ Form::close() }}
+
                             </div>
                         </div>
                     </div>

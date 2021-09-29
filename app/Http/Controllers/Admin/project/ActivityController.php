@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\project;
 
 
 use App\Http\Controllers\Controller;
+use App\libs\EmployeeProcess;
 use App\Models\Action;
 use App\Models\Customer;
 use App\Models\CustomerType;
@@ -36,6 +37,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Yajra\DataTables\DataTables;
 
 class ActivityController extends Controller
@@ -913,5 +915,39 @@ class ActivityController extends Controller
             Log::error('Admin/ScheduleController - scheduleEditEmployee error EX: '. $ex);
             return redirect()->back()->withErrors($ex);
         }
+    }
+
+    public function downloadEmployeePlotting(int $id)
+    {
+//        dd($request);
+        $currentProject = Project::find($id);
+
+        $projectActivityModels = EmployeeProcess::GetEmployeePlotting($id);
+
+        $now = Carbon::now('Asia/Jakarta');
+        $list = collect();
+        foreach($projectActivityModels as $projectActivityModel){
+            foreach($projectActivityModel["details"] as $projectActivity){
+                $action = "";
+                foreach($projectActivity["action"] as $actionModel){
+                    $action .= $actionModel;
+                }
+                $singleData = ([
+                    'Place'             => $projectActivityModel["place"],
+                    'Shift'             => $projectActivityModel["shift"],
+                    'Waktu'             => $projectActivity["time"],
+                    'Uraian Pekerjaan'  => $action,
+                ]);
+                $list->push($singleData);
+            }
+        }
+
+//        dd($projectActivityModels, $list);
+        $destinationPath = public_path()."/download_dac/";
+        $file = "DAC-".$currentProject->code."_".$now->format('d F Y_G.i.s').'.xlsx';
+
+        (new FastExcel($list))->export($destinationPath.$file);
+
+        return response()->download($destinationPath.$file);
     }
 }
