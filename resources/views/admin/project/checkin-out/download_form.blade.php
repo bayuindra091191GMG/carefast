@@ -42,8 +42,8 @@
                                 <div class="form-group form-float form-group-lg">
                                     <div class="form-line">
                                         <br>
-                                        <a id="btn_submit" class="btn btn-facebook" style="color: white;">Download Data Absensi</a>
-                                        <a id="btn_loading" class="btn btn-success text-white" style="display: none"><i class="fas fa-sync-alt fa-spin"></i>&nbsp;&nbsp;MEMPROSES DATA ABSENSI...</a>
+                                        <a id="btn_submit" class="btn btn-facebook" style="color: white;">Download Data</a>
+                                        <a id="btn_loading" class="btn btn-success text-white" style="display: none"><i class="fas fa-sync-alt fa-spin"></i>&nbsp;&nbsp;MEMPROSES DATA ...</a>
                                     </div>
                                 </div>
                             </div>

@@ -316,7 +316,7 @@ class AttendanceAbsentTestController extends Controller
             }
         }
         catch (\Exception $ex){
-            Log::error('Api/AttendanceAbsentController - attendanceIn error EX: '. $ex);
+            Log::error('Api/AttendanceAbsentController - attendanceInV2 error EX: '. $ex);
             return Response::json([
                 'message' => "Sorry Something went Wrong!",
                 'ex' => $ex,
