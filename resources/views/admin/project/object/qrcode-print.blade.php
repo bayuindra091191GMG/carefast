@@ -18,7 +18,14 @@
 
 
     <style>
-
+        .background-image{
+            background-image: url('{{ asset('images/carefast/print-background.jpg') }}');
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            background-size: cover;
+            height: 445px;
+            padding-top:90px;
+        }
         @media print {
             .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6,
             .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
@@ -60,6 +67,18 @@
             .col-sm-1 {
                 width: 8.333333333333332%;
             }
+
+            #non-print {
+                display: none;
+            }
+            .background-image{
+                background-image: url('{{ asset('images/carefast/print-background.jpg') }}');
+                background-repeat: no-repeat;
+                background-position: center bottom;
+                background-size: cover;
+                height: 400px;
+                padding-top:75px;
+            }
         }
     </style>
 </head>
@@ -73,22 +92,19 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="row">
-                <div class="col-sm-12">
-                    <a href="{{ route('admin.project.object.qrcode', ['id' => $project->id]) }}" class="btn btn-outline-primary float-left mr-3">
+                <div id="non-print" class="col-sm-12 pt-3 text-center">
+                    <a href="{{ route('admin.project.object.qrcode', ['id' => $project->id]) }}" class="btn btn-outline-primary mr-3">
                         Back
                     </a>
+                    &nbsp;
+                    <button onclick="printDiv()" class="btn btn-success">Print</button>
+                    <br>
                     <h3>PROJECT {{ $project->name }}</h3>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="card">
-                        <div class="col-sm-12 text-right pt-3">
-                            <button onclick="print()" class="btn btn-success">Print</button>
-{{--                            <a href="javascript:window.print();" class="btn btn-success">Print</a>--}}
-                        </div>
-
-                        <div id="print-section">
+                    <div id="print-section">
 {{--                            <div class="col-sm-12">--}}
 {{--                                <div class="col-sm-12" style="text-align: center;">--}}
 {{--                                    <h2>Project Qr-Code</h2>--}}
@@ -102,50 +118,72 @@
 {{--                                <hr>--}}
 {{--                            </div>--}}
                             <div class="col-sm-12 p-t-20" style="text-align: center;">
-                                <h2>Project Qr-Code</h2>
+                                <div class="row pl-5">
 
-                                <table style="width: 100%">
                                     @php($count=1)
                                     @foreach($placeArr as $projectObject)
-                                        @if($count%3 == 1)
-                                            @if($projectObject["id"] == "0")
-                                                <tr style="text-align: center;">
-                                                    <td style="width: 33.33333333333333%; text-align: center;padding:20px 10px 20px 10px;">
-                                                        <h2 style="font-weight: bold">Project Qr-Code</h2>
-                                                        <h3 style="font-weight: bold">{{$projectObject["name"]}}</h3>
-{{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject["qr_code"]}}&size=150x150" alt="" title="" />--}}
-                                                        <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />
-                                                        <br>
-                                                    </td>
+                                        <div class="col-sm-5 pb-5 mx-3 my-3 background-image">
+                                            @if($count == 1)
+                                                <h5>Project QR-CODE</h5>
                                             @else
-                                                <tr style="text-align: center;">
-                                                    <td style="width: 33.33333333333333%; text-align: center;padding:20px 10px 20px 10px;">
-                                                        <h3 style="font-weight: bold">{{$projectObject["name"]}}</h3>
-                                                        {{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject["qr_code"]}}&size=150x150" alt="" title="" />--}}
-                                                        <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />
-                                                        <br>
-                                                    </td>
+                                                <h5>{{substr($project->name,0,24)}}</h5>
                                             @endif
-                                        @elseif($count%3 == 2)
-                                                <td style="width: 33.33333333333333%; text-align: center;padding:20px 10px 20px 10px;">
-                                                    <h3 style="font-weight: bold">{{$projectObject["name"]}}</h3>
-                                                    {{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject["qr_code"]}}&size=150x150" alt="" title="" />--}}
-                                                    <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />
-
-                                                    <br>
-                                                </td>
-                                        @elseif($count%3 == 0)
-                                                <td style="width: 33.33333333333333%; text-align: center;padding:20px 10px 20px 10px;">
-                                                    <h3 style="font-weight: bold">{{$projectObject["name"]}}</h3>
-                                                    {{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject["qr_code"]}}&size=150x150" alt="" title="" />--}}
-                                                    <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />
-                                                    <br>
-                                                </td>
-                                            </tr>
+                                            <h4 style="font-weight: bold">{{substr($projectObject["name"],0,24)}}</h4>
+                                            <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />
+                                            <br>
+                                        </div>
+                                        @if($count%6 == 0)
+                                            <div class="col-sm-5 pb-5 mx-3 my-3" style="height: 200px">
+                                            </div>
+                                            <div class="col-sm-5 pb-5 mx-3 my-3" style="height: 200px">
+                                            </div>
                                         @endif
                                         @php($count++)
                                     @endforeach
-                                </table>
+                                </div>
+{{--                                <table style="width: 100%">--}}
+{{--                                    @php($count=1)--}}
+{{--                                    @foreach($placeArr as $projectObject)--}}
+{{--                                        @if($count%3 == 1)--}}
+{{--                                            @if($projectObject["id"] == "0")--}}
+{{--                                                <tr style="text-align: center;">--}}
+{{--                                                    <td style="width: 33.33333333333333%; text-align: center;padding:20px 10px 20px 10px;">--}}
+{{--                                                        <h2 style="font-weight: bold">Project QR-CODE</h2>--}}
+{{--                                                        <h3 style="font-weight: bold">{{$projectObject["name"]}}</h3>--}}
+{{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject["qr_code"]}}&size=150x150" alt="" title="" />--}}
+{{--                                                        <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />--}}
+{{--                                                        <br>--}}
+{{--                                                    </td>--}}
+{{--                                            @else--}}
+{{--                                                <tr style="text-align: center;">--}}
+{{--                                                    <td style="width: 33.33333333333333%; text-align: center;padding:20px 10px 20px 10px;">--}}
+{{--                                                        <h3 style="font-weight: bold">{{$projectObject["name"]}}</h3>--}}
+{{--                                                        --}}{{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject["qr_code"]}}&size=150x150" alt="" title="" />--}}
+{{--                                                        <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />--}}
+{{--                                                        <br>--}}
+{{--                                                    </td>--}}
+{{--                                            @endif--}}
+{{--                                        @elseif($count%3 == 2)--}}
+{{--                                                <td style="width: 33.33333333333333%; text-align: center;padding:20px 10px 20px 10px;">--}}
+{{--                                                    <h3 style="font-weight: bold">{{$projectObject["name"]}}</h3>--}}
+{{--                                                    --}}{{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject["qr_code"]}}&size=150x150" alt="" title="" />--}}
+{{--                                                    <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />--}}
+
+{{--                                                    <br>--}}
+{{--                                                </td>--}}
+{{--                                        @elseif($count%3 == 0)--}}
+{{--                                                <td style="width: 33.33333333333333%; text-align: center;padding:20px 10px 20px 10px;">--}}
+{{--                                                    <h3 style="font-weight: bold">{{$projectObject["name"]}}</h3>--}}
+{{--                                                    --}}{{--                                                        <img src="https://api.qrserver.com/v1/create-qr-code/?data={{$projectObject["qr_code"]}}&size=150x150" alt="" title="" />--}}
+{{--                                                    <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />--}}
+{{--                                                    <br>--}}
+{{--                                                </td>--}}
+{{--                                            </tr>--}}
+{{--                                        @endif--}}
+{{--                                        @php($count++)--}}
+{{--                                    @endforeach--}}
+{{--                                </table>--}}
+
 {{--                                <div class="row">--}}
 {{--                                    @if($projectObjects->count() > 0)--}}
 {{--                                        @php($count=1)--}}
@@ -169,11 +207,7 @@
 {{--                                </div>--}}
                             </div>
                         </div>
-
-                    </div>
                 </div>
-            </div>
-            <div class="card-body">
             </div>
         </div>
     </div>
@@ -192,12 +226,15 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
 <script>
-    function print(){
-        w=window.open();
-        w.document.write($('#print-section').html());
-        w.print();
-        w.close();
-        // window.print();
+    // function print(){
+    //     w=window.open();
+    //     w.document.write($('#print-section').html());
+    //     w.print();
+    //     w.close();
+    //     // window.print();
+    // }
+    function printDiv(){
+        window.print();
     }
 </script>
 

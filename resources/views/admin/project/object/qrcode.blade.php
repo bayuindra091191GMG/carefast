@@ -44,10 +44,6 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="card">
-                                            <div class="col-md-12 text-right">
-{{--                                                <button onclick="print()" class="btn btn-success">Print</button>--}}
-                                                <a href="{{ route('admin.project.object.qrcode', ['id' => $project->id]) }}?type=print" class="btn btn-success">PRINT QR CODE</a>
-                                            </div>
 
                                             <div id="print-section"  class="body">
 {{--                                                <div class="col-md-12">--}}

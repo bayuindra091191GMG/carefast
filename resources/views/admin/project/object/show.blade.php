@@ -55,6 +55,7 @@
                                                     <a href="{{ route('admin.project.object.edit', ['id' => $project->id]) }}" class="btn btn-primary">UBAH</a>
                                                 @endif
                                                 <a href="{{ route('admin.project.object.qrcode', ['id' => $project->id]) }}" class="btn btn-primary">SHOW QR CODE</a>
+                                                <a href="{{ route('admin.project.object.qrcode', ['id' => $project->id]) }}?type=print" class="btn btn-success">PRINT QR CODE</a>
                                             </div>
                                             <div class="body">
 
@@ -92,22 +93,22 @@
                                                                             {{$count}}
                                                                         </td>
                                                                         <td>
-                                                                            <input type='text'class='form-control' value="{{$projectObject->place_name}}" disabled>
+                                                                            <input type='text' class='form-control' value="{{$projectObject->place_name}}" disabled>
                                                                         </td>
                                                                         <td>
 {{--                                                                            <img src="https://api.qrserver.com/v1/create-qr-code/?data={{}}&size=100x100" alt="" title="" />--}}
                                                                             <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject->place->qr_code}}&choe=UTF-8" alt="" title="" />
 
-                                                                            <input type='text'class='form-control' value="{{$projectObject->place->qr_code}}" disabled>
+                                                                            <input type='text' class='form-control' value="{{$projectObject->place->qr_code}}" disabled>
                                                                         </td>
                                                                         <td>
-                                                                            <input type='text'class='form-control' value="{{$projectObject->unit_name}}" disabled>
+                                                                            <input type='text' class='form-control' value="{{$projectObject->unit_name}}" disabled>
                                                                         </td>
                                                                         <td>
-                                                                            <input type='text'class='form-control' value="{{$projectObject->sub1_unit_name}}" disabled>
+                                                                            <input type='text' class='form-control' value="{{$projectObject->sub1_unit_name}}" disabled>
                                                                         </td>
                                                                         <td>
-                                                                            <input type='text'class='form-control' value="{{$projectObject->sub2_unit_name}}" disabled>
+                                                                            <input type='text' class='form-control' value="{{$projectObject->sub2_unit_name}}" disabled>
                                                                         </td>
                                                                     </tr>
                                                                     @php($count++)
