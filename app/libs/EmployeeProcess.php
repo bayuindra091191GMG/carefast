@@ -228,10 +228,10 @@ class EmployeeProcess
                 //section to get employee from employee_schedule_plotting
                 $projectCSOModel = null;
                 $employeeSchedulePlotting = EmployeePlottingSchedule::where('project_activity_id', $projectActivity->id)->first();
+                $csoFromSchedulePlotting = "";
                 if(!empty($employeeSchedulePlotting)){
                     $days = explode(';', $employeeSchedulePlotting->day_employee_id);
                     $todayDay = Carbon::now()->format('j');
-                    $csoFromSchedulePlotting = "";
                     foreach($days as $day){
                         if(empty($day)) continue;
                         $date = explode(':', $day);
