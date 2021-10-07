@@ -337,7 +337,6 @@ class ProjectObjectController extends Controller
                         Session::flash('error', 'Place terdapat diplotting');
                         return redirect()->route('admin.project.object.edit',['id' => $project->id]);
                     }
-
                     $projectObject->delete();
                 }
             }
