@@ -89,7 +89,7 @@ class ActivityController extends Controller
         $placeIds = ProjectObject::select('place_id')->where('project_id', $id)->get();
 
 
-        $places = Place::whereIn('id', $placeIds)->get();
+        $places = Place::whereIn('id', $placeIds)->orderBy('name')->get();
 
         if($placeId > 0){
             $activities = ProjectActivitiesHeader::where('project_id', $id)
@@ -579,6 +579,7 @@ class ActivityController extends Controller
             $projectDetailDB->start = $startTimeParse;
             $projectDetailDB->finish = $finishTimeParse;
             $projectDetailDB->shift_type = $shiftType;
+            $action = $projectDetailDB->action_id;
 
             if(!empty($actions0) && empty($actionNew)){
                 $actionArr = explode("-", $actions0);
@@ -598,14 +599,16 @@ class ActivityController extends Controller
                     'updated_at'    => $dateNow,
                     'updated_by'    => $user->id
                 ]);
-                $action = $actionNewDb."#";
+                $action = $actionNewDb->id."#";
                 $projectDetailDB->action_id = $action;
             }
             $projectDetailDB->save();
 
             $scheduleDetail = ScheduleDetail::where('project_activity_detail_id', $activityDetailId)->first();
-            $scheduleDetail->project_activity_detail_id = $action;
-            $scheduleDetail->save();
+            if(!empty($scheduleDetail)){
+                $scheduleDetail->action_id = $action;
+                $scheduleDetail->save();
+            }
 
 
             Session::flash('success', 'Sukses mengubah data plotting!');
@@ -614,7 +617,7 @@ class ActivityController extends Controller
         }
         catch (\Exception $ex){
             Log::error('Admin/activity/ActivityController - update error EX: '. $ex);
-            return "Something went wrong! Please contact administrator! ". $ex;
+            dd($ex);
         }
     }
     public function destroy(Request $request){
@@ -657,7 +660,12 @@ class ActivityController extends Controller
             }
 
             $projectPlottingScheduleModel = collect();
-            $projectActivities = ProjectActivitiesHeader::where('project_id', $id)->get();
+            $projectObjects = ProjectObject::where('project_id', $id)->select('place_id')->get();
+            $placeId = [];
+            foreach ($projectObjects as $projectObject){
+                array_push($placeId, $projectObject->place_id);
+            }
+            $projectActivities = ProjectActivitiesHeader::where('project_id', $id)->whereIn('place_id', $placeId)->get();
             if (count($projectActivities) > 0) {
                 foreach ($projectActivities as $projectActivity) {
                     $isEmpty = true;
@@ -667,6 +675,11 @@ class ActivityController extends Controller
                     $employeePlottingSchedule = EmployeePlottingSchedule::where('project_activity_id', $projectActivity->id)->first();
                     $place = Place::find($projectActivity->place_id);
                     $projectActivityDetail = ProjectActivitiesDetail::where('activities_header_id', $projectActivity->id)->first();
+                    if(empty($projectActivityDetail)){
+                        dd("Error Acticities Detail not Found = " .$projectActivity);
+//                        continue;
+                    }
+
                     $projectShifts = ProjectShift::Where('id', $projectActivityDetail->shift_type)->first();
                     $shiftString = $projectShifts == null ? "-" : $projectShifts->shift_type;
 
