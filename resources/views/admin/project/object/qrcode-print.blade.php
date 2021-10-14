@@ -126,9 +126,9 @@
                                             @if($count == 1)
                                                 <h5>Project QR-CODE</h5>
                                             @else
-                                                <h5>{{substr($project->name,0,24)}}</h5>
+                                                <h5>{{substr($project->name,0,64)}}</h5>
                                             @endif
-                                            <h4 style="font-weight: bold">{{substr($projectObject["name"],0,24)}}</h4>
+                                            <h4 style="font-weight: bold">{{substr($projectObject["name"],0,64)}}</h4>
                                             <img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl={{$projectObject["qr_code"]}}&choe=UTF-8" alt="" title="" />
                                             <br>
                                         </div>
