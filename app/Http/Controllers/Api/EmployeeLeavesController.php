@@ -87,7 +87,7 @@ class EmployeeLeavesController extends Controller
                 array_push($projectEmployeeArr, $prjtEmp->project_id);
             }
             if($employee->employee_role_id == 1){
-                $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployee->project_id)
+                $sickLeaves = AttendanceSickLeafe::where('project_id', $projectEmployeeArr)
                     ->where('employee_id', $id)
                     ->orderbyDesc('created_at')
                     ->get();
@@ -365,6 +365,9 @@ class EmployeeLeavesController extends Controller
 
             $employees = AttendancePermission::where('employee_id', $id)->first();
             if(empty($employees)){
+                return Response::json("data kosong", 482);
+            }
+            if($employees->date_end < Carbon::now()){
                 return Response::json("data kosong", 482);
             }
 
