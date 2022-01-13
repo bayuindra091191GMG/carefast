@@ -47,8 +47,9 @@
                                                             </tr>
 
                                                             @if($projectShifts->count() > 0)
+                                                                @php($ct = 1)
                                                                 @foreach($projectShifts as $projectShift)
-                                                                    <tr>
+                                                                    <tr id='sch{{$ct}}'>
                                                                         <td>
                                                                             <select name="shift_types[]" class='form-control'>
                                                                                 <option value='HP' @if($projectShift->shift_type == "HP") selected @endif>HP</option>
@@ -70,9 +71,10 @@
                                                                                    value="{{$projectShift->finish_time}}"/>
                                                                         </td>
                                                                     </tr>
+                                                                    @php($ct++)
                                                                 @endforeach
                                                             @endif
-                                                            <tr id='sch1'></tr>
+                                                            <tr id='sch{{$ct}}'></tr>
                                                         </table>
                                                         <a id="add_row" class="btn btn-success" style="color: #fff;">Tambah</a>
                                                         &nbsp;
@@ -151,7 +153,7 @@
 
         });
 
-        var i=1;
+        var i=parseInt({{$projectCount}}) + 1;
         $("#add_row").click(function(){
             var bufferID = i;
             $('#sch'+i).html(

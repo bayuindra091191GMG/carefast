@@ -761,9 +761,11 @@ class ScheduleController extends Controller
         try{
             $currentProject = Project::find($id);
             $projectShifts = ProjectShift::Where('project_id', $id)->get();
+            $projectCount = count($projectShifts);
             $data = [
                 'project'               => $currentProject,
                 'projectShifts'         => $projectShifts,
+                'projectCount'         => $projectCount,
             ];
 
             return view('admin.project.schedule.edit-shift')->with($data);
