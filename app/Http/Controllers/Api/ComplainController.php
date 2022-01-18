@@ -1480,6 +1480,7 @@ class ComplainController extends Controller
 
             $projectModels = collect();
             $projectLists = ProjectEmployee::where('employee_id', $employee->id)
+                ->where('status_id', 1)
                 ->get();
             foreach ($projectLists as $projectList){
                 $project = Project::find($projectList->project_id);
