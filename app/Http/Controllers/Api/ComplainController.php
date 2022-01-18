@@ -936,7 +936,7 @@ class ComplainController extends Controller
                 'location'              => $customerComplaint->location,
             ]);
 
-            return Response::json($newComplaint->id, 200);
+            return Response::json($customerComplaintModel, 200);
         }
         catch (\Exception $ex){
             Log::error('Api/ComplainController - createComplaintEmployee error EX: '. $ex);
